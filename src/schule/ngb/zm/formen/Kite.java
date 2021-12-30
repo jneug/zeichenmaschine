@@ -2,24 +2,31 @@ package schule.ngb.zm.formen;
 
 import schule.ngb.zm.Options;
 
-import java.awt.geom.Ellipse2D;
+import java.awt.geom.Path2D;
 
-public class Ellipse extends Shape {
+public class Kite extends Shape {
 
 	protected double width;
 
 	protected double height;
 
-	public Ellipse( double x, double y, double width, double height ) {
+	protected double ratio;
+
+	public Kite( double x, double y, double width, double height ) {
+		this(x, y, width, height, 0.5);
+	}
+
+	public Kite( double x, double y, double width, double height, double ratio ) {
 		super(x, y);
 		this.width = width;
 		this.height = height;
+		this.ratio = ratio;
 		setAnchor(CENTER);
 	}
 
-	public Ellipse( Ellipse ellipse ) {
-		this(ellipse.x, ellipse.y, ellipse.width, ellipse.height);
-		copyFrom(ellipse);
+	public Kite( Kite pKite ) {
+		this(pKite.x, pKite.y, pKite.width, pKite.height, pKite.ratio);
+		copyFrom(pKite);
 	}
 
 	public double getWidth() {
@@ -38,19 +45,28 @@ public class Ellipse extends Shape {
 		this.height = height;
 	}
 
+	public double getRatio() {
+		return ratio;
+	}
+
+	public void setRatio( double ratio ) {
+		this.ratio = ratio;
+	}
+
 	@Override
 	public void copyFrom( Shape shape ) {
 		super.copyFrom(shape);
-		if( shape instanceof Ellipse ) {
-			Ellipse e = (Ellipse) shape;
-			this.width = e.width;
-			this.height = e.height;
+		if( shape instanceof Kite ) {
+			Kite d = (Kite) shape;
+			width = d.width;
+			height = d.height;
+			ratio = d.ratio;
 		}
 	}
 
 	@Override
-	public Ellipse copy() {
-		return new Ellipse(this);
+	public Kite copy() {
+		return new Kite(this);
 	}
 
 	@Override
@@ -67,17 +83,25 @@ public class Ellipse extends Shape {
 
 	@Override
 	public java.awt.Shape getShape() {
-		return new Ellipse2D.Double(0, 0, width, height);
+		double hHalf = width * .5, hRatio = ratio * height;
+		Path2D shape = new Path2D.Double();
+		shape.moveTo(hHalf, 0);
+		shape.lineTo(width, hRatio);
+		shape.lineTo(hHalf, height);
+		shape.lineTo(0, hRatio);
+		shape.closePath();
+		return shape;
 	}
 
 	@Override
 	public boolean equals( Object o ) {
 		if( this == o ) return true;
 		if( o == null || getClass() != o.getClass() ) return false;
-		Ellipse ellipse = (Ellipse) o;
+		Kite d = (Kite) o;
 		return super.equals(o) &&
-			Double.compare(ellipse.width, width) == 0 &&
-			Double.compare(ellipse.height, height) == 0;
+			Double.compare(d.width, width) == 0 &&
+			Double.compare(d.height, height) == 0 &&
+			Double.compare(d.ratio, ratio) == 0;
 	}
 
 	@Override
@@ -85,6 +109,7 @@ public class Ellipse extends Shape {
 		return getClass().getCanonicalName() + '[' +
 			"width=" + width +
 			",height=" + height +
+			",verhaeltnis=" + ratio +
 			",x=" + x +
 			",y=" + y +
 			']';

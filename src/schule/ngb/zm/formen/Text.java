@@ -1,56 +1,56 @@
 package schule.ngb.zm.formen;
 
+import schule.ngb.zm.Options;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
-public class Text extends Form {
-
-	private static final int DFT_FONT_SIZE = 14;
+public class Text extends Shape {
 
 	protected String text;
 
-	protected Font schriftart;
+	protected Font font;
 
-	protected int breite = 0, hoehe = 0, ascent = 0;
+	protected int width = 0, height = 0, ascent = 0;
 
-	public Text( double pX, double pY, String pText ) {
-		super(pX, pY);
-		schriftart = new Font(Font.SANS_SERIF, Font.PLAIN, DFT_FONT_SIZE);
-		setText(pText);
+	public Text( double x, double y, String text ) {
+		super(x, y);
+		font = new Font(Font.SANS_SERIF, Font.PLAIN, STD_FONTSIZE);
+		setText(text);
 	}
 
-	public Text( Text pText ) {
-		super(pText.getX(), pText.getY());
-		kopiere(pText);
+	public Text( Text text ) {
+		super(text.getX(), text.getY());
+		copyFrom(text);
 	}
 
-	public Form kopie() {
+	public Shape copy() {
 		return new Text(this);
 	}
 
 	@Override
-	public void kopiere( Form pForm ) {
-		super.kopiere(pForm);
-		if( pForm instanceof Text ) {
-			Text pText = (Text)pForm;
+	public void copyFrom( Shape shape ) {
+		super.copyFrom(shape);
+		if( shape instanceof Text ) {
+			Text pText = (Text) shape;
 			this.text = pText.getText();
-			this.schriftart = pText.getSchriftart();
+			this.font = pText.getFont();
 		}
 	}
 
 	@Override
-	public void skalieren( double pFaktor ) {
-		super.skalieren(pFaktor);
-		setSchriftgroesse(schriftart.getSize2D()*pFaktor);
+	public void scale( double factor ) {
+		super.scale(factor);
+		setFontsize(font.getSize2D() * factor);
 	}
 
-	public Font getSchriftart() {
-		return schriftart;
+	public Font getFont() {
+		return font;
 	}
 
-	public void setSchriftgroesse( double pGroesse ) {
-		schriftart = schriftart.deriveFont((float)pGroesse);
+	public void setFontsize( double size ) {
+		font = font.deriveFont((float) size);
 		setText(text);
 	}
 
@@ -62,34 +62,34 @@ public class Text extends Form {
 		text = pText;
 
 		Canvas metricsCanvas = new Canvas();
-		FontMetrics metrics = metricsCanvas.getFontMetrics(schriftart);
-		breite = metrics.stringWidth(text);
-		hoehe = metrics.getDescent() + metrics.getAscent();
+		FontMetrics metrics = metricsCanvas.getFontMetrics(font);
+		width = metrics.stringWidth(text);
+		height = metrics.getDescent() + metrics.getAscent();
 		ascent = metrics.getAscent();
 
-		setAnkerpunkt(ZENTRUM);
+		setAnchor(CENTER);
 	}
 
-	public double getBreite() {
-		return breite;
+	public double getWidth() {
+		return width;
 	}
 
-	public double getHoehe() {
-		return hoehe;
+	public double getHeight() {
+		return height;
 	}
 
-	public void setAnkerpunkt( byte pAnker ) {
-		ankerBerechnen(breite, ascent - hoehe, pAnker);
-	}
-
-	@Override
-	public Shape getShape() {
-		return new Rectangle2D.Double(0, 0, breite, hoehe);
+	public void setAnchor( Options.Direction anchor ) {
+		calculateAnchor(width, ascent - height, anchor);
 	}
 
 	@Override
-	public void zeichnen( Graphics2D graphics, AffineTransform pVerzerrung ) {
-		if( !sichtbar ) {
+	public java.awt.Shape getShape() {
+		return new Rectangle2D.Double(0, 0, width, height);
+	}
+
+	@Override
+	public void draw( Graphics2D graphics, AffineTransform pVerzerrung ) {
+		if( !visible ) {
 			return;
 		}
 
@@ -99,11 +99,11 @@ public class Text extends Form {
 		AffineTransform af = graphics.getTransform();
 
 		// Neue Werte setzen
-		graphics.setFont(schriftart);
-		graphics.setColor(konturFarbe);
-		graphics.transform(getVerzerrung());
+		graphics.setFont(font);
+		graphics.setColor(strokeColor.getColor());
+		graphics.transform(pVerzerrung);
 
-		// Text zeichnen
+		// Draw text
 		FontMetrics fm = graphics.getFontMetrics();
 		//graphics.drawString(text, (float) (x - fm.stringWidth(text)/2.0), (float) (y + fm.getDescent()));
 		graphics.drawString(text, 0, 0);
@@ -121,13 +121,15 @@ public class Text extends Form {
 		Text text = (Text) o;
 		return super.equals(o) &&
 			text.equals(text.text) &&
-			schriftart.equals(text.schriftart);
+			font.equals(text.font);
 	}
 
 	@Override
 	public String toString() {
 		return getClass().getCanonicalName() + "[" +
-			"text=" + text +
+			"text=" + text + ',' +
+			"font=" + font.getName() + ',' +
+			"size=" + font.getSize() +
 			']';
 	}
 
