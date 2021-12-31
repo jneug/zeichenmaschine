@@ -29,9 +29,11 @@ public class Zeichenleinwand extends Canvas {
 
 		// Liste der Ebenen initialisieren und die Standardebenen einfügen
 		layers = new LinkedList<>();
-		layers.add(new ColorLayer(Constants.STD_BACKGROUND));
-		layers.add(new DrawingLayer());
-		layers.add(new ShapesLayer());
+		synchronized( layers ) {
+			layers.add(new ColorLayer(Constants.STD_BACKGROUND));
+			layers.add(new DrawingLayer());
+			layers.add(new ShapesLayer());
+		}
 	}
 
 	/**
@@ -47,8 +49,10 @@ public class Zeichenleinwand extends Canvas {
 		this.setPreferredSize(this.getSize());
 		this.setMinimumSize(this.getSize());
 
-		for( Layer layer : layers ) {
-			layer.setSize(width, height);
+		synchronized( layers ) {
+			for( Layer layer : layers ) {
+				layer.setSize(width, height);
+			}
 		}
 	}
 
@@ -59,8 +63,10 @@ public class Zeichenleinwand extends Canvas {
 	 */
 	public void addLayer( Layer layer ) {
 		if( layer != null ) {
-			layer.setSize(getWidth(), getHeight());
-			layers.add(layer);
+			synchronized( layers ) {
+				layer.setSize(getWidth(), getHeight());
+				layers.add(layer);
+			}
 		}
 	}
 
@@ -71,8 +77,10 @@ public class Zeichenleinwand extends Canvas {
 	 */
 	public void addLayer( int i, Layer layer ) {
 		if( layer != null ) {
-			layer.setSize(getWidth(), getHeight());
-			layers.add(i, layer);
+			synchronized( layers ) {
+				layer.setSize(getWidth(), getHeight());
+				layers.add(i, layer);
+			}
 		}
 	}
 
@@ -140,8 +148,10 @@ public class Zeichenleinwand extends Canvas {
 	}
 
 	public void dispose() {
-		for( Layer layer : layers ) {
-			layer.dispose();
+		synchronized( layers ) {
+			for( Layer layer : layers ) {
+				layer.dispose();
+			}
 		}
 	}
 
@@ -163,8 +173,10 @@ public class Zeichenleinwand extends Canvas {
 						Graphics2D g2d = (Graphics2D) strategy.getDrawGraphics();
 						g2d.clearRect(0, 0, getWidth(), getHeight());
 
-						for( Layer layer : layers ) {
-							layer.draw(g2d);
+						synchronized( layers ) {
+							for( Layer layer : layers ) {
+								layer.draw(g2d);
+							}
 						}
 
 						g2d.dispose();
