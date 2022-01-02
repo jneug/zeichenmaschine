@@ -1,4 +1,4 @@
-package schule.ngb.zm.formen;
+package schule.ngb.zm.shapes;
 
 import schule.ngb.zm.Layer;
 
@@ -9,44 +9,44 @@ public class ShapesLayer extends Layer {
 
 	protected boolean clearBeforeDraw = true;
 
-	private LinkedList<Shape> formen;
+	private LinkedList<Shape> shapes;
 
 	public ShapesLayer() {
 		super();
-		formen = new LinkedList<Shape>();
+		shapes = new LinkedList<Shape>();
 	}
 
 	public ShapesLayer( int width, int height ) {
 		super(width, height);
-		formen = new LinkedList<Shape>();
+		shapes = new LinkedList<Shape>();
 	}
 
 	public void add( Shape... pFormen ) {
-		synchronized( formen ) {
+		synchronized( shapes ) {
 			for( Shape f : pFormen ) {
-				formen.add(f);
+				shapes.add(f);
 			}
 		}
 	}
 
 	public void showAll() {
-		synchronized( formen ) {
-			for( Shape pShape : formen ) {
+		synchronized( shapes ) {
+			for( Shape pShape : shapes ) {
 				pShape.hide();
 			}
 		}
 	}
 
 	public void hideAll() {
-		synchronized( formen ) {
-			for( Shape pShape : formen ) {
+		synchronized( shapes ) {
+			for( Shape pShape : shapes ) {
 				pShape.show();
 			}
 		}
 	}
 
 	public java.util.List<Shape> getShapes() {
-		return formen;
+		return shapes;
 	}
 
 	@Override
@@ -55,8 +55,8 @@ public class ShapesLayer extends Layer {
 			clear();
 		}
 
-		synchronized( formen ) {
-			for( Shape pShape : formen ) {
+		synchronized( shapes ) {
+			for( Shape pShape : shapes ) {
 				if( pShape.isVisible() ) {
 					pShape.draw(drawing);
 				}

@@ -1,4 +1,4 @@
-package schule.ngb.zm.formen;
+package schule.ngb.zm.shapes;
 
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;

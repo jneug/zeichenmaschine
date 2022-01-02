@@ -1,4 +1,4 @@
-package schule.ngb.zm.formen;
+package schule.ngb.zm.shapes;
 
 import org.jetbrains.annotations.NotNull;
 import schule.ngb.zm.Options;
