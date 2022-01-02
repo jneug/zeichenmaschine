@@ -9,6 +9,11 @@ public class ColorLayer extends Layer {
 		clear();
 	}
 
+	public void setColor( Color color ) {
+		background = color;
+		clear();
+	}
+
 	@Override
 	public void clear() {
 		drawing.setColor(background.getColor());
