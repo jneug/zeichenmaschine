@@ -175,10 +175,100 @@ public class TurtleLayer extends Layer {
 		mainTurtle.moveTo(x, y);
 	}
 
+	public Color getFillColor() {
+		return mainTurtle.getFillColor();
+	}
+
+	public void setFillColor( Color color ) {
+		mainTurtle.setFillColor(color);
+	}
+
+	public void setFillColor( int gray ) {
+		mainTurtle.setFillColor(gray);
+	}
+
+	public void noFill() {
+		mainTurtle.noFill();
+	}
+
+	public void setFillColor( int gray, int alpha ) {
+		mainTurtle.setFillColor(gray, alpha);
+	}
+
+	public void setFillColor( int red, int green, int blue ) {
+		mainTurtle.setFillColor(red, green, blue);
+	}
+
+	public void setFillColor( int red, int green, int blue, int alpha ) {
+		mainTurtle.setFillColor(red, green, blue, alpha);
+	}
+
+	public void resetFill() {
+		mainTurtle.resetFill();
+	}
+
+	public Color getStrokeColor() {
+		return mainTurtle.getStrokeColor();
+	}
+
+	public void setStrokeColor( Color color ) {
+		mainTurtle.setStrokeColor(color);
+	}
+
+	public void setStrokeColor( int gray ) {
+		mainTurtle.setStrokeColor(gray);
+	}
+
+	public void noStroke() {
+		mainTurtle.noStroke();
+	}
+
+	public void setStrokeColor( int gray, int alpha ) {
+		mainTurtle.setStrokeColor(gray, alpha);
+	}
+
+	public void setStrokeColor( int red, int green, int blue ) {
+		mainTurtle.setStrokeColor(red, green, blue);
+	}
+
+	public void setStrokeColor( int red, int green, int blue, int alpha ) {
+		mainTurtle.setStrokeColor(red, green, blue, alpha);
+	}
+
+	public double getStrokeWeight() {
+		return mainTurtle.getStrokeWeight();
+	}
+
+	public void setStrokeWeight( double weight ) {
+		mainTurtle.setStrokeWeight(weight);
+	}
+
+	public Options.StrokeType getStrokeType() {
+		return mainTurtle.getStrokeType();
+	}
+
+	public void setStrokeType( Options.StrokeType type ) {
+		mainTurtle.setStrokeType(type);
+	}
+
+	public void resetStroke() {
+		mainTurtle.resetStroke();
+	}
+
+	public void addPosToPath() {
+		mainTurtle.addPosToPath();
+	}
+
+	public void closePath() {
+		mainTurtle.closePath();
+	}
+
 	// End of delegate methods (auto-generated)
 
 
 	public class Turtle extends FilledShape {
+
+		private static final int STD_SIZE = 12;
 
 		boolean penDown = true;
 
