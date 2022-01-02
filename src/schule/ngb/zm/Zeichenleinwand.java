@@ -1,6 +1,6 @@
 package schule.ngb.zm;
 
-import schule.ngb.zm.formen.ShapesLayer;
+import schule.ngb.zm.shapes.ShapesLayer;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
