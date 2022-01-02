@@ -15,19 +15,14 @@ public class Vector extends Point2D.Double {
 		y = 0.0;
 	}
 
-	public Vector( double x, double pY ) {
+	public Vector( double x, double y ) {
 		this.x = x;
-		y = pY;
+		this.y = y;
 	}
 
 	public Vector( Point2D point ) {
 		x = point.getX();
-		x = point.getY();
-	}
-
-	public Vector( Vector vec ) {
-		x = vec.x;
-		y = vec.y;
+		y = point.getY();
 	}
 
 	public static Vector random() {
@@ -36,6 +31,10 @@ public class Vector extends Point2D.Double {
 
 	public static Vector random( double min, double max ) {
 		return new Vector(Math.random() * (max - min) + min, Math.random() * (max - min) + min);
+	}
+
+	public static Vector random( double minX, double maxX, double minY, double maxY ) {
+		return new Vector(Math.random() * (maxX - minX) + minX, Math.random() * (maxY - minY) + minY);
 	}
 
 	public static Vector setLength( Vector vector, double length ) {
