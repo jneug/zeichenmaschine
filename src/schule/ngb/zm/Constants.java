@@ -111,6 +111,10 @@ public class Constants {
 		return new Color(red, green, blue, alpha);
 	}
 
+	public static Color randomColor() {
+		return color(random(10, 255), random(10, 255), random(10, 255), 255);
+	}
+
 
 	public static double abs( double x ) {
 		return Math.abs(x);
@@ -130,6 +134,14 @@ public class Constants {
 
 	public static double ceil( double x ) {
 		return Math.ceil(x);
+	}
+
+	public static double sqrt( double x ) {
+		return Math.sqrt(x);
+	}
+
+	public static double pow( double x, double p ) {
+		return Math.pow(x, p);
 	}
 
 	public static double sin( double x ) {
