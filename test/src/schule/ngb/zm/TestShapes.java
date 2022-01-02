@@ -1,21 +1,18 @@
 package schule.ngb.zm;
 
-import schule.ngb.zm.formen.*;
-import schule.ngb.zm.formen.Point;
-import schule.ngb.zm.formen.Polygon;
-import schule.ngb.zm.formen.Rectangle;
-import schule.ngb.zm.formen.Shape;
+import schule.ngb.zm.shapes.*;
+import schule.ngb.zm.shapes.Point;
+import schule.ngb.zm.shapes.Polygon;
+import schule.ngb.zm.shapes.Rectangle;
+import schule.ngb.zm.shapes.Shape;
 
-import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.Random;
 
-public class TestFormen extends Zeichenmaschine {
-
-	Random rand = new Random();
+public class TestShapes extends Zeichenmaschine {
 
 	public static void main( String[] args ) {
-		new TestFormen();
+		new TestShapes();
 	}
 
 	@Override
@@ -98,15 +95,6 @@ public class TestFormen extends Zeichenmaschine {
 		p.setFillColor(clr);
 		p.setStrokeColor(clr);
 		shapes.add(p);
-	}
-
-	private Color randomColor() {
-		return new Color(
-			rand.nextInt(256),
-			rand.nextInt(256),
-			rand.nextInt(256),
-			128
-		);
 	}
 
 }

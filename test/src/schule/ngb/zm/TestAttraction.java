@@ -1,6 +1,6 @@
 package schule.ngb.zm;
 
-import schule.ngb.zm.formen.Rectangle;
+import schule.ngb.zm.shapes.Rectangle;
 
 import java.awt.geom.Rectangle2D;
 
