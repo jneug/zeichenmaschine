@@ -1,6 +1,6 @@
 package schule.ngb.zm;
 
-import schule.ngb.zm.formen.ShapesLayer;
+import schule.ngb.zm.shapes.ShapesLayer;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
@@ -26,6 +26,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Attributes to be accessed by subclasses.
 	 */
 	protected Zeichenleinwand canvas;
+
+	protected ColorLayer background;
 
 	protected DrawingLayer drawing;
 
@@ -91,6 +93,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 		framesPerSecond = STD_FPS;
 
+		background = getBackgroundLayer();
 		drawing = getDrawingLayer();
 		shapes = getShapesLayer();
 
@@ -187,13 +190,23 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 	public final void addLayer( Layer layer ) {
 		canvas.addLayer(layer);
+		layer.setSize(getWidth(), getHeight());
+	}
+
+	public final ColorLayer getBackgroundLayer() {
+		ColorLayer layer = canvas.getLayer(ColorLayer.class);
+		if( layer == null ) {
+			layer = new ColorLayer(STD_BACKGROUND);
+			canvas.addLayer(0, layer);
+		}
+		return layer;
 	}
 
 	public final DrawingLayer getDrawingLayer() {
 		DrawingLayer layer = canvas.getLayer(DrawingLayer.class);
 		if( layer == null ) {
 			layer = new DrawingLayer(getWidth(), getHeight());
-			canvas.addLayer(0, layer);
+			canvas.addLayer(1, layer);
 		}
 		return layer;
 	}
