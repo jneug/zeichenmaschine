@@ -4,12 +4,11 @@ import schule.ngb.zm.Color;
 import schule.ngb.zm.Layer;
 import schule.ngb.zm.Options;
 import schule.ngb.zm.Vector;
-import schule.ngb.zm.formen.FilledShape;
+import schule.ngb.zm.shapes.FilledShape;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
-import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -69,8 +68,8 @@ public class TurtleLayer extends Layer {
 	public Turtle newTurtle() {
 		Turtle newTurtle = new Turtle();
 
-		newTurtle.position.x = getWidth() / 2;
-		newTurtle.position.y = getHeight() / 2;
+		newTurtle.position.x = getWidth() / 2.0;
+		newTurtle.position.y = getHeight() / 2.0;
 		newTurtle.direction.x = 0.0;
 		newTurtle.direction.y = -1.0;
 		synchronized( turtles ) {
@@ -88,6 +87,13 @@ public class TurtleLayer extends Layer {
 
 	public Turtle getTurtle( int i ) {
 		return turtles.get(i);
+	}
+
+	@Override
+	public void setSize( int width, int height ) {
+		super.setSize(width, height);
+		mainTurtle.position.x = getWidth() / 2.0;
+		mainTurtle.position.y = getHeight() / 2.0;
 	}
 
 	/*
@@ -221,17 +227,26 @@ public class TurtleLayer extends Layer {
 
 		@Override
 		public void draw( Graphics2D graphics ) {
-			Shape shape = new RoundRectangle2D.Double(
+			/*Shape shape = new RoundRectangle2D.Double(
 				-12, -5, 16, 10, 5, 3
-			);
+			);*/
+			Path2D path = new Path2D.Double();
+			path.moveTo(STD_SIZE, 0);
+			path.lineTo(-STD_SIZE, -STD_SIZE/2);
+			path.lineTo(-STD_SIZE, STD_SIZE/2);
+			path.lineTo(STD_SIZE, 0);
 
 			AffineTransform verzerrung = new AffineTransform();
 			verzerrung.translate(position.x, position.y);
-			verzerrung.rotate(-1 * direction.angle());
+			verzerrung.rotate(Math.toRadians(direction.angle()));
 
-			shape = verzerrung.createTransformedShape(shape);
+			Shape shape = verzerrung.createTransformedShape(path);
 
-			graphics.setColor(strokeColor.getColor());
+			if( strokeColor != null ) {
+				graphics.setColor(strokeColor.getColor());
+			} else {
+				graphics.setColor(STD_STROKECOLOR.getColor());
+			}
 			graphics.fill(shape);
 			graphics.setColor(Color.BLACK.getColor());
 			graphics.setStroke(createStroke());
@@ -248,7 +263,7 @@ public class TurtleLayer extends Layer {
 			Vector positionStart = position.copy();
 			position.add(Vector.setLength(direction, dist));
 
-			if( penDown ) {
+			if( penDown && strokeColor != null ) {
 				drawing.setColor(strokeColor.getColor());
 				drawing.setStroke(createStroke());
 				drawing.drawLine((int) positionStart.x, (int) positionStart.y, (int) position.x, (int) position.y);
@@ -268,7 +283,7 @@ public class TurtleLayer extends Layer {
 		}
 
 		public void lt( double angle ) {
-			this.left(-angle);
+			this.left(angle);
 		}
 
 		public void left( double angle ) {
@@ -301,7 +316,7 @@ public class TurtleLayer extends Layer {
 			position.x = x;
 			position.y = y;
 
-			if( penDown ) {
+			if( penDown && strokeColor != null ) {
 				drawing.setColor(strokeColor.getColor());
 				drawing.setStroke(createStroke());
 				drawing.drawLine((int) x, (int) y, (int) position.x, (int) position.y);
