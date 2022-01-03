@@ -1,64 +1,115 @@
 package schule.ngb.zm;
 
+/**
+ * Repräsentiert eine Farbe in der Zeichenmaschine.
+ * <p>
+ * Farben bestehen entweder aus einem Grauwert (zwischen <code>0</code> und
+ * <code>255</code>) oder einem Rot-, Grün- und Blauanteil (jeweils zwischen
+ * <code>0</code> und <code>255</code>).
+ * <p>
+ * Eine Farbe hat außerdem einen Transparenzwert zwischen <code>0</code>
+ * (unsichtbar) und <code>255</code> (deckend).
+ */
 public class Color {
 
+	//@formatter:off
 	public static final Color BLACK = new Color(java.awt.Color.BLACK);
-
 	public static final Color WHITE = new Color(java.awt.Color.WHITE);
-
 	public static final Color GRAY = new Color(java.awt.Color.GRAY);
-
 	public static final Color DARKGRAY = new Color(java.awt.Color.DARK_GRAY);
-
 	public static final Color LIGHTGRAY = new Color(java.awt.Color.LIGHT_GRAY);
 
 	public static final Color RED = new Color(java.awt.Color.RED);
-
 	public static final Color GREEN = new Color(java.awt.Color.GREEN);
-
 	public static final Color BLUE = new Color(java.awt.Color.BLUE);
-
 	public static final Color YELLOW = new Color(java.awt.Color.YELLOW);
-
 	public static final Color ORANGE = new Color(java.awt.Color.ORANGE);
-
 	public static final Color CYAN = new Color(java.awt.Color.CYAN);
-
 	public static final Color MAGENTA = new Color(java.awt.Color.MAGENTA);
-
 	public static final Color PINK = new Color(java.awt.Color.PINK);
 
 	public static final Color HGGREEN = new Color(0, 165, 81);
-
 	public static final Color HGRED = new Color(151, 54, 60);
+	//@formatter:on
 
-
+	/**
+	 * RGBA Wert der Farbe als Integer kodiert.
+	 */
 	private int rgba;
 
+	/**
+	 * Erstellt eine leere (schwarze) Farbe.
+	 */
 	public Color() {
 		rgba = 0xFF000000;
 	}
 
+	/**
+	 * Erstellt eine graue Farbe entsprechend des Grauwertes <var>gray</var>.
+	 *
+	 * @param gray Ein Grauwert zwischen <code>0</code> und <code>255</code>.
+	 */
 	public Color( int gray ) {
 		this(gray, gray, gray, 255);
 	}
 
+	/**
+	 * Erstellt eine graue Farbe entsprechend des Grauwertes <var>gray</var> und
+	 * des Transparentwertes <var>alpha</var>.
+	 *
+	 * @param gray Ein Grauwert zwischen <code>0</code> und <code>255</code>.
+	 */
 	public Color( int gray, int alpha ) {
 		this(gray, gray, gray, alpha);
 	}
 
+	/**
+	 * Erstellt eine Farbe. Die Parameter <var>red</var>, <var>green</var> und
+	 * <var>blue</var> geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
+	 * liegen zwischen <code>0</code> und <code>255</code>.
+	 *
+	 * @param red   Rotwert zwischen <code>0</code> und <code>255</code>.
+	 * @param green Grünwert zwischen <code>0</code> und <code>255</code>.
+	 * @param blue  Blauwert zwischen <code>0</code> und <code>255</code>.
+	 * @return Ein passendes Farbobjekt.
+	 */
 	public Color( int red, int green, int blue ) {
 		this(red, green, blue, 255);
 	}
 
+	/**
+	 * Erstellt eine Farbe. Die Parameter <var>red</var>, <var>green</var> und
+	 * <var>blue</var> geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
+	 * liegen zwischen <code>0</code> und <code>255</code>.
+	 * <var>alpha</var> gibt den den Transparentwert an (auch zwischen
+	 * code>0</code> und <code>255</code>), wobei
+	 * <code>0</code> komplett durchsichtig ist und <code>255</code> komplett
+	 * deckend.
+	 *
+	 * @param red   Rotwert zwischen <code>0</code> und <code>255</code>.
+	 * @param green Grünwert zwischen <code>0</code> und <code>255</code>.
+	 * @param blue  Blauwert zwischen <code>0</code> und <code>255</code>.
+	 * @param alpha Transparentwert zwischen <code>0</code> und <code>255</code>.
+	 * @return Ein passendes Farbobjekt.
+	 */
 	public Color( int red, int green, int blue, int alpha ) {
 		rgba = (alpha << 24) | (red << 16) | (green << 8) | blue;
 	}
 
+	/**
+	 * Erstellt eine Farbe als Kopie von <var>color</var>.
+	 * @param color
+	 */
 	public Color( Color color ) {
 		this(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 	}
 
+	/**
+	 * Erstellt eine Farbe als Kopie von <var>color</var> und ersetzt den
+	 * Transparentwert durch <var>alpha</var>.
+	 * @param color
+	 * @param alpha
+	 */
 	public Color( Color color, int alpha ) {
 		this(color.getRed(), color.getGreen(), color.getBlue(), alpha);
 	}
@@ -71,12 +122,24 @@ public class Color {
 		this(color.getRed(), color.getGreen(), color.getBlue(), alpha);
 	}
 
+	/**
+	 * Erzeugt eine Farbe aus einem kodierten RGBA Integer-Wert.
+	 * @param rgba
+	 * @return
+	 */
 	public static Color parseRGB( int rgba ) {
 		Color c = new Color();
 		c.rgba = rgba;
 		return c;
 	}
 
+	/**
+	 * Erzeugt eine Farbe aus einem hexadezimalen Code. Der Hexcode kann
+	 * sechs- oder achtstellig sein (wenn ein Transparentwert vorhanden ist).
+	 * Dem Code kann ein <code>#</code> Zeichen vorangestellt sein.
+	 * @param hexcode
+	 * @return
+	 */
 	public static Color parseHexcode( String hexcode ) {
 		if( hexcode.startsWith("#") ) {
 			hexcode = hexcode.substring(1);
