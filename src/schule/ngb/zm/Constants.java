@@ -62,6 +62,7 @@ public class Constants {
 
 
 	// Farben
+
 	/**
 	 * Erstellt eine graue Farbe. Der Parameter <var>gray</var> gibt einen
 	 * Grauwert zwischen <code>0</code> und <code>255</code> an, wobei
@@ -83,7 +84,7 @@ public class Constants {
 	 * <code>0</code> komplett durchsichtig ist und <code>255</code> komplett
 	 * deckend.
 	 *
-	 * @param gray Grauwert zwischen <code>0</code> und <code>255</code>.
+	 * @param gray  Grauwert zwischen <code>0</code> und <code>255</code>.
 	 * @param alpha Transparentwert zwischen <code>0</code> und <code>255</code>.
 	 * @return Ein passendes Farbobjekt.
 	 */
@@ -96,9 +97,9 @@ public class Constants {
 	 * <var>blue</var> geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
 	 * liegen zwischen <code>0</code> und <code>255</code>.
 	 *
-	 * @param red Rotwert zwischen <code>0</code> und <code>255</code>.
+	 * @param red   Rotwert zwischen <code>0</code> und <code>255</code>.
 	 * @param green Grünwert zwischen <code>0</code> und <code>255</code>.
-	 * @param blue Blauwert zwischen <code>0</code> und <code>255</code>.
+	 * @param blue  Blauwert zwischen <code>0</code> und <code>255</code>.
 	 * @return Ein passendes Farbobjekt.
 	 */
 	public static Color color( int red, int green, int blue ) {
@@ -114,9 +115,9 @@ public class Constants {
 	 * <code>0</code> komplett durchsichtig ist und <code>255</code> komplett
 	 * deckend.
 	 *
-	 * @param red Rotwert zwischen <code>0</code> und <code>255</code>.
+	 * @param red   Rotwert zwischen <code>0</code> und <code>255</code>.
 	 * @param green Grünwert zwischen <code>0</code> und <code>255</code>.
-	 * @param blue Blauwert zwischen <code>0</code> und <code>255</code>.
+	 * @param blue  Blauwert zwischen <code>0</code> und <code>255</code>.
 	 * @param alpha Transparentwert zwischen <code>0</code> und <code>255</code>.
 	 * @return Ein passendes Farbobjekt.
 	 */
@@ -135,6 +136,7 @@ public class Constants {
 
 	/**
 	 * Erzeugt eine zufällige Farbe.
+	 *
 	 * @return Ein zufälliges Farbobjekt.
 	 */
 	public static Color randomColor() {
@@ -146,6 +148,7 @@ public class Constants {
 
 	/**
 	 * Ermittelt den Absolutbetrag der Zahl <var>x</var>.
+	 *
 	 * @param x Eine Zahl.
 	 * @return Der Absolutbetrag.
 	 */
@@ -155,6 +158,7 @@ public class Constants {
 
 	/**
 	 * Ermittelt das Vorzeichen der Zahl <var>x</var>.
+	 *
 	 * @param x Eine Zahl.
 	 * @return <code>-1</code>, <code>1</code> oder <code>0</code>.
 	 */
@@ -164,6 +168,7 @@ public class Constants {
 
 	/**
 	 * Rundet die Zahl <var>x</var>.
+	 *
 	 * @param x Eine Zahl.
 	 * @return Die gerundete Zahl.
 	 */
@@ -173,6 +178,7 @@ public class Constants {
 
 	/**
 	 * Rundet die Zahl <var>x</var> ab.
+	 *
 	 * @param x Eine Zahl.
 	 * @return Die abgerundete Zahl.
 	 */
@@ -182,6 +188,7 @@ public class Constants {
 
 	/**
 	 * Rundet die Zahl <var>x</var> auf.
+	 *
 	 * @param x Eine Zahl.
 	 * @return Die aufgerundete Zahl.
 	 */
@@ -191,6 +198,7 @@ public class Constants {
 
 	/**
 	 * Ermittelt die Quadratwurzel der Zahl <var>x</var>.
+	 *
 	 * @param x Eine Zahl.
 	 * @return Die Quadratwurzel.
 	 */
@@ -200,6 +208,7 @@ public class Constants {
 
 	/**
 	 * Ermittelt die Potenz der Zahl <var>x</var> zum Exponenten <var>p</var>.
+	 *
 	 * @param x Eine Zahl.
 	 * @param p Der Exponent.
 	 * @return <var>x</var> hoch <var>p</var>.
@@ -210,6 +219,7 @@ public class Constants {
 
 	/**
 	 * Ermittelt den Sinus der Zahl <var>x</var>.
+	 *
 	 * @param x Eine Zahl.
 	 * @return <code>sin(x)</code>.
 	 */
@@ -219,6 +229,7 @@ public class Constants {
 
 	/**
 	 * Ermittelt den Kosinus der Zahl <var>x</var>.
+	 *
 	 * @param x Eine Zahl.
 	 * @return <code>cos(x)</code>.
 	 */
@@ -228,6 +239,7 @@ public class Constants {
 
 	/**
 	 * Ermittelt den Tangens der Zahl <var>x</var>.
+	 *
 	 * @param x Eine Zahl.
 	 * @return <code>tan(x)</code>.
 	 */
@@ -237,6 +249,7 @@ public class Constants {
 
 	/**
 	 * Ermittelt den Arkussinus der Zahl <var>x</var>.
+	 *
 	 * @param x Eine Zahl.
 	 * @return <code>asin(x)</code>.
 	 */
@@ -246,6 +259,7 @@ public class Constants {
 
 	/**
 	 * Ermittelt den Arkuskosinus der Zahl <var>x</var>.
+	 *
 	 * @param x Eine Zahl.
 	 * @return <code>acos(x)</code>.
 	 */
@@ -255,6 +269,7 @@ public class Constants {
 
 	/**
 	 * Ermittelt den Arkusktangens der Zahl <var>x</var>.
+	 *
 	 * @param x Eine Zahl.
 	 * @return <code>atan(x)</code>.
 	 */
@@ -266,7 +281,8 @@ public class Constants {
 	 * Beschränkt die Zahl <var>x</var> auf das Intervall <code>[0, max]</code>.
 	 * Liegt <var>x</var> außerhalb des Intervalls, wird eine der Grenzen
 	 * zurückgegeben.
-	 * @param x Eine Zahl.
+	 *
+	 * @param x   Eine Zahl.
 	 * @param max Das Maximum des Intervalls.
 	 * @return Eine Zahl im Intervall <code>[0, max]</code>.
 	 */
@@ -281,7 +297,8 @@ public class Constants {
 	 * Beschränkt die Zahl <var>x</var> auf das Intervall <code>[min, max]</code>.
 	 * Liegt <var>x</var> außerhalb des Intervalls, wird eine der Grenzen
 	 * zurückgegeben.
-	 * @param x Eine Zahl.
+	 *
+	 * @param x   Eine Zahl.
 	 * @param max Das Maximum des Intervalls.
 	 * @return Eine Zahl im Intervall <code>[min, max]</code>.
 	 */
@@ -302,9 +319,10 @@ public class Constants {
 	 * <pre>
 	 * from - t * (from + to)
 	 * </pre>
+	 *
 	 * @param from Startwert
-	 * @param to Zielwert
-	 * @param t  Wert zwischen <code>0</code> und <code>1</code>.
+	 * @param to   Zielwert
+	 * @param t    Wert zwischen <code>0</code> und <code>1</code>.
 	 * @return Das Ergebnis der linearen Interpolation.
 	 */
 	public static double morph( double from, double to, double t ) {
@@ -313,6 +331,7 @@ public class Constants {
 
 	/**
 	 * Erzeugt eine Pseudozufallszahl im Intervall <code>[min, max[</code>.
+	 *
 	 * @param min Untere Grenze.
 	 * @param max Obere Grenze.
 	 * @return Eine Zufallszahl.
@@ -323,6 +342,7 @@ public class Constants {
 
 	/**
 	 * Erzeugt eine Pseudozufallsganzzahl im Intervall <code>[min, max[</code>.
+	 *
 	 * @param min Untere Grenze.
 	 * @param max Obere Grenze.
 	 * @return Eine Zufallszahl.
@@ -335,6 +355,7 @@ public class Constants {
 	 * Erzeugt einen zufälligen Wahrheitswert. <code>true</code> und
 	 * <code>false</code> werden mit einer Wahrscheinlichkeit von 50%
 	 * erzeugt.
+	 *
 	 * @return Ein Wahrheitswert.
 	 */
 	public static boolean randomBool() {
@@ -344,6 +365,7 @@ public class Constants {
 	/**
 	 * Erzeugt einen zufälligen Wahrheitswert. <code>true</code> wird mit
 	 * der Wahrscheinlichkeit <var>percent</var> Prozent erzeugt.
+	 *
 	 * @param percent Eine Prozentzahl zwischen <code>0</code> und <code>100</code>.
 	 * @return Ein Wahrheitswert.
 	 */
@@ -354,6 +376,7 @@ public class Constants {
 	/**
 	 * Erzeugt einen zufälligen Wahrheitswert. <code>true</code> wird mit
 	 * der Wahrscheinlichkeit <var>weight</var> erzeugt.
+	 *
 	 * @return Ein Wahrheitswert.
 	 */
 	public static boolean randomBool( double weight ) {
@@ -362,6 +385,7 @@ public class Constants {
 
 	/**
 	 * Erzeugt eine Pseudozufallszahl nach einer Gaussverteilung.
+	 *
 	 * @return Eine Zufallszahl.
 	 * @see Random#nextGaussian()
 	 */
@@ -371,6 +395,7 @@ public class Constants {
 
 	/**
 	 * Erzeugt den nächsten Wert eines Perlin-Noise.
+	 *
 	 * @return
 	 */
 	public static double noise() {
