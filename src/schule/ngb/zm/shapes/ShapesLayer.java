@@ -32,7 +32,7 @@ public class ShapesLayer extends Layer {
 	public void showAll() {
 		synchronized( shapes ) {
 			for( Shape pShape : shapes ) {
-				pShape.hide();
+				pShape.show();
 			}
 		}
 	}
@@ -40,7 +40,7 @@ public class ShapesLayer extends Layer {
 	public void hideAll() {
 		synchronized( shapes ) {
 			for( Shape pShape : shapes ) {
-				pShape.show();
+				pShape.hide();
 			}
 		}
 	}
