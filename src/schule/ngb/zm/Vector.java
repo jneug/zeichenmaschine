@@ -221,7 +221,7 @@ public class Vector extends Point2D.Double {
 		}
 		if( lenSq() < min * min ) {
 			setLen(min);
-		} else if( lenSq() > min * min ) {
+		} else if( lenSq() > max * max ) {
 			setLen(max);
 		}
 		return this;
