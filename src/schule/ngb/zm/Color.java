@@ -98,6 +98,7 @@ public class Color {
 
 	/**
 	 * Erstellt eine Farbe als Kopie von <var>color</var>.
+	 *
 	 * @param color
 	 */
 	public Color( Color color ) {
@@ -107,6 +108,7 @@ public class Color {
 	/**
 	 * Erstellt eine Farbe als Kopie von <var>color</var> und ersetzt den
 	 * Transparentwert durch <var>alpha</var>.
+	 *
 	 * @param color
 	 * @param alpha
 	 */
@@ -124,6 +126,7 @@ public class Color {
 
 	/**
 	 * Erzeugt eine Farbe aus einem kodierten RGBA Integer-Wert.
+	 *
 	 * @param rgba
 	 * @return
 	 */
@@ -137,6 +140,7 @@ public class Color {
 	 * Erzeugt eine Farbe aus einem hexadezimalen Code. Der Hexcode kann
 	 * sechs- oder achtstellig sein (wenn ein Transparentwert vorhanden ist).
 	 * Dem Code kann ein <code>#</code> Zeichen vorangestellt sein.
+	 *
 	 * @param hexcode
 	 * @return
 	 */
