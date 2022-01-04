@@ -50,20 +50,20 @@ public class Arrow extends Line {
 	 *
 	 * @param x
 	 * @param y
-	 * @param pVektor
+	 * @param vector
 	 */
-	public Arrow( double x, double y, Vector pVektor ) {
-		this(x, y, x + pVektor.x, y + pVektor.y);
+	public Arrow( double x, double y, Vector vector ) {
+		this(x, y, x + vector.x, y + vector.y);
 	}
 
 	/**
 	 * Erstellt einen Pfeil als Kopie einer vorgegebenen Linie.
 	 *
-	 * @param pLine
+	 * @param line
 	 */
-	public Arrow( Line pLine ) {
-		this(pLine.x, pLine.y, pLine.x2, pLine.y2);
-		this.copyFrom(pLine);
+	public Arrow( Line line ) {
+		this(line.x, line.y, line.x2, line.y2);
+		this.copyFrom(line);
 	}
 
 	public double getHeadsize() {
