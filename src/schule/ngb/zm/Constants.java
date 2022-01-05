@@ -227,6 +227,14 @@ public class Constants {
 		return Math.pow(x, p);
 	}
 
+	public static double radians( double angle ) {
+		return Math.toRadians(angle);
+	}
+
+	public static double degrees( double radians ) {
+		return Math.toDegrees(radians);
+	}
+
 	/**
 	 * Ermittelt den Sinus der Zahl <var>x</var>.
 	 *
