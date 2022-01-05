@@ -157,7 +157,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	public void quit() {
-		quit(!IN_BLUEJ);
+		//quit(!IN_BLUEJ);
+		quit(true);
 	}
 
 	public void quit( boolean exit ) {
