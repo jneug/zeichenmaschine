@@ -61,23 +61,23 @@ public class TestAttraction extends Zeichenmaschine {
         drawing.setStrokeType(DASHED);
         drawing.clear(33, 33, 33, 100);
 
-        drawing.setColor(Color.ORANGE);
+        drawing.setFillColor(Color.ORANGE);
         drawing.pie(posA.x, posA.y, 80, 30, 60);
-        drawing.setColor(Color.YELLOW);
+        drawing.setFillColor(Color.YELLOW);
         drawing.circle(posA.x, posA.y, 60);
 
         Vector acc = acceleration(posA, posB, massA, massB);
         velB.add(acc);
         posB.add(velB);
 
-        drawing.setColor(Color.BLUE);
+        drawing.setFillColor(Color.BLUE);
         drawing.circle(posB.x, posB.y, 20);
 
         acc = acceleration(posA, posC, massA, massC);
         velC.add(acc);
         posC.add(velC);
 
-        drawing.setColor(Color.GREEN);
+        drawing.setFillColor(Color.GREEN);
         drawing.circle(posC.x, posC.y, 20);
 
         drawing.rotate(1);

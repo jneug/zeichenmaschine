@@ -120,7 +120,7 @@ public class TestColor {
 			for( int i = 0; i < COLORS; i++ ) {
 				for( int j = 0; j < COLORS; j++ ) {
 					c = new Color(i * steps, j * steps, (i+j)/2 * steps);
-					drawing.setColor(c);
+					drawing.setFillColor(c);
 					drawing.rect(i*SIZE, j*SIZE, SIZE, SIZE);
 				}
 			}
@@ -128,13 +128,13 @@ public class TestColor {
 
 		public void draw() {
 			Color c = Color.HGGREEN;
-			drawing.setColor(c);
+			drawing.setFillColor(c);
 			drawing.rect(0, 0, width/2, height);
 
 			for( int p = 10; p < 100; p += 10 ) {
-				drawing.setColor(c.brighter(p));
+				drawing.setFillColor(c.brighter(p));
 				drawing.rect(width / 2, 0, width / 2, height / 2);
-				drawing.setColor(c.darker(p));
+				drawing.setFillColor(c.darker(p));
 				drawing.rect(width / 2, height / 2, width / 2, height / 2);
 
 				delay(1000);
