@@ -1,7 +1,5 @@
 package schule.ngb.zm;
 
-import schule.ngb.zm.util.List;
-
 public class TestDrawing extends Zeichenmaschine {
 
 	private final double w = 100, h = 50;
