@@ -217,12 +217,12 @@ public class DrawingLayer extends Layer {
 		circle(x - 1, y - 1, 2);
 	}
 
-	public void circle( double x, double y, double d ) {
-		ellipse(x, y, d, d, default_anchor);
+	public void circle( double x, double y, double r ) {
+		ellipse(x, y, r+r, r+r, default_anchor);
 	}
 
-	public void circle( double x, double y, double d, Options.Direction anchor ) {
-		ellipse(x, y, d, d, anchor);
+	public void circle( double x, double y, double r, Options.Direction anchor ) {
+		ellipse(x, y, r+r, r+r, anchor);
 	}
 
 	public void ellipse( double x, double y, double w, double h ) {
@@ -237,10 +237,14 @@ public class DrawingLayer extends Layer {
 		drawShape(ellipse);
 	}
 
-	public void arc( double x, double y, double d, double angle1, double angle2 ) {
+	public void arc( double x, double y, double r, double angle1, double angle2 ) {
+		arc(x, y, r+r, r+r, angle1, angle2);
+	}
+
+	public void arc( double x, double y, double w, double h, double angle1, double angle2 ) {
 		while( angle2 < angle1 ) angle2 += 360.0;
 
-		Point2D.Double anchorPoint = getAnchorPoint(x, y, d, d, CENTER);
+		Point2D.Double anchorPoint = getAnchorPoint(x, y, w, h, CENTER);
 		/*Shape arc = new Arc2D.Double(
 			anchorPoint.x,
 			anchorPoint.y,
@@ -250,16 +254,19 @@ public class DrawingLayer extends Layer {
 		);*/
 		arc.setArc(
 			anchorPoint.x, anchorPoint.y,
-			d, d,
-			angle1, angle2 - angle1,
+			w, h,
+			//Math.toRadians(angle1), Math.toRadians(angle2 - angle1),
+			angle1, angle2-angle1,
 			Arc2D.OPEN
 		);
 
 		drawShape(arc);
 	}
 
-	public void pie( double x, double y, double d, double angle1, double angle2 ) {
+	public void pie( double x, double y, double r, double angle1, double angle2 ) {
 		while( angle2 < angle1 ) angle2 += 360.0;
+
+		double d = r+r;
 
 		Point2D.Double anchorPoint = getAnchorPoint(x, y, d, d, CENTER);
 		/*Shape arc = new Arc2D.Double(
