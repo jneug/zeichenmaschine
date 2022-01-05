@@ -52,10 +52,20 @@ public class Constants {
 
 	public static final Color BLACK = Color.BLACK;
 	public static final Color WHITE = Color.WHITE;
+	public static final Color GRAY = Color.GRAY;
+	public static final Color DARKGRAY = Color.DARKGRAY;
+	public static final Color LIGHTGRAY = Color.LIGHTGRAY;
+
 	public static final Color RED = Color.RED;
 	public static final Color BLUE = Color.BLUE;
 	public static final Color GREEN = Color.GREEN;
 	public static final Color YELLOW = Color.YELLOW;
+	public static final Color ORANGE = Color.ORANGE;
+	public static final Color CYAN = Color.CYAN;
+	public static final Color MAGENTA = Color.MAGENTA;
+	public static final Color PINK = Color.PINK;
+	public static final Color PURPLE = Color.PURPLE;
+	public static final Color BROWN = Color.BROWN;
 
 	public static final Color STD_BACKGROUND = new Color(200, 200, 200);
 	//@formatter:on

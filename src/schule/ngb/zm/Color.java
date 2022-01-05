@@ -27,6 +27,8 @@ public class Color {
 	public static final Color CYAN = new Color(java.awt.Color.CYAN);
 	public static final Color MAGENTA = new Color(java.awt.Color.MAGENTA);
 	public static final Color PINK = new Color(java.awt.Color.PINK);
+	public static final Color PURPLE = new Color(101, 0, 191);
+	public static final Color BROWN = new Color(148, 82, 0);
 
 	public static final Color HGGREEN = new Color(0, 165, 81);
 	public static final Color HGRED = new Color(151, 54, 60);
