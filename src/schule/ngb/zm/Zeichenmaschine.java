@@ -48,7 +48,6 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	private Object keyboardLock = new Object();
 
 	/*
-	 * Internal attributes for controlling the sketchmachine
 	 * Interne Attribute zur Steuerung der Zeichenamschine.
 	 */
 	//
@@ -115,6 +114,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 		frame.pack();
 		frame.setResizable(false);
+		// TODO: Center on current display (not main display by default)
+		// TODO: Position at current BlueJ windows if IN_BLUEJ
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 
@@ -130,7 +131,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		initialized = true;
 	}
 
-
+	// TODO: Implement in conjunction with Zeichenfenster
 	public final void createFrame( String title ) {
 
 	}
@@ -145,6 +146,14 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		if( frame.isVisible() ) {
 			frame.setVisible(false);
 		}
+	}
+
+	public final void redraw() {
+		canvas.render();
+		//canvas.invalidate();
+		//frame.repaint();
+		//hide();
+		//show();
 	}
 
 	public void quit() {
