@@ -156,6 +156,22 @@ public class Constants {
 
 	// Mathematische Funktionen
 
+	public static double min( double... numbers ) {
+		double min = Double.MAX_VALUE;
+		for( int i = 0; i < numbers.length; i++ ) {
+			min = Math.min(min, numbers[i]);
+		}
+		return min;
+	}
+
+	public static double max( double... numbers ) {
+		double max = Double.MIN_VALUE;
+		for( int i = 0; i < numbers.length; i++ ) {
+			max = Math.max(max, numbers[i]);
+		}
+		return max;
+	}
+
 	/**
 	 * Ermittelt den Absolutbetrag der Zahl <var>x</var>.
 	 *
