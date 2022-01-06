@@ -95,16 +95,16 @@ public class Attractor extends Mover {
 	}
 
 	@Override
-	public void draw( Graphics2D graphics, AffineTransform pVerzerrung ) {
+	public void draw( Graphics2D graphics, AffineTransform transform ) {
 		double m = 2.0*mass;
 
 		AffineTransform at = graphics.getTransform();
-		graphics.transform(pVerzerrung);
+		graphics.transform(transform);
 		graphics.setColor(new java.awt.Color(255,193,64,66));
 		graphics.fillOval((int)(-.5*m), (int)(-.5*m), (int)(2*getRadius()+m), (int)(2*getRadius()+m));
 		graphics.setTransform(at);
 
-		super.draw(graphics, pVerzerrung);
+		super.draw(graphics, transform);
 	}
 
 }

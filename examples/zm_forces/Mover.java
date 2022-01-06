@@ -168,17 +168,17 @@ public class Mover extends Circle implements Updatable {
 	}
 
 	@Override
-	public void draw( Graphics2D graphics, AffineTransform pVerzerrung ) {
+	public void draw( Graphics2D graphics, AffineTransform transform ) {
 		if( SHOW_VELOCITY ) {
 			Vector v = velocity.copy().scale(10);
 			Arrow ar = new Arrow(v);
 
-			AffineTransform af = new AffineTransform(pVerzerrung);
+			AffineTransform af = new AffineTransform(transform);
 			af.translate(radius, radius);
 			ar.draw(graphics, af);
 		}
 
-		super.draw(graphics, pVerzerrung);
+		super.draw(graphics, transform);
 	}
 
 }
