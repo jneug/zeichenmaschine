@@ -14,7 +14,7 @@ public class Ellipse extends Shape {
 		super(x, y);
 		this.width = width;
 		this.height = height;
-		setAnchor(CENTER);
+		this.anchor = Options.Direction.CENTER;
 	}
 
 	public Ellipse( Ellipse ellipse ) {
@@ -22,16 +22,18 @@ public class Ellipse extends Shape {
 		copyFrom(ellipse);
 	}
 
+	@Override
 	public double getWidth() {
 		return width;
 	}
 
-	public void setWidth( double width ) {
-		this.width = width;
-	}
-
+	@Override
 	public double getHeight() {
 		return height;
+	}
+
+	public void setWidth( double width ) {
+		this.width = width;
 	}
 
 	public void setHeight( double height ) {
@@ -58,11 +60,6 @@ public class Ellipse extends Shape {
 		super.scale(factor);
 		width *= factor;
 		height *= factor;
-	}
-
-	@Override
-	public void setAnchor( Options.Direction anchor ) {
-		calculateAnchor(width, height, anchor);
 	}
 
 	@Override

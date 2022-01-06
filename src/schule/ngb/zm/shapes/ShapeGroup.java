@@ -13,6 +13,10 @@ public class ShapeGroup extends Shape {
 
 	private List<Shape> shapes;
 
+	protected double width = -1.0;
+
+	protected double height = -1.0;
+
 	public ShapeGroup() {
 		super();
 		shapes = new ArrayList<>(10);
@@ -29,7 +33,7 @@ public class ShapeGroup extends Shape {
 		for( Shape pShape : shapes ) {
 			this.shapes.add(pShape);
 		}
-		setAnchor(CENTER);
+		this.anchor = Options.Direction.CENTER;
 	}
 
 	public Shape copy() {
@@ -41,6 +45,7 @@ public class ShapeGroup extends Shape {
 		for( Shape shape : shapes ) {
 			add(shape, false);
 		}
+		invalidateBounds();
 	}
 
 	public void add( Shape pShape, boolean relative ) {
@@ -49,15 +54,18 @@ public class ShapeGroup extends Shape {
 			pShape.y = pShape.y - y;
 		}
 		shapes.add(pShape);
+		invalidateBounds();
 	}
 
 	public void removeAll() {
 		shapes.clear();
+		invalidateBounds();
 	}
 
 	public List<Shape> getShapes() {
 		return shapes;
 	}
+
 	public <ShapeType extends Shape> List<ShapeType> getShapes( Class<ShapeType> typeClass ) {
 		LinkedList<ShapeType> list = new LinkedList<>();
 		for( Shape s: shapes ) {
@@ -70,6 +78,7 @@ public class ShapeGroup extends Shape {
 
 	public void remove( Shape shape ) {
 		shapes.remove(shape);
+		invalidateBounds();
 	}
 
 	public Shape get( int index ) {
@@ -89,22 +98,39 @@ public class ShapeGroup extends Shape {
 	}
 
 	@Override
-	public void setAnchor( Options.Direction anchor ) {
+	public double getWidth() {
+		if( width < 0 ) {
+			calculateBounds();
+		}
+		return width;
+	}
+
+	@Override
+	public double getHeight() {
+		if( height < 0 ) {
+			calculateBounds();
+		}
+		return height;
+	}
+
+	private void invalidateBounds() {
+		width = -1.0;
+		height = -1.0;
+	}
+
+	private void calculateBounds() {
 		double minx = Double.MAX_VALUE, miny = Double.MAX_VALUE,
 			maxx = Double.MIN_VALUE, maxy = Double.MIN_VALUE;
 		for( Shape pShape : shapes ) {
-			Rectangle bounds = pShape.getBounds();
-			if( bounds.x < minx )
-				minx = bounds.x;
-			if( bounds.y < miny )
-				miny = bounds.y;
-			if( bounds.x+bounds.width > maxx )
-				maxx = bounds.x+bounds.width;
-			if( bounds.y+bounds.height > maxy )
-				maxy = bounds.y+bounds.height;
+			Bounds bounds = pShape.getBounds();
+			minx = Math.min(minx, bounds.x);
+			maxx = Math.max(maxx, bounds.x+bounds.width);
+			miny = Math.min(miny, bounds.y);
+			maxy = Math.max(maxy, bounds.y+bounds.height);
 		}
 
-		calculateAnchor(maxx-minx, maxy-miny, anchor);
+		width = maxx-minx;
+		height = maxy-miny;
 	}
 
 	@Override
@@ -117,20 +143,22 @@ public class ShapeGroup extends Shape {
 	}
 
 	@Override
-	public void draw( Graphics2D graphics, AffineTransform pVerzerrung ) {
+	public void draw( Graphics2D graphics, AffineTransform transform ) {
 		if( !visible ) {
 			return;
 		}
 
+		/*
 		AffineTransform verzerrung = new AffineTransform();
 		verzerrung.translate(x, y);
 		verzerrung.rotate(Math.toRadians(rotation));
 		//verzerrung.scale(skalierung, skalierung);
 		verzerrung.translate(-anchor.x, -anchor.y);
+		*/
 
 		for( Shape f: shapes ) {
 			AffineTransform af = f.getTransform();
-			af.preConcatenate(verzerrung);
+			af.preConcatenate(transform);
 			f.draw(graphics, af);
 		}
 	}

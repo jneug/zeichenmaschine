@@ -1,5 +1,6 @@
 package schule.ngb.zm.shapes;
 
+import org.jetbrains.annotations.NotNull;
 import schule.ngb.zm.Options;
 
 import java.awt.geom.Line2D;
@@ -16,7 +17,7 @@ public class Line extends Shape {
 		this.y2 = y2;
 	}
 
-	public Line( Line line ) {
+	public Line( @NotNull Line line ) {
 		this(line.x, line.y, line.x2, line.y2);
 		copyFrom(line);
 	}
@@ -35,6 +36,21 @@ public class Line extends Shape {
 
 	public void setY2( double y ) {
 		this.y2 = y;
+	}
+
+	@Override
+	public double getWidth() {
+		return Math.abs(x2-x);
+	}
+
+	@Override
+	public double getHeight() {
+		return Math.abs(y2-y);
+	}
+
+	@Override
+	public Bounds getBounds() {
+		return new Bounds(Math.min(x,x2), Math.min(y,y2), getWidth(), getHeight());
 	}
 
 	@Override
@@ -73,11 +89,6 @@ public class Line extends Shape {
 		super.moveTo(x, y);
 		x2 += dx;
 		y2 += dy;
-	}
-
-	@Override
-	public void setAnchor( Options.Direction anchor ) {
-		calculateAnchor(x2 - x, y2 - y, anchor);
 	}
 
 	@Override

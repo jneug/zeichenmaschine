@@ -99,11 +99,6 @@ public class Arc extends Shape {
 	}
 
 	@Override
-	public void setAnchor( Options.Direction anchor ) {
-		calculateAnchor(width, height, anchor);
-	}
-
-	@Override
 	public java.awt.Shape getShape() {
 		return new Arc2D.Double(0, 0, width, height, startingangle, angle, type.awt_type);
 	}

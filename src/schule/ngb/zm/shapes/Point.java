@@ -20,7 +20,7 @@ public class Point extends Circle {
 	/**
 	 * Erstellt ein Punktobjekt mit den Koordinaten des übergebenen
 	 * {@link schule.ngb.zm.Vector Vektors}.
-	 * @param point
+	 * @param vector
 	 */
 	public Point( schule.ngb.zm.Vector vector ) {
 		super(vector.x, vector.y, POINT_RADIUS);
@@ -52,7 +52,7 @@ public class Point extends Circle {
 	@Override
 	public void setAnchor( Options.Direction anchor ) {
 		// Punkte sind immer im Zentrum verankert
-		calculateAnchor(radius + radius, radius + radius, CENTER);
+		super.setAnchor(Options.Direction.CENTER);
 	}
 
 }

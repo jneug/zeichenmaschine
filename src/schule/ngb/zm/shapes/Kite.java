@@ -21,7 +21,7 @@ public class Kite extends Shape {
 		this.width = width;
 		this.height = height;
 		this.ratio = ratio;
-		setAnchor(CENTER);
+		this.anchor = Options.Direction.CENTER;
 	}
 
 	public Kite( Kite pKite ) {
@@ -29,6 +29,7 @@ public class Kite extends Shape {
 		copyFrom(pKite);
 	}
 
+	@Override
 	public double getWidth() {
 		return width;
 	}
@@ -37,6 +38,7 @@ public class Kite extends Shape {
 		this.width = width;
 	}
 
+	@Override
 	public double getHeight() {
 		return height;
 	}
@@ -74,11 +76,6 @@ public class Kite extends Shape {
 		super.scale(factor);
 		width *= factor;
 		height *= factor;
-	}
-
-	@Override
-	public void setAnchor( Options.Direction anchor ) {
-		calculateAnchor(width, height, anchor);
 	}
 
 	@Override

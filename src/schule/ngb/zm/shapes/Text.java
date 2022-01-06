@@ -25,6 +25,42 @@ public class Text extends Shape {
 		copyFrom(text);
 	}
 
+	public double getWidth() {
+		return width;
+	}
+
+	public double getHeight() {
+		return height;
+	}
+
+	public Font getFont() {
+		return font;
+	}
+
+	public void setFontsize( double size ) {
+		font = font.deriveFont((float) size);
+		calculateBounds();
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	public void setText( String pText ) {
+		text = pText;
+		calculateBounds();
+	}
+
+	private void calculateBounds() {
+		//GraphicsDevice gd;
+		//gd.getDefaultConfiguration().createCompatibleImage(1,1);
+		Canvas metricsCanvas = new Canvas();
+		FontMetrics metrics = metricsCanvas.getFontMetrics(font);
+		width = metrics.stringWidth(text);
+		//height = metrics.getHeight();
+		height = metrics.getDescent() + metrics.getAscent();
+	}
+
 	public Shape copy() {
 		return new Text(this);
 	}
@@ -36,6 +72,7 @@ public class Text extends Shape {
 			Text pText = (Text) shape;
 			this.text = pText.getText();
 			this.font = pText.getFont();
+			calculateBounds();
 		}
 	}
 
@@ -45,50 +82,13 @@ public class Text extends Shape {
 		setFontsize(font.getSize2D() * factor);
 	}
 
-	public Font getFont() {
-		return font;
-	}
-
-	public void setFontsize( double size ) {
-		font = font.deriveFont((float) size);
-		setText(text);
-	}
-
-	public String getText() {
-		return text;
-	}
-
-	public void setText( String pText ) {
-		text = pText;
-
-		Canvas metricsCanvas = new Canvas();
-		FontMetrics metrics = metricsCanvas.getFontMetrics(font);
-		width = metrics.stringWidth(text);
-		height = metrics.getDescent() + metrics.getAscent();
-		ascent = metrics.getAscent();
-
-		setAnchor(CENTER);
-	}
-
-	public double getWidth() {
-		return width;
-	}
-
-	public double getHeight() {
-		return height;
-	}
-
-	public void setAnchor( Options.Direction anchor ) {
-		calculateAnchor(width, ascent - height, anchor);
-	}
-
 	@Override
 	public java.awt.Shape getShape() {
 		return new Rectangle2D.Double(0, 0, width, height);
 	}
 
 	@Override
-	public void draw( Graphics2D graphics, AffineTransform pVerzerrung ) {
+	public void draw( Graphics2D graphics, AffineTransform transform ) {
 		if( !visible ) {
 			return;
 		}
@@ -101,10 +101,10 @@ public class Text extends Shape {
 		// Neue Werte setzen
 		graphics.setFont(font);
 		graphics.setColor(strokeColor.getColor());
-		graphics.transform(pVerzerrung);
+		graphics.transform(transform);
 
 		// Draw text
-		FontMetrics fm = graphics.getFontMetrics();
+		//FontMetrics fm = graphics.getFontMetrics();
 		//graphics.drawString(text, (float) (x - fm.stringWidth(text)/2.0), (float) (y + fm.getDescent()));
 		graphics.drawString(text, 0, 0);
 

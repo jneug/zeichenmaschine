@@ -7,6 +7,8 @@ public class Polygon extends Shape {
 
 	protected Point2D[] points;
 
+	private double width = 0.0, height = 0.0;
+
 	public Polygon( double x, double y, Point2D... points ) {
 		super(x, y);
 
@@ -14,6 +16,8 @@ public class Polygon extends Shape {
 		for( int i = 0; i < points.length; i++ ) {
 			this.points[i] = new Point2D.Double(points[i].getX() - x, points[i].getY() - y);
 		}
+
+		calculateBounds();
 	}
 
 	public Polygon( Point2D... points ) {
@@ -25,6 +29,8 @@ public class Polygon extends Shape {
 			}
 			this.points[i] = new Point2D.Double(points[i].getX() - x, points[i].getY() - y);
 		}
+
+		calculateBounds();
 	}
 
 	public Polygon( double x1, double y1, double x2, double y2, double... coordinates ) {
@@ -38,11 +44,29 @@ public class Polygon extends Shape {
 		for( int i = 0; i < numPoints - 2; i += 1 ) {
 			this.points[i + 2] = new Point2D.Double(coordinates[i * 2] - x1, coordinates[i * 2 + 1] - y1);
 		}
+
+		calculateBounds();
 	}
 
 	public Polygon( Polygon polygon ) {
 		super(polygon.x, polygon.y);
 		copyFrom(polygon);
+	}
+
+	@Override
+	public double getWidth() {
+		return width;
+	}
+
+	@Override
+	public double getHeight() {
+		return height;
+	}
+
+	private void calculateBounds() {
+		java.awt.Rectangle s = getShape().getBounds();
+		width = s.width;
+		height = s.height;
 	}
 
 	public Point2D[] getPoints() {
@@ -60,6 +84,7 @@ public class Polygon extends Shape {
 				points[i] = new Point2D.Double(v.points[i].getX(), v.points[i].getY());
 			}
 		}
+		calculateBounds();
 	}
 
 	@Override

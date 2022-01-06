@@ -4,7 +4,6 @@ public class Rhombus extends Kite {
 
 	public Rhombus( double x, double y, double width, double height ) {
 		super(x, y, width, height, 0.5);
-		setAnchor(CENTER);
 	}
 
 	public Rhombus( Rhombus rhombus ) {

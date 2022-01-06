@@ -3,10 +3,10 @@ package schule.ngb.zm.shapes;
 import org.jetbrains.annotations.NotNull;
 import schule.ngb.zm.Options;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
 public abstract class Shape extends FilledShape {
 
@@ -20,7 +20,7 @@ public abstract class Shape extends FilledShape {
 
 	protected boolean visible = true;
 
-	protected Point2D.Double anchor = new Point2D.Double();
+	protected Options.Direction anchor = Options.Direction.CENTER;
 
 	public Shape( double x, double y ) {
 		this.x = x;
@@ -47,6 +47,32 @@ public abstract class Shape extends FilledShape {
 		this.y = y;
 	}
 
+	/**
+	 * Gibt die Breite dieser Form zurück.
+	 * <p>
+	 * Die Breite einer Form ist immer die Breite ihrer Begrenzung, <b>bevor</b>
+	 * Drehungen und andere Transformationen auf sei angewandt wurden.
+	 * <p>
+	 * Die Begrenzungen der tatsächlich gezeichneten Form kann mit {@link #getBounds()}
+	 * abgerufen werden.
+	 *
+	 * @return
+	 */
+	public abstract double getWidth();
+
+	/**
+	 * Gibt die Höhe dieser Form zurück.
+	 * <p>
+	 * Die Höhe einer Form ist immer die Höhe ihrer Begrenzung, <b>bevor</b>
+	 * Drehungen und andere Transformationen auf sei angewandt wurden.
+	 * <p>
+	 * Die Begrenzungen der tatsächlich gezeichneten Form kann mit {@link #getBounds()}
+	 * abgerufen werden.
+	 *
+	 * @return
+	 */
+	public abstract double getHeight();
+
 	public double getRotation() {
 		return rotation;
 	}
@@ -71,114 +97,84 @@ public abstract class Shape extends FilledShape {
 		visible = !visible;
 	}
 
-	public Point2D.Double getAnchor() {
-		return new Point2D.Double(anchor.x, anchor.y);
+	public Options.Direction getAnchor() {
+		return anchor;
 	}
 
 	/**
 	 * Setzt den Ankerpunkt der Form basierend auf der angegebenen
 	 * {@link Options.Direction Richtung}.
-	 *
+	 * <p>
 	 * Für das Setzen des Ankers muss das {@link #getBounds() begrenzende
 	 * Rechteck} berechnet werden. Unterklassen sollten die Methode
 	 * überschreiben, wenn der Anker auch direkt gesetzt werden kann.
+	 *
 	 * @param anchor
 	 */
 	public void setAnchor( Options.Direction anchor ) {
-		java.awt.Shape shape = getShape();
-		if( shape != null ) {
-			Rectangle2D bounds = shape.getBounds2D();
-			calculateAnchor(bounds.getWidth(), bounds.getHeight(), anchor);
-		} else {
-			this.anchor.x = 0;
-			this.anchor.y = 0;
-		}
-	}
-
-	/**
-	 * Setzt den Ankerpunkt explizit auf den angegebenen
-	 * @param anchor
-	 */
-	public void setAnchor( Point2D.Double anchor ) {
-		setAnchor(anchor, false);
-	}
-
-	public void setAnchor( Point2D.Double anchor, boolean isRelative ) {
 		if( anchor != null ) {
-			setAnchor(anchor.x, anchor.y, isRelative);
-		} else {
-			setAnchor(0, 0, true);
-		}
-	}
-
-	public void setAnchor( double x, double y ) {
-		setAnchor(x, y, false);
-	}
-
-	public void setAnchor( double x, double y, boolean isRelative ) {
-		if( isRelative ) {
-			this.anchor.x = x;
-			this.anchor.y = y;
-		} else {
-			this.anchor.x = this.x-x;
-			this.anchor.y = this.y-y;
+			this.anchor = anchor;
 		}
 	}
 
 	/**
-	 * Hilfsmethode zur Berechnung eines Ankerpunktes relativ zu den angegebenen
-	 * Begrenzungen basierend aus {@link #x}-, {@link #y}-Koordinate und
-	 * <var>width</var> / <var>height</var> (Breite / Höhe).
-	 * @param width
-	 * @param height
-	 * @param anchor
+	 * Bestimmt den Ankerpunkt der Form relativ zur oberen linken Ecke und
+	 * abhängig vom gesetzten {@link #setAnchor(Options.Direction) Anker}.
 	 */
-	protected void calculateAnchor( double width, double height, @NotNull Options.Direction anchor ) {
-		double bHalf = width * .5, hHalf = height * .5;
-		// pAnker == CENTER
-		this.anchor.x = bHalf;
-		this.anchor.y = hHalf;
+	public Point2D.Double getAnchorPoint() {
+		Point2D.Double anchorpoint = new Point2D.Double(0, 0);
+
+		double bHalf = getWidth() * .5, hHalf = getHeight() * .5;
+		// anchor == CENTER
+		anchorpoint.x = bHalf;
+		anchorpoint.y = hHalf;
+
 		if( NORTH.is(anchor) ) {
-			this.anchor.y -= hHalf;
+			anchorpoint.y -= hHalf;
 		}
 		if( SOUTH.is(anchor) ) {
-			this.anchor.y += hHalf;
+			anchorpoint.y += hHalf;
 		}
 		if( WEST.is(anchor) ) {
-			this.anchor.x -= bHalf;
+			anchorpoint.x -= bHalf;
 		}
 		if( EAST.is(anchor) ) {
-			this.anchor.x += bHalf;
+			anchorpoint.x += bHalf;
 		}
+
+		return anchorpoint;
 	}
 
 	/**
 	 * Kopiert die Eigenschaften der übergebenen Form in diese.
-	 *
+	 * <p>
 	 * Unterklassen sollten diese Methode überschreiben, um weitere Eigenschaften
 	 * zu kopieren (zum Beispiel den Radius eines Kreises). Mit dem Aufruf
 	 * <code>super.copyFrom(shape)</code> sollten die Basiseigenschaften
 	 * kopiert werden.
+	 *
 	 * @param shape
 	 */
 	public void copyFrom( Shape shape ) {
-		moveTo(shape.x, shape.y);
-		setFillColor(shape.getFillColor());
-		setStrokeColor(shape.getStrokeColor());
-		setStrokeWeight(shape.getStrokeWeight());
-		setStrokeType(shape.getStrokeType());
-		visible = shape.isVisible();
-		rotation = shape.rotation;
-		scale(shape.scale);
-		setAnchor(shape.getAnchor());
+		if( shape != null ) {
+			moveTo(shape.x, shape.y);
+			setFillColor(shape.getFillColor());
+			setStrokeColor(shape.getStrokeColor());
+			setStrokeWeight(shape.getStrokeWeight());
+			setStrokeType(shape.getStrokeType());
+			visible = shape.isVisible();
+			rotation = shape.rotation;
+			scale(shape.scale);
+			setAnchor(shape.getAnchor());
+		}
 	}
 
 	public abstract Shape copy();
 
 	public abstract java.awt.Shape getShape();
 
-	public Rectangle getBounds() {
-		return new Rectangle(this);
+	public Bounds getBounds() {
+		return new Bounds(this);
 	}
 
 	public void move( double dx, double dy ) {
@@ -193,8 +189,6 @@ public abstract class Shape extends FilledShape {
 
 	public void scale( double factor ) {
 		scale = factor;
-		anchor.x *= factor;
-		anchor.y *= factor;
 	}
 
 	public void scaleBy( double factor ) {
@@ -214,6 +208,8 @@ public abstract class Shape extends FilledShape {
     }*/
 
 	public AffineTransform getTransform() {
+		Point2D.Double anchor = getAnchorPoint();
+
 		AffineTransform transform = new AffineTransform();
 		transform.translate(x, y);
 		transform.rotate(Math.toRadians(rotation));
@@ -237,17 +233,17 @@ public abstract class Shape extends FilledShape {
 	 * matrix an. Wird u.A. von der {@link ShapeGroup} verwendet.
 	 *
 	 * @param graphics
-	 * @param pVerzerrung
+	 * @param transform
 	 */
-	public void draw( Graphics2D graphics, AffineTransform pVerzerrung ) {
+	public void draw( Graphics2D graphics, AffineTransform transform ) {
 		if( !visible ) {
 			return;
 		}
 
 		java.awt.Shape shape = getShape();
 		if( shape != null ) {
-			if( pVerzerrung != null ) {
-				shape = pVerzerrung.createTransformedShape(shape);
+			if( transform != null ) {
+				shape = transform.createTransformedShape(shape);
 			}
 
 			Color currentColor = graphics.getColor();

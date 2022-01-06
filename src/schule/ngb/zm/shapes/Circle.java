@@ -11,12 +11,21 @@ public class Circle extends Shape {
 	public Circle( double x, double y, double radius ) {
 		super(x, y);
 		this.radius = radius;
-		setAnchor(CENTER);
 	}
 
 	public Circle( Circle circle ) {
 		this(circle.x, circle.y, circle.radius);
 		copyFrom(circle);
+	}
+
+	@Override
+	public double getWidth() {
+		return radius+radius;
+	}
+
+	@Override
+	public double getHeight() {
+		return radius+radius;
 	}
 
 	public double getRadius() {
@@ -49,11 +58,6 @@ public class Circle extends Shape {
 	@Override
 	public java.awt.Shape getShape() {
 		return new Ellipse2D.Double(0, 0, radius + radius, radius + radius);
-	}
-
-	@Override
-	public void setAnchor( Options.Direction anchor ) {
-		calculateAnchor(radius + radius, radius + radius, anchor);
 	}
 
 	@Override

@@ -35,7 +35,7 @@ public class Picture extends Shape {
 
 		width = image.getWidth();
 		height = image.getHeight();
-		setAnchor(CENTER);
+		this.anchor = Options.Direction.CENTER;
 	}
 
 	public Picture( Picture picture ) {
@@ -60,7 +60,6 @@ public class Picture extends Shape {
 
 			width = image.getWidth();
 			height = image.getHeight();
-			setAnchor(shape.getAnchor());
 		}
 	}
 
@@ -69,7 +68,7 @@ public class Picture extends Shape {
 	}
 
 	public void setWidth( double width ) {
-		scale(width / width);
+		scale(width / this.width);
 	}
 
 	public double getHeight() {
@@ -77,16 +76,11 @@ public class Picture extends Shape {
 	}
 
 	public void setHeight( double height ) {
-		scale(height / height);
+		scale(height / this.height);
 	}
 
 	public BufferedImage getImage() {
 		return image;
-	}
-
-	@Override
-	public void setAnchor( Options.Direction anchor ) {
-		calculateAnchor(width, height, anchor);
 	}
 
 	@Override
@@ -114,7 +108,7 @@ public class Picture extends Shape {
 	*/
 
 	@Override
-	public void draw( Graphics2D graphics, AffineTransform pVerzerrung ) {
+	public void draw( Graphics2D graphics, AffineTransform transform ) {
 		if( !visible ) {
 			return;
 		}

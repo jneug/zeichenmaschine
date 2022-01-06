@@ -14,7 +14,7 @@ public class Rectangle extends Shape {
 		super(x, y);
 		this.width = width;
 		this.height = height;
-		setAnchor(NORTHWEST);
+		this.anchor = Options.Direction.NORTHWEST;
 	}
 
 	public Rectangle( Rectangle pRechteck ) {
@@ -36,22 +36,23 @@ public class Rectangle extends Shape {
 		strokeType = DASHED;
 	}
 
+	@Override
 	public double getWidth() {
 		return width;
+	}
+
+	@Override
+	public double getHeight() {
+		return height;
 	}
 
 	public void setWidth( double width ) {
 		this.width = width;
 	}
 
-	public double getHeight() {
-		return height;
-	}
-
 	public void setHeight( double height ) {
 		this.height = height;
 	}
-
 
 	@Override
 	public Rectangle copy() {
@@ -78,11 +79,6 @@ public class Rectangle extends Shape {
 	@Override
 	public java.awt.Shape getShape() {
 		return new Rectangle2D.Double(0, 0, width, height);
-	}
-
-	@Override
-	public void setAnchor( Options.Direction anchor ) {
-		calculateAnchor(width, height, anchor);
 	}
 
 	@Override

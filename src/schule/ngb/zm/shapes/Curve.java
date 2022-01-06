@@ -34,6 +34,16 @@ public class Curve extends Shape {
 		coordinates = Arrays.copyOf(curve.coordinates, curve.coordinates.length);
 	}
 
+	@Override
+	public double getWidth() {
+		return Math.abs(x-coordinates[coordinates.length-2]);
+	}
+
+	@Override
+	public double getHeight() {
+		return Math.abs(y-coordinates[coordinates.length-1]);
+	}
+
 	public Point2D getStart() {
 		return new Point2D.Double(x, y);
 	}
@@ -136,6 +146,9 @@ public class Curve extends Shape {
 	@Override
 	public void scale( double factor ) {
 		super.scale(factor);
+		/*for( int i = 0; i < coordinates.length; i++ ) {
+			coordinates[i] *= factor;
+		}*/
 		coordinates[coordinates.length - 4] *= factor;
 		coordinates[coordinates.length - 3] *= factor;
 		coordinates[coordinates.length - 2] *= factor;
