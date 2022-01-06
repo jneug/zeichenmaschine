@@ -8,11 +8,11 @@ import java.util.Stack;
 
 public class DrawingLayer extends Layer {
 
-	protected Color strokeColor;
+	protected Color fillColor = STD_FILLCOLOR;
 
-	protected Color fillColor;
+	protected Color strokeColor = STD_STROKECOLOR;
 
-	protected double strokeWeight;
+	protected double strokeWeight = STD_STROKEWEIGHT;
 
 	protected Options.StrokeType strokeType = SOLID;
 
@@ -30,11 +30,6 @@ public class DrawingLayer extends Layer {
 	public DrawingLayer() {
 		super();
 		transformStack.push(new AffineTransform());
-
-		strokeColor = Color.BLACK;
-		fillColor = Color.WHITE;
-		strokeWeight = 1.0;
-
 		fontMetrics = drawing.getFontMetrics();
 	}
 
