@@ -54,13 +54,14 @@ public class Raindrops extends Zeichenmaschine {
 	 */
 	private Text textDropped, textCatched;
 
+	public Raindrops() {
+		super(GAME_WIDTH, GAME_HEIGHT, "ZM: Raindrops");
+	}
+
 	/**
 	 * Initialisierung des Spiels und der benötigten Objekte.
 	 */
 	public void setup() {
-		setSize(GAME_WIDTH, GAME_HEIGHT);
-		setTitle("ZM: Raindrops");
-
 		// Hintergrund blaugrau
 		background.setColor(129, 174, 206);
 
