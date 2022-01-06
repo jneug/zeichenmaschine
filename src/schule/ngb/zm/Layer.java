@@ -91,10 +91,12 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 	 */
 	public void clear() {
 		// https://stackoverflow.com/questions/31149206/set-pixels-of-bufferedimage-as-transparent
+		Color current = drawing.getColor();
 		drawing.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
 		drawing.setColor(new Color(255, 255, 255, 255));
 		drawing.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
 		drawing.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+		drawing.setColor(current);
 	}
 
 	/**
