@@ -48,17 +48,24 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 	protected double mouseX = 0.0, mouseY = 0.0, pmouseX = 0.0, pmouseY = 0.0;
 
+	protected boolean mousePressed = false;
+
+	protected int mouseButton = 0;
+
+	protected char key = ' ';
+
+	protected int keyCode = 0;
+
+	protected boolean keyPressed = false;
+
 	protected int width, height;
 
 	protected int screenWidth, screenHeight;
 
+
 	/*
 	 * Interne Attribute zur Steuerung der Zeichenmaschine.
 	 */
-
-	private Object mouseLock = new Object();
-
-	private Object keyboardLock = new Object();
 
 	private JFrame frame;
 
@@ -132,6 +139,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 		canvas.addMouseListener(this);
 		canvas.addMouseMotionListener(this);
+		canvas.addKeyListener(this);
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing( WindowEvent e ) {
@@ -396,10 +404,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	/*
 	 * Mouse handling
 	 */
-
 	@Override
-	public void mouseClicked( MouseEvent e ) {
-		saveMousePosition(e.getPoint());
+	public final void mouseClicked( MouseEvent e ) {
+		saveMousePosition(e);
 		mouseClicked();
 	}
 
@@ -407,8 +414,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	@Override
-	public void mousePressed( MouseEvent e ) {
-		saveMousePosition(e.getPoint());
+	public final void mousePressed( MouseEvent e ) {
+		saveMousePosition(e);
+		mousePressed = true;
 		mousePressed();
 	}
 
@@ -416,8 +424,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	@Override
-	public void mouseReleased( MouseEvent e ) {
-		saveMousePosition(e.getPoint());
+	public final void mouseReleased( MouseEvent e ) {
+		saveMousePosition(e);
+		mousePressed = false;
 		mouseReleased();
 	}
 
@@ -425,18 +434,18 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	@Override
-	public void mouseEntered( MouseEvent e ) {
-		saveMousePosition(e.getPoint());
+	public final void mouseEntered( MouseEvent e ) {
+		// Intentionally left blank
 	}
 
 	@Override
-	public void mouseExited( MouseEvent e ) {
-		saveMousePosition(e.getPoint());
+	public final void mouseExited( MouseEvent e ) {
+		// Intentionally left blank
 	}
 
 	@Override
-	public void mouseDragged( MouseEvent e ) {
-		saveMousePosition(e.getPoint());
+	public final void mouseDragged( MouseEvent e ) {
+		saveMousePosition(e);
 		mouseDragged();
 	}
 
@@ -445,8 +454,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	@Override
-	public void mouseMoved( MouseEvent e ) {
-		saveMousePosition(e.getPoint());
+	public final void mouseMoved( MouseEvent e ) {
+		saveMousePosition(e);
 		mouseMoved();
 	}
 
@@ -454,41 +463,31 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 	}
 
-	private void saveMousePosition( Point pLocation ) {
-		//pmouseX = mouseX;
-		//pmouseY = mouseY;
-        /*synchronized(mouseLock) {
-            mouseX = pLocation.getX()-this.getRootPane().getX();
-            mouseY = pLocation.getY()-this.getRootPane().getY();
-        }*/
-	}
-
-	private void saveMousePosition() {
+	private void saveMousePosition( MouseEvent e ) {
 		pmouseX = mouseX;
 		pmouseY = mouseY;
 
-		// TODO: Seems not right ...
-		java.awt.Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
-		java.awt.Point compLoc = canvas.getLocationOnScreen();
-		mouseX = mouseLoc.x - compLoc.x;
-		mouseY = mouseLoc.y - compLoc.y;
-	}
-
-	@Override
-	public void keyTyped( KeyEvent e ) {
-		keyTyped();
+		mouseX = e.getX();
+		mouseY = e.getY();
 	}
 
 	/*
 	 * Keyboard handling
 	 */
+	@Override
+	public final void keyTyped( KeyEvent e ) {
+		saveKeys(e);
+		keyTyped();
+	}
 
 	public void keyTyped() {
 
 	}
 
 	@Override
-	public void keyPressed( KeyEvent e ) {
+	public final void keyPressed( KeyEvent e ) {
+		saveKeys(e);
+		keyPressed = true;
 		keyPressed();
 	}
 
@@ -497,12 +496,19 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	@Override
-	public void keyReleased( KeyEvent e ) {
+	public final void keyReleased( KeyEvent e ) {
+		saveKeys(e);
+		keyPressed = false;
 		keyReleased();
 	}
 
 	public void keyReleased() {
 
+	}
+
+	private final void saveKeys( KeyEvent e ) {
+		key = e.getKeyChar();
+		keyCode = e.getKeyCode();
 	}
 
 	class Zeichenthread extends Thread {
@@ -535,7 +541,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 				delta = (System.nanoTime() - beforeTime) / 1000000000.0;
 				beforeTime = System.nanoTime();
 
-				saveMousePosition();
+				//saveMousePosition();
 
 				handleUpdate(delta);
 				handleDraw();
