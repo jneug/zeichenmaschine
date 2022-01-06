@@ -121,7 +121,7 @@ public abstract class Shape extends FilledShape {
 	 * Bestimmt den Ankerpunkt der Form relativ zur oberen linken Ecke und
 	 * abhängig vom gesetzten {@link #setAnchor(Options.Direction) Anker}.
 	 */
-	public Point2D.Double getAnchorPoint() {
+	public Point2D.Double getAnchorPoint( Options.Direction anchor ) {
 		Point2D.Double anchorpoint = new Point2D.Double(0, 0);
 
 		double bHalf = getWidth() * .5, hHalf = getHeight() * .5;
@@ -203,18 +203,36 @@ public abstract class Shape extends FilledShape {
 		this.rotation = angle % 360;
 	}
 
+	public void rotate( Point2D center, double angle ) {
+		rotate(center.getX(), center.getY(), angle);
+	}
+
+	public void rotate( double x, double y, double angle ) {
+		this.rotation += angle % 360;
+
+		// Rotate x/y position
+		double x1 = this.x-x, y1 = this.y-y;
+
+		double rad = Math.toRadians(angle);
+		double x2 = x1 * Math.cos(rad) - y1 * Math.sin(rad);
+		double y2 = x1 * Math.sin(rad) + y1 * Math.cos(rad);
+
+		this.x = x2 + x;
+		this.y = y2 + y;
+	}
+
     /*public void shear( double dx, double dy ) {
         verzerrung.shear(dx, dy);
     }*/
 
 	public AffineTransform getTransform() {
-		Point2D.Double anchor = getAnchorPoint();
+		Point2D.Double anchorPoint = getAnchorPoint(this.anchor);
 
 		AffineTransform transform = new AffineTransform();
 		transform.translate(x, y);
 		transform.rotate(Math.toRadians(rotation));
 		//transform.scale(scale, scale);
-		transform.translate(-anchor.x, -anchor.y);
+		transform.translate(-anchorPoint.x, -anchorPoint.y);
 		return transform;
 	}
 

@@ -30,9 +30,9 @@ public class Zeichenleinwand extends Canvas {
 		// Liste der Ebenen initialisieren und die Standardebenen einfügen
 		layers = new LinkedList<>();
 		synchronized( layers ) {
-			layers.add(new ColorLayer(Constants.STD_BACKGROUND));
-			layers.add(new DrawingLayer());
-			layers.add(new ShapesLayer());
+			layers.add(new ColorLayer(width, height, Constants.STD_BACKGROUND));
+			layers.add(new DrawingLayer(width, height));
+			layers.add(new ShapesLayer(width, height));
 		}
 	}
 
@@ -160,6 +160,16 @@ public class Zeichenleinwand extends Canvas {
 		render();
 	}
 
+	public void draw( Graphics graphics ) {
+		Graphics2D g2d = (Graphics2D) graphics.create();
+		synchronized( layers ) {
+			for( Layer layer : layers ) {
+				layer.draw(g2d);
+			}
+		}
+		g2d.dispose();
+	}
+
 	public void render() {
 		if( getBufferStrategy() == null ) {
 			allocateBuffer();
@@ -192,16 +202,6 @@ public class Zeichenleinwand extends Canvas {
 					// Repeat the rendering if the drawing buffer was lost
 				} while( strategy.contentsLost() );
 			}
-
-			/*
-			Graphics2D g2d = (Graphics2D) g.create();
-
-			for( Layer layer : layers ) {
-				layer.draw(g2d);
-			}
-
-			g2d.dispose();
-			*/
 		}
 	}
 }

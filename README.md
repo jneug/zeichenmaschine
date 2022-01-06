@@ -11,6 +11,6 @@ Mit der Zechenmaschine können Schüler:innen ihre Programme von Anfang an mit
 Visualisierungen und Interaktionen ausstatten, ohne sich mit der GUI Programmierung 
 mit Java Swing auseinandersetzen zu müssen.
 
-Die Bibliothek wurde sich stark on [Processing](https://processing.org),
+Die Bibliothek wurde stark on [Processing](https://processing.org),
 [Engine Alpha](https://engine-alpha.org) und [TigerJython](https://www.tigerjython.ch/de)
 inspiriert.

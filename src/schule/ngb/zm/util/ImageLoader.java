@@ -1,7 +1,11 @@
 package schule.ngb.zm.util;
 
 import javax.imageio.ImageIO;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -136,6 +140,47 @@ public class ImageLoader {
 
 	public static void disableCaching() {
 		cacheing = false;
+	}
+
+
+	public static void saveImage( Image image, File file ) throws IOException {
+		saveImage(image, file, false);
+	}
+
+	public static void saveImage( Image image, File file, boolean overwriteIfExists ) throws IOException {
+		BufferedImage outimage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+
+		Graphics2D g = outimage.createGraphics();
+		g.setColor(Color.WHITE);
+		g.fillRect(0, 0, outimage.getWidth(), outimage.getHeight());
+		g.drawImage(image, 0, 0, null);
+		g.dispose();
+
+		saveImage(outimage, file, overwriteIfExists);
+	}
+
+	public static void saveImage( BufferedImage image, File file ) throws IOException {
+		saveImage(image, file, false);
+	}
+
+	public static void saveImage( BufferedImage image, File file, boolean overwriteIfExists ) throws IOException {
+		if( file.isFile() ) {
+			if( !overwriteIfExists ) {
+				throw new IOException("File already exists. Delete target file before saving image.");
+			} else if( !file.canWrite() ) {
+				throw new IOException("File already exists and is not writeable. Change permissions before saving again.");
+			}
+		}
+
+		String filename = file.getName();
+		String formatName = "png";
+		if( filename.lastIndexOf('.') >= 0 ) {
+			formatName = filename.substring(filename.lastIndexOf('.') + 1);
+		} else {
+			file = new File(file.getAbsolutePath() + ".png");
+		}
+
+		ImageIO.write(image, formatName, file);
 	}
 
 }

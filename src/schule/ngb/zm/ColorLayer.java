@@ -9,6 +9,12 @@ public class ColorLayer extends Layer {
 		clear();
 	}
 
+	public ColorLayer( int width, int height, Color color ) {
+		super(width, height);
+		this.background = color;
+		clear();
+	}
+
 	@Override
 	public void setSize( int width, int height ) {
 		super.setSize(width, height);

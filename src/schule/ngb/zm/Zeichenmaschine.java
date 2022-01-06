@@ -1,15 +1,21 @@
 package schule.ngb.zm;
 
 import schule.ngb.zm.shapes.ShapesLayer;
+import schule.ngb.zm.util.ImageLoader;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
+import java.awt.Color;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * Hauptklasse der Zeichenmaschine.
- *
+ * <p>
  * Projekte der Zeichenmaschine sollten als Unterklasse implementiert werden.
  * Die Klasse übernimmt die Initialisierung eines Programmfensters und der
  * nötigen Komponenten.
@@ -25,6 +31,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	/*
 	 * Attributes to be accessed by subclasses.
 	 */
+
 	protected Zeichenleinwand canvas;
 
 	protected ColorLayer background;
@@ -41,17 +48,23 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 	protected double mouseX = 0.0, mouseY = 0.0, pmouseX = 0.0, pmouseY = 0.0;
 
-	protected int width = STD_WIDTH, height = STD_HEIGHT;
+	protected int width, height;
+
+	protected int screenWidth, screenHeight;
+
+	/*
+	 * Interne Attribute zur Steuerung der Zeichenmaschine.
+	 */
 
 	private Object mouseLock = new Object();
 
 	private Object keyboardLock = new Object();
 
-	/*
-	 * Interne Attribute zur Steuerung der Zeichenamschine.
-	 */
-	//
 	private JFrame frame;
+
+	private GraphicsEnvironment environment;
+
+	private GraphicsDevice displayDevice;
 
 	private boolean running = false, isDrawing = false, isUpdating = false;
 
@@ -60,6 +73,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	private Thread mainThread;
 
 	private boolean quitAfterTeardown = false, initialized = false;
+
 
 	public Zeichenmaschine() {
 		this(APP_NAME + " " + APP_VERSION);
@@ -73,19 +87,36 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch( Exception e ) {
-			System.err.println("Error setting the look and feel.");
+			System.err.println("Error setting the look and feel: " + e.getMessage());
 		}
 
-		GraphicsEnvironment environment =
-			GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice displayDevice = environment.getDefaultScreenDevice();
+
+		// Looking for the screen currently holding the mouse pointer
+		// that will be used as the screen device for this Zeichenmaschine
+		java.awt.Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
+		environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice[] devices = environment.getScreenDevices();
+		for( GraphicsDevice gd: devices ) {
+			if( gd.getDefaultConfiguration().getBounds().contains(mouseLoc) ) {
+				displayDevice = gd;
+				break;
+			}
+		}
+		if( displayDevice == null ) {
+			displayDevice = environment.getDefaultScreenDevice();
+		}
+
+
+		this.width = width;
+		this.height = height;
+		java.awt.Rectangle displayBounds = displayDevice.getDefaultConfiguration().getBounds();
+		this.screenWidth = (int)displayBounds.getWidth();
+		this.screenHeight = (int)displayBounds.getHeight();
+
 
 		frame = new JFrame(displayDevice.getDefaultConfiguration());
 		frame.setTitle(title);
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-
-		this.width = width;
-		this.height = height;
 
 		canvas = new Zeichenleinwand(width, height);
 		frame.add(canvas);
@@ -96,6 +127,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		drawing = getDrawingLayer();
 		shapes = getShapesLayer();
 
+		// TODO: When to call settings?
 		settings();
 
 		canvas.addMouseListener(this);
@@ -114,9 +146,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 		frame.pack();
 		frame.setResizable(false);
-		// TODO: Center on current display (not main display by default)
-		// TODO: Position at current BlueJ windows if IN_BLUEJ
-		frame.setLocationRelativeTo(null);
+		centerFrame();
 		frame.setVisible(true);
 
 		canvas.allocateBuffer();
@@ -146,6 +176,19 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		if( frame.isVisible() ) {
 			frame.setVisible(false);
 		}
+	}
+
+	public final void centerFrame() {
+		// TODO: Center on current display (not main display by default)
+		// TODO: Position at current BlueJ windows if IN_BLUEJ
+		//frame.setLocationRelativeTo(null);
+		//frame.setLocationRelativeTo(displayDevice.getFullScreenWindow());
+
+		java.awt.Rectangle bounds = displayDevice.getDefaultConfiguration().getBounds();
+		frame.setLocation(
+			(int)(bounds.x + (screenWidth-frame.getWidth())/2.0),
+			(int)(bounds.y + (screenHeight-frame.getHeight())/2.0)
+		);
 	}
 
 	public final void redraw() {
@@ -240,6 +283,64 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 	public final void setFramesPerSecond( int pFramesPerSecond ) {
 		framesPerSecond = pFramesPerSecond;
+	}
+
+	public void saveImage() {
+		JFileChooser jfc = new JFileChooser();
+		jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		jfc.setMultiSelectionEnabled(false);
+
+		int status = jfc.showSaveDialog(frame);
+		if( status == JFileChooser.APPROVE_OPTION ) {
+			File outfile = jfc.getSelectedFile();
+			if( outfile.isDirectory() ) {
+				outfile = new File(outfile.getAbsolutePath() + File.separator + "zeichenmaschine.png");
+			}
+			saveImage(outfile.getAbsolutePath());
+		}
+	}
+
+	public void saveImage( String filepath ) {
+		BufferedImage img = new BufferedImage(canvas.getWidth(),canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+
+		Graphics2D g = img.createGraphics();
+		g.setColor(STD_BACKGROUND.getColor());
+		g.fillRect(0, 0, img.getWidth(), img.getHeight());
+		canvas.draw(g);
+		g.dispose();
+
+		try {
+			ImageLoader.saveImage(img, new File(filepath), true);
+		} catch ( IOException ex ) {
+			ex.printStackTrace();
+		}
+	}
+
+	public ImageLayer snapshot() {
+		BufferedImage img = new BufferedImage(canvas.getWidth(),canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+
+		Graphics2D g = img.createGraphics();
+		g.setColor(STD_BACKGROUND.getColor());
+		g.fillRect(0, 0, img.getWidth(), img.getHeight());
+		canvas.draw(g);
+		g.dispose();
+
+		/*
+		float factor = 0.8f;
+		float base = 255f * (1f - factor);
+		RescaleOp op = new RescaleOp(factor, base, null);
+		BufferedImage filteredImage
+			= new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
+		op.filter(img, filteredImage);
+		*/
+
+		ImageLayer imgLayer = new ImageLayer(img);
+		if( canvas.getLayer(0) instanceof ColorLayer ) {
+			canvas.addLayer(1, imgLayer);
+		} else {
+			canvas.addLayer(0, imgLayer);
+		}
+		return imgLayer;
 	}
 
 	/*
@@ -366,6 +467,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		pmouseX = mouseX;
 		pmouseY = mouseY;
 
+		// TODO: Seems not right ...
 		java.awt.Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
 		java.awt.Point compLoc = canvas.getLocationOnScreen();
 		mouseX = mouseLoc.x - compLoc.x;

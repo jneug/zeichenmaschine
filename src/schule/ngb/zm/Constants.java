@@ -8,8 +8,8 @@ public class Constants {
 	public static final String APP_NAME = "Zeichenmaschine";
 
 	public static final int APP_VERSION_MAJ = 0;
-	public static final int APP_VERSION_MIN = 1;
-	public static final int APP_VERSION_REV = 5;
+	public static final int APP_VERSION_MIN = 0;
+	public static final int APP_VERSION_REV = 8;
 
 	public static final String APP_VERSION = APP_VERSION_MAJ + "." + APP_VERSION_MIN + "." + APP_VERSION_REV;
 

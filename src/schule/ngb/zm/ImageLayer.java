@@ -16,11 +16,6 @@ public class ImageLayer extends Layer {
 
 	protected boolean redraw = true;
 
-	public ImageLayer() {
-
-	}
-
-
 	public ImageLayer( String source ) {
 		image = ImageLoader.loadImage(source);
 	}
