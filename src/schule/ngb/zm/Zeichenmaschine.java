@@ -5,11 +5,12 @@ import schule.ngb.zm.util.ImageLoader;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
-import java.awt.*;
-import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.MouseInfo;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RescaleOp;
 import java.io.File;
 import java.io.IOException;
 
@@ -469,6 +470,17 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 		mouseX = e.getX();
 		mouseY = e.getY();
+	}
+
+	private void saveMousePosition() {
+		pmouseX = mouseX;
+		pmouseY = mouseY;
+
+		// Calculates mouse position based on screen, not based on canvas
+		java.awt.Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
+		java.awt.Point compLoc = canvas.getLocationOnScreen();
+		mouseX = mouseLoc.x - compLoc.x;
+		mouseY = mouseLoc.y - compLoc.y;
 	}
 
 	/*
