@@ -1,5 +1,8 @@
 package schule.ngb.zm;
 
+import schule.ngb.zm.util.ImageLoader;
+
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 public class Constants {
@@ -153,6 +156,10 @@ public class Constants {
 		return color(random(10, 255), random(10, 255), random(10, 255), 255);
 	}
 
+
+	public static BufferedImage loadImage( String name ) {
+		return ImageLoader.loadImage(name);
+	}
 
 	// Mathematische Funktionen
 
