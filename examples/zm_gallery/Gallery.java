@@ -1,6 +1,8 @@
 import schule.ngb.zm.Color;
 import schule.ngb.zm.Zeichenmaschine;
 
+import java.awt.event.KeyEvent;
+
 /**
  * Eine Bildergallerie von Bildern eines Informatikkurses des 10. Jahrgangs.
  */
@@ -43,10 +45,12 @@ public class Gallery extends Zeichenmaschine {
 	}
 
 	/**
-	 * Bei Mausklick ein Zufallsbild anzeigen
+	 * Bei Betätigen der Leertaste ein Zufallsbild anzeigen
 	 */
-	public void mouseClicked() {
-		drawRandom();
+	public void keyPressed() {
+		if( keyCode == 32 ) {
+			drawRandom();
+		}
 	}
 
 	/**
