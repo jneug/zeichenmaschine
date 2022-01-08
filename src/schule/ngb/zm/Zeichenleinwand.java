@@ -2,7 +2,10 @@ package schule.ngb.zm;
 
 import schule.ngb.zm.shapes.ShapesLayer;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -12,7 +15,7 @@ import java.util.LinkedList;
  * mehreren Ebenen, auf denen auf verschiedene Arten gezeichnet werden kann. Die
  * Ebenen lassen sich beliebig übereinander aNORTHen, ausblenden oder wieder
  * löschen.
- *
+ * <p>
  * Jede Ebene besitzt eine Zeichenfläche, auf der ihre Zeichnung liegt. Diese
  * zeichenflächen werden pro Frame einmal von "DOWN" nach "UP" auf diese
  * Leinwand gezeichnet.
@@ -40,7 +43,7 @@ public class Zeichenleinwand extends Canvas {
 	 * Ändert die Größe der Zeichenleinwand auf die angegebene Größe in Pixeln.
 	 * Eine Größenänderung hat auch eine Größenänderung aller Ebenen zur Folge.
 	 *
-	 * @param width Neue Width der Leinwand in Pixeln.
+	 * @param width  Neue Width der Leinwand in Pixeln.
 	 * @param height Neue Höhe der Leinwand in Pixeln.
 	 */
 	@Override
@@ -59,6 +62,7 @@ public class Zeichenleinwand extends Canvas {
 	/**
 	 * Fügt der Zeichenleinwand eine Ebene hinzu, die oberhalb aller bisherigen
 	 * Ebenen eingefügt wird.
+	 *
 	 * @param layer Die neue Ebene.
 	 */
 	public void addLayer( Layer layer ) {
@@ -72,7 +76,8 @@ public class Zeichenleinwand extends Canvas {
 
 	/**
 	 * Fügt der Zeichenleinwand eine Ebene an einer bestimmten Stelle hinzu.
-	 * @param i Index der Ebene, beginnend mit <code>0</code>.
+	 *
+	 * @param i     Index der Ebene, beginnend mit <code>0</code>.
 	 * @param layer Die neue Ebene.
 	 */
 	public void addLayer( int i, Layer layer ) {
@@ -85,7 +90,17 @@ public class Zeichenleinwand extends Canvas {
 	}
 
 	/**
+	 * Gibt die Anzahl der {@link Layer Ebenen} in dieser Leinwand zurück.
+	 *
+	 * @return Die Anzahl der Ebenen.
+	 */
+	public int getLayerCount() {
+		return layers.size();
+	}
+
+	/**
 	 * Gibt die Liste der bisher hinzugefügten Ebenen zurück.
+	 *
 	 * @return Liste der Ebenen.
 	 */
 	public java.util.List<Layer> getLayers() {
@@ -193,7 +208,7 @@ public class Zeichenleinwand extends Canvas {
 					} while( strategy.contentsRestored() );
 
 					// Display the buffer
-					if (!strategy.contentsLost()) {
+					if( !strategy.contentsLost() ) {
 						strategy.show();
 
 						Toolkit.getDefaultToolkit().sync();
@@ -204,4 +219,5 @@ public class Zeichenleinwand extends Canvas {
 			}
 		}
 	}
+
 }

@@ -29,7 +29,9 @@ public final class Options {
 		INITIALIZING,
 		INITIALIZED,
 		RUNNING,
-		AUSED,
+		UPDATING,
+		DRAWING,
+		PAUSED,
 		STOPPED,
 		TERMINATED
 	}

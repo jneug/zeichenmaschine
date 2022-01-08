@@ -2,6 +2,7 @@ package schule.ngb.zm;
 
 import schule.ngb.zm.util.ImageLoader;
 
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
@@ -71,6 +72,11 @@ public class Constants {
 	public static final Color BROWN = Color.BROWN;
 
 	public static final Color STD_BACKGROUND = new Color(200, 200, 200);
+
+	public static final int NOBUTTON = MouseEvent.NOBUTTON;
+	public static final int BUTTON1 = MouseEvent.BUTTON1;
+	public static final int BUTTON2 = MouseEvent.BUTTON2;
+	public static final int BUTTON3 = MouseEvent.BUTTON3;
 	//@formatter:on
 
 
