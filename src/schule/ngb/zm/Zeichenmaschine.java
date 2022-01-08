@@ -5,10 +5,7 @@ import schule.ngb.zm.util.ImageLoader;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
-import java.awt.Graphics2D;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.MouseInfo;
+import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -186,6 +183,10 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	// Gibt an, ob nach Ende des Hauptthreads das Programm beendet werden soll,
 	// oder das Zeichenfenster weiter geöffnet bleibt.
 	private boolean quitAfterTeardown = false;
+
+	// Mauscrusor
+	private Cursor invisibleCursor = null;
+	private boolean cursorVisible = true;
 	//@formatter:on
 
 
@@ -680,6 +681,33 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		} catch( InterruptedException ex ) {
 			// Nothing
 		}
+	}
+
+	/**
+	 * Zeigt den Mauszeiger wieder an, falls er zuvor {@link #hideCursor() versteckt}
+	 * wurde.
+	 */
+	public final void showCursor() {
+		// Übernommen aus processing.awt.PSurfaceAWT von Processing4
+		if (!cursorVisible) {
+			cursorVisible = true;
+			canvas.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		}
+	}
+
+	/**
+	 * Macht den Mauszeiger unsichtbar.
+	 */
+	public final void hideCursor() {
+		// Übernommen aus processing.awt.PSurfaceAWT von Processing4
+		if (invisibleCursor == null) {
+			BufferedImage cursorImg =
+				new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+			invisibleCursor =
+				canvas.getToolkit().createCustomCursor(cursorImg, new Point(8, 8), "blank");
+		}
+		canvas.setCursor(invisibleCursor);
+		cursorVisible = false;
 	}
 
 	/*

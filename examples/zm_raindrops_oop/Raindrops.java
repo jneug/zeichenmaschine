@@ -62,6 +62,8 @@ public class Raindrops extends Zeichenmaschine {
 	 * Initialisierung des Spiels und der benötigten Objekte.
 	 */
 	public void setup() {
+		hideCursor();
+
 		// Hintergrund blaugrau
 		background.setColor(129, 174, 206);
 

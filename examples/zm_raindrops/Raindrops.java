@@ -29,6 +29,7 @@ public class Raindrops extends Zeichenmaschine {
     public void setup() {
         setSize(400, 600);
         setTitle("ZM: Raindrops");
+		hideCursor();
 
 		drawing.setFontSize(64);
     }
