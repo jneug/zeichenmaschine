@@ -12,9 +12,6 @@ import java.awt.image.BufferedImage;
 
 public class Picture extends Shape {
 
-	// https://stackoverflow.com/questions/14225518/tinting-image-in-java-improvement
-	protected Color tint;
-
 	private BufferedImage image;
 
 	private double width;
@@ -106,6 +103,56 @@ public class Picture extends Shape {
 		return verzerrung;
 	}
 	*/
+
+	public void flip( Options.Direction dir ) {
+		int w = image.getWidth();
+		int h = image.getHeight();
+
+		BufferedImage new_image = ImageLoader.createImage(w, h, image.getColorModel().getTransparency());
+		Graphics2D g = new_image.createGraphics();
+		if( dir.contains(LEFT) || dir.contains(RIGHT) ) {
+			g.drawImage(image, 0, 0, w, h, w, 0, 0, h, null);
+		} else {
+			g.drawImage(image, 0, 0, w, h, 0, h, w, 0, null);
+		}
+		g.dispose();
+		image = new_image;
+	}
+
+	public void tint( Color tintColor ) {
+		BufferedImage mask = generateMask(tintColor, 0.5);
+
+		int imgWidth = image.getWidth();
+		int imgHeight = image.getHeight();
+
+		BufferedImage new_image = ImageLoader.createImage(imgWidth, imgHeight, image.getColorModel().getTransparency());
+		Graphics2D g2 = new_image.createGraphics();
+		g2.drawImage(image, 0, 0, null);
+		g2.drawImage(mask, 0, 0, null);
+		g2.dispose();
+
+		image = new_image;
+	}
+
+	private BufferedImage generateMask( Color color, double alpha ) {
+		int imgWidth = image.getWidth();
+		int imgHeight = image.getHeight();
+
+		BufferedImage imgMask = ImageLoader.createImage(imgWidth, imgHeight, Transparency.TRANSLUCENT);
+		imgMask.coerceData(true);
+
+		Graphics2D g2 = imgMask.createGraphics();
+
+		g2.drawImage(image, 0, 0, null);
+		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_IN, (float)alpha));
+		g2.setColor(color.getJavaColor());
+
+		g2.fillRect(0, 0, imgWidth, imgHeight);
+		g2.dispose();
+
+		return imgMask;
+	}
+
 
 	@Override
 	public void draw( Graphics2D graphics, AffineTransform transform ) {
