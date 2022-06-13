@@ -456,16 +456,16 @@ public class DrawingLayer extends Layer {
 		// anchor == CENTER
 		Point2D.Double anchorPoint = new Point2D.Double(x - whalf, y - hhalf);
 
-		if( NORTH.is(anchor) ) {
+		if( NORTH.in(anchor) ) {
 			anchorPoint.y += hhalf;
 		}
-		if( SOUTH.is(anchor) ) {
+		if( SOUTH.in(anchor) ) {
 			anchorPoint.y -= hhalf;
 		}
-		if( WEST.is(anchor) ) {
+		if( WEST.in(anchor) ) {
 			anchorPoint.x += whalf;
 		}
-		if( EAST.is(anchor) ) {
+		if( EAST.in(anchor) ) {
 			anchorPoint.x -= whalf;
 		}
 

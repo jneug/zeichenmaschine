@@ -3,11 +3,13 @@ package schule.ngb.zm;
 import java.awt.geom.Arc2D;
 
 /**
- * Diese Klasse sammelt Enumerationen, die verschiedene Eigenschaften der
- * zu zeichnenden Formen darstellen.
+ * Diese Klasse sammelt Enumerationen, die verschiedene Eigenschaften der zu
+ * zeichnenden Formen darstellen.
  */
 public final class Options {
-	private Options() {}
+
+	private Options() {
+	}
 
 	public enum StrokeType {
 		SOLID, DASHED, DOTTED
@@ -19,7 +21,9 @@ public final class Options {
 
 	public enum PathType {
 		OPEN(Arc2D.OPEN), CLOSED(Arc2D.CHORD), PIE(Arc2D.PIE);
+
 		public final int awt_type;
+
 		PathType( int type ) {
 			awt_type = type;
 		}
@@ -55,14 +59,25 @@ public final class Options {
 		RIGHT(EAST.mask);
 
 		public final byte mask;
+
 		Direction( int mask ) {
 			this.mask = (byte) mask;
 		}
-		public boolean is( int mask ) {
+
+		public boolean in( int mask ) {
 			return (mask & this.mask) == this.mask;
 		}
-		public boolean is( Direction dir ) {
-			return (dir.mask & this.mask) == this.mask;
+
+		public boolean in( Direction dir ) {
+			return in(dir.mask);
+		}
+
+		public boolean contains( int mask ) {
+			return (mask & this.mask) == mask;
+		}
+
+		public boolean contains( Direction dir ) {
+			return contains(dir.mask);
 		}
 	}
 

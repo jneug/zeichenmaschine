@@ -129,16 +129,16 @@ public abstract class Shape extends FilledShape {
 		anchorpoint.x = bHalf;
 		anchorpoint.y = hHalf;
 
-		if( NORTH.is(anchor) ) {
+		if( NORTH.in(anchor) ) {
 			anchorpoint.y -= hHalf;
 		}
-		if( SOUTH.is(anchor) ) {
+		if( SOUTH.in(anchor) ) {
 			anchorpoint.y += hHalf;
 		}
-		if( WEST.is(anchor) ) {
+		if( WEST.in(anchor) ) {
 			anchorpoint.x -= bHalf;
 		}
-		if( EAST.is(anchor) ) {
+		if( EAST.in(anchor) ) {
 			anchorpoint.x += bHalf;
 		}
 
