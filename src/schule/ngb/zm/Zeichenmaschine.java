@@ -70,13 +70,33 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	private GraphicsDevice displayDevice;
 
 	/**
+	 * Speichert, ob die Zeichenmaschine mit {@link #setFullscreen(boolean)}
+	 * in den Vollbildmodus versetzt wurde.
 	 */
+	private boolean fullscreen = false;
 
 	/**
+	 * Höhe und Breite der Zeichenmaschine, bevor sie mit
+	 * {@link #setFullscreen(boolean)} in den Vollbild-Modus versetzt wurde.
+	 * Wird verwendet, um die Fenstergröße wiederherzustellen, sobald der
+	 * Vollbild-Modus verlassen wird.
 	 */
+	private int initialWidth, initialHeight;
 
 	/**
+	 * KeyListener, um den Vollbild-Modus mit der Escape-Taste zu verlassen.
+	 * Wird von {@link #setFullscreen(boolean)} automatisch einzugefügt und
+	 * entfernt.
 	 */
+	KeyListener fullscreenExitListener = new KeyAdapter() {
+		@Override
+		public void keyPressed( KeyEvent e ) {
+			if( e.getKeyCode() == KeyEvent.VK_ESCAPE ) {
+				// canvas.removeKeyListener(this);
+				setFullscreen(false);
+			}
+		}
+	};
 
 	// Aktueller Zustand der Zeichenmaschine.
 	private Options.AppState state = Options.AppState.INITIALIZING;
@@ -255,7 +275,45 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Zeigt das Zeichenfenster an.
+	 * Aktiviert oder deaktiviert den Vollbildmodus für die Zeichenmaschine.
+	 * <p>
+	 * Der Vollbildmodus wird abhängig von {@code pEnable} entweder aktiviert
+	 * oder deaktiviert. Wird die Zeichenmaschine in den Vollbildmodus versetzt,
+	 * dann wird automatisch ein {@link KeyListener} aktiviert, der bei
+	 * Betätigung der ESCAPE-Taste den Vollbildmodus verlässt. Wird der
+	 * Vollbildmodus verlassen, wird die zuletzt gesetzte Fenstergröße
+	 * wiederhergestellt.
+	 *
+	 * @param pEnable Wenn {@code true}, wird der Vollbildmodus aktiviert,
+	 * 				  ansonsten deaktiviert.
+	 */
+	public final void setFullscreen( boolean pEnable ) {
+		if( displayDevice.isFullScreenSupported() ) {
+			if( pEnable && !fullscreen ) {
+				// frame.setUndecorated(true);
+				frame.setResizable(false); // Should be set anyway
+				displayDevice.setFullScreenWindow(frame);
+				// Update width / height
+				initialWidth = width;
+				initialHeight = height;
+				setSize(screenWidth, screenHeight);
+				// Register ESC as exit fullscreen
+				canvas.addKeyListener(fullscreenExitListener);
+
+				fullscreen = true;
+			} else if( !pEnable && fullscreen ) {
+				fullscreen = false;
+
+				canvas.removeKeyListener(fullscreenExitListener);
+				displayDevice.setFullScreenWindow(null);
+				setSize(initialWidth, initialHeight);
+				// frame.setUndecorated(false);
+			}
+		}
+	}
+
+	/**
+	 * Gibt den aktuellen {@link Options.AppState Zustand} der Zeichenmaschine zurück.
 	 *
 	 * @see JFrame#setVisible(boolean)
 	 */
@@ -362,15 +420,20 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * @param height
 	 */
 	public final void setSize( int width, int height ) {
-		//frame.setSize(width, height);
+		if( fullscreen ) {
+			initialWidth = Math.min(Math.max(width, 100), screenWidth);
+			initialHeight = Math.min(Math.max(height, 100), screenHeight);
+			setFullscreen(false);
+		} else {
+			if( canvas != null ) {
+				canvas.setSize(width, height);
+			}
+			this.width = Math.min(Math.max(width, 100), screenWidth);
+			this.height = Math.min(Math.max(height, 100), screenHeight);
 
-		if( canvas != null ) {
-			canvas.setSize(width, height);
+			//frame.setSize(width, height);
+			frame.pack();
 		}
-		this.width = width;
-		this.height = height;
-
-		frame.pack();
 	}
 
 	/**
