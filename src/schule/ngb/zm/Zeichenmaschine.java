@@ -115,9 +115,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	// oder das Zeichenfenster weiter geöffnet bleibt.
 	private boolean quitAfterTeardown = false;
 
-	// Mauscrusor
+	// Mauscursor
 	private Cursor invisibleCursor = null;
-	private boolean cursorVisible = true;
+	protected boolean cursorVisible = true;
 	//@formatter:on
 
 
@@ -702,30 +702,92 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Zeigt den Mauszeiger wieder an, falls er zuvor {@link #hideCursor() versteckt}
-	 * wurde.
+	 * Macht den Mauszeiger unsichtbar.
+	 * <p>
+	 * Nach dem Aufruf gilt {@code cursorVisible == false}.
+	 * <p>
+	 * Der Aufruf von {@code hideCursor()} ist dasselbe wie der Aufruf von
+	 * {@link #setCursor(Cursor) setCursor(null)}.
 	 */
-	public final void showCursor() {
-		// Übernommen aus processing.awt.PSurfaceAWT von Processing4
-		if (!cursorVisible) {
-			cursorVisible = true;
-			canvas.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-		}
+	public final void hideCursor() {
+		setCursor(null);
 	}
 
 	/**
-	 * Macht den Mauszeiger unsichtbar.
+	 * Zeigt den Mauszeiger wieder an, falls er zuvor {@link #hideCursor() versteckt}
+	 * wurde.
+	 * <p>
+	 * Nach dem Aufruf gilt {@code cursorVisible == true}.
+	 * <p>
+	 * Der Aufruf von {@code hideCursor()} ist dasselbe wie der Aufruf von
+	 * {@link #setCursor(int) setCursor(Cursor.DEFAULT_CURSOR)}.
 	 */
-	public final void hideCursor() {
-		// Übernommen aus processing.awt.PSurfaceAWT von Processing4
-		if (invisibleCursor == null) {
-			BufferedImage cursorImg =
-				new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
-			invisibleCursor =
-				canvas.getToolkit().createCustomCursor(cursorImg, new Point(8, 8), "blank");
+	public final void showCursor() {
+		setCursor(Cursor.DEFAULT_CURSOR);
+	}
+
+	/**
+	 * Ändert den Mauszeiger auf ein eigenes Bild.
+	 * <p>
+	 * Das Bild darf die vom Betriebssystem vorgegebene Mindestgröße nicht
+	 * überschreiten und kann aus einer beliebigen Quelle geladen werden, oder
+	 * direkt im Programm erstellt werden. Die Koordinaten des Hotspot geben an,
+	 * an welcher Stelle des Bildes sich die "Spitze" befindet. Die Koordinaten
+	 * werden relativ zur oberen linken Ecke des Bildes angegeben.
+	 *
+	 * @param pCursorImage Ein Bild, das den Mauszeiger ersetzt.
+	 * @param hotSpotX Relative x-Koordinate des Hotspots.
+	 * @param hotSpotY Relative y-Koordinate des Hotspots.
+	 * @see ImageLoader#loadImage(String)
+	 * @see Toolkit#createCustomCursor(Image, Point, String)
+	 */
+	public final void setCursor( Image pCursorImage, int hotSpotX, int hotSpotY ) {
+		Point hotSpot = new Point(hotSpotX, hotSpotY);
+		setCursor(canvas.getToolkit().createCustomCursor(pCursorImage, hotSpot, "zmCursor"));
+	}
+
+	/**
+	 * Setzt den Mauszeiger auf eines der vordefinierten Symbole.
+	 * <p>
+	 * Die Konstanten der Klasse {@link Cursor} definieren 13 Standardzeiger,
+	 * die durch angabe der Nummer geladen werden können.
+	 * <pre>
+	 *     setCursor(Cursor.HAND_CURSOR);
+	 * </pre>
+	 * @param pPredefinedCursor Eine der Cursor-Konstanten.
+	 * @see Cursor
+	 */
+	public final void setCursor( int pPredefinedCursor ) {
+		setCursor(Cursor.getPredefinedCursor(pPredefinedCursor));
+	}
+
+	/**
+	 * Setzt den Mauszeiger auf das übergebenen Cursor-Objekt.
+	 * Wenn {@code pCursor} {@code null} ist, wird der Mauszeiger unsichtbar
+	 * gemacht (dies ist dasselbe wie der Aufruf von {@link #hideCursor()}).
+	 * @param pCursor Ein Cursor-Objekt oder {@code null}.
+	 * <p>
+	 * Nach Aufruf der Methode kann über {@link #cursorVisible} abgefragt werden,
+	 * ob der Cursor zurzeit sichtbar ist oder nicht.
+	 */
+	public final void setCursor( Cursor pCursor ) {
+		if( pCursor == null && cursorVisible ) {
+			// Falls null übergeben, Zeiger verstecken
+
+			// Übernommen aus processing.awt.PSurfaceAWT von Processing4
+			if( invisibleCursor == null ) {
+				BufferedImage cursorImg =
+					new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+				invisibleCursor =
+					canvas.getToolkit().createCustomCursor(cursorImg, new Point(8, 8), "blank");
+			}
+			canvas.setCursor(invisibleCursor);
+			cursorVisible = false;
+		} else if( pCursor != null ) {
+			// Zeiger neu zuweisen
+			canvas.setCursor(pCursor);
+			cursorVisible = true;
 		}
-		canvas.setCursor(invisibleCursor);
-		cursorVisible = false;
 	}
 
 	/*
