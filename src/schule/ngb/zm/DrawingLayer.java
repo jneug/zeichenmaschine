@@ -23,6 +23,10 @@ public class DrawingLayer extends Layer {
 	protected Rectangle2D.Double rect = new Rectangle2D.Double();
 	protected Arc2D.Double arc = new Arc2D.Double();
 
+	protected Path2D.Double path = new Path2D.Double();
+
+	private boolean pathStarted = false;
+
 	private Stack<AffineTransform> transformStack = new Stack<>();
 
 	private FontMetrics fontMetrics = null;
@@ -35,6 +39,8 @@ public class DrawingLayer extends Layer {
 
 	public DrawingLayer( int width, int height ) {
 		super(width, height);
+		transformStack.push(new AffineTransform());
+		fontMetrics = drawing.getFontMetrics();
 	}
 
 	public Color getColor() {
@@ -354,6 +360,32 @@ public class DrawingLayer extends Layer {
 		fillShape(path);
 		drawShape(path);
 	}
+
+	// TODO: General shape drawing
+	/*
+	public void beginShape() {
+		path.reset();
+		pathStarted = false;
+	}
+
+	public void lineTo( double x, double y ) {
+		if( !pathStarted ) {
+			path.moveTo(x, y);
+			pathStarted = true;
+		} else {
+			path.lineTo(x, y);
+		}
+	}
+
+	public void endShape() {
+		path.closePath();
+		path.trimToSize();
+		pathStarted = false;
+
+		fillShape(path);
+		drawShape(path);
+	}
+	*/
 
 	public void image( String imageSource, double x, double y ) {
 		image(ImageLoader.loadImage(imageSource), x, y, 1.0, default_anchor);
