@@ -81,6 +81,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	// Aktueller Zustand der Zeichenmaschine.
 	private Options.AppState state = Options.AppState.INITIALIZING;
 	private boolean running = false;
+	private boolean pause_pending = false;
+
+	private boolean stop_after_update = false, run_once = true;
 
 	// Aktuelle Frames pro Sekunde der Zeichenmaschine.
 	private int framesPerSecond;
@@ -278,11 +281,44 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * im Zeichenfenster an.
 	 */
 	public final void redraw() {
+		if( state == Options.AppState.PAUSED ) {
+			draw();
+		}
 		canvas.render();
-		//canvas.invalidate();
-		//frame.repaint();
-		//hide();
-		//show();
+		// canvas.invalidate();
+		// frame.repaint();
+		// hide();
+		// show();
+	}
+
+	/**
+	 * Pausiert die Ausführung von {@link #update(double)} und {@link #draw()}
+	 * nach dem nächsten vollständigen Frame.
+	 * <p>
+	 * Die Zeichenmaschine wechselt in den Zustand {@link Options.AppState#PAUSED},
+	 * sobald der aktuelle Frame beendet wurde.
+	 */
+	public final void pause() {
+		pause_pending = true;
+	}
+
+	/**
+	 * Setzt die Ausführung der Zeichenmaschine fort, nachdem diese mit
+	 * {@link #pause()} pausiert wurde.
+	 */
+	public final void resume() {
+		pause_pending = false;
+		if( state == Options.AppState.PAUSED ) {
+			state = Options.AppState.RUNNING;
+		}
+	}
+
+	/**
+	 * Prüft, ob die Zeichenmaschine gerade pausiert ist.
+	 * @return
+	 */
+	public final boolean isPaused() {
+		return state == Options.AppState.PAUSED;
 	}
 
 	/**
