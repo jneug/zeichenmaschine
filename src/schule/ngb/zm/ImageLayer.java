@@ -1,10 +1,9 @@
 package schule.ngb.zm;
 
-import schule.ngb.zm.util.ImageLoader;
+import java.awt.Graphics2D;
+import java.awt.Image;
 
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.ImageObserver;
+import schule.ngb.zm.util.ImageLoader;
 
 public class ImageLayer extends Layer {
 
@@ -16,20 +15,20 @@ public class ImageLayer extends Layer {
 
 	protected boolean redraw = true;
 
-	public ImageLayer( String source ) {
+	public ImageLayer(String source) {
 		image = ImageLoader.loadImage(source);
 	}
 
-	public ImageLayer( Image image ) {
+	public ImageLayer(Image image) {
 		this.image = image;
 	}
 
-	public ImageLayer( int width, int height, Image image ) {
+	public ImageLayer(int width, int height, Image image) {
 		super(width, height);
 		this.image = image;
 	}
 
-	public void setImage( Image image ) {
+	public void setImage(Image image) {
 		this.image = image;
 		redraw = true;
 	}
@@ -38,7 +37,7 @@ public class ImageLayer extends Layer {
 		return x;
 	}
 
-	public void setX( double pX ) {
+	public void setX(double pX) {
 		this.x = pX;
 		redraw = true;
 	}
@@ -47,7 +46,7 @@ public class ImageLayer extends Layer {
 		return y;
 	}
 
-	public void setY( double pY ) {
+	public void setY(double pY) {
 		this.y = pY;
 		redraw = true;
 	}
@@ -59,9 +58,9 @@ public class ImageLayer extends Layer {
 	}
 
 	@Override
-	public void draw( Graphics2D graphics ) {
-		if( redraw && visible ) {
-			drawing.drawImage(image, (int)x, (int)y, null);
+	public void draw(Graphics2D graphics) {
+		if (redraw && visible) {
+			drawing.drawImage(image, (int) x, (int) y, null);
 			redraw = false;
 		}
 		super.draw(graphics);
