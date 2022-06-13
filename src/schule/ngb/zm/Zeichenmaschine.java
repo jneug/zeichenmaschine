@@ -3,6 +3,7 @@ package schule.ngb.zm;
 import schule.ngb.zm.shapes.ShapesLayer;
 import schule.ngb.zm.util.ImageLoader;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
@@ -249,6 +250,17 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		frame = new JFrame(displayDevice.getDefaultConfiguration());
 		frame.setTitle(title);
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+		// Das Icon des Fensters ändern
+		try {
+			ImageIcon icon = new ImageIcon(ImageIO.read(new File("res/icon_64.png")));
+			frame.setIconImage(icon.getImage());
+
+			// Dock Icon in macOS setzen
+			Taskbar taskbar = Taskbar.getTaskbar();
+			taskbar.setIconImage(icon.getImage());
+		} catch( IOException e ) {
+		}
 
 		// Erstellen der Leinwand
 		canvas = new Zeichenleinwand(width, height);
