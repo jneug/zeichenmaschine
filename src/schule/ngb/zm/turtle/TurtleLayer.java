@@ -298,6 +298,7 @@ public class TurtleLayer extends Layer {
 			if( pathOpen ) {
 				addPosToPath();
 				path.closePath();
+				path.trimToSize();
 				pathOpen = false;
 			}
 		}
