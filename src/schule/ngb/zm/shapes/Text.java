@@ -105,7 +105,7 @@ public class Text extends Shape {
 
 		// Neue Werte setzen
 		graphics.setFont(font);
-		graphics.setColor(strokeColor.getColor());
+		graphics.setColor(strokeColor.getJavaColor());
 		graphics.transform(transform);
 
 		// Draw text

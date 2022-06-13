@@ -12,32 +12,89 @@ package schule.ngb.zm;
  */
 public class Color {
 
-	//@formatter:off
-	public static final Color BLACK = new Color(java.awt.Color.BLACK);
-	public static final Color WHITE = new Color(java.awt.Color.WHITE);
-	public static final Color GRAY = new Color(java.awt.Color.GRAY);
-	public static final Color DARKGRAY = new Color(java.awt.Color.DARK_GRAY);
-	public static final Color LIGHTGRAY = new Color(java.awt.Color.LIGHT_GRAY);
 
-	public static final Color RED = new Color(java.awt.Color.RED);
-	public static final Color GREEN = new Color(java.awt.Color.GREEN);
-	public static final Color BLUE = new Color(java.awt.Color.BLUE);
-	public static final Color YELLOW = new Color(java.awt.Color.YELLOW);
-	public static final Color ORANGE = new Color(java.awt.Color.ORANGE);
+
+	//@formatter:off
+	/**
+	 * Die Farbe Schwarz (Grauwert 0).
+	 */
+	public static final Color BLACK = new Color(0);
+
+	/**
+	 * Die Farbe Weiß (Grauwert 255).
+	 */
+	public static final Color WHITE = new Color(255);
+
+	/**
+	 * Die Farbe Grau (Grauwert 128).
+	 */
+	public static final Color GRAY = new Color(128);
+
+	/**
+	 * Die Farbe Dunkelgrau (Grauwert 64).
+	 */
+	public static final Color DARKGRAY = new Color(64);
+
+	/**
+	 * Die Farbe Hellgrau (Grauwert 192).
+	 */
+	public static final Color LIGHTGRAY = new Color(192);
+
+	/**
+	 * Die Farbe Zeichenmaschinen-Rot.
+	 */
+	public static final Color RED = new Color(240, 80, 37);
+	/**
+	 * Die Farbe Zeichenmaschinen-Grün.
+	 */
+	public static final Color GREEN = new Color(98, 199, 119);
+	/**
+	 * Die Farbe Zeichenmaschinen-Blau.
+	 */
+	public static final Color BLUE = new Color(49, 197, 244);
+	/**
+	 * Die Farbe Zeichenmaschinen-Gelb.
+	 */
+	public static final Color YELLOW = new Color(248, 239, 34);
+	/**
+	 * Die Farbe Zeichenmaschinen-Orange.
+	 */
+	public static final Color ORANGE = new Color(248, 158, 80);
+	/**
+	 * Die Farbe Zeichenmaschinen-Türkis.
+	 */
 	public static final Color CYAN = new Color(java.awt.Color.CYAN);
+	/**
+	 * Die Farbe Zeichenmaschinen-Magenta.
+	 */
 	public static final Color MAGENTA = new Color(java.awt.Color.MAGENTA);
-	public static final Color PINK = new Color(java.awt.Color.PINK);
+	/**
+	 * Die Farbe Zeichenmaschinen-Rosa.
+	 */
+	public static final Color PINK = new Color(240, 99, 164);
+	/**
+	 * Die Farbe Zeichenmaschinen-Lila.
+	 */
 	public static final Color PURPLE = new Color(101, 0, 191);
+	/**
+	 * Die Farbe Zeichenmaschinen-Braun.
+	 */
 	public static final Color BROWN = new Color(148, 82, 0);
 
+	/**
+	 * Die Farbe Helmholtz-Grün.
+	 */
 	public static final Color HGGREEN = new Color(0, 165, 81);
+	/**
+	 * Die Farbe Helmholtz-Rot.
+	 */
 	public static final Color HGRED = new Color(151, 54, 60);
 	//@formatter:on
 
 	/**
 	 * RGBA Wert der Farbe als Integer kodiert.
 	 */
-	private int rgba;
+	private final int rgba;
 
 	/**
 	 * Erstellt eine leere (schwarze) Farbe.
@@ -127,15 +184,56 @@ public class Color {
 	}
 
 	/**
+	 * Interner Konstruktor für die Initialisierung einer Farbe mit einem
+	 * RGBA-Wert.
+	 *
+	 * Da der Konstruktor {@link #Color(int)} schon besetzt ist, muss hier der
+	 * Parameter {@code isRGBA} auf {@code true} gesetzt werden, damit {@code rgba}
+	 * korrekt interpretiert wird.
+	 * @param rgba RGBA-wert der Farbe.
+	 * @param isRGBA Sollte immer {@code true} sein.
+	 */
+	Color( int rgba, boolean isRGBA ) {
+		if( !isRGBA ) {
+			this.rgba = (255 << 24) | (rgba << 16) | (rgba << 8) | rgba;
+		} else {
+			this.rgba = rgba;
+		}
+	}
+
+	/**
 	 * Erzeugt eine Farbe aus einem kodierten RGBA Integer-Wert.
 	 *
 	 * @param rgba
 	 * @return
 	 */
-	public static Color parseRGB( int rgba ) {
-		Color c = new Color();
-		c.rgba = rgba;
+	public static Color getRGBColor( int rgba ) {
+		Color c = new Color(rgba, true);
 		return c;
+	}
+
+	public static Color getHSBColor(double h, double s, double b) {
+		return new Color(java.awt.Color.getHSBColor((float)h, (float)s, (float)b));
+	}
+
+	public static Color getHSLColor(double h, double s, double l) {
+		int rgb = Color.HSLtoRGB(new float[]{(float)h, (float)s, (float)l});
+		return Color.getRGBColor(rgb);
+	}
+
+	public static Color parseString( String pColor ) {
+		pColor = pColor.toLowerCase().strip();
+		if( pColor.contains("red") || pColor.contains("rot") ) {
+			return Color.RED.copy();
+		} else if( pColor.contains("blue") || pColor.contains("blau") ) {
+			return Color.BLUE.copy();
+		} else if( pColor.contains("green") || pColor.contains("grün") || pColor.contains("gruen") ) {
+			return Color.GREEN.copy();
+		} else if( pColor.contains("yellow") || pColor.contains("gelb") ) {
+			return Color.YELLOW.copy();
+		} else {
+			return new Color();
+		}
 	}
 
 	/**
@@ -165,18 +263,32 @@ public class Color {
 			hexcode = hexcode;
 		}
 
-		Color c = new Color();
-		c.rgba = (alpha << 24) | Integer.valueOf(hexcode, 16);
-		return c;
+		return Color.getRGBColor((alpha << 24) | Integer.valueOf(hexcode, 16));
 	}
 
-	public static Color morph( java.awt.Color pFarbe1, java.awt.Color pFarbe2, double pFactor ) {
-		if( pFactor < 0.0 || pFarbe2 == null ) {
-			return new Color(pFarbe1);
+	public static Color interpolate( java.awt.Color color1, java.awt.Color color2, double t ) {
+		if( t < 0.0 || color2 == null ) {
+			return new Color(color1);
 		}
-		if( pFactor > 1.0 || pFarbe1 == null ) return new Color(pFarbe2);
-		double pFactorInv = 1 - pFactor;
-		return new Color((int) (pFactorInv * pFarbe1.getRed() + pFactor * pFarbe2.getRed()), (int) (pFactorInv * pFarbe1.getGreen() + pFactor * pFarbe2.getGreen()), (int) (pFactorInv * pFarbe1.getBlue() + pFactor * pFarbe2.getBlue()), (int) (pFactorInv * pFarbe1.getAlpha() + pFactor * pFarbe2.getAlpha()));
+		if( t > 1.0 || color1 == null ) {
+			return new Color(color2);
+		}
+		double pFactorInv = 1 - t;
+		return new Color((int) (pFactorInv * color1.getRed() + t * color2.getRed()), (int) (pFactorInv * color1.getGreen() + t * color2.getGreen()), (int) (pFactorInv * color1.getBlue() + t * color2.getBlue()), (int) (pFactorInv * color1.getAlpha() + t * color2.getAlpha()));
+	}
+
+	public static Color interpolate( Color color1, Color color2, double t ) {
+		if( color1 == null && color2 == null ) {
+			throw new IllegalArgumentException("Color.interpolate() needs at least one color to be not null.");
+		}
+		if( t < 0.0 || color2 == null ) {
+			return color1.copy();
+		}
+		if( t > 1.0 || color1 == null ) {
+			return color2.copy();
+		}
+		double pFactorInv = 1 - t;
+		return new Color((int) (pFactorInv * color1.getRed() + t * color2.getRed()), (int) (pFactorInv * color1.getGreen() + t * color2.getGreen()), (int) (pFactorInv * color1.getBlue() + t * color2.getBlue()), (int) (pFactorInv * color1.getAlpha() + t * color2.getAlpha()));
 	}
 
 	public static float[] RGBtoHSL( int rgb, float[] hsl ) {
@@ -223,6 +335,17 @@ public class Color {
 		return HSLtoRGB(hsl, 255);
 	}
 
+	/**
+	 * Konvertiert eine Farbe mit Komponenten im HSL-Farbraum in den
+	 * RGB-Farbraum.
+	 *
+	 * Die Farbkomponenten werden als Float-Array übergeben. Im Index 0 steht
+	 * der h-Wert im Bereich 0 bis 360, Index 1 und 2 enthalten den s- und
+	 * l-Wert im Bereich von 0 bis 1.
+	 * @param hsl Die Farbkomponenten im HSL-Farbraum.
+	 * @param alpha Ein Transparenzwert im Bereich 0 bis 255.
+	 * @return Der RGBA-Wert der Farbe.
+	 */
 	public static int HSLtoRGB( float[] hsl, int alpha ) {
 		float h = hsl[0];
 		float s = hsl[1];
@@ -269,81 +392,141 @@ public class Color {
 		return (alpha & 255) << 24 | r << 16 | g << 8 | b;
 	}
 
-	/*public void setRed( int red ) {
-		rgba = (red << 16) | (0xFF00FFFF & rgba);
-	}*/
-
+	/**
+	 * Erzeugt eine Kopie dieser Farbe.
+	 * @return Ein neues Farbobjekt.
+	 */
 	public Color copy() {
 		return new Color(this);
 	}
 
-	/*public void setGreen( int green ) {
-		rgba = (green << 8) | (0xFFFF00FF & rgba);
-	}*/
-
+	/**
+	 * Gibt den RGBA-Wert dieser Farbe zurück.
+	 *
+	 * Eine Farbe wird als 32-Bit Integer gespeichert. Bits 24-31 enthalten
+	 * den Transparenzwert, 16-23 den Rotwert, 8-15 den Grünwert und 0-7 den
+	 * Blauwert der Farbe.
+	 * @return Der RGBA-Wert der Farbe.
+	 * @see #getRed()
+	 * @see #getGreen()
+	 * @see #getBlue()
+	 * @see #getAlpha()
+	 */
 	public int getRGBA() {
 		return rgba;
 	}
 
-	/*public void setBlue( int blue ) {
-		rgba = blue | (0xFFFFFF00 & rgba);
-	}*/
-
+	/**
+	 * Gibt den Rotwert dieser Farbe zurück.
+	 * @return Der Rotwert der Farbe zwischen 0 und 255.
+	 */
 	public int getRed() {
 		return (rgba >> 16) & 255;
 	}
 
-	/*public void setAlpha( int alpha ) {
-		rgba = (alpha << 24) | (0x00FFFFFF & rgba);
-	}*/
-
+	/**
+	 * Gibt den Grünwert dieser Farbe zurück.
+	 * @return Der Grünwert der Farbe zwischen 0 und 255.
+	 */
 	public int getGreen() {
 		return (rgba >> 8) & 255;
 	}
 
+	/**
+	 * Gibt den Blauwert dieser Farbe zurück.
+	 * @return Der Blauwert der Farbe zwischen 0 und 255.
+	 */
 	public int getBlue() {
 		return rgba & 255;
 	}
 
+	/**
+	 * Gibt den Transparenzwert dieser Farbe zurück.
+	 * @return Der Transparenzwert der Farbe zwischen 0 und 255.
+	 */
 	public int getAlpha() {
 		return (rgba >> 24) & 255;
 	}
 
-	public java.awt.Color getColor() {
+	/**
+	 * Erzeugt ein {@link java.awt.Color}-Objekt aus dieser Farbe.
+	 *
+	 * Das erzeugte Farbobjekt hat dieselben Rot-, Grün-, Blau-
+	 * und Transparenzwerte wie diese Farbe.
+	 * @return Ein Java-Farbobjekt.
+	 */
+	public java.awt.Color getJavaColor() {
 		return new java.awt.Color(rgba, true);
 	}
 
 	@Override
-	public boolean equals( Object po ) {
-		if( this == po ) return true;
-		if( po == null || getClass() != po.getClass() ) return false;
-		Color ppColor = (Color) po;
-		return rgba == ppColor.rgba;
+	/**
+	 * Prüft, ob ein anderes Objekt zu diesem gleich ist.
+	 *
+	 * Die Methode gibt genau dann {@code true} zurück, wenn das andere
+	 * Objekt nicht {@code null} ist, vom Typ {@code Color} ist und es
+	 * dieselben Rot-, Grün-, Blau- und Transparenzwerte hat.
+	 * @param obj Das zu vergleichende Objekt.
+	 * @return {@code true}, wenn die Objekte gleich sind, sonst {@code false}.
+	 */
+	public boolean equals( Object obj ) {
+		return obj instanceof Color && ((Color)obj).getRGBA() == this.rgba;
 	}
 
+	/**
+	 * Erzeugt einen Text-String, der diese Farbe beschreibt.
+	 * @return Eine Textversion der Farbe.
+	 */
 	@Override
 	public String toString() {
 		return getClass().getCanonicalName() + '[' + "r=" + getRed() + ',' + "g=" + getGreen() + ',' + "b=" + getBlue() + ',' + "a=" + getAlpha() + ']';
 	}
 
+	/**
+	 * Berechnet einen Hashcode für dieses Farbobjekt.
+	 * @return Ein Hashcode für diese Rabe.
+	 */
+	@Override
+	public int hashCode() {
+		return rgba;
+	}
+
+	/**
+	 *  Erzeugt eine um 30% hellere Version dieser Farbe.
+	 * @return Ein Farbobjekt mit einer helleren Farbe.
+	 */
 	public Color brighter() {
 		return brighter(30);
 	}
 
+	/**
+	 * Erzeugt eine um {@code percent} hellere Version dieser Farbe.
+	 * @param percent Eine Prozentzahl zwischen 0 und 100.
+	 * @return Ein Farbobjekt mit einer helleren Farbe.
+	 */
 	public Color brighter( int percent ) {
 		float[] hsl = RGBtoHSL(rgba, null);
 		hsl[2] = Math.min(Math.max(hsl[2] * (1.0f + percent / 100.0f), 0.0f), 1.0f);
-		return Color.parseRGB(HSLtoRGB(hsl, getAlpha()));
+		return Color.getRGBColor(HSLtoRGB(hsl, getAlpha()));
 	}
 
+	/**
+	 * Erzeugt eine um 30% dunklere Version dieser Farbe.
+	 * @return Ein Farbobjekt mit einer dunkleren Farbe.
+	 */
 	public Color darker() {
 		return darker(30);
 	}
 
+	/**
+	 * Erzeugt eine um {@code percent} dunklere Version dieser Farbe.
+	 * @param percent Eine Prozentzahl zwischen 0 und 100.
+	 * @return Ein Farbobjekt mit einer dunkleren Farbe.
+	 */
 	public Color darker( int percent ) {
 		float[] hsl = RGBtoHSL(rgba, null);
 		hsl[2] = Math.min(Math.max(hsl[2] * (1.0f - percent / 100.0f), 0.0f), 1.0f);
-		return Color.parseRGB(HSLtoRGB(hsl, getAlpha()));
+		return Color.getRGBColor(HSLtoRGB(hsl, getAlpha()));
 	}
 
 }

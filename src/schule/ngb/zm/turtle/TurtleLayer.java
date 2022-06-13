@@ -306,7 +306,7 @@ public class TurtleLayer extends Layer {
 			closePath();
 
 			if( fillColor != null && fillColor.getAlpha() > 0 ) {
-				drawing.setColor(fillColor.getColor());
+				drawing.setColor(fillColor.getJavaColor());
 				drawing.fill(path);
 			}
 		}
@@ -333,12 +333,12 @@ public class TurtleLayer extends Layer {
 			Shape shape = verzerrung.createTransformedShape(path);
 
 			if( strokeColor != null ) {
-				graphics.setColor(strokeColor.getColor());
+				graphics.setColor(strokeColor.getJavaColor());
 			} else {
-				graphics.setColor(STD_STROKECOLOR.getColor());
+				graphics.setColor(STD_STROKECOLOR.getJavaColor());
 			}
 			graphics.fill(shape);
-			graphics.setColor(Color.BLACK.getColor());
+			graphics.setColor(Color.BLACK.getJavaColor());
 			graphics.setStroke(createStroke());
 			graphics.draw(shape);
 		}
@@ -354,7 +354,7 @@ public class TurtleLayer extends Layer {
 			position.add(Vector.setLength(direction, dist));
 
 			if( penDown && strokeColor != null ) {
-				drawing.setColor(strokeColor.getColor());
+				drawing.setColor(strokeColor.getJavaColor());
 				drawing.setStroke(createStroke());
 				drawing.drawLine((int) positionStart.x, (int) positionStart.y, (int) position.x, (int) position.y);
 			}
@@ -407,7 +407,7 @@ public class TurtleLayer extends Layer {
 			position.y = y;
 
 			if( penDown && strokeColor != null ) {
-				drawing.setColor(strokeColor.getColor());
+				drawing.setColor(strokeColor.getJavaColor());
 				drawing.setStroke(createStroke());
 				drawing.drawLine((int) x, (int) y, (int) position.x, (int) position.y);
 			}

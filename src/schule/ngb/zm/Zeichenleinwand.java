@@ -28,7 +28,7 @@ public class Zeichenleinwand extends Canvas {
 		super.setSize(width, height);
 		this.setPreferredSize(this.getSize());
 		this.setMinimumSize(this.getSize());
-		this.setBackground(Constants.STD_BACKGROUND.getColor());
+		this.setBackground(Constants.STD_BACKGROUND.getJavaColor());
 
 		// Liste der Ebenen initialisieren und die Standardebenen einfügen
 		layers = new LinkedList<>();

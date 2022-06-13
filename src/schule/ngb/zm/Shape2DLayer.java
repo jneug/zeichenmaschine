@@ -49,7 +49,7 @@ public final class Shape2DLayer extends Layer {
 
 	public void setFillColor( Color pColor ) {
 		fillColor = pColor;
-		drawing.setColor(pColor.getColor());
+		drawing.setColor(pColor.getJavaColor());
 	}
 
 	public void noFill() {
@@ -78,7 +78,7 @@ public final class Shape2DLayer extends Layer {
 
 	public void setStrokeColor( Color pColor ) {
 		strokeColor = pColor;
-		drawing.setColor(pColor.getColor());
+		drawing.setColor(pColor.getJavaColor());
 	}
 
 	public void noStroke() {
@@ -140,10 +140,10 @@ public final class Shape2DLayer extends Layer {
 		shapes.add(s);
 
 		if( instantDraw ) {
-			drawing.setColor(fillColor.getColor());
+			drawing.setColor(fillColor.getJavaColor());
 			drawing.fill(s);
 
-			drawing.setColor(strokeColor.getColor());
+			drawing.setColor(strokeColor.getJavaColor());
 			drawing.draw(s);
 		}
 	}
@@ -152,10 +152,10 @@ public final class Shape2DLayer extends Layer {
 	public void draw( Graphics2D pGraphics ) {
 		if( !instantDraw ) {
 			for( Shape shape : shapes ) {
-				drawing.setColor(fillColor.getColor());
+				drawing.setColor(fillColor.getJavaColor());
 				drawing.fill(shape);
 
-				drawing.setColor(strokeColor.getColor());
+				drawing.setColor(strokeColor.getJavaColor());
 				drawing.draw(shape);
 			}
 		}

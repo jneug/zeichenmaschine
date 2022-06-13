@@ -48,7 +48,7 @@ public class ColorLayer extends Layer {
 
 	@Override
 	public void clear() {
-		drawing.setColor(background.getColor());
+		drawing.setColor(background.getJavaColor());
 		drawing.fillRect(0, 0, getWidth(), getHeight());
 	}
 

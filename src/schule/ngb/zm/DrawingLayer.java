@@ -47,7 +47,7 @@ public class DrawingLayer extends Layer {
 
 	public void setFillColor( Color color ) {
 		fillColor = color;
-		drawing.setColor(color.getColor());
+		drawing.setColor(color.getJavaColor());
 	}
 
 	public void noFill() {
@@ -76,7 +76,7 @@ public class DrawingLayer extends Layer {
 
 	public void setStrokeColor( Color color ) {
 		strokeColor = color;
-		drawing.setColor(color.getColor());
+		drawing.setColor(color.getJavaColor());
 	}
 
 	public void noStroke() {
@@ -172,7 +172,7 @@ public class DrawingLayer extends Layer {
 		java.awt.Color currentColor = drawing.getColor();
 		pushMatrix();
 		resetMatrix();
-		drawing.setColor(pColor.getColor());
+		drawing.setColor(pColor.getJavaColor());
 		drawing.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
 		drawing.setColor(currentColor);
 		popMatrix();
@@ -474,7 +474,7 @@ public class DrawingLayer extends Layer {
 
 	private void fillShape( Shape pShape ) {
 		if( fillColor != null && fillColor.getAlpha() > 0.0 ) {
-			drawing.setColor(fillColor.getColor());
+			drawing.setColor(fillColor.getJavaColor());
 			drawing.fill(pShape);
 		}
 	}
@@ -482,7 +482,7 @@ public class DrawingLayer extends Layer {
 	private void drawShape( Shape pShape ) {
 		if( strokeColor != null && strokeColor.getAlpha() > 0.0
 			&& strokeWeight > 0.0 ) {
-			drawing.setColor(strokeColor.getColor());
+			drawing.setColor(strokeColor.getJavaColor());
 			drawing.setStroke(createStroke());
 			drawing.draw(pShape);
 		}

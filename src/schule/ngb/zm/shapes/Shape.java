@@ -266,12 +266,12 @@ public abstract class Shape extends FilledShape {
 
 			Color currentColor = graphics.getColor();
 			if( fillColor != null && fillColor.getAlpha() > 0 ) {
-				graphics.setColor(fillColor.getColor());
+				graphics.setColor(fillColor.getJavaColor());
 				graphics.fill(shape);
 			}
 			if( strokeColor != null && strokeColor.getAlpha() > 0
 				&& strokeWeight > 0.0 ) {
-				graphics.setColor(strokeColor.getColor());
+				graphics.setColor(strokeColor.getJavaColor());
 				graphics.setStroke(createStroke());
 				graphics.draw(shape);
 			}

@@ -165,7 +165,7 @@ public class Arrow extends Line {
 
 		Color currentColor = graphics.getColor();
 		if( strokeColor != null && strokeColor.getAlpha() > 0.0 ) {
-			graphics.setColor(strokeColor.getColor());
+			graphics.setColor(strokeColor.getJavaColor());
 			graphics.setStroke(new BasicStroke((float) strokeWeight));
 			if( arrowhead == FILLED ) {
 				graphics.fill(head);
