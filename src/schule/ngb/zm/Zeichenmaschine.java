@@ -122,14 +122,33 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 
 	/**
-	 * Erstellt eine neue Zeichenmaschine.
+	 * Erstellt eine neue Zeichenmaschine mit Standardwerten für Titel und
+	 * Größe.
+	 * <p>
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
 	 */
 	public Zeichenmaschine() {
 		this(APP_NAME + " " + APP_VERSION);
 	}
 
 	/**
-	 * Erstellt eine neue Zeichenmaschine mit dem angegebene Titel.
+	 * Erstellt eine neue Zeichenmaschine mit Standardwerten für Titel und
+	 * Größe.
+	 * <p>
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
+	 *
+	 * @param run_once {@code true} beendet die Zeichenmaschine nach einem
+	 *                 Aufruf von {@code draw()}.
+	 */
+	public Zeichenmaschine( boolean run_once ) {
+		this(APP_NAME + " " + APP_VERSION, run_once);
+	}
+
+	/**
+	 * Erstellt eine neue Zeichenmaschine mit dem angegebene Titel und
+	 * Standardwerten für die Größe.
+	 * <p>
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
 	 *
 	 * @param title Der Titel, der oben im Fenster steht.
 	 */
@@ -138,14 +157,57 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Erstellt eine neue zeichenmaschine mit einer Leinwand der angebenen
+	 * Erstellt eine neue Zeichenmaschine mit dem angegebene Titel und
+	 * Standardwerten für die Größe.
+	 * <p>
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
+	 *
+	 * @param title Der Titel, der oben im Fenster steht.
+	 * @param run_once {@code true} beendet die Zeichenmaschine nach einem
+	 *                 Aufruf von {@code draw()}.
+	 */
+	public Zeichenmaschine( String title, boolean run_once ) {
+		this(STD_WIDTH, STD_HEIGHT, title, run_once);
+	}
+
+	/**
+	 * Erstellt eine neue zeichenmaschine mit einer Leinwand der angegebenen
 	 * Größe und dem angegebenen Titel.
+	 * <p>
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
 	 *
 	 * @param width  Breite der {@link Zeichenleinwand Zeichenleinwand}.
 	 * @param height Höhe der {@link Zeichenleinwand Zeichenleinwand}.
 	 * @param title  Der Titel, der oben im Fenster steht.
 	 */
 	public Zeichenmaschine( int width, int height, String title ) {
+		this(width, height, title, true);
+	}
+
+	/**
+	 * Erstellt eine neue zeichenmaschine mit einer Leinwand der angegebenen
+	 * Größe und dem angegebenen Titel.
+	 * <p>
+	 * Die Zeichenmaschine öffnet automatisch ein Fenster mit einer
+	 * {@link Zeichenleinwand}, die {@code width} Pixel breit und {@code height}
+	 * Pixel hoch ist. Die Leinwand hat immer eine Mindestgröße von 100x100
+	 * Pixeln und kann nicht größer als der aktuelle Bildschirm werden.
+	 * Das Fenster bekommt den angegebenen Titel.
+	 * <p>
+	 * Falls {@code run_once} gleich {@code false} ist, werden
+	 * {@link #update(double)} und {@link #draw()} entsprechend der
+	 * {@link #framesPerSecond} kontinuierlich aufgerufen.
+	 * Falls das Programm als Unterklasse der Zeichenmaschine verfasst wird,
+	 * dann kann auch, {@code update(double)} überschrieben werden, damit die
+	 * Maschine nicht automatisch beendet.
+	 *
+	 * @param width  Breite der {@link Zeichenleinwand Zeichenleinwand}.
+	 * @param height Höhe der {@link Zeichenleinwand Zeichenleinwand}.
+	 * @param title  Der Titel, der oben im Fenster steht.
+	 * @param run_once {@code true} beendet die Zeichenmaschine nach einem
+	 *                 Aufruf von {@code draw()}.
+	 */
+	public Zeichenmaschine( int width, int height, String title, boolean run_once ) {
 		// Setzen des "Look&Feel"
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -311,9 +373,16 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	/**
 	 * Gibt den aktuellen {@link Options.AppState Zustand} der Zeichenmaschine zurück.
 	 *
-	 * @see JFrame#setVisible(boolean)
+	 * @return Der Zustand der Zeichenmaschine.
 	 */
-	public void show() {
+	public Options.AppState getState() {
+		return state;
+	}
+
+	/**
+	 * Zeigt das Zeichenfenster an.
+	 */
+	public final void show() {
 		if( !frame.isVisible() ) {
 			frame.setVisible(true);
 		}
@@ -321,10 +390,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 	/**
 	 * Versteckt das Zeichenfenster.
-	 *
-	 * @see JFrame#setVisible(boolean)
 	 */
-	public void hide() {
+	public final void hide() {
 		if( frame.isVisible() ) {
 			frame.setVisible(false);
 		}
@@ -376,16 +443,24 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Stoppt den Zeichenthread. Nachdem der aktuelle Frame gezeichnet wurde
-	 * wird {@link #teardown()} aufgerufen. Das Programm wird nicht beendet und
-	 * das Zeichenfenster bleibt weiter angezeigt.
+	 * Stoppt die Zeichenmaschine.
+	 * <p>
+	 * Nachdem der aktuelle Frame gezeichnet wurde wechselt die Zeichenmaschine
+	 * in den Zustand {@link Options.AppState#STOPPED} und ruft {@link #teardown()}
+	 * auf. Nachdem {@code teardown()} ausgeführt wurde wechselt der Zustand zu
+	 * {@link Options.AppState#TERMINATED}. Das Zeichenfenster bleibt weiter
+	 * geöffnet.
 	 */
 	public final void stop() {
 		running = false;
 	}
 
 	/**
-	 * Beendet das Programm.
+	 * Beendet die Zeichenmaschine vollständig.
+	 * <p>
+	 * Das Programm wird {@link #quit() beendet} und alle geöffneten Fenster
+	 * geschlossen. Falls die Maschine noch läuft, wird sie zunächst nach dem
+	 * nächsten vollständigen Frame {@link #stop() gestoppt}.
 	 */
 	public final void exit() {
 		if( running ) {
@@ -405,8 +480,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Beendet das Programm. Falls <var>exit</var> gleich {@code true} ist,
-	 * wird die komplette Virtuelle Maschine beendet.
+	 * Beendet das Programm. Falls {@code exit} gleich {@code true} ist,
+	 * wird die komplette VM beendet.
 	 *
 	 * @param exit Ob die VM beendet werden soll.
 	 * @see System#exit(int)
@@ -422,10 +497,11 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Setzte die Größe der {@link Zeichenleinwand}.
+	 * Ändert die Größe der {@link Zeichenleinwand}.
 	 *
-	 * @param width
-	 * @param height
+	 * @param width Neue Breite der Zeichenleinwand.
+	 * @param height Neue Höhe der Zeichenleinwand.
+	 * @see Zeichenleinwand#setSize(int, int)
 	 */
 	public final void setSize( int width, int height ) {
 		if( fullscreen ) {
@@ -497,7 +573,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 *
 	 * @return Die Anzahl der Ebenen.
 	 */
-	public int getLayerCount() {
+	public final int getLayerCount() {
 		return canvas.getLayerCount();
 	}
 
@@ -605,7 +681,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Bilddatei auf der Festplatte. Zur Auswahl der Zieldatei wird dem Nutzer
 	 * ein {@link JFileChooser} angezeigt.
 	 */
-	public void saveImage() {
+	public final void saveImage() {
 		JFileChooser jfc = new JFileChooser();
 		jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 		jfc.setMultiSelectionEnabled(false);
@@ -624,11 +700,11 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Speichert den aktuellen Inhalt der {@link Zeichenleinwand} in einer
 	 * Bilddatei im angegebenen Dateipfad auf der Festplatte.
 	 */
-	public void saveImage( String filepath ) {
-		BufferedImage img = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+	public final void saveImage( String filepath ) {
+		BufferedImage img = ImageLoader.createImage(canvas.getWidth(), canvas.getHeight());
 
 		Graphics2D g = img.createGraphics();
-		g.setColor(STD_BACKGROUND.getColor());
+		g.setColor(STD_BACKGROUND.getJavaColor());
 		g.fillRect(0, 0, img.getWidth(), img.getHeight());
 		canvas.draw(g);
 		g.dispose();
@@ -648,11 +724,11 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 *
 	 * @return Die neue Bildebene.
 	 */
-	public ImageLayer snapshot() {
-		BufferedImage img = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
+	public final ImageLayer snapshot() {
+		BufferedImage img = ImageLoader.createImage(canvas.getWidth(), canvas.getHeight());
 
 		Graphics2D g = img.createGraphics();
-		g.setColor(STD_BACKGROUND.getColor());
+		g.setColor(STD_BACKGROUND.getJavaColor());
 		g.fillRect(0, 0, img.getWidth(), img.getHeight());
 		canvas.draw(g);
 		g.dispose();
@@ -678,8 +754,16 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	/**
 	 * Pausiert die Schleife der Zeichenmaschine für die angegebene Anzahl an
 	 * Millisekunden.
+	 * <p>
+	 * Falls {@code delay()} während eines Aufrufs von {@link #draw()}
+	 * aufgerufen wird, dann wird der aktuelle Zustand der Leinwand angezeigt.
+	 * <p>
+	 * Die Methode übernimmt keine Garantie, dass die Wartezeit exakt {@code ms}
+	 * Millisekunden beträgt. Sie kann etwas kürzer oder (für kurze Wartezeiten)
+	 * etwas länger sein. Für zeitkritische Simulationen sollte daher die genaue
+	 * Zeitdifferenz gemessen und berücksichtigt werden.
 	 *
-	 * @param ms Schlafenszeit in Millisekunden.
+	 * @param ms Wartezeit in Millisekunden.
 	 */
 	public final void delay( int ms ) {
 		if( ms <= 0 ) {
