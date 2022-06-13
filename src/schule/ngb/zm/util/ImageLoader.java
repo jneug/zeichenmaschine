@@ -1,9 +1,7 @@
 package schule.ngb.zm.util;
 
 import javax.imageio.ImageIO;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -148,7 +146,8 @@ public class ImageLoader {
 	}
 
 	public static void saveImage( Image image, File file, boolean overwriteIfExists ) throws IOException {
-		BufferedImage outimage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+		//BufferedImage outimage = new BufferedImage(image.getWidth(null), image.getHeight(null), BufferedImage.TYPE_INT_RGB);
+		BufferedImage outimage = createImage(image.getWidth(null), image.getHeight(null));
 
 		Graphics2D g = outimage.createGraphics();
 		g.setColor(Color.WHITE);
@@ -181,6 +180,18 @@ public class ImageLoader {
 		}
 
 		ImageIO.write(image, formatName, file);
+	}
+
+	public static BufferedImage createImage( int width, int height ) {
+		return createImage(width, height, BufferedImage.TYPE_INT_RGB);
+	}
+
+	public static BufferedImage createImage( int width, int height, int type ) {
+		return GraphicsEnvironment
+			.getLocalGraphicsEnvironment()
+			.getDefaultScreenDevice()
+			.getDefaultConfiguration()
+			.createCompatibleImage(width, height, type);
 	}
 
 }
