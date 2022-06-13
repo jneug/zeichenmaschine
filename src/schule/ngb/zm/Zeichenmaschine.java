@@ -44,121 +44,19 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	/**
 	 * Ebene mit der Hintergrundfarbe.
 	 */
-	protected ColorLayer background;
+	protected static ColorLayer background;
 
 	/**
 	 * Zeichenebene
 	 */
-	protected DrawingLayer drawing;
+	protected static DrawingLayer drawing;
 
 	/**
 	 * Formenebene
 	 */
-	protected ShapesLayer shapes;
+	protected static ShapesLayer shapes;
 
-	/**
-	 * Anzahl der Ticks (Frames), die das Programm bisher läuft.
-	 */
-	protected int tick = 0;
-
-	/**
-	 * Die Zeit in Millisekunden, die das Programm seit seinem Start läuft.
-	 */
-	protected long runtime = 0L;
-
-	/**
-	 * Der Zeitunterschied zum letzten Frame in Sekunden.
-	 */
-	protected double delta = 0.0;
-
-	/**
-	 * Die aktuelle {@code x}-Koordinate der Maus.
-	 */
-	protected double mouseX = 0.0;
-
-	/**
-	 * Die aktuelle {@code y}-Koordinate der Maus.
-	 */
-	protected double mouseY = 0.0;
-
-	/**
-	 * Die letzte {@code x}-Koordinate der Maus (wird einmal pro Frame
-	 * aktualisiert).
-	 */
-	protected double pmouseX = 0.0;
-
-	/**
-	 * Die letzte {@code y}-Koordinate der Maus (wird einmal pro Frame
-	 * aktualisiert).
-	 */
-	protected double pmouseY = 0.0;
-
-	/**
-	 * Gibt an, ob ein Mausknopf derzeit gedrückt ist.
-	 */
-	protected boolean mousePressed = false;
-
-	/**
-	 * Der aktuell gedrückte Mausknopf. Die Mausknöpfe werden durch die Konstanten
-	 * {@link #NOBUTTON}, {@link #BUTTON1}, {@link #BUTTON2} und {@link #BUTTON3}
-	 * angegeben. (Sie stimmen mit den Konstanten in {@link MouseEvent} überein.
-	 *
-	 * @see MouseEvent
-	 */
-	protected int mouseButton = NOBUTTON;
-
-	/**
-	 * Das zuletzt ausgelöste {@code MouseEvent}.
-	 */
-	protected MouseEvent mouseEvent;
-
-	/**
-	 * Gibt an, ob derzeit eine Taste gedrückt ist.
-	 */
-	protected boolean keyPressed = false;
-
-	/**
-	 * Das Zeichen der zuletzt gedrückten Taste.
-	 */
-	protected char key = ' ';
-
-	/**
-	 * Der Tastencode der zuletzt gedrückten Taste. Die Keycodes können in der
-	 * Klasse {@link KeyEvent} nachgesehen werden. (Zum Beispiel
-	 * {@link KeyEvent#VK_ENTER}.)
-	 */
-	protected int keyCode = 0;
-
-	/**
-	 * Das zuletzt ausgelöste {@link KeyEvent}.
-	 */
-	protected KeyEvent keyEvent;
-
-	/**
-	 * Die Höhe der Zeichenleinwand.
-	 */
-	protected int width;
-
-	/**
-	 * Die Breite der Zeichenleinwand.
-	 */
-	protected int height;
-
-	/**
-	 * Die Breite des Bildschirms, auf dem das Zeichenfenster geöffnet wurde.
-	 * <p>
-	 * Beachte, dass sich die Breite nicht anpasst, wenn das Zeichenfenster auf
-	 * einen anderen Bildschirm verschoben wird.
-	 */
-	protected int screenWidth;
-
-	/**
-	 * Die Höhe des Bildschirms, auf dem das Zeichenfenster geöffnet wurde.
-	 * <p>
-	 * Beachte, dass sich die Höhe nicht anpasst, wenn das Zeichenfenster auf
-	 * einen anderen Bildschirm verschoben wird.
-	 */
-	protected int screenHeight;
+	////////
 
 
 	/*
@@ -170,6 +68,15 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	// Die Graphics-Objekte für das aktuelle Fenster.
 	private GraphicsEnvironment environment;
 	private GraphicsDevice displayDevice;
+
+	/**
+	 */
+
+	/**
+	 */
+
+	/**
+	 */
 
 	// Aktueller Zustand der Zeichenmaschine.
 	private Options.AppState state = Options.AppState.INITIALIZING;
