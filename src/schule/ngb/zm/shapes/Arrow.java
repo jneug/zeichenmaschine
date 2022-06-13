@@ -1,6 +1,5 @@
 package schule.ngb.zm.shapes;
 
-import org.jetbrains.annotations.NotNull;
 import schule.ngb.zm.Options;
 import schule.ngb.zm.Vector;
 
@@ -30,7 +29,7 @@ public class Arrow extends Line {
 	 *
 	 * @param vector
 	 */
-	public Arrow( @NotNull Vector vector ) {
+	public Arrow( Vector vector ) {
 		this(0, 0, vector.x, vector.y);
 	}
 
@@ -41,7 +40,7 @@ public class Arrow extends Line {
 	 * @param vector1
 	 * @param vector2
 	 */
-	public Arrow( @NotNull Vector vector1, @NotNull Vector vector2 ) {
+	public Arrow( Vector vector1, Vector vector2 ) {
 		this(vector1.x, vector1.y, vector2.x, vector2.y);
 	}
 
@@ -53,7 +52,7 @@ public class Arrow extends Line {
 	 * @param y
 	 * @param vector
 	 */
-	public Arrow( double x, double y, @NotNull Vector vector ) {
+	public Arrow( double x, double y, Vector vector ) {
 		this(x, y, x + vector.x, y + vector.y);
 	}
 
@@ -62,7 +61,7 @@ public class Arrow extends Line {
 	 *
 	 * @param line
 	 */
-	public Arrow( @NotNull Line line ) {
+	public Arrow( Line line ) {
 		this(line.x, line.y, line.x2, line.y2);
 		this.copyFrom(line);
 	}

@@ -1,8 +1,5 @@
 package schule.ngb.zm.shapes;
 
-import org.jetbrains.annotations.NotNull;
-import schule.ngb.zm.Options;
-
 import java.awt.geom.Line2D;
 
 public class Line extends Shape {
@@ -11,13 +8,13 @@ public class Line extends Shape {
 
 	protected double y2;
 
-	public Line( double x1, double y1, double x2, double y2 ) {
+	public Line(double x1, double y1, double x2, double y2) {
 		super(x1, y1);
 		this.x2 = x2;
 		this.y2 = y2;
 	}
 
-	public Line( @NotNull Line line ) {
+	public Line(Line line) {
 		this(line.x, line.y, line.x2, line.y2);
 		copyFrom(line);
 	}
@@ -26,7 +23,7 @@ public class Line extends Shape {
 		return x2;
 	}
 
-	public void setX2( double x ) {
+	public void setX2(double x) {
 		this.x2 = x;
 	}
 
@@ -34,36 +31,36 @@ public class Line extends Shape {
 		return y2;
 	}
 
-	public void setY2( double y ) {
+	public void setY2(double y) {
 		this.y2 = y;
 	}
 
 	@Override
 	public double getWidth() {
-		return Math.abs(x2-x);
+		return Math.abs(x2 - x);
 	}
 
 	@Override
 	public double getHeight() {
-		return Math.abs(y2-y);
+		return Math.abs(y2 - y);
 	}
 
 	@Override
 	public Bounds getBounds() {
-		return new Bounds(Math.min(x,x2), Math.min(y,y2), getWidth(), getHeight());
+		return new Bounds(Math.min(x, x2), Math.min(y, y2), getWidth(), getHeight());
 	}
 
 	@Override
-	public void scale( double factor ) {
+	public void scale(double factor) {
 		super.scale(factor);
 		x2 *= factor;
 		y2 *= factor;
 	}
 
 	@Override
-	public void copyFrom( Shape shape ) {
+	public void copyFrom(Shape shape) {
 		super.copyFrom(shape);
-		if( shape instanceof Line ) {
+		if (shape instanceof Line) {
 			Line pLine = (Line) shape;
 			x2 = pLine.x2;
 			y2 = pLine.y2;
@@ -76,16 +73,16 @@ public class Line extends Shape {
 	}
 
 	@Override
-	public void move( double dx, double dy ) {
+	public void move(double dx, double dy) {
 		super.move(dx, dy);
 		x2 += dx;
 		y2 += dx;
 	}
 
 	@Override
-	public void moveTo( double x, double y ) {
-		double dx = x2-this.x;
-		double dy = y2-this.y;
+	public void moveTo(double x, double y) {
+		double dx = x2 - this.x;
+		double dy = y2 - this.y;
 		super.moveTo(x, y);
 		x2 += dx;
 		y2 += dy;
@@ -97,23 +94,25 @@ public class Line extends Shape {
 	}
 
 	@Override
-	public boolean equals( Object o ) {
-		if( this == o ) return true;
-		if( o == null || getClass() != o.getClass() ) return false;
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 		Line pLine = (Line) o;
 		return super.equals(o) &&
-			Double.compare(pLine.x2, x2) == 0 &&
-			Double.compare(pLine.y2, y2) == 0;
+				Double.compare(pLine.x2, x2) == 0 &&
+				Double.compare(pLine.y2, y2) == 0;
 	}
 
 	@Override
 	public String toString() {
 		return getClass().getCanonicalName() + "[" +
-			"x1=" + x +
-			",y1=" + y +
-			",x2=" + x2 +
-			",y2=" + y2 +
-			']';
+				"x1=" + x +
+				",y1=" + y +
+				",x2=" + x2 +
+				",y2=" + y2 +
+				']';
 	}
 
 }

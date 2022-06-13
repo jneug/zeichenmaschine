@@ -1,6 +1,5 @@
 package schule.ngb.zm.shapes;
 
-import org.jetbrains.annotations.NotNull;
 import schule.ngb.zm.Options;
 
 import java.awt.Color;

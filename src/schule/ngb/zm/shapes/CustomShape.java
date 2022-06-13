@@ -1,7 +1,5 @@
 package schule.ngb.zm.shapes;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.awt.geom.Path2D;
 
 public class CustomShape extends Shape {
@@ -15,7 +13,7 @@ public class CustomShape extends Shape {
 		path = new Path2D.Double();
 	}
 
-	public CustomShape( @NotNull CustomShape custom ) {
+	public CustomShape( CustomShape custom ) {
 		super(custom.x, custom.y);
 		path = custom.path;
 		calculateBounds();

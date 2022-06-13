@@ -14,6 +14,10 @@ public abstract class FilledShape extends StrokedShape {
 		fillColor = color;
 	}
 
+	public void setFillColor( Color color, int alpha ) {
+		fillColor = new Color(color, alpha);
+	}
+
 	public void setFillColor( int gray ) {
 		setFillColor(gray, gray, gray, 255);
 	}

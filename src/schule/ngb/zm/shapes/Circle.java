@@ -1,10 +1,11 @@
 package schule.ngb.zm.shapes;
 
+import schule.ngb.zm.Drawable;
 import schule.ngb.zm.Options;
 
 import java.awt.geom.Ellipse2D;
 
-public class Circle extends Shape {
+public class Circle extends Shape implements Drawable {
 
 	protected double radius;
 
