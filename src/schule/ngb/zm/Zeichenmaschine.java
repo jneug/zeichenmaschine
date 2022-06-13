@@ -134,7 +134,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * @param title Der Titel, der oben im Fenster steht.
 	 */
 	public Zeichenmaschine( String title ) {
-		this(STD_WIDTH, STD_HEIGHT, title);
+		this(STD_WIDTH, STD_HEIGHT, title, true);
 	}
 
 	/**
@@ -203,6 +203,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 		// FPS setzen
 		framesPerSecond = STD_FPS;
+		this.run_once = run_once;
 
 		// Settings der Unterklasse aufrufen, falls das Fenster vor dem Öffnen
 		// verändert werden soll.
@@ -216,12 +217,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing( WindowEvent e ) {
-				if( running ) {
-					running = false;
-					quitAfterTeardown = true;
-				} else {
-					quit();
-				}
+				exit();
 			}
 		});
 
@@ -391,7 +387,19 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	/**
 	 * Beendet das Programm.
 	 */
-	public void quit() {
+	public final void exit() {
+		if( running ) {
+			running = false;
+			this.quitAfterTeardown = true;
+		} else {
+			quit(true);
+		}
+	}
+
+	/**
+	 * Beendet das Programm vollständig.
+	 */
+	public final void quit() {
 		//quit(!IN_BLUEJ);
 		quit(true);
 	}
@@ -403,7 +411,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * @param exit Ob die VM beendet werden soll.
 	 * @see System#exit(int)
 	 */
-	public void quit( boolean exit ) {
+	public final void quit( boolean exit ) {
 		frame.setVisible(false);
 		canvas.dispose();
 		frame.dispose();
@@ -830,12 +838,13 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * @param delta
 	 */
 	public void update( double delta ) {
-		running = false;
+		//running = !run_once;
+		stop_after_update = run_once;
 	}
 
 	/**
 	 * {@code draw()} wird einmal pro Frame aufgerufen. Bei einer
-	 * {@link #getFramesPerSecond() Framerate} von {@code 60} also in etwa 60-Mal
+	 * {@link #getFramesPerSecond() Framerate} von 60 also in etwa 60-Mal
 	 * pro Sekunde. In der {@code draw}-Methode wird der Inhalt der Ebenen
 	 * manipuliert und deren Inhalte gezeichnet. Am Ende des Frames werden alle
 	 * Ebenen auf die {@link Zeichenleinwand} übertragen.
@@ -844,7 +853,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * da hier die Zeichnung des Programms erstellt wird.
 	 */
 	public void draw() {
-		// Intentionally left blank
+		running = !stop_after_update;
 	}
 
 	/**
@@ -1012,7 +1021,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 			tick = 0;
 			runtime = 0;
 
-			// call setup of subclass
+			// call setup of subclass and wait
 			setup();
 
 			state = Options.AppState.RUNNING;
@@ -1023,13 +1032,15 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 				saveMousePosition(mouseEvent);
 
-				handleUpdate(delta);
-				handleDraw();
+				if( state != Options.AppState.PAUSED ) {
+					handleUpdate(delta);
+					handleDraw();
 
-				if( canvas != null ) {
-					canvas.render();
-					//canvas.invalidate();
-					//frame.repaint();
+					if( canvas != null ) {
+						canvas.render();
+						// canvas.invalidate();
+						// frame.repaint();
+					}
 				}
 
 				// delta time in ns
@@ -1055,6 +1066,11 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 				_runtime = System.currentTimeMillis() - start;
 				tick = _tick;
 				runtime = _runtime;
+
+				if( pause_pending ) {
+					state = Options.AppState.PAUSED;
+					pause_pending = false;
+				}
 			}
 			state = Options.AppState.STOPPED;
 
