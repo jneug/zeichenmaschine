@@ -23,7 +23,7 @@ public class Mover extends Circle implements Updatable {
 	/**
 	 * Ob die momentane Geschwindigkeit der Objekte als Pfeil dargestellt werden soll.
 	 */
-	public static final boolean SHOW_VELOCITY = false;
+	public static final boolean SHOW_VELOCITY = true;
 
 
 	/**
@@ -163,8 +163,10 @@ public class Mover extends Circle implements Updatable {
 		velocity.add(acceleration);
 		acceleration.scale(0.0);
 
-		this.x += velocity.x;
-		this.y += velocity.y;
+		if( velocity.length() > 0.5 ) {
+			this.x += velocity.x;
+			this.y += velocity.y;
+		}
 	}
 
 	@Override

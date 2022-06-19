@@ -1,14 +1,12 @@
 import schule.ngb.zm.Color;
 import schule.ngb.zm.Zeichenmaschine;
 
-import java.awt.event.KeyEvent;
-
 /**
  * Eine Bildergallerie von Bildern eines Informatikkurses des 10. Jahrgangs.
  */
 public class Gallery extends Zeichenmaschine {
 
-	public static void main( String[] args ) {
+	public static void main(String[] args) {
 		new Gallery();
 	}
 
@@ -28,7 +26,7 @@ public class Gallery extends Zeichenmaschine {
 	 * Zeigt ein zufälliges Bild an.
 	 */
 	public void drawRandom() {
-		switch( random(0, 4) ) {
+		switch (random(0, 4)) {
 			case 0:
 				rainbow();
 				break;
@@ -45,10 +43,10 @@ public class Gallery extends Zeichenmaschine {
 	}
 
 	/**
-	 * Bei Betätigen der Leertaste ein Zufallsbild anzeigen
+	 * Bei Betätigen der Leertaste ein Zufallsbild anzeigen.
 	 */
 	public void keyPressed() {
-		if( keyCode == 32 ) {
+		if (keyCode == 32) {
 			drawRandom();
 		}
 	}
@@ -58,10 +56,10 @@ public class Gallery extends Zeichenmaschine {
 	 *
 	 * @param pWartezeit Die Wartezeit zum nächsten Bildwechsel in Millisekunden.
 	 */
-	public void slideshow( int pWartezeit ) {
+	public void slideshow(int pWartezeit) {
 		int i = 0;
-		while( true ) {
-			switch( i ) {
+		while (true) {
+			switch (i) {
 				case 0:
 					rainbow();
 					break;
@@ -91,7 +89,7 @@ public class Gallery extends Zeichenmaschine {
 		drawing.clear(60, 155, 217);
 
 		// Einige Werte berechnen, um Bild an Bildgröße anzupassen
-		double size = (width+height)*0.03333;
+		double size = (width + height) * 0.03333;
 		double r = width / 2.0;
 
 		// Kleiner werdende Kreise in den Farben des Bogens zeichnen
@@ -108,7 +106,7 @@ public class Gallery extends Zeichenmaschine {
 
 		// Sonne zeichnen
 		drawing.setFillColor(232, 200, 52);
-		drawing.circle(width*0.8333, size*2.6666, size*2);
+		drawing.circle(width * 0.8333, size * 2.6666, size * 2);
 
 		// Bild auf Leinwand übertragen
 		redraw();
@@ -125,22 +123,21 @@ public class Gallery extends Zeichenmaschine {
 		drawing.setStrokeColor(0);
 
 		// Farben der Streifen festlegen
-		Color[] colors = new Color[]{
-			RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE
+		Color[] colors = new Color[] {
+				RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE
 		};
 
 		// Breite der Streifen an Bildgröße anpassen
-		double size = height*0.06666;
-		double borderX = width/6.0, borderY = height/6.0;
-
+		double size = height * 0.06666;
+		double borderX = width / 6.0, borderY = height / 6.0;
 
 		// Flaggenstab zeichnen
 		drawing.setFillColor(BROWN);
-		drawing.rect(borderX, borderY, size, height - 2*borderY, NORTHWEST);
+		drawing.rect(borderX, borderY, size, height - 2 * borderY, NORTHWEST);
 		// Streifen zeichnen
-		for( int i = 0; i < colors.length; i++ ) {
+		for (int i = 0; i < colors.length; i++) {
 			drawing.setFillColor(colors[i]);
-			drawing.rect(borderX, borderY + i * size, width - 2*borderX, size, NORTHWEST);
+			drawing.rect(borderX, borderY + i * size, width - 2 * borderX, size, NORTHWEST);
 		}
 
 		// Bild auf Leinwand übertragen
@@ -159,17 +156,17 @@ public class Gallery extends Zeichenmaschine {
 		drawing.setFillColor(WHITE);
 
 		// Zufällig erzeugte Sterne
-		for( int i = 0; i < (width+height)/4; i++ ) {
+		for (int i = 0; i < (width + height) / 4; i++) {
 			drawing.circle(random(0.0, width), random(0.0, height), random(1, 3));
 		}
 
 		// Einige Werte berechnen, die später verwendet werden, um
 		// die Zeichnung an die Bildschirmgröße anzupassen.
-		double radius = limit(width*0.6666, height*0.6666) / 2.0;
+		double radius = limit(width * 0.6666, 0.0, height * 0.6666) / 2.0;
 		double w2 = width / 2.0, h2 = height / 2.0;
 		double r2 = radius / 2.0,
-			r3 = radius / 3.0, r4 = radius / 4.0,
-			r5 = radius / 5.0, r10 = radius / 10.0;
+				r3 = radius / 3.0, r4 = radius / 4.0,
+				r5 = radius / 5.0, r10 = radius / 10.0;
 
 		// Korpus zeichnen
 		drawing.setFillColor(128);
@@ -187,35 +184,32 @@ public class Gallery extends Zeichenmaschine {
 
 		// Strahlen des Lasers zeichnen
 		int beams = 8; // Anzahl Strahlen
-		for( int i = 0; i < beams; i++ ) {
+		for (int i = 0; i < beams; i++) {
 			drawing.setStrokeColor(GREEN);
 			drawing.setStrokeType(SOLID);
 			drawing.setStrokeWeight(1.6);
 			drawing.line(
-				w2 + r2 - r4 * cos(radians(360 / beams * i)),
-				h2 - r3 + r4 * sin(radians(360 / beams * i)),
-				w2 + r2 + 2 + r5,
-				h2 - r3 - 2 - r5
-			);
+					w2 + r2 - r4 * cos(radians(360 / beams * i)),
+					h2 - r3 + r4 * sin(radians(360 / beams * i)),
+					w2 + r2 + 2 + r5,
+					h2 - r3 - 2 - r5);
 
 			drawing.setStrokeType(DASHED);
 			drawing.setStrokeWeight(3.0);
 			drawing.line(
-				w2 + r2 - r4 * cos(radians(360 / beams * i)),
-				h2 - r3 + r4 * sin(radians(360 / beams * i)),
-				w2 + r2 + 2 + r5,
-				h2 - r3 - 2 - r5
-			);
+					w2 + r2 - r4 * cos(radians(360 / beams * i)),
+					h2 - r3 + r4 * sin(radians(360 / beams * i)),
+					w2 + r2 + 2 + r5,
+					h2 - r3 - 2 - r5);
 
 			drawing.setStrokeColor(WHITE);
 			drawing.setStrokeType(SOLID);
 			drawing.setStrokeWeight(1.0);
 			drawing.line(
-				w2 + r2 - r4 * cos(radians(360 / beams * i)),
-				h2 - r3 + r4 * sin(radians(360 / beams * i)),
-				w2 + r2 + 2 + r5,
-				h2 - r3 - 2 - r5
-			);
+					w2 + r2 - r4 * cos(radians(360 / beams * i)),
+					h2 - r3 + r4 * sin(radians(360 / beams * i)),
+					w2 + r2 + 2 + r5,
+					h2 - r3 - 2 - r5);
 		}
 
 		// Hauptstrahl

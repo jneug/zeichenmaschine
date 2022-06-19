@@ -75,8 +75,8 @@ public class Attractor extends Mover {
 		if( pMover != this && isActive() ) {
 			Vector force = new Vector(this.x, this.y);
 			force.sub(pMover.getX(), pMover.getY());
-			double v = G * mass / force.lenSq();
-			force.setLen(v).limit(1.0, 4 * G);
+			double v = G * mass / force.lengthSq();
+			force.setLength(v).limit(1.0, 4 * G);
 			pMover.applyForce(force);
 		}
 	}

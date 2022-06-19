@@ -60,4 +60,9 @@ public class TIXY extends Zeichenmaschine {
 		}
 	}
 
+	@Override
+	public void mousePressed() {
+		stop();
+	}
+
 }

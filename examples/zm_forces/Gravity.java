@@ -77,10 +77,11 @@ public class Gravity extends Zeichenmaschine {
 	 * Welt zurück.
 	 */
 	public void mouseClicked() {
+		background.setColor(randomNiceColor());
 		for( Mover m : movers ) {
 			m.moveTo(random(10, width - 10), 30);
 			m.setVelocity(mouseX-m.getX(), mouseY-m.getY());
-			m.getVelocity().setLen(4.0);
+			m.getVelocity().setLength(4.0);
 		}
 	}
 

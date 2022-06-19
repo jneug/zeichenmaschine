@@ -40,7 +40,7 @@ public class Dot implements Drawable {
 			color = DOT_WHITE;
 		}
 
-		value = Constants.limit(value, 1.0);
+		value = Constants.limit(value, 0.0, 1.0);
 		size = (int) (SIZE * value);
 	}
 
@@ -51,7 +51,7 @@ public class Dot implements Drawable {
 
 	@Override
 	public void draw( Graphics2D graphics ) {
-		graphics.setColor(color.getColor());
+		graphics.setColor(color.getJavaColor());
 		graphics.fillOval(GAP + x * (SIZE + GAP) + RADIUS - (size / 2), GAP + y * (SIZE + GAP) + RADIUS - (size / 2), size, size);
 	}
 
