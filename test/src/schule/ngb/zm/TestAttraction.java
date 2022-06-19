@@ -1,114 +1,112 @@
 package schule.ngb.zm;
 
-import schule.ngb.zm.formen.Form;
-import schule.ngb.zm.formen.Rechteck;
+import schule.ngb.zm.shapes.Rectangle;
 
-import java.awt.*;
 import java.awt.geom.Rectangle2D;
 
-public class TestAttraction extends Zeichenfenster {
+public class TestAttraction extends Zeichenmaschine {
 
     public static void main(String[] args) {
         new TestAttraction();
     }
 
     @Override
-    public void einstellungen() {
+    public void settings() {
         setSize(800, 600);
-        setTitel("My test Window");
+        setTitle("My test Window");
         //setFramesPerSecond(5);
 
-        s2dl = new Shape2DEbene();
-        hinzu(s2dl);
+        s2dl = new Shape2DLayer();
+        addLayer(s2dl);
     }
 
-    Shape2DEbene s2dl;
+    Shape2DLayer s2dl;
 
-    Vektor posA, posB, velB, posC, velC;
+    Vector posA, posB, velB, posC, velC;
 
     double massA = 500, massB = 1, massC = 4.3, G = 5.0;
 
-    Rechteck recht;
+    Rectangle recht;
 
     @Override
-    public void vorbereiten() {
+    public void setup() {
         //zeichnung.hide();
-        zeichnung.clear(200);
-        posA = new Vektor(0, 0);
-        posB = new Vektor(-100, -100);
-        velB = new Vektor(10, -10);
-        posC = new Vektor(200, 100);
-        velC = new Vektor(1, 14);
+        drawing.clear(200);
+        posA = new Vector(0, 0);
+        posB = new Vector(-100, -100);
+        velB = new Vector(10, -10);
+        posC = new Vector(200, 100);
+        velC = new Vector(1, 14);
 
-        zeichnung.translate(breite /2, hoehe /2);
-        zeichnung.shear(0.1, 0.5);
+        drawing.translate(width /2, height /2);
+        drawing.shear(0.1, 0.5);
 
-        recht = new Rechteck(50, 50, 150, 75);
-        recht.setFuellfarbe(200);
-        recht.setKonturFarbe(255, 0, 64);
-        recht.setKonturDicke(2.5);
-        recht.setKonturArt(Form.GESTRICHELT);
-        formen.anzeigen(recht);
+        recht = new Rectangle(50, 50, 150, 75);
+        recht.setFillColor(200);
+        recht.setStrokeColor(255, 0, 64);
+        recht.setStrokeWeight(2.5);
+        recht.setStrokeType(DASHED);
+        shapes.add(recht);
 
-        zeichnung.verstecken();
+        drawing.hide();
         //schule.ngb.zm.formen.verstecken();
 
-        s2dl.setColor(64,200,128);
+        s2dl.setFillColor(64,200,128);
         s2dl.add(new Rectangle2D.Double(100, 100, 120, 80));
     }
 
-    public void zeichnen() {
-        zeichnung.setStrokeColor(255);
-        zeichnung.setStrokeWeight(4.0);
-        zeichnung.setKonturArt(GESTRICHELT);
-        zeichnung.clear(33, 33, 33, 100);
+    public void draw() {
+        drawing.setStrokeColor(255);
+        drawing.setStrokeWeight(4.0);
+        drawing.setStrokeType(DASHED);
+        drawing.clear(33, 33, 33, 100);
 
-        zeichnung.setColor(Color.ORANGE);
-        zeichnung.pie(posA.x, posA.y, 80, 30, 60);
-        zeichnung.setColor(Color.YELLOW);
-        zeichnung.circle(posA.x, posA.y, 60);
+        drawing.setFillColor(Color.ORANGE);
+        drawing.pie(posA.x, posA.y, 80, 30, 60);
+        drawing.setFillColor(Color.YELLOW);
+        drawing.circle(posA.x, posA.y, 60);
 
-        Vektor acc = acceleration(posA, posB, massA, massB);
-        velB.addieren(acc);
-        posB.addieren(velB);
+        Vector acc = acceleration(posA, posB, massA, massB);
+        velB.add(acc);
+        posB.add(velB);
 
-        zeichnung.setColor(Color.BLUE);
-        zeichnung.circle(posB.x, posB.y, 20);
+        drawing.setFillColor(Color.BLUE);
+        drawing.circle(posB.x, posB.y, 20);
 
         acc = acceleration(posA, posC, massA, massC);
-        velC.addieren(acc);
-        posC.addieren(velC);
+        velC.add(acc);
+        posC.add(velC);
 
-        zeichnung.setColor(Color.GREEN);
-        zeichnung.circle(posC.x, posC.y, 20);
+        drawing.setFillColor(Color.GREEN);
+        drawing.circle(posC.x, posC.y, 20);
 
-        zeichnung.rotate(1);
+        drawing.rotate(1);
 
-        formen.leeren();
+        shapes.clear();
 				double x = recht.getX();
-        x = (x+100*delta)% breite;
+        x = (x+100*delta)% width;
 				recht.setX(x);
     }
 
-    Vektor acceleration(Vektor a, Vektor b, double ma, double mb ) {
-        Vektor acc = Vektor.subtrahieren(a, b);
-        double draw = (G*ma*mb)/acc.laengeQuad();
-        acc.setLaenge(draw*delta);
-        acc.beschraenken(3, 30);
+    Vector acceleration( Vector a, Vector b, double ma, double mb ) {
+        Vector acc = Vector.sub(a, b);
+        double draw = (G*ma*mb)/acc.lengthSq();
+        acc.setLength(draw*delta);
+        acc.limit(3, 30);
         return acc;
     }
 
     public void mouseDragged() {
-        zeichnung.translate(mausX - lmausX, mausY - lmausY);
+        drawing.translate(mouseX - pmouseX, mouseY - pmouseY);
     }
 
     boolean zoom = true;
     public void mouseClicked() {
         //canvas.translateToCanvas(mouseX-width/2.0, mouseY-height/2.0);
         if( zoom ) {
-            zeichnung.scale(2.0);
+            drawing.scale(2.0);
         } else {
-            zeichnung.scale(.5);
+            drawing.scale(.5);
         }
         zoom = !zoom;
     }
