@@ -90,8 +90,8 @@ public class TestAttraction extends Zeichenmaschine {
 
     Vector acceleration( Vector a, Vector b, double ma, double mb ) {
         Vector acc = Vector.sub(a, b);
-        double draw = (G*ma*mb)/acc.lenSq();
-        acc.setLen(draw*delta);
+        double draw = (G*ma*mb)/acc.lengthSq();
+        acc.setLength(draw*delta);
         acc.limit(3, 30);
         return acc;
     }

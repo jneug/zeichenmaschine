@@ -42,14 +42,14 @@ public class TestColor {
 	public void parseColors() {
 		Color c;
 
-		c = Color.parseRGB(0x00FF00FF);
+		c = Color.getRGBColor(0x00FF00FF);
 		assertEquals(0x00FF00FF, c.getRGBA());
 		assertEquals(255, c.getRed());
 		assertEquals(0, c.getGreen());
 		assertEquals(255, c.getBlue());
 		assertEquals(0, c.getAlpha());
 
-		c = Color.parseRGB(0x33FF3333);
+		c = Color.getRGBColor(0x33FF3333);
 		assertEquals(0x33FF3333, c.getRGBA());
 		assertEquals(255, c.getRed());
 		assertEquals(51, c.getGreen());

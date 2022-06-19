@@ -19,6 +19,14 @@ public class TestShapes extends Zeichenmaschine {
 	public void setup() {
 		setSize(400, 400);
 
+		//createShapes();
+
+		//add(new Triangle(200, 150, 150, 250, 250, 250));
+		add(new Rectangle(200, 200, 200, 100));
+		shapes.getShape(0).setAnchor(CENTER);
+	}
+
+	public void createShapes() {
 		add(new Rectangle(20, 10, 40, 20));
 		add(new Ellipse(40, 50, 40, 20));
 		add(new Circle(40, 80, 10));
@@ -55,13 +63,15 @@ public class TestShapes extends Zeichenmaschine {
 
 	@Override
 	public void update( double delta ) {
+		//shapes.getShape(Triangle.class).rotate(2);
+		shapes.getShape(0).rotate(200, 250,2);
 	}
 
 	@Override
 	public void mouseClicked() {
 		for( Shape s : shapes.getShapes() ) {
 			randomizeShape(s);
-			s.move(10, 10);
+			//s.move(10, 10);
 		}
 	}
 

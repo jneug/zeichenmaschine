@@ -96,11 +96,11 @@ public class TestVector {
 		assertEquals(-75, vec2.x, 0.0001);
 		assertEquals(-150, vec2.y, 0.0001);
 
-		assertEquals(100, vec1.set(100,0).len(), 0.0001);
-		assertEquals(10000, vec1.lenSq(), 0.0001);
-		assertEquals(Math.sqrt(50*50 + 60*60), vec1.set(50,60).len(), 0.0001);
-		assertEquals(1.0, vec1.set(100,0).normalize().len(), 0.0001);
-		assertEquals(1.0, Vector.random().normalize().len(), 0.0001);
+		assertEquals(100, vec1.set(100,0).length(), 0.0001);
+		assertEquals(10000, vec1.lengthSq(), 0.0001);
+		assertEquals(Math.sqrt(50*50 + 60*60), vec1.set(50,60).length(), 0.0001);
+		assertEquals(1.0, vec1.set(100,0).normalize().length(), 0.0001);
+		assertEquals(1.0, Vector.random().normalize().length(), 0.0001);
 	}
 
 
