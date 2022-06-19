@@ -16,6 +16,8 @@ public abstract class StrokedShape extends Constants implements Drawable {
 
 	protected Options.StrokeType strokeType = SOLID;
 
+	protected Stroke stroke = null;
+
 	public Color getStrokeColor() {
 		return strokeColor;
 	}
@@ -54,6 +56,7 @@ public abstract class StrokedShape extends Constants implements Drawable {
 
 	public void setStrokeWeight( double weight ) {
 		this.strokeWeight = weight;
+		this.stroke = null;
 	}
 
 	public Options.StrokeType getStrokeType() {
@@ -67,6 +70,7 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 */
 	public void setStrokeType( Options.StrokeType type ) {
 		this.strokeType = DASHED;
+		this.stroke = null;
 	}
 
 	@Override
@@ -77,26 +81,32 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 * @return
 	 */
 	protected Stroke createStroke() {
-		switch( strokeType ) {
-			case DOTTED:
-				return new BasicStroke(
-					(float) strokeWeight,
-					BasicStroke.CAP_ROUND,
-					BasicStroke.JOIN_ROUND,
-					10.0f, new float[]{1.0f, 5.0f}, 0.0f);
-			case DASHED:
-				return new BasicStroke(
-					(float) strokeWeight,
-					BasicStroke.CAP_ROUND,
-					BasicStroke.JOIN_ROUND,
-					10.0f, new float[]{5.0f}, 0.0f);
-			case SOLID:
-			default:
-				return new BasicStroke(
-					(float) strokeWeight,
-					BasicStroke.CAP_ROUND,
-					BasicStroke.JOIN_ROUND);
+		if( stroke == null ) {
+			switch( strokeType ) {
+				case DOTTED:
+					stroke = new BasicStroke(
+						(float) strokeWeight,
+						BasicStroke.CAP_ROUND,
+						BasicStroke.JOIN_ROUND,
+						10.0f, new float[]{1.0f, 5.0f}, 0.0f);
+					break;
+				case DASHED:
+					stroke = new BasicStroke(
+						(float) strokeWeight,
+						BasicStroke.CAP_ROUND,
+						BasicStroke.JOIN_ROUND,
+						10.0f, new float[]{5.0f}, 0.0f);
+					break;
+				case SOLID:
+				default:
+					stroke = new BasicStroke(
+						(float) strokeWeight,
+						BasicStroke.CAP_ROUND,
+						BasicStroke.JOIN_ROUND);
+					break;
+			}
 		}
+		return stroke;
 	}
 
 	public void resetStroke() {
