@@ -917,40 +917,39 @@ public class Constants {
 	}
 
 	// Typecasting
-	/*
-	public static final int i( char value ) {
+	public static final int getInt( char value ) {
 		return (int) value;
 	}
 
-	public static final int i( byte value ) {
+	public static final int getInt( byte value ) {
 		return (int) value;
 	}
 
-	public static final int i( short value ) {
+	public static final int getInt( short value ) {
 		return (int) value;
 	}
 
-	public static final int i( long value ) {
+	public static final int getInt( long value ) {
 		return (int) value;
 	}
 
-	public static final int i( double value ) {
+	public static final int getInt( double value ) {
 		return (int) value;
 	}
 
-	public static final int i( float value ) {
+	public static final int getInt( float value ) {
 		return (int) value;
 	}
 
-	public static final int i( int value ) {
+	public static final int getInt( int value ) {
 		return (int) value;
 	}
 
-	public static final int i( boolean value ) {
+	public static final int getInt( boolean value ) {
 		return value ? 0 : 1;
 	}
 
-	public static final int i( String value ) {
+	public static final int getInt( String value ) {
 		try {
 			return Integer.parseInt(value);
 		} catch( NumberFormatException ex ) {
@@ -958,39 +957,39 @@ public class Constants {
 		}
 	}
 
-	public static final double d( char value ) {
+	public static final double getDouble( char value ) {
 		return (double) value;
 	}
 
-	public static final double d( byte value ) {
+	public static final double getDouble( byte value ) {
 		return (double) value;
 	}
 
-	public static final double d( short value ) {
+	public static final double getDouble( short value ) {
 		return (double) value;
 	}
 
-	public static final double d( long value ) {
+	public static final double getDouble( long value ) {
 		return (double) value;
 	}
 
-	public static final double d( double value ) {
+	public static final double getDouble( double value ) {
 		return value;
 	}
 
-	public static final double d( float value ) {
+	public static final double getDouble( float value ) {
 		return (double) value;
 	}
 
-	public static final double d( int value ) {
+	public static final double getDouble( int value ) {
 		return (double) value;
 	}
 
-	public static final double d( boolean value ) {
+	public static final double getDouble( boolean value ) {
 		return value ? 0.0 : 1.0;
 	}
 
-	public static final double d( String value ) {
+	public static final double getDouble( String value ) {
 		try {
 			return Double.parseDouble(value);
 		} catch( NumberFormatException ex ) {
@@ -998,41 +997,40 @@ public class Constants {
 		}
 	}
 
-	public static final boolean b( char value ) {
+	public static final boolean getBool( char value ) {
 		return value != 0;
 	}
 
-	public static final boolean b( byte value ) {
+	public static final boolean getBool( byte value ) {
 		return value != 0;
 	}
 
-	public static final boolean b( short value ) {
+	public static final boolean getBool( short value ) {
 		return value != 0;
 	}
 
-	public static final boolean b( int value ) {
+	public static final boolean getBool( int value ) {
 		return value != 0;
 	}
 
-	public static final boolean b( long value ) {
+	public static final boolean getBool( long value ) {
 		return value != 0L;
 	}
 
-	public static final boolean b( double value ) {
+	public static final boolean getBool( double value ) {
 		return value != 0.0;
 	}
 
-	public static final boolean b( float value ) {
+	public static final boolean getBool( float value ) {
 		return value != 0.0f;
 	}
 
-	public static final boolean b( boolean value ) {
+	public static final boolean getBool( boolean value ) {
 		return value;
 	}
 
-	public static final boolean b( String value ) {
+	public static final boolean getBool( String value ) {
 		return Boolean.parseBoolean(value);
 	}
-	*/
 
 }
