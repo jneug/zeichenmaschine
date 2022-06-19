@@ -1,12 +1,13 @@
 package schule.ngb.zm.partikel;
 
-import schule.ngb.zm.Aktualisierbar;
-import schule.ngb.zm.Vektor;
-import schule.ngb.zm.Zeichenbar;
+import schule.ngb.zm.Updatable;
+import schule.ngb.zm.Color;
+import schule.ngb.zm.Vector;
+import schule.ngb.zm.Drawable;
 
 import java.awt.*;
 
-public class PartikelGenerator implements Aktualisierbar, Zeichenbar {
+public class PartikelGenerator implements Updatable, Drawable {
 
 	private int partikelProFrame;
 
@@ -18,9 +19,9 @@ public class PartikelGenerator implements Aktualisierbar, Zeichenbar {
 
 	private Partikel naechsterPartikel;
 
-	public Vektor position;
+	public Vector position;
 
-	public Vektor richtung = new Vektor();
+	public Vector richtung = new Vector();
 
 	public int winkel = 0;
 
@@ -33,7 +34,7 @@ public class PartikelGenerator implements Aktualisierbar, Zeichenbar {
 	private Vortex vortex = null;
 
 	public PartikelGenerator( double pX, double pY, int pPartikelLeben, int pPartikelProFrame ) {
-		position = new Vektor(pX, pY);
+		position = new Vector(pX, pY);
 		partikelProFrame = pPartikelProFrame;
 		partikelLeben = pPartikelLeben;
 		partikel = new Partikel[partikelProFrame*partikelLeben];
@@ -42,19 +43,19 @@ public class PartikelGenerator implements Aktualisierbar, Zeichenbar {
 	}
 
 	@Override
-	public boolean istAktiv() {
+	public boolean isActive() {
 		return aktiv;
 	}
 
 	@Override
-	public boolean istSichtbar() {
+	public boolean isVisible() {
 		return aktiv;
 	}
 
 	public void starten() {
 		// Partikel initialisieren
 		for( int i = 0; i < partikel.length; i++ ) {
-			partikel[i] = new Partikel(position.kopie());
+			partikel[i] = new Partikel(position.copy());
 			if( i > 0 ) {
 				partikel[i-1].naechster = partikel[i];
 			}
@@ -79,8 +80,8 @@ public class PartikelGenerator implements Aktualisierbar, Zeichenbar {
 			);
 			p.position.set(position);
 
-			p.geschwindigkeit.set(richtung.kopie().drehen(rotation));
-			p.geschwindigkeit.skalieren(zufall());
+			p.geschwindigkeit.set(richtung.copy().rotate(rotation));
+			p.geschwindigkeit.scale(zufall());
 
 			p.farbeStart = farbeStart;
 			p.farbeEnde = farbeEnde;
@@ -94,18 +95,18 @@ public class PartikelGenerator implements Aktualisierbar, Zeichenbar {
 	}
 
 	@Override
-	public void aktualisieren( double delta ) {
-		if( istAktiv() ) {
+	public void update( double delta ) {
+		if( isActive() ) {
 			partikelGenerieren();
 
 			_aktiv = false;
 			for( int i = 0; i < partikel.length; i++ ) {
 				if( partikel[i] != null ) {
-					if( partikel[i].istAktiv() ) {
+					if( partikel[i].isActive() ) {
 						if( vortex != null ) {
 							vortex.attract(partikel[i]);
 						}
-						partikel[i].aktualisieren(delta);
+						partikel[i].update(delta);
 						_aktiv = true;
 					} else {
 						partikel[i].naechster = naechsterPartikel;
@@ -125,17 +126,17 @@ public class PartikelGenerator implements Aktualisierbar, Zeichenbar {
 	}
 
 	@Override
-	public void zeichnen( Graphics2D graphics ) {
-		if( istSichtbar() ) {
-			Color current = graphics.getColor();
+	public void draw( Graphics2D graphics ) {
+		if( isActive() ) {
+			java.awt.Color current = graphics.getColor();
 			for( int i = 0; i < partikel.length; i++ ) {
 				if( partikel[i] != null ) {
-					partikel[i].zeichnen(graphics);
+					partikel[i].draw(graphics);
 				}
 			}
 
 			if( vortex != null ) {
-				graphics.setColor(Color.BLACK);
+				graphics.setColor(java.awt.Color.BLACK);
 				double vscale = (4*vortex.scale);
 				graphics.fillOval((int)(vortex.position.x-vscale*.5), (int)(vortex.position.y-vscale*.5), (int)vscale, (int)vscale);
 			}
@@ -147,17 +148,17 @@ public class PartikelGenerator implements Aktualisierbar, Zeichenbar {
 
 
 	class Vortex {
-		Vektor position;
+		Vector position;
 		double speed = 1.0, scale = 1.0;
 
-		public Vortex( Vektor pPosition ,double pSpeed, double pScale ) {
-			this.position = pPosition.kopie();
+		public Vortex( Vector pPosition ,double pSpeed, double pScale ) {
+			this.position = pPosition.copy();
 			this.scale = pScale;
 			this.speed = pSpeed;
 		}
 
 		public void attract( Partikel pPartikel ) {
-			Vektor diff = Vektor.subtrahieren(pPartikel.position, this.position);
+			Vector diff = Vector.sub(pPartikel.position, this.position);
 			double dx = -diff.y * this.speed;
 			double dy = diff.x * this.speed;
 			double f = 1.0 / (1.0 + (dx*dx+dy*dy)/scale);

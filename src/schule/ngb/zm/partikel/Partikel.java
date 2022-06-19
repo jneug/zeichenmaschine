@@ -1,21 +1,21 @@
 package schule.ngb.zm.partikel;
 
-import schule.ngb.zm.Aktualisierbar;
-import schule.ngb.zm.Farbe;
-import schule.ngb.zm.Vektor;
-import schule.ngb.zm.Zeichenbar;
+import schule.ngb.zm.Updatable;
+import schule.ngb.zm.Color;
+import schule.ngb.zm.Vector;
+import schule.ngb.zm.Drawable;
 
 import java.awt.*;
 
 
 
-public class Partikel implements Aktualisierbar, Zeichenbar {
+public class Partikel implements Updatable, Drawable {
 
 	int maxLeben = 0;
 
 	int leben = 0;
 
-	Vektor position, geschwindigkeit, beschleunigung;
+	Vector position, geschwindigkeit, beschleunigung;
 
 	Color farbe, farbeStart, farbeEnde;
 
@@ -23,52 +23,52 @@ public class Partikel implements Aktualisierbar, Zeichenbar {
 
 	double masse = 1.0;
 
-	public Partikel( Vektor pPosition ) {
-		position = pPosition.kopie();
-		geschwindigkeit = new Vektor();
-		beschleunigung = new Vektor();
+	public Partikel( Vector pPosition ) {
+		position = pPosition.copy();
+		geschwindigkeit = new Vector();
+		beschleunigung = new Vector();
 	}
 
-	public Partikel( Vektor pPosition, Vektor pGeschwindigkeit ) {
-		position = pPosition.kopie();
-		geschwindigkeit = pGeschwindigkeit.kopie();
-		beschleunigung = new Vektor();
+	public Partikel( Vector pPosition, Vector pGeschwindigkeit ) {
+		position = pPosition.copy();
+		geschwindigkeit = pGeschwindigkeit.copy();
+		beschleunigung = new Vector();
 	}
 
 	@Override
-	public boolean istAktiv() {
+	public boolean isActive() {
 		return leben > 0;
 	}
 
 	@Override
-	public boolean istSichtbar() {
-		return istAktiv();
+	public boolean isVisible() {
+		return isActive();
 	}
 
-	public void beschleunigen( Vektor pBeschleunigung ) {
-		beschleunigung.addieren(Vektor.dividieren(pBeschleunigung, masse));
+	public void beschleunigen( Vector pBeschleunigung ) {
+		beschleunigung.add(Vector.div(pBeschleunigung, masse));
 	}
 
 	@Override
-	public void aktualisieren( double delta ) {
-		if( istAktiv() ) {
-			geschwindigkeit.addieren(beschleunigung);
-			position.addieren(Vektor.skalieren(geschwindigkeit, delta));
-			beschleunigung.skalieren(0.0);
+	public void update( double delta ) {
+		if( isActive() ) {
+			geschwindigkeit.add(beschleunigung);
+			position.add(Vector.scale(geschwindigkeit, delta));
+			beschleunigung.scale(0.0);
 
 			leben -= 1;
 
 			if( farbeStart != null ) {
 				double t = 1.0 - (double) leben / (double) maxLeben;
-				farbe = Farbe.morphen(farbeStart, farbeEnde, t);
+				farbe = Color.interpolate(farbeStart, farbeEnde, t);
 			}
 		}
 	}
 
 	@Override
-	public void zeichnen( Graphics2D graphics ) {
-		if( istSichtbar() ) {
-			graphics.setColor(farbe);
+	public void draw( Graphics2D graphics ) {
+		if( isVisible() ) {
+			graphics.setColor(farbe.getJavaColor());
 			graphics.fillOval((int) position.x, (int) position.y, 4, 4);
 		}
 	}
