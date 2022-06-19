@@ -230,6 +230,11 @@ public class Constants {
 	 */
 	public static final double QUARTER_PI = Math.PI / 4.0;
 
+	/**
+	 * Konstante für das Doppelte der Kreiszahl Pi (entspricht 360 Grad).
+	 */
+	public static final double TWO_PI = Math.PI * 2.0;
+
 
 	/**
 	 * Globale Variablen, die von allen Klassen genutzt werden dürfen. Änderungen
