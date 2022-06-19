@@ -140,19 +140,6 @@ public class Vector extends Point2D.Double {
 	}
 
 	/**
-	 * Addiert die beiden Vektoren zu einem neuen Vektor.
-	 *
-	 * @param vector1 Erster Vektor.
-	 * @param vector2 Zweiter Vektor.
-	 * @return Summenvektor der beiden Vektoren.
-	 */
-	public static Vector add( Vector vector1, Vector vector2 ) {
-		Vector vec = vector1.copy();
-		vec.add(vector2);
-		return vec;
-	}
-
-	/**
 	 * Subtrahiert den zweiten vom ersten Vektor.
 	 *
 	 * @param vector1 Erster Vektor.
@@ -320,9 +307,9 @@ public class Vector extends Point2D.Double {
 	}
 
 	/**
-	 * Dieser Vektor selbst (method chaining)
-	 * @param vector
-	 * @return
+	 * Addiert den Vektor {@code vector} zu diesem.
+	 * @param vector Ein anderer Vektor.
+	 * @return Dieser Vektor selbst (method chaining)
 	 */
 	public Vector add( Vector vector ) {
 		x += vector.x;
@@ -330,10 +317,29 @@ public class Vector extends Point2D.Double {
 		return this;
 	}
 
+	/**
+	 * Addiert die angegebenen Werte zur x- und y-Komponente des Vektors.
+	 * @param x Summand x-Komponente.
+	 * @param y Summand y-Komponente.
+	 * @return Dieser Vektor selbst (method chaining)
+	 */
 	public Vector add( double x, double y ) {
 		this.x += x;
 		this.y += y;
 		return this;
+	}
+
+	/**
+	 * Addiert die beiden Vektoren zu einem neuen Vektor.
+	 *
+	 * @param vector1 Erster Vektor.
+	 * @param vector2 Zweiter Vektor.
+	 * @return Summenvektor der beiden Vektoren.
+	 */
+	public static Vector add( Vector vector1, Vector vector2 ) {
+		Vector vec = vector1.copy();
+		vec.add(vector2);
+		return vec;
 	}
 
 	public Vector sub( Vector vector ) {

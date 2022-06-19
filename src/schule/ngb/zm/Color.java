@@ -529,4 +529,42 @@ public class Color {
 		return Color.getRGBColor(HSLtoRGB(hsl, getAlpha()));
 	}
 
+	public Color greyscale() {
+		return new Color((int)(getRed()*.299 + getGreen()*.587 + getBlue()*0.114));
+	}
+
+	/**
+	 * Erzeugt eine zu dieser invertierte Farbe.
+	 * @return Ein Farbobjekt mit der invertierten Farbe.
+	 */
+	public Color inverted() {
+		//return new Color((0xFFFFFFFF - (0x00FFFFFF & rgba)) | (0xFF000000 & rgba));
+		return new Color(rgba ^ 0x00FFFFFF);
+	}
+
+	/**
+	 * Erzeugt die Komplementärfarbe zu dieser.
+	 * @return Ein Farbobjekt mit der Komplementärfarbe.
+	 */
+	public Color complement() {
+		float[] hsl = RGBtoHSL(rgba, null);
+		hsl[0] = 360 - hsl[0];
+		return new Color(HSLtoRGB(hsl, getAlpha()));
+	}
+
+	/**
+	 * Wählt entweder {@link #WHITE weiß} oder {@link #BLACK schwarz} aus, je
+	 * nachdem, welche der Farben besser als Textfarbe mit dieser Farbe als
+	 * Hintergrund funktioniert (besser lesbar ist).
+	 * @return Schwarz oder weiß.
+	 */
+	public Color textcolor() {
+		// Basiert auf https://stackoverflow.com/questions/946544/good-text-foreground-color-for-a-given-background-color
+		if( (getRed()*.299 + getGreen()*.587 + getBlue()*0.114) < 186 ) {
+			return WHITE;
+		} else {
+			return BLACK;
+		}
+	}
+
 }
