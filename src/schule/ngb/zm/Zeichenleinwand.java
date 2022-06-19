@@ -13,17 +13,25 @@ import java.util.LinkedList;
 /**
  * Eine Leinwand ist die Hauptkomponente einer Zeichenmaschine. Sie besteht aus
  * mehreren Ebenen, auf denen auf verschiedene Arten gezeichnet werden kann. Die
- * Ebenen lassen sich beliebig übereinander aNORTHen, ausblenden oder wieder
+ * Ebenen lassen sich beliebig übereinander legen, ausblenden oder wieder
  * löschen.
  * <p>
  * Jede Ebene besitzt eine Zeichenfläche, auf der ihre Zeichnung liegt. Diese
- * zeichenflächen werden pro Frame einmal von "DOWN" nach "UP" auf diese
+ * Zeichenflächen werden pro Frame einmal von "unten" nach "oben" auf diese
  * Leinwand gezeichnet.
  */
 public class Zeichenleinwand extends Canvas {
 
+	/**
+	 * Liste der hinzugefügten Ebenen.
+	 */
 	private LinkedList<Layer> layers;
 
+	/**
+	 * Erstellt eine neue Zeichenleinwand mit einer festen Größe.
+	 * @param width Breite der Zeichenleinwand.
+	 * @param height Höhe der Zeichenleinwand.
+	 */
 	public Zeichenleinwand( int width, int height ) {
 		super.setSize(width, height);
 		this.setPreferredSize(this.getSize());
@@ -41,7 +49,9 @@ public class Zeichenleinwand extends Canvas {
 
 	/**
 	 * Ändert die Größe der Zeichenleinwand auf die angegebene Größe in Pixeln.
-	 * Eine Größenänderung hat auch eine Größenänderung aller Ebenen zur Folge.
+	 * <p>
+	 * Bei einer Größenänderung wird auch die Größe aller bisher hinzugefügter
+	 * {@link Layer Ebenen} angepasst, sodass sie die gesamte Leinwand füllen.
 	 *
 	 * @param width  Neue Width der Leinwand in Pixeln.
 	 * @param height Neue Höhe der Leinwand in Pixeln.
@@ -158,10 +168,16 @@ public class Zeichenleinwand extends Canvas {
 		return result;
 	}
 
+	/**
+	 * Erstellt eine passende {@link BufferStrategy} für diese Ebene.
+	 */
 	public void allocateBuffer() {
 		this.createBufferStrategy(2);
 	}
 
+	/**
+	 * Löscht alle Ebenen der Zeichenebene und gibt deren Ressourcen frei.
+	 */
 	public void dispose() {
 		synchronized( layers ) {
 			for( Layer layer : layers ) {
@@ -175,6 +191,10 @@ public class Zeichenleinwand extends Canvas {
 		render();
 	}
 
+	/**
+	 * Zeichnet den Inhalt aller {@link Layer Ebenen} in den Grafik-Kontext.
+	 * @param graphics
+	 */
 	public void draw( Graphics graphics ) {
 		Graphics2D g2d = (Graphics2D) graphics.create();
 		synchronized( layers ) {
@@ -185,6 +205,9 @@ public class Zeichenleinwand extends Canvas {
 		g2d.dispose();
 	}
 
+	/**
+	 * Zeigt den aktuellen Inhalt der Zeichenleinwand an.
+	 */
 	public void render() {
 		if( getBufferStrategy() == null ) {
 			allocateBuffer();
