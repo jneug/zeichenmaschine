@@ -359,6 +359,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 				canvas.addKeyListener(fullscreenExitListener);
 
 				fullscreen = true;
+				fullscreenChanged();
 			} else if( !pEnable && fullscreen ) {
 				fullscreen = false;
 
@@ -366,8 +367,14 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 				displayDevice.setFullScreenWindow(null);
 				setSize(initialWidth, initialHeight);
 				// frame.setUndecorated(false);
+				fullscreenChanged();
 			}
 		}
+	}
+
+	public boolean isFullscreen() {
+		Window win = displayDevice.getFullScreenWindow();
+		return fullscreen && win != null;
 	}
 
 	/**
@@ -1082,6 +1089,15 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		key = event.getKeyChar();
 		keyCode = event.getKeyCode();
 	}
+
+	// Window changes
+	public void fullscreenChanged() {
+		// Intentionally left blank
+	}
+
+	////
+	// Zeichenthread
+	////
 
 	class Zeichenthread extends Thread {
 
