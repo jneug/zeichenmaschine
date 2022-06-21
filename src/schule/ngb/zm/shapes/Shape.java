@@ -52,8 +52,8 @@ public abstract class Shape extends FilledShape {
 	 * Die Breite einer Form ist immer die Breite ihrer Begrenzung, <b>bevor</b>
 	 * Drehungen und andere Transformationen auf sei angewandt wurden.
 	 * <p>
-	 * Die Begrenzungen der tatsächlich gezeichneten Form kann mit {@link #getBounds()}
-	 * abgerufen werden.
+	 * Die Begrenzungen der tatsächlich gezeichneten Form kann mit
+	 * {@link #getBounds()} abgerufen werden.
 	 *
 	 * @return
 	 */
@@ -65,8 +65,8 @@ public abstract class Shape extends FilledShape {
 	 * Die Höhe einer Form ist immer die Höhe ihrer Begrenzung, <b>bevor</b>
 	 * Drehungen und andere Transformationen auf sei angewandt wurden.
 	 * <p>
-	 * Die Begrenzungen der tatsächlich gezeichneten Form kann mit {@link #getBounds()}
-	 * abgerufen werden.
+	 * Die Begrenzungen der tatsächlich gezeichneten Form kann mit
+	 * {@link #getBounds()} abgerufen werden.
 	 *
 	 * @return
 	 */
@@ -104,9 +104,10 @@ public abstract class Shape extends FilledShape {
 	 * Setzt den Ankerpunkt der Form basierend auf der angegebenen
 	 * {@link Options.Direction Richtung}.
 	 * <p>
-	 * Für das Setzen des Ankers muss das {@link #getBounds() begrenzende
-	 * Rechteck} berechnet werden. Unterklassen sollten die Methode
-	 * überschreiben, wenn der Anker auch direkt gesetzt werden kann.
+	 * Für das Setzen des Ankers muss das
+	 * {@link #getBounds() begrenzende Rechteck} berechnet werden. Unterklassen
+	 * sollten die Methode überschreiben, wenn der Anker auch direkt gesetzt
+	 * werden kann.
 	 *
 	 * @param anchor
 	 */
@@ -117,38 +118,44 @@ public abstract class Shape extends FilledShape {
 	}
 
 	/**
-	 * Bestimmt den Ankerpunkt der Form relativ zur oberen linken Ecke und
-	 * abhängig vom gesetzten {@link #setAnchor(Options.Direction) Anker}.
+	 * Bestimmt den Ankerpunkt der Form relativ zum gesetzten
+	 * {@link #setAnchor(Options.Direction) Ankerpunkt}.
+	 *
+	 * @param anchor Die Richtung des Ankerpunktes.
+	 * @return Der relative Ankerpunkt.
 	 */
 	public Point2D.Double getAnchorPoint( Options.Direction anchor ) {
-		Point2D.Double anchorpoint = new Point2D.Double(0, 0);
+		double wHalf = getWidth() * .5, hHalf = getHeight() * .5;
 
-		double bHalf = getWidth() * .5, hHalf = getHeight() * .5;
 		// anchor == CENTER
-		anchorpoint.x = bHalf;
-		anchorpoint.y = hHalf;
+		Point2D.Double anchorPoint = new Point2D.Double(
+			wHalf * (anchor.x - this.anchor.x),
+			hHalf * (anchor.y - this.anchor.y)
+		);
 
-		if( NORTH.in(anchor) ) {
-			anchorpoint.y -= hHalf;
-		}
-		if( SOUTH.in(anchor) ) {
-			anchorpoint.y += hHalf;
-		}
-		if( WEST.in(anchor) ) {
-			anchorpoint.x -= bHalf;
-		}
-		if( EAST.in(anchor) ) {
-			anchorpoint.x += bHalf;
-		}
+		return anchorPoint;
+	}
 
-		return anchorpoint;
+	/**
+	 * Ermittelt die absoluten Koordinaten eines angegebenen
+	 * {@link #setAnchor(Options.Direction) Ankers}.
+	 *
+	 * @param anchor Die Richtung des Ankerpunktes.
+	 * @return Der absolute Ankerpunkt.
+	 */
+	public Point2D.Double getAbsAnchorPoint( Options.Direction anchor ) {
+		Point2D.Double ap = getAnchorPoint(anchor);
+		ap.x += getX();
+		ap.y += getY();
+		return ap;
 	}
 
 	/**
 	 * Kopiert die Eigenschaften der übergebenen Form in diese.
 	 * <p>
-	 * Unterklassen sollten diese Methode überschreiben, um weitere Eigenschaften
-	 * zu kopieren (zum Beispiel den Radius eines Kreises). Mit dem Aufruf
+	 * Unterklassen sollten diese Methode überschreiben, um weitere
+	 * Eigenschaften zu kopieren (zum Beispiel den Radius eines Kreises). Mit
+	 * dem Aufruf
 	 * <code>super.copyFrom(shape)</code> sollten die Basiseigenschaften
 	 * kopiert werden.
 	 *
@@ -186,6 +193,78 @@ public abstract class Shape extends FilledShape {
 		this.y = y;
 	}
 
+	public void moveTo( Shape shape ) {
+		moveTo(shape.getX(), shape.getY());
+	}
+
+	public void moveTo( Shape shape, Options.Direction dir ) {
+		moveTo(shape, dir, 0.0);
+	}
+
+	/**
+	 * Bewegt den Ankerpunkt dieser Form zu einem Ankerpunkt einer anderen Form.
+	 * Mit {@code buff} kann ein zusätzlicher Abstand angegeben werden, um den
+	 * die Form entlang des Ankerpunktes {@code anchor} verschoben werden soll.
+	 * Ist der Anker zum Beispiel {@code NORTH}, dann wird die Form um
+	 * {@code buff} nach oben verschoben.
+	 *
+	 * @param shape
+	 * @param anchor
+	 * @param buff
+	 */
+	public void moveTo( Shape shape, Options.Direction dir, double buff ) {
+		Point2D ap = shape.getAbsAnchorPoint(dir);
+
+		this.x = ap.getX() + dir.x * buff;
+		this.y = ap.getY() + dir.y * buff;
+	}
+
+	public void alignTo( Shape shape, Options.Direction dir ) {
+		alignTo(shape, dir, 0.0);
+	}
+
+	/**
+	 * Richtet die Form entlang der angegebenen Richtung an einer anderen Form
+	 * aus. Für {@code DOWN} wird beispielsweise die y-Koordinate der unteren
+	 * Kante dieser Form an der unteren Kante der angegebenen Form {@code shape}
+	 * ausgerichtet. Die x-Koordinate wird nicht verändert. {@code buff} gibt
+	 * einen Abstand ab, um den diese From versetzt ausgerichtet werden soll.
+	 *
+	 * @param shape
+	 * @param dir
+	 * @param buff
+	 */
+	public void alignTo( Shape shape, Options.Direction dir, double buff ) {
+		Point2D anchorShape = shape.getAbsAnchorPoint(dir);
+		Point2D anchorThis = this.getAbsAnchorPoint(dir);
+
+		this.x += Math.abs(dir.x) * (anchorShape.getX() - anchorThis.getX()) + dir.x * buff;
+		this.y += Math.abs(dir.y) * (anchorShape.getY() - anchorThis.getY()) + dir.y * buff;
+	}
+
+	public void nextTo( Shape shape, Options.Direction dir ) {
+		nextTo(shape, dir, STD_BUFFER);
+	}
+
+	/**
+	 * Bewegt die Form neben eine andere in Richtung des angegebenen
+	 * Ankerpunktes. Im Gegensatz zu
+	 * {@link #moveTo(Shape, Options.Direction, double)} wird die Breite bzw.
+	 * Höhe der Formen berücksichtigt und die Formen so platziert, dass keine
+	 * Überlappungen vorhanden sind.
+	 *
+	 * @param shape
+	 * @param dir
+	 * @param buff
+	 */
+	public void nextTo( Shape shape, Options.Direction dir, double buff ) {
+		Point2D anchorShape = shape.getAbsAnchorPoint(dir);
+		Point2D anchorThis = this.getAbsAnchorPoint(dir.inverse());
+
+		this.x += (anchorShape.getX() - anchorThis.getX()) + dir.x * buff;
+		this.y += (anchorShape.getY() - anchorThis.getY()) + dir.y * buff;
+	}
+
 	public void scale( double factor ) {
 		scale = factor;
 	}
@@ -210,7 +289,7 @@ public abstract class Shape extends FilledShape {
 		this.rotation += angle % 360;
 
 		// Rotate x/y position
-		double x1 = this.x-x, y1 = this.y-y;
+		double x1 = this.x - x, y1 = this.y - y;
 
 		double rad = Math.toRadians(angle);
 		double x2 = x1 * Math.cos(rad) - y1 * Math.sin(rad);
@@ -225,13 +304,15 @@ public abstract class Shape extends FilledShape {
     }*/
 
 	public AffineTransform getTransform() {
-		Point2D.Double anchorPoint = getAnchorPoint(this.anchor);
+		// Point2D.Double anchorPoint = getAnchorPoint();
+		Point2D.Double basePoint = getAnchorPoint(Options.Direction.NORTHWEST);
 
 		AffineTransform transform = new AffineTransform();
 		transform.translate(x, y);
 		transform.rotate(Math.toRadians(rotation));
 		//transform.scale(scale, scale);
-		transform.translate(-anchorPoint.x, -anchorPoint.y);
+		//transform.translate(-anchorPoint.x, -anchorPoint.y);
+		transform.translate(basePoint.x, basePoint.y);
 		return transform;
 	}
 
@@ -246,8 +327,9 @@ public abstract class Shape extends FilledShape {
 	}
 
 	/**
-	 * Zeichnet die Form, aber wendet zuvor noch eine zusätzliche Transformations-
-	 * matrix an. Wird u.A. von der {@link ShapeGroup} verwendet.
+	 * Zeichnet die Form, aber wendet zuvor noch eine zusätzliche
+	 * Transformations- matrix an. Wird u.A. von der {@link ShapeGroup}
+	 * verwendet.
 	 *
 	 * @param graphics
 	 * @param transform

@@ -41,43 +41,58 @@ public final class Options {
 	}
 
 	public enum Direction {
-		CENTER(0),
-		NORTH(1 << 0),
-		EAST(1 << 1),
-		SOUTH(1 << 2),
-		WEST(1 << 3),
+		CENTER(0, 0),
+		NORTH(0, -1),
+		EAST(1, 0),
+		SOUTH(0, 1),
+		WEST(-1, 0),
 
-		NORTHEAST(NORTH.mask | EAST.mask),
-		SOUTHEAST(SOUTH.mask | EAST.mask),
-		NORTHWEST(NORTH.mask | WEST.mask),
-		SOUTHWEST(SOUTH.mask | WEST.mask),
+		NORTHEAST(1, -1),
+		SOUTHEAST(1, 1),
+		NORTHWEST(-1, -1),
+		SOUTHWEST(-1, 1),
 
-		MIDDLE(CENTER.mask),
-		UP(NORTH.mask),
-		DOWN(SOUTH.mask),
-		LEFT(WEST.mask),
-		RIGHT(EAST.mask);
+		MIDDLE(CENTER),
+		UP(NORTH),
+		DOWN(SOUTH),
+		LEFT(WEST),
+		RIGHT(EAST);
 
-		public final byte mask;
+		public final byte x, y;
 
-		Direction( int mask ) {
-			this.mask = (byte) mask;
+		Direction( int x, int y ) {
+			this.x = (byte)x;
+			this.y = (byte)y;
 		}
 
-		public boolean in( int mask ) {
-			return (mask & this.mask) == this.mask;
+		Direction( Direction original ) {
+			this.x = original.x;
+			this.y = original.y;
 		}
 
 		public boolean in( Direction dir ) {
-			return in(dir.mask);
-		}
-
-		public boolean contains( int mask ) {
-			return (mask & this.mask) == mask;
+			return (this.x == dir.x && this.y == 0) || (this.y == dir.y && this.x == 0) || (this.x == dir.x && this.y == dir.y);
 		}
 
 		public boolean contains( Direction dir ) {
-			return contains(dir.mask);
+			return dir.in(this);
+		}
+
+		public Vector asVector() {
+			return new Vector(x, y);
+		}
+
+		/**
+		 * Gibt die entgegengesetzte Richtung zu dieser zurück.
+		 * @return
+		 */
+		public Direction inverse() {
+			for( Direction dir: Direction.values() ) {
+				if( dir.x == -this.x && dir.y == -this.y ) {
+					return dir;
+				}
+			}
+			return CENTER;
 		}
 	}
 
