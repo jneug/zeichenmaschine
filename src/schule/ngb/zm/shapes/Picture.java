@@ -161,7 +161,7 @@ public class Picture extends Shape {
 		}
 
 		AffineTransform current = graphics.getTransform();
-		graphics.transform(getTransform());
+		graphics.transform(transform);
 		graphics.drawImage(image, 0, 0, (int) width, (int) height, null);
 		graphics.setTransform(current);
 	}
