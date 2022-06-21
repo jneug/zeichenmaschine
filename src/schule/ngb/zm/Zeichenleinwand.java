@@ -168,6 +168,20 @@ public class Zeichenleinwand extends Canvas {
 		return result;
 	}
 
+	public boolean removeLayer( Layer pLayer ) {
+		return layers.remove(pLayer);
+	}
+
+	public void removeLayers( Layer... pLayers ) {
+		for( Layer layer: pLayers ) {
+			layers.remove(layer);
+		}
+	}
+
+	public void clearLayers() {
+		layers.clear();
+	}
+
 	/**
 	 * Erstellt eine passende {@link BufferStrategy} für diese Ebene.
 	 */
