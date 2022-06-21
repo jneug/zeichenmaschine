@@ -71,6 +71,11 @@ public class Constants {
 	 */
 	public static final int STD_FONTSIZE = 14;
 
+	/**
+	 * Standardwert für den Abstand von Formen.
+	 */
+	public static final int STD_BUFFER = 10;
+
 	public static final Options.StrokeType SOLID = Options.StrokeType.SOLID;
 
 	public static final Options.StrokeType DASHED = Options.StrokeType.DASHED;
@@ -757,6 +762,10 @@ public class Constants {
 	 */
 	public static final double interpolate( double from, double to, double t ) {
 		return from + t * (to - from);
+	}
+
+	public static final double morph( double from, double to, double t ) {
+		return interpolate(from, to, limit(t, 0.0, 1.0));
 	}
 
 	public static final double map( double value, double fromMin, double fromMax, double toMin, double toMax ) {
