@@ -11,6 +11,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 
 /**
  * Hauptklasse der Zeichenmaschine.
@@ -346,6 +347,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * 				  ansonsten deaktiviert.
 	 */
 	public final void setFullscreen( boolean pEnable ) {
+		// See https://docs.oracle.com/javase/tutorial/extra/fullscreen/index.html
 		if( displayDevice.isFullScreenSupported() ) {
 			if( pEnable && !fullscreen ) {
 				// frame.setUndecorated(true);
