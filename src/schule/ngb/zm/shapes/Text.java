@@ -1,8 +1,12 @@
 package schule.ngb.zm.shapes;
 
+import schule.ngb.zm.Color;
 import schule.ngb.zm.Options;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 
@@ -11,6 +15,8 @@ public class Text extends Shape {
 	protected String text;
 
 	protected Font font;
+
+	protected Color fontColor = BLACK;
 
 	protected int width = 0, height = 0, ascent = 0;
 
@@ -22,6 +28,8 @@ public class Text extends Shape {
 		super(x, y);
 		this.font = font;
 		setText(text);
+		fillColor = null;
+		strokeColor = null;
 		anchor = Options.Direction.CENTER;
 	}
 
@@ -56,6 +64,46 @@ public class Text extends Shape {
 		calculateBounds();
 	}
 
+	public Color getFontColor() {
+		return fontColor;
+	}
+
+	public void setFontColor( Color color ) {
+		if( color != null ) {
+			fontColor = color;
+		} else {
+			fontColor = BLACK;
+		}
+	}
+
+	public void setFontColor( Color color, int alpha ) {
+		if( color != null ) {
+			fontColor = new Color(color, alpha);
+		} else {
+			fontColor = BLACK;
+		}
+	}
+
+	public void setFontColor( int gray ) {
+		setFontColor(gray, gray, gray, 255);
+	}
+
+	public void setFontColor( int gray, int alpha ) {
+		setFontColor(gray, gray, gray, alpha);
+	}
+
+	public void setFontColor( int red, int green, int blue ) {
+		setFontColor(red, green, blue, 255);
+	}
+
+	public void setFontColor( int red, int green, int blue, int alpha ) {
+		setFontColor(new Color(red, green, blue, alpha));
+	}
+
+	public void resetFontColor() {
+		setFontColor(BLACK);
+	}
+
 	private void calculateBounds() {
 		//GraphicsDevice gd;
 		//gd.getDefaultConfiguration().createCompatibleImage(1,1);
@@ -64,6 +112,7 @@ public class Text extends Shape {
 		width = metrics.stringWidth(text);
 		//height = metrics.getHeight();
 		height = metrics.getDescent() + metrics.getAscent();
+		ascent = metrics.getMaxAscent();
 	}
 
 	public Shape copy() {
@@ -100,18 +149,32 @@ public class Text extends Shape {
 
 		// Aktuelle Werte speichern
 		Font currentFont = graphics.getFont();
-		Color currentColor = graphics.getColor();
+		java.awt.Color currentColor = graphics.getColor();
 		AffineTransform af = graphics.getTransform();
-
-		// Neue Werte setzen
-		graphics.setFont(font);
-		graphics.setColor(strokeColor.getJavaColor());
 		graphics.transform(transform);
 
-		// Draw text
-		//FontMetrics fm = graphics.getFontMetrics();
-		//graphics.drawString(text, (float) (x - fm.stringWidth(text)/2.0), (float) (y + fm.getDescent()));
-		graphics.drawString(text, 0, 0);
+		// Hintergrund
+		if( fillColor != null && fillColor.getAlpha() > 0 ) {
+			graphics.setColor(fillColor.getJavaColor());
+			graphics.fillRect(0, 0, width, height);
+		}
+		if( strokeColor != null && strokeColor.getAlpha() > 0
+			&& strokeWeight > 0.0 ) {
+			graphics.setColor(strokeColor.getJavaColor());
+			graphics.setStroke(createStroke());
+			graphics.drawRect(0, 0, width, height);
+		}
+
+		// Neue Werte setzen
+		if( font != null && fontColor != null && fontColor.getAlpha() > 0 ) {
+			graphics.setFont(font);
+			graphics.setColor(fontColor.getJavaColor());
+
+			// Draw text
+			//FontMetrics fm = graphics.getFontMetrics();
+			//graphics.drawString(text, (float) (x - fm.stringWidth(text)/2.0), (float) (y + fm.getDescent()));
+			graphics.drawString(text, 0, ascent);
+		}
 
 		// Alte Werte wiederherstellen
 		graphics.setTransform(af);
