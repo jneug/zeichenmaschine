@@ -369,8 +369,8 @@ public class Constants {
 	// Farben
 
 	/**
-	 * Erstellt eine graue Farbe. Der Parameter {@code gray} gibt einen
-	 * Grauwert zwischen <code>0</code> und <code>255</code> an, wobei
+	 * Erstellt eine graue Farbe. Der Parameter {@code gray} gibt einen Grauwert
+	 * zwischen <code>0</code> und <code>255</code> an, wobei
 	 * <code>0</code> schwarz und <code>255</code> weiß ist.
 	 *
 	 * @param gray Grauwert zwischen <code>0</code> und <code>255</code>.
@@ -381,8 +381,8 @@ public class Constants {
 	}
 
 	/**
-	 * Erstellt eine graue Farbe. Der Parameter {@code gray} gibt einen
-	 * Grauwert zwischen <code>0</code> und <code>255</code> an, wobei
+	 * Erstellt eine graue Farbe. Der Parameter {@code gray} gibt einen Grauwert
+	 * zwischen <code>0</code> und <code>255</code> an, wobei
 	 * <code>0</code> schwarz und <code>255</code> weiß ist.
 	 * {@code alpha} gibt den den Transparentwert an (auch zwischen
 	 * <code>0</code> und <code>255</code>), wobei
@@ -400,8 +400,8 @@ public class Constants {
 
 	/**
 	 * Erstellt eine Farbe. Die Parameter {@code red}, {@code green} und
-	 * {@code blue} geben die Rot-, Grün- und Blauanteile der Farbe. Die
-	 * Werte liegen zwischen <code>0</code> und <code>255</code>.
+	 * {@code blue} geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
+	 * liegen zwischen <code>0</code> und <code>255</code>.
 	 *
 	 * @param red Rotwert zwischen <code>0</code> und <code>255</code>.
 	 * @param green Grünwert zwischen <code>0</code> und <code>255</code>.
@@ -414,10 +414,10 @@ public class Constants {
 
 	/**
 	 * Erstellt eine Farbe. Die Parameter {@code red}, {@code green} und
-	 * {@code blue} geben die Rot-, Grün- und Blauanteile der Farbe. Die
-	 * Werte liegen zwischen <code>0</code> und <code>255</code>.
-	 * {@code alpha} gibt den den Transparentwert an (auch zwischen
-	 * code>0</code> und <code>255</code>), wobei
+	 * {@code blue} geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
+	 * liegen zwischen <code>0</code> und <code>255</code>. {@code alpha} gibt
+	 * den den Transparentwert an (auch zwischen code>0</code> und
+	 * <code>255</code>), wobei
 	 * <code>0</code> komplett durchsichtig ist und <code>255</code> komplett
 	 * deckend.
 	 *
@@ -710,9 +710,9 @@ public class Constants {
 	}
 
 	/**
-	 * Beschränkt die Zahl {@code x} auf das Intervall <code>[min,
-	 * max]</code>. Liegt {@code x} außerhalb des Intervalls, wird eine der
-	 * Grenzen zurückgegeben.
+	 * Beschränkt die Zahl {@code x} auf das Intervall <code>[min, max]</code>.
+	 * Liegt {@code x} außerhalb des Intervalls, wird eine der Grenzen
+	 * zurückgegeben.
 	 *
 	 * @param x Eine Zahl.
 	 * @param max Das Maximum des Intervalls.
@@ -729,9 +729,9 @@ public class Constants {
 	}
 
 	/**
-	 * Beschränkt die Zahl {@code x} auf das Intervall <code>[min,
-	 * max]</code>. Liegt {@code x} außerhalb des Intervalls, wird eine der
-	 * Grenzen zurückgegeben.
+	 * Beschränkt die Zahl {@code x} auf das Intervall <code>[min, max]</code>.
+	 * Liegt {@code x} außerhalb des Intervalls, wird eine der Grenzen
+	 * zurückgegeben.
 	 *
 	 * @param x Eine Zahl.
 	 * @param max Das Maximum des Intervalls.
@@ -748,8 +748,8 @@ public class Constants {
 	}
 
 	/**
-	 * Interpoliert einen Wert zwischen {@code from} und {@code to}
-	 * linear, abhängig von {@code t}. Das Ergebnis entspricht der Formel
+	 * Interpoliert einen Wert zwischen {@code from} und {@code to} linear,
+	 * abhängig von {@code t}. Das Ergebnis entspricht der Formel
 	 *
 	 * <pre>
 	 * from - t * (from + to)
