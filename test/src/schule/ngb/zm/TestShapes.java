@@ -22,8 +22,10 @@ public class TestShapes extends Zeichenmaschine {
 		//createShapes();
 
 		//add(new Triangle(200, 150, 150, 250, 250, 250));
-		add(new Rectangle(200, 200, 200, 100));
-		shapes.getShape(0).setAnchor(CENTER);
+		//add(new Rectangle(200, 200, 200, 100));
+		//shapes.getShape(0).setAnchor(CENTER);
+
+		shapePositions();
 	}
 
 	public void createShapes() {
@@ -61,10 +63,29 @@ public class TestShapes extends Zeichenmaschine {
 		add(new Text(200, 40, "Shapes 😊"));
 	}
 
+	public void shapePositions() {
+		int pad = 24;
+		Rectangle bounds = new Rectangle(pad, pad, width-pad, height-pad);
+
+		Rectangle[] rects = new Rectangle[5];
+		for( int i = 0; i < rects.length; i++ ) {
+			rects[i] = new Rectangle(40 + i*15, 40 + i*15, 10, 10+i*4);
+		}
+		shapes.add(rects);
+
+		for( Rectangle r: rects ) {
+			r.alignTo(bounds, LEFT);
+		}
+
+		Text t = new TextBox(width/2, height/2, 200, 200, "Hello,\nWorld!");
+
+		shapes.add(t);
+	}
+
 	@Override
 	public void update( double delta ) {
 		//shapes.getShape(Triangle.class).rotate(2);
-		shapes.getShape(0).rotate(200, 250,2);
+		//shapes.getShape(0).rotate(200, 250,2);
 	}
 
 	@Override
