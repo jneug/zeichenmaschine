@@ -33,9 +33,9 @@ public class ShapeGroup extends Shape {
 
 	private List<Shape> shapes;
 
-	protected double width = -1.0;
+	private double width = -1.0;
 
-	protected double height = -1.0;
+	private double height = -1.0;
 
 	public ShapeGroup() {
 		super();
