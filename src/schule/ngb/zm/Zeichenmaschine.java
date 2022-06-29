@@ -126,7 +126,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Erstellt eine neue Zeichenmaschine mit Standardwerten für Titel und
 	 * Größe.
 	 * <p>
-	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr
+	 * Details.
 	 */
 	public Zeichenmaschine() {
 		this(APP_NAME + " " + APP_VERSION);
@@ -136,10 +137,11 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Erstellt eine neue Zeichenmaschine mit Standardwerten für Titel und
 	 * Größe.
 	 * <p>
-	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr
+	 * Details.
 	 *
 	 * @param run_once {@code true} beendet die Zeichenmaschine nach einem
-	 *                 Aufruf von {@code draw()}.
+	 * 	Aufruf von {@code draw()}.
 	 */
 	public Zeichenmaschine( boolean run_once ) {
 		this(APP_NAME + " " + APP_VERSION, run_once);
@@ -149,7 +151,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Erstellt eine neue Zeichenmaschine mit dem angegebene Titel und
 	 * Standardwerten für die Größe.
 	 * <p>
-	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr
+	 * Details.
 	 *
 	 * @param title Der Titel, der oben im Fenster steht.
 	 */
@@ -161,11 +164,12 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Erstellt eine neue Zeichenmaschine mit dem angegebene Titel und
 	 * Standardwerten für die Größe.
 	 * <p>
-	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr
+	 * Details.
 	 *
 	 * @param title Der Titel, der oben im Fenster steht.
 	 * @param run_once {@code true} beendet die Zeichenmaschine nach einem
-	 *                 Aufruf von {@code draw()}.
+	 * 	Aufruf von {@code draw()}.
 	 */
 	public Zeichenmaschine( String title, boolean run_once ) {
 		this(STD_WIDTH, STD_HEIGHT, title, run_once);
@@ -175,11 +179,12 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Erstellt eine neue zeichenmaschine mit einer Leinwand der angegebenen
 	 * Größe und dem angegebenen Titel.
 	 * <p>
-	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr
+	 * Details.
 	 *
-	 * @param width  Breite der {@link Zeichenleinwand Zeichenleinwand}.
+	 * @param width Breite der {@link Zeichenleinwand Zeichenleinwand}.
 	 * @param height Höhe der {@link Zeichenleinwand Zeichenleinwand}.
-	 * @param title  Der Titel, der oben im Fenster steht.
+	 * @param title Der Titel, der oben im Fenster steht.
 	 */
 	public Zeichenmaschine( int width, int height, String title ) {
 		this(width, height, title, true);
@@ -192,21 +197,21 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Die Zeichenmaschine öffnet automatisch ein Fenster mit einer
 	 * {@link Zeichenleinwand}, die {@code width} Pixel breit und {@code height}
 	 * Pixel hoch ist. Die Leinwand hat immer eine Mindestgröße von 100x100
-	 * Pixeln und kann nicht größer als der aktuelle Bildschirm werden.
-	 * Das Fenster bekommt den angegebenen Titel.
+	 * Pixeln und kann nicht größer als der aktuelle Bildschirm werden. Das
+	 * Fenster bekommt den angegebenen Titel.
 	 * <p>
 	 * Falls {@code run_once} gleich {@code false} ist, werden
 	 * {@link #update(double)} und {@link #draw()} entsprechend der
-	 * {@link #framesPerSecond} kontinuierlich aufgerufen.
-	 * Falls das Programm als Unterklasse der Zeichenmaschine verfasst wird,
-	 * dann kann auch, {@code update(double)} überschrieben werden, damit die
-	 * Maschine nicht automatisch beendet.
+	 * {@link #framesPerSecond} kontinuierlich aufgerufen. Falls das Programm
+	 * als Unterklasse der Zeichenmaschine verfasst wird, dann kann auch,
+	 * {@code update(double)} überschrieben werden, damit die Maschine nicht
+	 * automatisch beendet.
 	 *
-	 * @param width  Breite der {@link Zeichenleinwand Zeichenleinwand}.
+	 * @param width Breite der {@link Zeichenleinwand Zeichenleinwand}.
 	 * @param height Höhe der {@link Zeichenleinwand Zeichenleinwand}.
-	 * @param title  Der Titel, der oben im Fenster steht.
+	 * @param title Der Titel, der oben im Fenster steht.
 	 * @param run_once {@code true} beendet die Zeichenmaschine nach einem
-	 *                 Aufruf von {@code draw()}.
+	 * 	Aufruf von {@code draw()}.
 	 */
 	public Zeichenmaschine( int width, int height, String title, boolean run_once ) {
 		// Setzen des "Look&Feel"
@@ -344,7 +349,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * wiederhergestellt.
 	 *
 	 * @param pEnable Wenn {@code true}, wird der Vollbildmodus aktiviert,
-	 * 				  ansonsten deaktiviert.
+	 * 	ansonsten deaktiviert.
 	 */
 	public final void setFullscreen( boolean pEnable ) {
 		// See https://docs.oracle.com/javase/tutorial/extra/fullscreen/index.html
@@ -380,7 +385,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Gibt den aktuellen {@link Options.AppState Zustand} der Zeichenmaschine zurück.
+	 * Gibt den aktuellen {@link Options.AppState Zustand} der Zeichenmaschine
+	 * zurück.
 	 *
 	 * @return Der Zustand der Zeichenmaschine.
 	 */
@@ -425,8 +431,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Pausiert die Ausführung von {@link #update(double)} und {@link #draw()}
 	 * nach dem nächsten vollständigen Frame.
 	 * <p>
-	 * Die Zeichenmaschine wechselt in den Zustand {@link Options.AppState#PAUSED},
-	 * sobald der aktuelle Frame beendet wurde.
+	 * Die Zeichenmaschine wechselt in den Zustand
+	 * {@link Options.AppState#PAUSED}, sobald der aktuelle Frame beendet
+	 * wurde.
 	 */
 	public final void pause() {
 		pause_pending = true;
@@ -445,6 +452,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 	/**
 	 * Prüft, ob die Zeichenmaschine gerade pausiert ist.
+	 *
 	 * @return
 	 */
 	public final boolean isPaused() {
@@ -455,10 +463,10 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Stoppt die Zeichenmaschine.
 	 * <p>
 	 * Nachdem der aktuelle Frame gezeichnet wurde wechselt die Zeichenmaschine
-	 * in den Zustand {@link Options.AppState#STOPPED} und ruft {@link #teardown()}
-	 * auf. Nachdem {@code teardown()} ausgeführt wurde wechselt der Zustand zu
-	 * {@link Options.AppState#TERMINATED}. Das Zeichenfenster bleibt weiter
-	 * geöffnet.
+	 * in den Zustand {@link Options.AppState#STOPPED} und ruft
+	 * {@link #teardown()} auf. Nachdem {@code teardown()} ausgeführt wurde
+	 * wechselt der Zustand zu {@link Options.AppState#TERMINATED}. Das
+	 * Zeichenfenster bleibt weiter geöffnet.
 	 */
 	public final void stop() {
 		running = false;
@@ -489,8 +497,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Beendet das Programm. Falls {@code exit} gleich {@code true} ist,
-	 * wird die komplette VM beendet.
+	 * Beendet das Programm. Falls {@code exit} gleich {@code true} ist, wird
+	 * die komplette VM beendet.
 	 *
 	 * @param exit Ob die VM beendet werden soll.
 	 * @see System#exit(int)
@@ -506,6 +514,27 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
+	 * Interne Methode um die Größe der Zeichenfläche zu ändern.
+	 * <p>
+	 * Die Methode berücksichtigt nicht den Zustand des Fensters (z.B.
+	 * Vollbildmodus) und geht davon aus, dass die aufrufende Methode
+	 * sichergestellt hat, dass eine Änderung der Größe der Zeichenfläche
+	 * zulässig und sinnvoll ist.
+	 *
+	 * @param width Neue Breite der Zeichenleinwand.
+	 * @param height Neue Höhe der Zeichenleinwand.
+	 * @see #setSize(int, int)
+	 * @see #setFullscreen(boolean)
+	 */
+	private void changeSize( int width, int height ) {
+		if( canvas != null ) {
+			canvas.setSize(width, height);
+		}
+		this.width = Math.min(Math.max(width, 100), screenWidth);
+		this.height = Math.min(Math.max(height, 100), screenHeight);
+	}
+
+	/**
 	 * Ändert die Größe der {@link Zeichenleinwand}.
 	 *
 	 * @param width Neue Breite der Zeichenleinwand.
@@ -518,11 +547,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 			initialHeight = Math.min(Math.max(height, 100), screenHeight);
 			setFullscreen(false);
 		} else {
-			if( canvas != null ) {
-				canvas.setSize(width, height);
-			}
-			this.width = Math.min(Math.max(width, 100), screenWidth);
-			this.height = Math.min(Math.max(height, 100), screenHeight);
+			changeSize(width, height);
 
 			//frame.setSize(width, height);
 			frame.pack();
@@ -566,8 +591,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Fügt der {@link Zeichenleinwand} eine weitere {@link Layer Ebene}
-	 * hinzu.
+	 * Fügt der {@link Zeichenleinwand} eine weitere {@link Layer Ebene} hinzu.
 	 *
 	 * @param layer Die neue Ebene.
 	 */
@@ -614,9 +638,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Gibt die {@link ColorLayer Ebene} mit der Hintergrundfarbe zurück. Gibt es
-	 * keine solche Ebene, so wird eine erstellt und der {@link Zeichenleinwand}
-	 * hinzugefügt.
+	 * Gibt die {@link ColorLayer Ebene} mit der Hintergrundfarbe zurück. Gibt
+	 * es keine solche Ebene, so wird eine erstellt und der
+	 * {@link Zeichenleinwand} hinzugefügt.
 	 * <p>
 	 * In der Regel sollte dies dieselbe Ebene sein wie {@link #background}.
 	 *
@@ -632,8 +656,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Gibt die Standard-{@link DrawingLayer Zeichenebene} zurück. Gibt es
-	 * keine solche Ebene, so wird eine erstellt und der {@link Zeichenleinwand}
+	 * Gibt die Standard-{@link DrawingLayer Zeichenebene} zurück. Gibt es keine
+	 * solche Ebene, so wird eine erstellt und der {@link Zeichenleinwand}
 	 * hinzugefügt.
 	 * <p>
 	 * In der Regel sollte dies dieselbe Ebene sein wie {@link #drawing}.
@@ -650,8 +674,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Gibt die Standard-{@link ShapesLayer Formenebene} zurück. Gibt es
-	 * keine solche Ebene, so wird eine erstellt und der {@link Zeichenleinwand}
+	 * Gibt die Standard-{@link ShapesLayer Formenebene} zurück. Gibt es keine
+	 * solche Ebene, so wird eine erstellt und der {@link Zeichenleinwand}
 	 * hinzugefügt.
 	 * <p>
 	 * In der Regel sollte dies dieselbe Ebene sein wie {@link #shapes}.
@@ -727,9 +751,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 	/**
 	 * Erstellt eine Momentanaufnahme des aktuellen Inhalts der
-	 * {@link Zeichenleinwand} und erstellt daraus eine {@link ImageLayer Bildebene}.
-	 * Die Ebene wird automatisch der {@link Zeichenleinwand} vor dem
-	 * {@link #background} hinzugefügt.
+	 * {@link Zeichenleinwand} und erstellt daraus eine
+	 * {@link ImageLayer Bildebene}. Die Ebene wird automatisch der
+	 * {@link Zeichenleinwand} vor dem {@link #background} hinzugefügt.
 	 *
 	 * @return Die neue Bildebene.
 	 */
@@ -815,8 +839,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Zeigt den Mauszeiger wieder an, falls er zuvor {@link #hideCursor() versteckt}
-	 * wurde.
+	 * Zeigt den Mauszeiger wieder an, falls er zuvor
+	 * {@link #hideCursor() versteckt} wurde.
 	 * <p>
 	 * Nach dem Aufruf gilt {@code cursorVisible == true}.
 	 * <p>
@@ -855,6 +879,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * <pre>
 	 *     setCursor(Cursor.HAND_CURSOR);
 	 * </pre>
+	 *
 	 * @param pPredefinedCursor Eine der Cursor-Konstanten.
 	 * @see Cursor
 	 */
@@ -863,13 +888,14 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Setzt den Mauszeiger auf das übergebenen Cursor-Objekt.
-	 * Wenn {@code pCursor} {@code null} ist, wird der Mauszeiger unsichtbar
-	 * gemacht (dies ist dasselbe wie der Aufruf von {@link #hideCursor()}).
+	 * Setzt den Mauszeiger auf das übergebenen Cursor-Objekt. Wenn
+	 * {@code pCursor} {@code null} ist, wird der Mauszeiger unsichtbar gemacht
+	 * (dies ist dasselbe wie der Aufruf von {@link #hideCursor()}).
+	 *
 	 * @param pCursor Ein Cursor-Objekt oder {@code null}.
-	 * <p>
-	 * Nach Aufruf der Methode kann über {@link #cursorVisible} abgefragt werden,
-	 * ob der Cursor zurzeit sichtbar ist oder nicht.
+	 * 	<p>
+	 * 	Nach Aufruf der Methode kann über {@link #cursorVisible} abgefragt
+	 * 	werden, ob der Cursor zurzeit sichtbar ist oder nicht.
 	 */
 	public final void setCursor( Cursor pCursor ) {
 		if( pCursor == null && cursorVisible ) {
@@ -896,7 +922,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 */
 
 	/**
-	 * Die Settings werden einmal beim Erstellten der Zeichenmaschine aufgerufen.
+	 * Die Settings werden einmal beim Erstellten der Zeichenmaschine
+	 * aufgerufen.
 	 * <p>
 	 * {@code settings()} wird nur selten benötigt, wenn das Zeichenfenster
 	 */
@@ -921,9 +948,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Aktualisierungen abhängig von der echten Verzögerung zwischen zwei Frames
 	 * zu berechnen.
 	 * <p>
-	 * {@code delta} wird in Sekunden angegeben. Um eine Form zum Beispiel
-	 * um {@code 50} Pixel pro Sekunde in {@code x}-Richtung zu bewegen,
-	 * kann so vorgegangen werden:
+	 * {@code delta} wird in Sekunden angegeben. Um eine Form zum Beispiel um
+	 * {@code 50} Pixel pro Sekunde in {@code x}-Richtung zu bewegen, kann so
+	 * vorgegangen werden:
 	 * <pre>
 	 * shape.move(50*delta, 0.0);
 	 * </pre>
@@ -937,23 +964,24 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 	/**
 	 * {@code draw()} wird einmal pro Frame aufgerufen. Bei einer
-	 * {@link #getFramesPerSecond() Framerate} von 60 also in etwa 60-Mal
-	 * pro Sekunde. In der {@code draw}-Methode wird der Inhalt der Ebenen
+	 * {@link #getFramesPerSecond() Framerate} von 60 also in etwa 60-Mal pro
+	 * Sekunde. In der {@code draw}-Methode wird der Inhalt der Ebenen
 	 * manipuliert und deren Inhalte gezeichnet. Am Ende des Frames werden alle
 	 * Ebenen auf die {@link Zeichenleinwand} übertragen.
 	 * <p>
-	 * {@code draw()} stellt die wichtigste Methode für eine Zeichenmaschine dar,
-	 * da hier die Zeichnung des Programms erstellt wird.
+	 * {@code draw()} stellt die wichtigste Methode für eine Zeichenmaschine
+	 * dar, da hier die Zeichnung des Programms erstellt wird.
 	 */
 	public void draw() {
 		running = !stop_after_update;
 	}
 
 	/**
-	 * {@code teardown()} wird aufgerufen, sobald die Schleife des Hauptprogramms
-	 * beendet wurde. Dies passiert entweder nach dem ersten Durchlauf (wenn keine
-	 * eigene {@link #update(double)} erstellt wurde), nach dem Aufruf von
-	 * {@link #stop()} oder nachdem das {@link Zeichenfenster} geschlossen wurde.
+	 * {@code teardown()} wird aufgerufen, sobald die Schleife des
+	 * Hauptprogramms beendet wurde. Dies passiert entweder nach dem ersten
+	 * Durchlauf (wenn keine eigene {@link #update(double)} erstellt wurde),
+	 * nach dem Aufruf von {@link #stop()} oder nachdem das
+	 * {@link Zeichenfenster} geschlossen wurde.
 	 * <p>
 	 * In {@code teardown()} kann zum Beispiel der Abschlussbildschirm eines
 	 * Spiels oder der Abspann einer Animation angezeigt werden, oder mit
