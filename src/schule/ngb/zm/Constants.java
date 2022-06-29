@@ -1047,4 +1047,320 @@ public class Constants {
 		return Boolean.parseBoolean(value);
 	}
 
+	// Konstants for Key events (Copied from KeyEvent)
+
+	/**
+	 * Constant for the ENTER virtual key.
+	 */
+	public static final int KEY_ENTER = KeyEvent.VK_ENTER;
+
+	/**
+	 * Constant for the BACK_SPACE virtual key.
+	 */
+	public static final int KEY_BACK_SPACE = KeyEvent.VK_BACK_SPACE;
+
+	/**
+	 * Constant for the TAB virtual key.
+	 */
+	public static final int KEY_TAB = KeyEvent.VK_TAB;
+
+	/**
+	 * Constant for the CANCEL virtual key.
+	 */
+	public static final int KEY_CANCEL = KeyEvent.VK_CANCEL;
+
+	/**
+	 * Constant for the CLEAR virtual key.
+	 */
+	public static final int KEY_CLEAR = KeyEvent.VK_CLEAR;
+
+	/**
+	 * Constant for the SHIFT virtual key.
+	 */
+	public static final int KEY_SHIFT = KeyEvent.VK_SHIFT;
+
+	/**
+	 * Constant for the CONTROL virtual key.
+	 */
+	public static final int KEY_CONTROL = KeyEvent.VK_CONTROL;
+
+	/**
+	 * Constant for the ALT virtual key.
+	 */
+	public static final int KEY_ALT = KeyEvent.VK_ALT;
+
+	/**
+	 * Constant for the PAUSE virtual key.
+	 */
+	public static final int KEY_PAUSE = KeyEvent.VK_PAUSE;
+
+	/**
+	 * Constant for the CAPS_LOCK virtual key.
+	 */
+	public static final int KEY_CAPS_LOCK = KeyEvent.VK_CAPS_LOCK;
+
+	/**
+	 * Constant for the ESCAPE virtual key.
+	 */
+	public static final int KEY_ESCAPE = KeyEvent.VK_ESCAPE;
+
+	/**
+	 * Constant for the SPACE virtual key.
+	 */
+	public static final int KEY_SPACE = KeyEvent.VK_SPACE;
+
+	/**
+	 * Constant for the PAGE_UP virtual key.
+	 */
+	public static final int KEY_PAGE_UP = KeyEvent.VK_PAGE_UP;
+
+	/**
+	 * Constant for the PAGE_DOWN virtual key.
+	 */
+	public static final int KEY_PAGE_DOWN = KeyEvent.VK_PAGE_DOWN;
+
+	/**
+	 * Constant for the END virtual key.
+	 */
+	public static final int KEY_END = KeyEvent.VK_END;
+
+	/**
+	 * Constant for the HOME virtual key.
+	 */
+	public static final int KEY_HOME = KeyEvent.VK_HOME;
+
+	/**
+	 * Constant for the non-numpad <b>left</b> arrow key.
+	 */
+	public static final int KEY_LEFT = KeyEvent.VK_LEFT;
+
+	/**
+	 * Constant for the non-numpad <b>up</b> arrow key.
+	 */
+	public static final int KEY_UP = KeyEvent.VK_UP;
+
+	/**
+	 * Constant for the non-numpad <b>right</b> arrow key.
+	 */
+	public static final int KEY_RIGHT = KeyEvent.VK_RIGHT;
+
+	/**
+	 * Constant for the non-numpad <b>down</b> arrow key.
+	 */
+	public static final int KEY_DOWN = KeyEvent.VK_DOWN;
+
+	/**
+	 * Constant for the comma key, ","
+	 */
+	public static final int KEY_COMMA = KeyEvent.VK_COMMA;
+
+	/**
+	 * Constant for the minus key, "-"
+	 *
+	 * @since 1.2
+	 */
+	public static final int KEY_MINUS = KeyEvent.VK_MINUS;
+
+	/**
+	 * Constant for the period key, "."
+	 */
+	public static final int KEY_PERIOD = KeyEvent.VK_PERIOD;
+
+	/**
+	 * Constant for the forward slash key, "/"
+	 */
+	public static final int KEY_SLASH = KeyEvent.VK_SLASH;
+
+	/**
+	 * Constant for the "0" key.
+	 */
+	public static final int KEY_0 = KeyEvent.VK_0;
+
+	/**
+	 * Constant for the "1" key.
+	 */
+	public static final int KEY_1 = KeyEvent.VK_1;
+
+	/**
+	 * Constant for the "2" key.
+	 */
+	public static final int KEY_2 = KeyEvent.VK_2;
+
+	/**
+	 * Constant for the "3" key.
+	 */
+	public static final int KEY_3 = KeyEvent.VK_3;
+
+	/**
+	 * Constant for the "4" key.
+	 */
+	public static final int KEY_4 = KeyEvent.VK_4;
+
+	/**
+	 * Constant for the "5" key.
+	 */
+	public static final int KEY_5 = KeyEvent.VK_5;
+
+	/**
+	 * Constant for the "6" key.
+	 */
+	public static final int KEY_6 = KeyEvent.VK_6;
+
+	/**
+	 * Constant for the "7" key.
+	 */
+	public static final int KEY_7 = KeyEvent.VK_7;
+
+	/**
+	 * Constant for the "8" key.
+	 */
+	public static final int KEY_8 = KeyEvent.VK_8;
+
+	/**
+	 * Constant for the "9" key.
+	 */
+	public static final int KEY_9 = KeyEvent.VK_9;
+
+	/**
+	 * Constant for the semicolon key, ";"
+	 */
+	public static final int KEY_SEMICOLON = KeyEvent.VK_SEMICOLON;
+
+	/**
+	 * Constant for the equals key, "="
+	 */
+	public static final int KEY_EQUALS = KeyEvent.VK_EQUALS;
+
+	/** VK_A thru VK_Z are the same as ASCII 'A' thru 'Z' (0x41 - 0x5A) */
+
+	/**
+	 * Constant for the "A" key.
+	 */
+	public static final int KEY_A = KeyEvent.VK_A;
+
+	/**
+	 * Constant for the "B" key.
+	 */
+	public static final int KEY_B = KeyEvent.VK_B;
+
+	/**
+	 * Constant for the "C" key.
+	 */
+	public static final int KEY_C = KeyEvent.VK_C;
+
+	/**
+	 * Constant for the "D" key.
+	 */
+	public static final int KEY_D = KeyEvent.VK_D;
+
+	/**
+	 * Constant for the "E" key.
+	 */
+	public static final int KEY_E = KeyEvent.VK_E;
+
+	/**
+	 * Constant for the "F" key.
+	 */
+	public static final int KEY_F = KeyEvent.VK_F;
+
+	/**
+	 * Constant for the "G" key.
+	 */
+	public static final int KEY_G = KeyEvent.VK_G;
+
+	/**
+	 * Constant for the "H" key.
+	 */
+	public static final int KEY_H = KeyEvent.VK_H;
+
+	/**
+	 * Constant for the "I" key.
+	 */
+	public static final int KEY_I = KeyEvent.VK_I;
+
+	/**
+	 * Constant for the "J" key.
+	 */
+	public static final int KEY_J = KeyEvent.VK_J;
+
+	/**
+	 * Constant for the "K" key.
+	 */
+	public static final int KEY_K = KeyEvent.VK_K;
+
+	/**
+	 * Constant for the "L" key.
+	 */
+	public static final int KEY_L = KeyEvent.VK_L;
+
+	/**
+	 * Constant for the "M" key.
+	 */
+	public static final int KEY_M = KeyEvent.VK_M;
+
+	/**
+	 * Constant for the "N" key.
+	 */
+	public static final int KEY_N = KeyEvent.VK_N;
+
+	/**
+	 * Constant for the "O" key.
+	 */
+	public static final int KEY_O = KeyEvent.VK_O;
+
+	/**
+	 * Constant for the "P" key.
+	 */
+	public static final int KEY_P = KeyEvent.VK_P;
+
+	/**
+	 * Constant for the "Q" key.
+	 */
+	public static final int KEY_Q = KeyEvent.VK_Q;
+
+	/**
+	 * Constant for the "R" key.
+	 */
+	public static final int KEY_R = KeyEvent.VK_R;
+
+	/**
+	 * Constant for the "S" key.
+	 */
+	public static final int KEY_S = KeyEvent.VK_S;
+
+	/**
+	 * Constant for the "T" key.
+	 */
+	public static final int KEY_T = KeyEvent.VK_T;
+
+	/**
+	 * Constant for the "U" key.
+	 */
+	public static final int KEY_U = KeyEvent.VK_U;
+
+	/**
+	 * Constant for the "V" key.
+	 */
+	public static final int KEY_V = KeyEvent.VK_V;
+
+	/**
+	 * Constant for the "W" key.
+	 */
+	public static final int KEY_W = KeyEvent.VK_W;
+
+	/**
+	 * Constant for the "X" key.
+	 */
+	public static final int KEY_X = KeyEvent.VK_X;
+
+	/**
+	 * Constant for the "Y" key.
+	 */
+	public static final int KEY_Y = KeyEvent.VK_Y;
+
+	/**
+	 * Constant for the "Z" key.
+	 */
+	public static final int KEY_Z = KeyEvent.VK_Z;
+
 }
