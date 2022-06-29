@@ -361,7 +361,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 				// Update width / height
 				initialWidth = width;
 				initialHeight = height;
-				setSize(screenWidth, screenHeight);
+				changeSize(screenWidth, screenHeight);
 				// Register ESC as exit fullscreen
 				canvas.addKeyListener(fullscreenExitListener);
 
@@ -372,7 +372,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 				canvas.removeKeyListener(fullscreenExitListener);
 				displayDevice.setFullScreenWindow(null);
-				setSize(initialWidth, initialHeight);
+				changeSize(initialWidth, initialHeight);
+				frame.pack();
 				// frame.setUndecorated(false);
 				fullscreenChanged();
 			}
