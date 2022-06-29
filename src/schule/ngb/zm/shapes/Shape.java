@@ -117,6 +117,18 @@ public abstract class Shape extends FilledShape {
 		}
 	}
 
+	protected static Point2D.Double getAnchorPoint( double width, double height, Options.Direction anchor ) {
+		double wHalf = width * .5, hHalf = height * .5;
+
+		// anchor == CENTER
+		Point2D.Double anchorPoint = new Point2D.Double(
+			wHalf + wHalf * anchor.x,
+			hHalf + hHalf * anchor.y
+		);
+
+		return anchorPoint;
+	}
+
 	/**
 	 * Bestimmt den Ankerpunkt der Form relativ zum gesetzten
 	 * {@link #setAnchor(Options.Direction) Ankerpunkt}.
@@ -144,6 +156,7 @@ public abstract class Shape extends FilledShape {
 	 * @return Der absolute Ankerpunkt.
 	 */
 	public Point2D.Double getAbsAnchorPoint( Options.Direction anchor ) {
+		// TODO: Die absoluten Anker müssten eigentlich die Rotation berücksichtigen.
 		Point2D.Double ap = getAnchorPoint(anchor);
 		ap.x += getX();
 		ap.y += getY();
@@ -217,6 +230,24 @@ public abstract class Shape extends FilledShape {
 
 		this.x = ap.getX() + dir.x * buff;
 		this.y = ap.getY() + dir.y * buff;
+	}
+
+	/**
+	 * Richtet die Form entlang der angegebenen Richtung am Rand der
+	 * Zeichenfläche aus.
+	 *
+	 * @param dir Die Richtung der Ausrichtung.
+	 */
+	public void alignTo( Options.Direction dir ) {
+		alignTo(dir, 0.0);
+	}
+
+	public void alignTo( Options.Direction dir, double buff ) {
+		Point2D anchorShape = Shape.getAnchorPoint(width, height, dir);
+		Point2D anchorThis = this.getAbsAnchorPoint(dir);
+
+		this.x += Math.abs(dir.x) * (anchorShape.getX() - anchorThis.getX()) + dir.x * buff;
+		this.y += Math.abs(dir.y) * (anchorShape.getY() - anchorThis.getY()) + dir.y * buff;
 	}
 
 	public void alignTo( Shape shape, Options.Direction dir ) {
