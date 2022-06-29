@@ -1,8 +1,9 @@
 import schule.ngb.zm.Drawable;
+import schule.ngb.zm.Options;
 import schule.ngb.zm.Updatable;
 import schule.ngb.zm.shapes.Picture;
 
-public class Hehomon {
+public class Hehomon extends Picture implements Updatable {
 
 	private String name, typ, bild;
 
@@ -14,7 +15,11 @@ public class Hehomon {
 
 	private String angr1, angr2, vert1, vert2;
 
+	private double sinOffset;
+
 	public Hehomon( String pName, String pTyp, int pLp, int pAngr, int pVert, String pAngr1, String pAngr2, String pVert1, String pVert2, String pBild ) {
+		super(0, 0, "images/" + pBild);
+
 		name = pName;
 		lp = pLp;
 		lpMax = pLp;
@@ -25,6 +30,8 @@ public class Hehomon {
 		vert1 = pVert1;
 		vert2 = pVert2;
 		bild = pBild;
+
+		sinOffset = random(-PI, PI);
 	}
 
 	public String getName() {
@@ -125,6 +132,16 @@ public class Hehomon {
 
 	public void verteidigung2( Hehomon gegner ) {
 
+	}
+
+	public boolean isActive() {
+		return true;
+	}
+
+	@Override
+	public void update( double delta ) {
+		double deltaY = sin(runtime / 800.0 * PI + sinOffset);
+		this.move(0.0, deltaY);
 	}
 
 }

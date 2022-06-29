@@ -1,7 +1,12 @@
-import schule.ngb.zm.Zeichenmaschine;
+import schule.ngb.zm.Constants;
+import schule.ngb.zm.ImageLayer;
+import schule.ngb.zm.Spielemaschine;
 import schule.ngb.zm.shapes.Picture;
 
-public class HehomonGame extends Zeichenmaschine {
+import java.awt.Image;
+import java.awt.event.KeyEvent;
+
+public class HehomonGame extends Spielemaschine {
 
 	public static void main( String[] args ) {
 		new HehomonGame();
@@ -12,36 +17,119 @@ public class HehomonGame extends Zeichenmaschine {
 
 	private Hitpoints hpAttacker, hpDefender;
 
+	private Display display;
+
+	private Menu menu;
+
+	private boolean idle = true;
+
 	public HehomonGame() {
-		super(1024, 768, "ZM: Hehomon");
-		//setFullscreen(true);
+		super(960, 642, "ZM: Hehomon");
+		setFullscreen(true);
 	}
 
 	@Override
 	public void setup() {
+		ImageLayer bg = new ImageLayer("images/hintergrund.jpg");
+		canvas.addLayer(1, bg);
+
 		attacker = new Alligung();
+		attacker.moveTo(width * .25, 250);
+		attacker.flip(LEFT);
 		defender = new Salamanyte();
+		defender.moveTo(width * .75, 250);
 
-		hpAttacker = new Hitpoints(200, 400, attacker);
-		hpDefender = new Hitpoints(width-100, 400, defender);
+		hpAttacker = new Hitpoints(attacker);
+		hpDefender = new Hitpoints(defender);
 
-		shapes.add(new Picture(200, 100, "images/"+attacker.getBild()));
-		shapes.add(new Picture(width-200, 100, "images/"+defender.getBild()));
-		shapes.add(hpAttacker, hpDefender);
+		display = new Display(500, 500);
+		display.alignTo(SOUTHEAST, -50.0);
+
+		menu = new Menu(attacker);
+		menu.getWidth();
+		menu.alignTo(SOUTHWEST, -50.0);
+
+		add(attacker, defender);
+		add(hpAttacker, hpDefender);
+		add(display, menu);
 	}
 
-	@Override
-	public void update( double delta ) {
-	}
-
-	@Override
-	public void draw() {
-	}
-
-	@Override
 	public void keyPressed() {
-		attacker.nimmSchaden(random(0, 10));
-		defender.nimmSchaden(random(0, 10));
+		if( !idle ) {
+			return;
+		}
+
+		idle = false;
+		if( keyCode == KEY_A ) {
+			display.setText(attacker.getName() + " benutzt " + attacker.getNameAngr1() + "!");
+			delay(500);
+			attacker.angriff1(defender);
+		} else if( keyCode == KEY_S ) {
+			display.setText(attacker.getName() + " benutzt " + attacker.getNameAngr2() + "!");
+			delay(500);
+			attacker.angriff2(defender);
+		} else if( keyCode == KEY_D ) {
+			display.setText(attacker.getName() + " benutzt " + attacker.getNameVert1() + "!");
+			delay(500);
+			attacker.verteidigung1(defender);
+		} else if( keyCode == KEY_F ) {
+			display.setText(attacker.getName() + " benutzt " + attacker.getNameVert2() + "!");
+			delay(500);
+			attacker.verteidigung2(defender);
+		}
+
+		delay(500);
+		pruefeSiegbedingung();
+		verteidigerAmZug();
+		display.setText(attacker.getName() + " ist am Zug.");
+		idle = true;
+	}
+
+	private void verteidigerAmZug() {
+		int zufall = random(1, 4);
+		switch( zufall ) {
+			case 1:
+				display.setText(defender.getName() + " benutzt " + defender.getNameAngr1() + "!");
+				delay(500);
+				defender.angriff1(attacker);
+				break;
+			case 2:
+				display.setText(defender.getName() + " benutzt " + defender.getNameAngr2() + "!");
+				delay(500);
+				defender.angriff2(attacker);
+				break;
+			case 3:
+				display.setText(defender.getName() + " benutzt " + defender.getNameVert1() + "!");
+				delay(500);
+				defender.verteidigung1(attacker);
+				break;
+			case 4:
+				display.setText(defender.getName() + " benutzt " + defender.getNameVert2() + "!");
+				delay(500);
+				defender.verteidigung2(attacker);
+				break;
+		}
+
+		delay(500);
+		pruefeSiegbedingung();
+	}
+
+	private void pruefeSiegbedingung() {
+		if( defender.getLp() <= 0 || true ) {
+			//view.angreiferGewinnt();
+			display.setText(attacker.getName() + " gewinnt!");
+		} else if( attacker.getLp() <= 0 ) {
+			//view.verteidigerGewinnt();
+			display.setText(defender.getName() + " gewinnt!");
+		}
+	}
+
+	@Override
+	public void fullscreenChanged() {
+		if( defender != null ) {
+			defender.moveTo(width * .75, 250);
+			hpDefender.moveTo(width * .75, defender.getAbsAnchorPoint(DOWN).y + 50);
+		}
 	}
 
 }

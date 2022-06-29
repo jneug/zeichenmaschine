@@ -10,13 +10,15 @@ public class Hitpoints extends ShapeGroup implements Updatable {
 
 	private Rectangle rectMax, rectCurrent;
 
-	public Hitpoints( int pX, int pY, Hehomon pHehomon ) {
+	public Hitpoints(Hehomon pHehomon ) {
+		super();
+
 		hehomon = pHehomon;
 
-		rectMax = new Rectangle(pX,pY,206,11);
+		rectMax = new Rectangle(0, 0,206,11);
 		rectMax.setFillColor(0);
 		rectMax.noStroke();
-		rectCurrent = new Rectangle(pX+3,pY+3,200,5);
+		rectCurrent = new Rectangle(3,3,200,5);
 		rectCurrent.setFillColor(255);
 		rectCurrent.noStroke();
 
@@ -24,6 +26,7 @@ public class Hitpoints extends ShapeGroup implements Updatable {
 
 		add(rectMax);
 		add(rectCurrent);
+		nextTo(pHehomon, DOWN);
 	}
 
 	@Override
@@ -35,14 +38,8 @@ public class Hitpoints extends ShapeGroup implements Updatable {
 	public void update( double delta ) {
 		double lpAnteil = ((double)hehomon.getLp()/hehomon.getLpMax());
 
-		rectCurrent.setWidth( (int)((double)(rectMax.getWidth()-6) * lpAnteil) );
-		rectCurrent.setFillColor(
-			new Color(
-				255 - ((int)(255.0 * lpAnteil)),
-				(int)(255.0 * lpAnteil),
-				0
-			)
-		);
+		rectCurrent.setWidth( morph(0.0, rectMax.getWidth()-6.0, lpAnteil) );
+		rectCurrent.setFillColor( Color.interpolate(RED, GREEN, lpAnteil) );
 	}
 
 }
