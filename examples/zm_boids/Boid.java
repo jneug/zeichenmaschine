@@ -82,7 +82,9 @@ public class Boid extends Creature {
 					alignment.add(c.getVelocity());
 
 					double distSq = position.distanceSq(c.getPosition());
-					separation.add(Vector.sub(position, c.getPosition()).div(distSq));
+					if( distSq > 0 ) {
+						separation.add(Vector.sub(position, c.getPosition()).div(distSq));
+					}
 
 					boids += 1;
 				}

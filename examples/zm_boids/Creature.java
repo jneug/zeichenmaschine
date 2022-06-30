@@ -28,7 +28,7 @@ public abstract class Creature extends Constants {
 
 	public abstract void update( List<Creature> creatures );
 
-	protected void limitPosition() {
+	public void limitPosition() {
 		if( position.x < 0 ) {
 			if( Boids.BORDER_WRAP ) {
 				position.x = width;

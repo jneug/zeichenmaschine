@@ -45,6 +45,10 @@ public class Boids extends Zeichenmaschine {
 		synchronized( creatures ) {
 			for( Creature c : creatures ) {
 				c.update(creatures);
+				if( Double.isNaN(c.getPosition().x) ) {
+					pause();
+					break;
+				}
 			}
 		}
 	}
@@ -70,9 +74,37 @@ public class Boids extends Zeichenmaschine {
 
 	@Override
 	public void keyPressed() {
-		if( keyCode == KeyEvent.VK_G ) {
+		if( keyCode == KEY_G ) {
 			setSize(800, 800);
+		} else if( keyCode == KEY_C ) {
+			int cnt = 0;
+			for( Creature c : creatures ) {
+				Vector pos = c.getPosition();
+				if(  pos.x >= 0 && pos.x <= width && pos.y >= 0 && pos.y <= height ) {
+					cnt++;
+				} else {
+					System.out.printf("Missing: %s\n", c.getPosition().toString());
+				}
+			}
+			System.out.printf("Screen: %dx%d\nCreatures: %d of %d\n", width, height, cnt, creatures.size());
+		} else if( keyCode == KEY_F ) {
+			setFullscreen(true);
+		} else if( keyCode == KEY_Q ) {
+			for( Creature c : creatures ) {
+				c.getPosition().set(width/2, height/2);
+			}
 		}
 	}
 
+	/*@Override
+	public void fullscreenChanged() {
+		if( creatures != null ) {
+			synchronized( creatures ) {
+				for( Creature c : creatures ) {
+					c.limitPosition();
+				}
+			}
+		}
+	}
+	*/
 }
