@@ -12,6 +12,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Hauptklasse der Zeichenmaschine.
@@ -20,15 +22,43 @@ import java.util.LinkedList;
  * Die Klasse übernimmt die Initialisierung eines Programmfensters und der
  * nötigen Komponenten.
  */
-public class Zeichenmaschine extends Constants implements MouseInputListener, KeyListener {
+public class Zeichenmaschine extends Constants {
 
 	/**
 	 * Gibt an, ob die Zeichenmaschine aus BlueJ heraus gestartet wurde.
 	 */
-	public static boolean IN_BLUEJ;
+	public static final boolean IN_BLUEJ;
 
 	static {
 		IN_BLUEJ = System.getProperty("java.class.path").contains("bluej");
+	}
+
+	public static final boolean MACOS;
+
+	public static final boolean WINDOWS;
+
+	public static final boolean LINUX;
+
+	static {
+		final String name = System.getProperty("os.name");
+
+		if( name.contains("Mac") ) {
+			MACOS = true;
+			WINDOWS = false;
+			LINUX = false;
+		} else if( name.contains("Windows") ) {
+			MACOS = false;
+			WINDOWS = true;
+			LINUX = false;
+		} else if( name.equals("Linux") ) {  // true for the ibm vm
+			MACOS = false;
+			WINDOWS = false;
+			LINUX = true;
+		} else {
+			MACOS = false;
+			WINDOWS = false;
+			LINUX = false;
+		}
 	}
 
 	/*
@@ -111,6 +141,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 	// Hauptthread der Zeichenmaschine.
 	private Thread mainThread;
+
+	// Queue für abgefangene InputEvents
+	private BlockingQueue<InputEvent> eventQueue = new LinkedBlockingQueue<>();
 
 	// Gibt an, ob nach Ende des Hauptthreads das Programm beendet werden soll,
 	// oder das Zeichenfenster weiter geöffnet bleibt.
@@ -250,15 +283,21 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		// Das Icon des Fensters ändern
+
 		try {
 			ImageIcon icon = new ImageIcon(ImageIO.read(new File("res/icon_64.png")));
-			frame.setIconImage(icon.getImage());
 
-			// Dock Icon in macOS setzen
-			Taskbar taskbar = Taskbar.getTaskbar();
-			taskbar.setIconImage(icon.getImage());
+			if( MACOS ) {
+				// Dock Icon in macOS setzen
+				Taskbar taskbar = Taskbar.getTaskbar();
+				taskbar.setIconImage(icon.getImage());
+			} else {
+				// Kleines Icon des Frames setzen
+				frame.setIconImage(icon.getImage());
+			}
 		} catch( IOException e ) {
 		}
+
 
 		// Erstellen der Leinwand
 		canvas = new Zeichenleinwand(width, height);
@@ -279,9 +318,67 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		settings();
 
 		// Listener hinzufügen, um auf Maus- und Tastatureingaben zu hören.
-		canvas.addMouseListener(this);
-		canvas.addMouseMotionListener(this);
-		canvas.addKeyListener(this);
+		//canvas.addMouseListener(this);
+		//canvas.addMouseMotionListener(this);
+		//canvas.addKeyListener(this);
+		canvas.addMouseListener(new MouseInputListener() {
+			@Override
+			public void mouseClicked( MouseEvent e ) {
+				enqueueEvent(e);
+			}
+
+			@Override
+			public void mousePressed( MouseEvent e ) {
+				enqueueEvent(e);
+			}
+
+			@Override
+			public void mouseReleased( MouseEvent e ) {
+				enqueueEvent(e);
+			}
+
+			@Override
+			public void mouseEntered( MouseEvent e ) {
+			}
+
+			@Override
+			public void mouseExited( MouseEvent e ) {
+			}
+
+			@Override
+			public void mouseDragged( MouseEvent e ) {
+				enqueueEvent(e);
+			}
+
+			@Override
+			public void mouseMoved( MouseEvent e ) {
+				enqueueEvent(e);
+			}
+		});
+		/*
+		canvas.addMouseWheelListener(new MouseWheelListener() {
+			@Override
+			public void mouseWheelMoved( MouseWheelEvent e ) {
+				enqueueEvent(e);
+			}
+		});
+		*/
+		canvas.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped( KeyEvent e ) {
+				enqueueEvent(e);
+			}
+
+			@Override
+			public void keyPressed( KeyEvent e ) {
+				enqueueEvent(e);
+			}
+
+			@Override
+			public void keyReleased( KeyEvent e ) {
+				enqueueEvent(e);
+			}
+		});
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing( WindowEvent e ) {
@@ -527,12 +624,13 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * @see #setSize(int, int)
 	 * @see #setFullscreen(boolean)
 	 */
-	private void changeSize( int width, int height ) {
+	private void changeSize( int newWidth, int newHeight ) {
+		width = Math.min(Math.max(newWidth, 100), screenWidth);
+		height = Math.min(Math.max(newHeight, 100), screenHeight);
+
 		if( canvas != null ) {
 			canvas.setSize(width, height);
 		}
-		this.width = Math.min(Math.max(width, 100), screenWidth);
-		this.height = Math.min(Math.max(height, 100), screenHeight);
 	}
 
 	/**
@@ -995,9 +1093,95 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	/*
 	 * Mouse handling
 	 */
-	@Override
-	public final void mouseClicked( MouseEvent e ) {
-		mouseEvent = e;
+	private void enqueueEvent( InputEvent evt ) {
+		eventQueue.add(evt);
+
+		if (isPaused()) {
+			dispatchEvents();
+		}
+	}
+
+	private void dispatchEvents() {
+		synchronized( eventQueue ) {
+			while( !eventQueue.isEmpty() ) {
+				InputEvent evt = eventQueue.poll();
+
+				// ???
+				switch( evt.getID() ) {
+					case KeyEvent.KEY_TYPED:
+					case KeyEvent.KEY_PRESSED:
+					case KeyEvent.KEY_RELEASED:
+						handleKeyEvent((KeyEvent) evt);
+						break;
+
+					case MouseEvent.MOUSE_CLICKED:
+					case MouseEvent.MOUSE_PRESSED:
+					case MouseEvent.MOUSE_RELEASED:
+					case MouseEvent.MOUSE_MOVED:
+					case MouseEvent.MOUSE_DRAGGED:
+					case MouseEvent.MOUSE_WHEEL:
+						handleMouseEvent((MouseEvent) evt);
+						break;
+				}
+			}
+		}
+	}
+
+	private void handleKeyEvent( KeyEvent evt ) {
+		keyEvent = evt;
+		key = evt.getKeyChar();
+		keyCode = evt.getKeyCode();
+
+		switch( evt.getID() ) {
+			case KeyEvent.KEY_TYPED:
+				keyTyped(evt);
+				break;
+			case KeyEvent.KEY_PRESSED:
+				keyPressed = true;
+				keyPressed(evt);
+				break;
+			case KeyEvent.KEY_RELEASED:
+				keyPressed = false;
+				keyReleased(evt);
+				break;
+		}
+	}
+
+	private void handleMouseEvent( MouseEvent evt ) {
+		if( mouseEvent != null && evt.getComponent() == canvas ) {
+			pmouseX = mouseX;
+			pmouseY = mouseY;
+
+			mouseX = evt.getX();
+			mouseY = evt.getY();
+		}
+
+		mouseEvent = evt;
+
+		switch( evt.getID() ){
+			case MouseEvent.MOUSE_CLICKED:
+				mouseClicked(evt);
+				break;
+			case MouseEvent.MOUSE_PRESSED:
+				mousePressed = true;
+				mouseButton = evt.getButton();
+				mousePressed(evt);
+				break;
+			case MouseEvent.MOUSE_RELEASED:
+				mousePressed = false;
+				mouseButton = NOBUTTON;
+				mousePressed(evt);
+				break;
+			case MouseEvent.MOUSE_DRAGGED:
+				mouseDragged(evt);
+				break;
+			case MouseEvent.MOUSE_MOVED:
+				mouseMoved(evt);
+				break;
+		}
+	}
+
+	public void mouseClicked( MouseEvent e ) {
 		mouseClicked();
 	}
 
@@ -1005,11 +1189,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		// Intentionally left blank
 	}
 
-	@Override
-	public final void mousePressed( MouseEvent e ) {
-		mouseEvent = e;
-		mousePressed = true;
-		mouseButton = e.getButton();
+	public void mousePressed( MouseEvent e ) {
 		mousePressed();
 	}
 
@@ -1017,11 +1197,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		// Intentionally left blank
 	}
 
-	@Override
-	public final void mouseReleased( MouseEvent e ) {
-		mouseEvent = e;
-		mousePressed = false;
-		mouseButton = NOBUTTON;
+	public void mouseReleased( MouseEvent e ) {
 		mouseReleased();
 	}
 
@@ -1029,19 +1205,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		// Intentionally left blank
 	}
 
-	@Override
-	public final void mouseEntered( MouseEvent e ) {
-		// Intentionally left blank
-	}
-
-	@Override
-	public final void mouseExited( MouseEvent e ) {
-		// Intentionally left blank
-	}
-
-	@Override
-	public final void mouseDragged( MouseEvent e ) {
-		mouseEvent = e;
+	public void mouseDragged( MouseEvent e ) {
 		mouseDragged();
 	}
 
@@ -1049,9 +1213,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		// Intentionally left blank
 	}
 
-	@Override
-	public final void mouseMoved( MouseEvent e ) {
-		mouseEvent = e;
+	public void mouseMoved( MouseEvent e ) {
 		mouseMoved();
 	}
 
@@ -1083,9 +1245,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	/*
 	 * Keyboard handling
 	 */
-	@Override
-	public final void keyTyped( KeyEvent e ) {
-		saveKeys(e);
+	public void keyTyped( KeyEvent e ) {
 		keyTyped();
 	}
 
@@ -1093,10 +1253,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		// Intentionally left blank
 	}
 
-	@Override
-	public final void keyPressed( KeyEvent e ) {
-		saveKeys(e);
-		keyPressed = true;
+	public void keyPressed( KeyEvent e ) {
 		keyPressed();
 	}
 
@@ -1104,21 +1261,12 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		// Intentionally left blank
 	}
 
-	@Override
-	public final void keyReleased( KeyEvent e ) {
-		saveKeys(e);
-		keyPressed = false;
+	public void keyReleased( KeyEvent e ) {
 		keyReleased();
 	}
 
 	public void keyReleased() {
 		// Intentionally left blank
-	}
-
-	private final void saveKeys( KeyEvent event ) {
-		keyEvent = event;
-		key = event.getKeyChar();
-		keyCode = event.getKeyCode();
 	}
 
 	// Window changes
@@ -1161,7 +1309,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 				delta = (System.nanoTime() - beforeTime) / 1000000000.0;
 				beforeTime = System.nanoTime();
 
-				saveMousePosition(mouseEvent);
+				//saveMousePosition(mouseEvent);
 
 				if( state != Options.AppState.PAUSED ) {
 					handleUpdate(delta);
@@ -1172,6 +1320,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 						// canvas.invalidate();
 						// frame.repaint();
 					}
+
+					dispatchEvents();
 				}
 
 				// delta time in ns
@@ -1190,7 +1340,6 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 					overslept = (System.nanoTime() - afterTime) - sleep;
 				} else {
 					overslept = 0L;
-
 				}
 
 				_tick += 1;
