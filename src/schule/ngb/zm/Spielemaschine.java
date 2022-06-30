@@ -9,22 +9,18 @@ public class Spielemaschine extends Zeichenmaschine {
 
 	private LinkedList<Updatable> updatables;
 
+	private GraphicsLayer mainLayer;
+
 	public Spielemaschine( String title ) {
 		this(STD_WIDTH, STD_HEIGHT, title);
 	}
 
-
-	private GraphicsLayer mainLayer;
 
 	public Spielemaschine( int width, int height, String title ) {
 		super(width, height, title, false);
 
 		drawables = new LinkedList<>();
 		updatables = new LinkedList<>();
-
-		canvas.removeLayers(drawing, shapes);
-		drawing = null;
-		shapes = null;
 
 		mainLayer = new GraphicsLayer();
 		canvas.addLayer(mainLayer);
