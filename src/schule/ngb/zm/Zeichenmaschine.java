@@ -687,7 +687,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		ShapesLayer layer = canvas.getLayer(ShapesLayer.class);
 		if( layer == null ) {
 			layer = new ShapesLayer(getWidth(), getHeight());
-			canvas.addLayer(layer);
+			canvas.addLayer(2, layer);
 		}
 		return layer;
 	}
