@@ -1,43 +1,46 @@
 package schule.ngb.zm.util;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ImageLoader {
 
-	public static boolean cacheing = true;
+	public static boolean caching = true;
 
-	private static HashMap<String, BufferedImage> imageCache = new HashMap<>();
+	private static Map<String, BufferedImage> imageCache = new ConcurrentHashMap<>();
 
 	public static BufferedImage loadImage( String source ) {
-		return loadImage(source, cacheing);
+		return loadImage(source, caching);
 	}
 
 	/**
 	 * Läadt ein Bild von der angegebenen Quelle <var>source</var> und gibt das
 	 * Bild zurück oder <code>null</code>, wenn das Bild nicht geladen werden
 	 * konnte. Ist ein Bild mit der angegebenen Quelle im Cache, wird das
-	 * gechachete Bild zurückgegeben. Dies kann mit <code>cacheing = false</code>
-	 * verhindert werden.
+	 * gechachete Bild zurückgegeben. Dies kann mit <code>caching =
+	 * false</code> verhindert werden.
 	 * <p>
-	 * Wurde chacheing global deaktiviert, kann mit <code>cacheing = true</code>
+	 * Wurde chacheing global deaktiviert, kann mit <code>caching = true</code>
 	 * das Bild trotzdem aus dem Cache geladen werden, wenn es vorhanden ist.
 	 *
 	 * @param source
-	 * @param cacheing
+	 * @param caching
 	 * @return
 	 */
-	public static BufferedImage loadImage( String source, boolean cacheing ) {
+	public static BufferedImage loadImage( String source, boolean caching ) {
 		if( source == null || source.length() == 0 )
 			throw new IllegalArgumentException("Image source may not be null or empty.");
 
-		if( cacheing && imageCache.containsKey(source) ) {
+		if( caching && imageCache.containsKey(source) ) {
 			BufferedImage cachedImage = imageCache.get(source);
 			if( cachedImage != null ) {
 				return cachedImage;
@@ -68,12 +71,13 @@ public class ImageLoader {
 				img = ImageIO.read(url);
 			}
 
-			if( cacheing && img != null ) {
+			if( caching && img != null ) {
 				imageCache.put(source, img);
 			}
 
 			return img;
 		} catch( IOException ioe ) {
+			// TODO: Log error!
 			return null;
 		}
 	}
@@ -88,7 +92,7 @@ public class ImageLoader {
 	 */
 	public static boolean preloadImage( String name, String source ) {
 		BufferedImage img = loadImage(source, true);
-		if( cacheing && img != null ) {
+		if( caching && img != null ) {
 			imageCache.put(name, img);
 			return true;
 		}
@@ -133,11 +137,11 @@ public class ImageLoader {
 	}
 
 	public static void enableCaching() {
-		cacheing = true;
+		caching = true;
 	}
 
 	public static void disableCaching() {
-		cacheing = false;
+		caching = false;
 	}
 
 
@@ -193,5 +197,7 @@ public class ImageLoader {
 			.getDefaultConfiguration()
 			.createCompatibleImage(width, height, type);
 	}
+
+	private ImageLoader() {}
 
 }
