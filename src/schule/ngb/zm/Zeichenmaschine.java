@@ -12,8 +12,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 /**
  * Hauptklasse der Zeichenmaschine.
@@ -1091,6 +1090,37 @@ public class Zeichenmaschine extends Constants {
 	}
 
 	/*
+	 * Task scheduling
+	 */
+	private DelayQueue<DelayedTask> taskQueue = new DelayQueue<>();
+
+	public void scheduleTask( Runnable runnable, int delay ) {
+		taskQueue.add(new DelayedTask(delay, runnable));
+	}
+	
+	public void scheduleTask( Runnable runnable, int delay, boolean concurrent ) {
+		DelayedTask task = new DelayedTask(delay, runnable);
+		task.concurrent = concurrent;
+		taskQueue.add(task);
+	}
+
+	private void runTasks() {
+		synchronized( taskQueue ) {
+			DelayedTask task = taskQueue.poll();
+			while( task != null ) {
+				if( task.concurrent ) {
+					SwingUtilities.invokeLater(task.runnable);
+					// new Thread(task.runnable).start();
+				} else {
+					task.runnable.run();
+				}
+
+				task = taskQueue.poll();
+			}
+		}
+	}
+
+	/*
 	 * Mouse handling
 	 */
 	private void enqueueEvent( InputEvent evt ) {
@@ -1324,6 +1354,8 @@ public class Zeichenmaschine extends Constants {
 					dispatchEvents();
 				}
 
+				runTasks();
+
 				// delta time in ns
 				long afterTime = System.nanoTime();
 				long dt = afterTime - beforeTime;
@@ -1376,6 +1408,30 @@ public class Zeichenmaschine extends Constants {
 				draw();
 				state = Options.AppState.RUNNING;
 			}
+		}
+
+	}
+
+	class DelayedTask implements Delayed {
+		long startTime; // in ms
+		Runnable runnable;
+
+		boolean concurrent = false;
+
+		public DelayedTask( int delay, Runnable runnable ) {
+			this.startTime = System.currentTimeMillis() + delay;
+			this.runnable = runnable;
+		}
+
+		@Override
+		public long getDelay( TimeUnit unit ) {
+			int diff = (int)(startTime - System.currentTimeMillis());
+			return unit.convert(diff, TimeUnit.MILLISECONDS);
+		}
+
+		@Override
+		public int compareTo( Delayed o ) {
+			return (int) (startTime- ((DelayedTask)o).startTime);
 		}
 
 	}
