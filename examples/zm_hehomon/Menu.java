@@ -17,7 +17,7 @@ public class Menu extends ShapeGroup {
 
 		lines = new Text[4];
 		for( int i = 0; i < lines.length; i++ ) {
-			lines[i] = new Text(5, 5+i*25, "");
+			lines[i] = new Text(5, 5+i*25, "", "Arial-BOLD-20");
 			lines[i].setFontColor(WHITE);
 			lines[i].setFontsize(20);
 			lines[i].setAnchor(NORTHWEST);

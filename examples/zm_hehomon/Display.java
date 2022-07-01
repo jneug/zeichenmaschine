@@ -19,6 +19,7 @@ public class Display extends ShapeGroup {
 		text.setFontColor(255);
 		text.setFontsize(20);
 		text.setAnchor(NORTHWEST);
+		text.setFont("fonts/FredokaOne-Regular.ttf");
 
 		add(background, text);
 	}

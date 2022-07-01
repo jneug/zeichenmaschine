@@ -1,10 +1,9 @@
-import schule.ngb.zm.Constants;
 import schule.ngb.zm.ImageLayer;
 import schule.ngb.zm.Spielemaschine;
-import schule.ngb.zm.shapes.Picture;
+import schule.ngb.zm.util.FontLoader;
 
-import java.awt.Image;
-import java.awt.event.KeyEvent;
+import java.awt.Font;
+import java.lang.reflect.InvocationTargetException;
 
 public class HehomonGame extends Spielemaschine {
 
@@ -23,20 +22,39 @@ public class HehomonGame extends Spielemaschine {
 
 	private boolean idle = true;
 
+	private static final Class[] HEHOMONS = new Class[]{
+		Alligung.class, Salamanyte.class, Gardon.class, Mantairy.class, Shigong.class, Toxo.class, Wokachu.class
+	};
+
 	public HehomonGame() {
 		super(960, 642, "ZM: Hehomon");
-		setFullscreen(true);
+		//setFullscreen(true);
+	}
+
+	private Hehomon newHehomon() {
+		try {
+			Class<Hehomon> clazz = (Class<Hehomon>) choice(HEHOMONS);
+			return clazz.getConstructor().newInstance();
+		} catch( NoSuchMethodException | InstantiationException |
+				 IllegalAccessException | InvocationTargetException ex ) {
+			exit();
+			return null;
+		}
 	}
 
 	@Override
 	public void setup() {
+		Font font = FontLoader.loadFont("fonts/FredokaOne-Regular.ttf" );
+
 		ImageLayer bg = new ImageLayer("images/hintergrund.jpg");
 		canvas.addLayer(1, bg);
 
-		attacker = new Alligung();
+
+
+		attacker = newHehomon();
 		attacker.moveTo(width * .25, 250);
 		attacker.flip(LEFT);
-		defender = new Salamanyte();
+		defender = newHehomon();
 		defender.moveTo(width * .75, 250);
 
 		hpAttacker = new Hitpoints(attacker);
