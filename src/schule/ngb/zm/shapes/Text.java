@@ -2,6 +2,7 @@ package schule.ngb.zm.shapes;
 
 import schule.ngb.zm.Color;
 import schule.ngb.zm.Options;
+import schule.ngb.zm.util.FontLoader;
 
 import java.awt.Canvas;
 import java.awt.Font;
@@ -22,6 +23,19 @@ public class Text extends Shape {
 
 	public Text( double x, double y, String text ) {
 		this(x, y, text, new Font(Font.SANS_SERIF, Font.PLAIN, STD_FONTSIZE));
+	}
+	public Text( double x, double y, String text, String fontname ) {
+		super(x, y);
+		Font userfont = FontLoader.loadFont(fontname);
+		if( userfont != null ) {
+			font = userfont;
+		} else {
+			font = new Font(Font.SANS_SERIF, Font.PLAIN, STD_FONTSIZE);
+		}
+		setText(text);
+		fillColor = null;
+		strokeColor = null;
+		anchor = Options.Direction.CENTER;
 	}
 
 	public Text( double x, double y, String text, Font font ) {
@@ -46,6 +60,18 @@ public class Text extends Shape {
 		return height;
 	}
 
+	public void setFont( String fontname ) {
+		Font newFont = FontLoader.loadFont(fontname);
+		if( newFont != null ) {
+			setFont(newFont);
+		}
+	}
+
+	public void setFont( Font newFont ) {
+		font = newFont.deriveFont(font.getSize2D());
+		calculateBounds();
+	}
+
 	public Font getFont() {
 		return font;
 	}
@@ -53,6 +79,10 @@ public class Text extends Shape {
 	public void setFontsize( double size ) {
 		font = font.deriveFont((float) size);
 		calculateBounds();
+	}
+
+	public double getFontsize() {
+		return font.getSize2D();
 	}
 
 	public String getText() {
