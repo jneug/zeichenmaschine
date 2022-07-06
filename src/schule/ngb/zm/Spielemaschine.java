@@ -72,6 +72,10 @@ public class Spielemaschine extends Zeichenmaschine {
 		}
 	}
 
+	protected void updateGame( double delta ) {
+
+	}
+
 	@Override
 	public final void update( double delta ) {
 		synchronized( updatables ) {
@@ -81,6 +85,8 @@ public class Spielemaschine extends Zeichenmaschine {
 				}
 			}
 		}
+
+		updateGame(delta);
 	}
 
 	@Override
