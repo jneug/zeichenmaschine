@@ -321,67 +321,13 @@ public class Zeichenmaschine extends Constants {
 		settings();
 
 		// Listener hinzufügen, um auf Maus- und Tastatureingaben zu hören.
-		//canvas.addMouseListener(this);
-		//canvas.addMouseMotionListener(this);
-		//canvas.addKeyListener(this);
-		canvas.addMouseListener(new MouseInputListener() {
-			@Override
-			public void mouseClicked( MouseEvent e ) {
-				enqueueEvent(e);
-			}
+		InputListener inputListener = new InputListener();
+		canvas.addMouseListener(inputListener);
+		canvas.addMouseMotionListener(inputListener);
+		canvas.addMouseWheelListener(inputListener);
+		canvas.addKeyListener(inputListener);
 
-			@Override
-			public void mousePressed( MouseEvent e ) {
-				enqueueEvent(e);
-			}
-
-			@Override
-			public void mouseReleased( MouseEvent e ) {
-				enqueueEvent(e);
-			}
-
-			@Override
-			public void mouseEntered( MouseEvent e ) {
-			}
-
-			@Override
-			public void mouseExited( MouseEvent e ) {
-			}
-
-			@Override
-			public void mouseDragged( MouseEvent e ) {
-				enqueueEvent(e);
-			}
-
-			@Override
-			public void mouseMoved( MouseEvent e ) {
-				enqueueEvent(e);
-			}
-		});
-		/*
-		canvas.addMouseWheelListener(new MouseWheelListener() {
-			@Override
-			public void mouseWheelMoved( MouseWheelEvent e ) {
-				enqueueEvent(e);
-			}
-		});
-		*/
-		canvas.addKeyListener(new KeyListener() {
-			@Override
-			public void keyTyped( KeyEvent e ) {
-				enqueueEvent(e);
-			}
-
-			@Override
-			public void keyPressed( KeyEvent e ) {
-				enqueueEvent(e);
-			}
-
-			@Override
-			public void keyReleased( KeyEvent e ) {
-				enqueueEvent(e);
-			}
-		});
+		// Programm beenden, wenn Fenster geschlossen wird
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing( WindowEvent e ) {
@@ -1136,7 +1082,7 @@ public class Zeichenmaschine extends Constants {
 	private void enqueueEvent( InputEvent evt ) {
 		eventQueue.add(evt);
 
-		if (isPaused()) {
+		if( isPaused() ) {
 			dispatchEvents();
 		}
 	}
@@ -1146,7 +1092,6 @@ public class Zeichenmaschine extends Constants {
 			while( !eventQueue.isEmpty() ) {
 				InputEvent evt = eventQueue.poll();
 
-				// ???
 				switch( evt.getID() ) {
 					case KeyEvent.KEY_TYPED:
 					case KeyEvent.KEY_PRESSED:
@@ -1188,17 +1133,9 @@ public class Zeichenmaschine extends Constants {
 	}
 
 	private void handleMouseEvent( MouseEvent evt ) {
-		if( mouseEvent != null && evt.getComponent() == canvas ) {
-			pmouseX = mouseX;
-			pmouseY = mouseY;
-
-			mouseX = evt.getX();
-			mouseY = evt.getY();
-		}
-
 		mouseEvent = evt;
 
-		switch( evt.getID() ){
+		switch( evt.getID() ) {
 			case MouseEvent.MOUSE_CLICKED:
 				mouseClicked(evt);
 				break;
@@ -1213,9 +1150,11 @@ public class Zeichenmaschine extends Constants {
 				mousePressed(evt);
 				break;
 			case MouseEvent.MOUSE_DRAGGED:
+				//saveMousePosition(evt);
 				mouseDragged(evt);
 				break;
 			case MouseEvent.MOUSE_MOVED:
+				//saveMousePosition(evt);
 				mouseMoved(evt);
 				break;
 		}
@@ -1266,8 +1205,8 @@ public class Zeichenmaschine extends Constants {
 			pmouseX = mouseX;
 			pmouseY = mouseY;
 
-			mouseX = event.getX();
-			mouseY = event.getY();
+			mouseX = cmouseX;
+			mouseY = cmouseY;
 		}
 	}
 
@@ -1349,7 +1288,7 @@ public class Zeichenmaschine extends Constants {
 				delta = (System.nanoTime() - beforeTime) / 1000000000.0;
 				beforeTime = System.nanoTime();
 
-				//saveMousePosition(mouseEvent);
+				saveMousePosition(mouseEvent);
 
 				if( state != Options.AppState.PAUSED ) {
 					handleUpdate(delta);
@@ -1444,6 +1383,65 @@ public class Zeichenmaschine extends Constants {
 		@Override
 		public int compareTo( Delayed o ) {
 			return (int) (startTime- ((DelayedTask)o).startTime);
+
+	class InputListener implements MouseInputListener, MouseMotionListener, MouseWheelListener, KeyListener{
+		@Override
+		public void mouseClicked( MouseEvent e ) {
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void mousePressed( MouseEvent e ) {
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void mouseReleased( MouseEvent e ) {
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void mouseEntered( MouseEvent e ) {
+			// Intentionally left blank
+		}
+
+		@Override
+		public void mouseExited( MouseEvent e ) {
+			// Intentionally left blank
+		}
+
+		@Override
+		public void mouseDragged( MouseEvent e ) {
+			cmouseX = e.getX();
+			cmouseY = e.getY();
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void mouseMoved( MouseEvent e ) {
+			cmouseX = e.getX();
+			cmouseY = e.getY();
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void keyTyped( KeyEvent e ) {
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void keyPressed( KeyEvent e ) {
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void keyReleased( KeyEvent e ) {
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void mouseWheelMoved( MouseWheelEvent e ) {
+			// enqueueEvent(e);
 		}
 
 	}

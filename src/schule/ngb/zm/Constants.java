@@ -290,6 +290,18 @@ public class Constants {
 	public static double pmouseY = 0.0;
 
 	/**
+	 * Die aktuelle (<em>current</em>) {@code x}-Koordinate der Maus
+	 * (wird bei jeder Mausbewegung aktualisiert).
+	 */
+	public static double cmouseX = 0.0;
+
+	/**
+	 * Die aktuelle (<em>current</em>) {@code y}-Koordinate der Maus
+	 * (wird bei jeder Mausbewegung aktualisiert).
+	 */
+	public static double cmouseY = 0.0;
+
+	/**
 	 * Gibt an, ob ein Mausknopf derzeit gedrückt ist.
 	 */
 	public static boolean mousePressed = false;
