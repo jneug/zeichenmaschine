@@ -1,7 +1,9 @@
 package schule.ngb.zm;
 
 import schule.ngb.zm.shapes.ShapesLayer;
+import schule.ngb.zm.tasks.TaskRunner;
 import schule.ngb.zm.util.ImageLoader;
+import schule.ngb.zm.util.Log;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,6 +13,8 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.*;
+import java.util.logging.Level;
 
 /**
  * Hauptklasse der Zeichenmaschine.
@@ -19,15 +23,43 @@ import java.io.IOException;
  * Die Klasse übernimmt die Initialisierung eines Programmfensters und der
  * nötigen Komponenten.
  */
-public class Zeichenmaschine extends Constants implements MouseInputListener, KeyListener {
+public class Zeichenmaschine extends Constants {
 
 	/**
 	 * Gibt an, ob die Zeichenmaschine aus BlueJ heraus gestartet wurde.
 	 */
-	public static boolean IN_BLUEJ;
+	public static final boolean IN_BLUEJ;
 
 	static {
 		IN_BLUEJ = System.getProperty("java.class.path").contains("bluej");
+	}
+
+	public static final boolean MACOS;
+
+	public static final boolean WINDOWS;
+
+	public static final boolean LINUX;
+
+	static {
+		final String name = System.getProperty("os.name");
+
+		if( name.contains("Mac") ) {
+			MACOS = true;
+			WINDOWS = false;
+			LINUX = false;
+		} else if( name.contains("Windows") ) {
+			MACOS = false;
+			WINDOWS = true;
+			LINUX = false;
+		} else if( name.equals("Linux") ) {  // true for the ibm vm
+			MACOS = false;
+			WINDOWS = false;
+			LINUX = true;
+		} else {
+			MACOS = false;
+			WINDOWS = false;
+			LINUX = false;
+		}
 	}
 
 	/*
@@ -106,10 +138,16 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	private boolean stop_after_update = false, run_once = true;
 
 	// Aktuelle Frames pro Sekunde der Zeichenmaschine.
-	private int framesPerSecond;
+	private int framesPerSecondInternal;
 
 	// Hauptthread der Zeichenmaschine.
 	private Thread mainThread;
+
+	// Queue für geplante Aufgaben
+	private DelayQueue<DelayedTask> taskQueue = new DelayQueue<>();
+
+	// Queue für abgefangene InputEvents
+	private BlockingQueue<InputEvent> eventQueue = new LinkedBlockingQueue<>();
 
 	// Gibt an, ob nach Ende des Hauptthreads das Programm beendet werden soll,
 	// oder das Zeichenfenster weiter geöffnet bleibt.
@@ -125,7 +163,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Erstellt eine neue Zeichenmaschine mit Standardwerten für Titel und
 	 * Größe.
 	 * <p>
-	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr
+	 * Details.
 	 */
 	public Zeichenmaschine() {
 		this(APP_NAME + " " + APP_VERSION);
@@ -135,10 +174,11 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Erstellt eine neue Zeichenmaschine mit Standardwerten für Titel und
 	 * Größe.
 	 * <p>
-	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr
+	 * Details.
 	 *
 	 * @param run_once {@code true} beendet die Zeichenmaschine nach einem
-	 *                 Aufruf von {@code draw()}.
+	 * 	Aufruf von {@code draw()}.
 	 */
 	public Zeichenmaschine( boolean run_once ) {
 		this(APP_NAME + " " + APP_VERSION, run_once);
@@ -148,7 +188,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Erstellt eine neue Zeichenmaschine mit dem angegebene Titel und
 	 * Standardwerten für die Größe.
 	 * <p>
-	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr
+	 * Details.
 	 *
 	 * @param title Der Titel, der oben im Fenster steht.
 	 */
@@ -160,11 +201,12 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Erstellt eine neue Zeichenmaschine mit dem angegebene Titel und
 	 * Standardwerten für die Größe.
 	 * <p>
-	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr
+	 * Details.
 	 *
 	 * @param title Der Titel, der oben im Fenster steht.
 	 * @param run_once {@code true} beendet die Zeichenmaschine nach einem
-	 *                 Aufruf von {@code draw()}.
+	 * 	Aufruf von {@code draw()}.
 	 */
 	public Zeichenmaschine( String title, boolean run_once ) {
 		this(STD_WIDTH, STD_HEIGHT, title, run_once);
@@ -174,11 +216,12 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Erstellt eine neue zeichenmaschine mit einer Leinwand der angegebenen
 	 * Größe und dem angegebenen Titel.
 	 * <p>
-	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr Details.
+	 * Siehe {@link #Zeichenmaschine(int, int, String, boolean)} für mehr
+	 * Details.
 	 *
-	 * @param width  Breite der {@link Zeichenleinwand Zeichenleinwand}.
+	 * @param width Breite der {@link Zeichenleinwand Zeichenleinwand}.
 	 * @param height Höhe der {@link Zeichenleinwand Zeichenleinwand}.
-	 * @param title  Der Titel, der oben im Fenster steht.
+	 * @param title Der Titel, der oben im Fenster steht.
 	 */
 	public Zeichenmaschine( int width, int height, String title ) {
 		this(width, height, title, true);
@@ -191,28 +234,30 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Die Zeichenmaschine öffnet automatisch ein Fenster mit einer
 	 * {@link Zeichenleinwand}, die {@code width} Pixel breit und {@code height}
 	 * Pixel hoch ist. Die Leinwand hat immer eine Mindestgröße von 100x100
-	 * Pixeln und kann nicht größer als der aktuelle Bildschirm werden.
-	 * Das Fenster bekommt den angegebenen Titel.
+	 * Pixeln und kann nicht größer als der aktuelle Bildschirm werden. Das
+	 * Fenster bekommt den angegebenen Titel.
 	 * <p>
 	 * Falls {@code run_once} gleich {@code false} ist, werden
 	 * {@link #update(double)} und {@link #draw()} entsprechend der
-	 * {@link #framesPerSecond} kontinuierlich aufgerufen.
-	 * Falls das Programm als Unterklasse der Zeichenmaschine verfasst wird,
-	 * dann kann auch, {@code update(double)} überschrieben werden, damit die
-	 * Maschine nicht automatisch beendet.
+	 * {@link #framesPerSecond} kontinuierlich aufgerufen. Falls das Programm
+	 * als Unterklasse der Zeichenmaschine verfasst wird, dann kann auch,
+	 * {@code update(double)} überschrieben werden, damit die Maschine nicht
+	 * automatisch beendet.
 	 *
-	 * @param width  Breite der {@link Zeichenleinwand Zeichenleinwand}.
+	 * @param width Breite der {@link Zeichenleinwand Zeichenleinwand}.
 	 * @param height Höhe der {@link Zeichenleinwand Zeichenleinwand}.
-	 * @param title  Der Titel, der oben im Fenster steht.
+	 * @param title Der Titel, der oben im Fenster steht.
 	 * @param run_once {@code true} beendet die Zeichenmaschine nach einem
-	 *                 Aufruf von {@code draw()}.
+	 * 	Aufruf von {@code draw()}.
 	 */
 	public Zeichenmaschine( int width, int height, String title, boolean run_once ) {
+		LOG.info("Starting " + APP_NAME + " " + APP_VERSION);
+
 		// Setzen des "Look&Feel"
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch( Exception e ) {
-			System.err.println("Error setting the look and feel: " + e.getMessage());
+		} catch( Exception ex ) {
+			LOG.log(Level.SEVERE, "Error setting the look and feel: " + ex.getMessage(), ex);
 		}
 
 		// Wir suchen den Bildschirm, der derzeit den Mauszeiger enthält, um
@@ -244,15 +289,21 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		// Das Icon des Fensters ändern
+
 		try {
 			ImageIcon icon = new ImageIcon(ImageIO.read(new File("res/icon_64.png")));
-			frame.setIconImage(icon.getImage());
 
-			// Dock Icon in macOS setzen
-			Taskbar taskbar = Taskbar.getTaskbar();
-			taskbar.setIconImage(icon.getImage());
+			if( MACOS ) {
+				// Dock Icon in macOS setzen
+				Taskbar taskbar = Taskbar.getTaskbar();
+				taskbar.setIconImage(icon.getImage());
+			} else {
+				// Kleines Icon des Frames setzen
+				frame.setIconImage(icon.getImage());
+			}
 		} catch( IOException e ) {
 		}
+
 
 		// Erstellen der Leinwand
 		canvas = new Zeichenleinwand(width, height);
@@ -264,7 +315,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		shapes = getShapesLayer();
 
 		// FPS setzen
-		framesPerSecond = STD_FPS;
+		framesPerSecondInternal = STD_FPS;
 		this.run_once = run_once;
 
 		// Settings der Unterklasse aufrufen, falls das Fenster vor dem Öffnen
@@ -273,9 +324,13 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		settings();
 
 		// Listener hinzufügen, um auf Maus- und Tastatureingaben zu hören.
-		canvas.addMouseListener(this);
-		canvas.addMouseMotionListener(this);
-		canvas.addKeyListener(this);
+		InputListener inputListener = new InputListener();
+		canvas.addMouseListener(inputListener);
+		canvas.addMouseMotionListener(inputListener);
+		canvas.addMouseWheelListener(inputListener);
+		canvas.addKeyListener(inputListener);
+
+		// Programm beenden, wenn Fenster geschlossen wird
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing( WindowEvent e ) {
@@ -343,9 +398,10 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * wiederhergestellt.
 	 *
 	 * @param pEnable Wenn {@code true}, wird der Vollbildmodus aktiviert,
-	 * 				  ansonsten deaktiviert.
+	 * 	ansonsten deaktiviert.
 	 */
 	public final void setFullscreen( boolean pEnable ) {
+		// See https://docs.oracle.com/javase/tutorial/extra/fullscreen/index.html
 		if( displayDevice.isFullScreenSupported() ) {
 			if( pEnable && !fullscreen ) {
 				// frame.setUndecorated(true);
@@ -354,24 +410,33 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 				// Update width / height
 				initialWidth = width;
 				initialHeight = height;
-				setSize(screenWidth, screenHeight);
+				changeSize(screenWidth, screenHeight);
 				// Register ESC as exit fullscreen
 				canvas.addKeyListener(fullscreenExitListener);
 
 				fullscreen = true;
+				fullscreenChanged();
 			} else if( !pEnable && fullscreen ) {
 				fullscreen = false;
 
 				canvas.removeKeyListener(fullscreenExitListener);
 				displayDevice.setFullScreenWindow(null);
-				setSize(initialWidth, initialHeight);
+				changeSize(initialWidth, initialHeight);
+				frame.pack();
 				// frame.setUndecorated(false);
+				fullscreenChanged();
 			}
 		}
 	}
 
+	public boolean isFullscreen() {
+		Window win = displayDevice.getFullScreenWindow();
+		return fullscreen && win != null;
+	}
+
 	/**
-	 * Gibt den aktuellen {@link Options.AppState Zustand} der Zeichenmaschine zurück.
+	 * Gibt den aktuellen {@link Options.AppState Zustand} der Zeichenmaschine
+	 * zurück.
 	 *
 	 * @return Der Zustand der Zeichenmaschine.
 	 */
@@ -416,8 +481,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Pausiert die Ausführung von {@link #update(double)} und {@link #draw()}
 	 * nach dem nächsten vollständigen Frame.
 	 * <p>
-	 * Die Zeichenmaschine wechselt in den Zustand {@link Options.AppState#PAUSED},
-	 * sobald der aktuelle Frame beendet wurde.
+	 * Die Zeichenmaschine wechselt in den Zustand
+	 * {@link Options.AppState#PAUSED}, sobald der aktuelle Frame beendet
+	 * wurde.
 	 */
 	public final void pause() {
 		pause_pending = true;
@@ -436,6 +502,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 	/**
 	 * Prüft, ob die Zeichenmaschine gerade pausiert ist.
+	 *
 	 * @return
 	 */
 	public final boolean isPaused() {
@@ -446,13 +513,30 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Stoppt die Zeichenmaschine.
 	 * <p>
 	 * Nachdem der aktuelle Frame gezeichnet wurde wechselt die Zeichenmaschine
-	 * in den Zustand {@link Options.AppState#STOPPED} und ruft {@link #teardown()}
-	 * auf. Nachdem {@code teardown()} ausgeführt wurde wechselt der Zustand zu
-	 * {@link Options.AppState#TERMINATED}. Das Zeichenfenster bleibt weiter
-	 * geöffnet.
+	 * in den Zustand {@link Options.AppState#STOPPED} und ruft
+	 * {@link #teardown()} auf. Nachdem {@code teardown()} ausgeführt wurde
+	 * wechselt der Zustand zu {@link Options.AppState#TERMINATED}. Das
+	 * Zeichenfenster bleibt weiter geöffnet.
 	 */
 	public final void stop() {
 		running = false;
+	}
+
+	/**
+	 * Führt interne Aufräumarbeiten durch.
+	 * <p>
+	 * Wird nach dem {@link #stop() Stopp} der Zeichenmaschine aufgerufen und
+	 * verbleibende Threads, Tasks, etc. zu stoppen und aufzuräumen. Die
+	 * Äquivalente Methode für Unterklassen ist {@link #teardown()}, die direkt
+	 * vor {@code cleanup()} aufgerufen wird.
+	 */
+	private void cleanup() {
+		// Alle noch nicht ausgelösten Events werden entfernt
+		eventQueue.clear();
+		// Alle noch nicht ausgeführten Tasks werden entfernt
+		taskQueue.clear();
+		// TaskRunner stoppen
+		TaskRunner.shutdown();
 	}
 
 	/**
@@ -480,8 +564,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Beendet das Programm. Falls {@code exit} gleich {@code true} ist,
-	 * wird die komplette VM beendet.
+	 * Beendet das Programm. Falls {@code exit} gleich {@code true} ist, wird
+	 * die komplette VM beendet.
 	 *
 	 * @param exit Ob die VM beendet werden soll.
 	 * @see System#exit(int)
@@ -493,6 +577,28 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 		if( exit ) {
 			System.exit(0);
+		}
+	}
+
+	/**
+	 * Interne Methode um die Größe der Zeichenfläche zu ändern.
+	 * <p>
+	 * Die Methode berücksichtigt nicht den Zustand des Fensters (z.B.
+	 * Vollbildmodus) und geht davon aus, dass die aufrufende Methode
+	 * sichergestellt hat, dass eine Änderung der Größe der Zeichenfläche
+	 * zulässig und sinnvoll ist.
+	 *
+	 * @param newWidth Neue Breite der Zeichenleinwand.
+	 * @param newHeight Neue Höhe der Zeichenleinwand.
+	 * @see #setSize(int, int)
+	 * @see #setFullscreen(boolean)
+	 */
+	private void changeSize( int newWidth, int newHeight ) {
+		width = Math.min(Math.max(newWidth, 100), screenWidth);
+		height = Math.min(Math.max(newHeight, 100), screenHeight);
+
+		if( canvas != null ) {
+			canvas.setSize(width, height);
 		}
 	}
 
@@ -509,11 +615,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 			initialHeight = Math.min(Math.max(height, 100), screenHeight);
 			setFullscreen(false);
 		} else {
-			if( canvas != null ) {
-				canvas.setSize(width, height);
-			}
-			this.width = Math.min(Math.max(width, 100), screenWidth);
-			this.height = Math.min(Math.max(height, 100), screenHeight);
+			changeSize(width, height);
 
 			//frame.setSize(width, height);
 			frame.pack();
@@ -557,8 +659,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Fügt der {@link Zeichenleinwand} eine weitere {@link Layer Ebene}
-	 * hinzu.
+	 * Fügt der {@link Zeichenleinwand} eine weitere {@link Layer Ebene} hinzu.
 	 *
 	 * @param layer Die neue Ebene.
 	 */
@@ -605,9 +706,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Gibt die {@link ColorLayer Ebene} mit der Hintergrundfarbe zurück. Gibt es
-	 * keine solche Ebene, so wird eine erstellt und der {@link Zeichenleinwand}
-	 * hinzugefügt.
+	 * Gibt die {@link ColorLayer Ebene} mit der Hintergrundfarbe zurück. Gibt
+	 * es keine solche Ebene, so wird eine erstellt und der
+	 * {@link Zeichenleinwand} hinzugefügt.
 	 * <p>
 	 * In der Regel sollte dies dieselbe Ebene sein wie {@link #background}.
 	 *
@@ -623,8 +724,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Gibt die Standard-{@link DrawingLayer Zeichenebene} zurück. Gibt es
-	 * keine solche Ebene, so wird eine erstellt und der {@link Zeichenleinwand}
+	 * Gibt die Standard-{@link DrawingLayer Zeichenebene} zurück. Gibt es keine
+	 * solche Ebene, so wird eine erstellt und der {@link Zeichenleinwand}
 	 * hinzugefügt.
 	 * <p>
 	 * In der Regel sollte dies dieselbe Ebene sein wie {@link #drawing}.
@@ -641,8 +742,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Gibt die Standard-{@link ShapesLayer Formenebene} zurück. Gibt es
-	 * keine solche Ebene, so wird eine erstellt und der {@link Zeichenleinwand}
+	 * Gibt die Standard-{@link ShapesLayer Formenebene} zurück. Gibt es keine
+	 * solche Ebene, so wird eine erstellt und der {@link Zeichenleinwand}
 	 * hinzugefügt.
 	 * <p>
 	 * In der Regel sollte dies dieselbe Ebene sein wie {@link #shapes}.
@@ -653,7 +754,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		ShapesLayer layer = canvas.getLayer(ShapesLayer.class);
 		if( layer == null ) {
 			layer = new ShapesLayer(getWidth(), getHeight());
-			canvas.addLayer(layer);
+			canvas.addLayer(2, layer);
 		}
 		return layer;
 	}
@@ -664,7 +765,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * @return Angepeilte Frames pro Sekunde
 	 */
 	public final int getFramesPerSecond() {
-		return framesPerSecond;
+		return framesPerSecondInternal;
 	}
 
 	/**
@@ -673,7 +774,13 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * @param pFramesPerSecond Neue FPS.
 	 */
 	public final void setFramesPerSecond( int pFramesPerSecond ) {
-		framesPerSecond = pFramesPerSecond;
+		if( pFramesPerSecond > 0 ) {
+			framesPerSecondInternal = pFramesPerSecond;
+		} else {
+			framesPerSecondInternal = 1;
+			// Logger ...
+		}
+		framesPerSecond = framesPerSecondInternal;
 	}
 
 	/**
@@ -718,9 +825,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 	/**
 	 * Erstellt eine Momentanaufnahme des aktuellen Inhalts der
-	 * {@link Zeichenleinwand} und erstellt daraus eine {@link ImageLayer Bildebene}.
-	 * Die Ebene wird automatisch der {@link Zeichenleinwand} vor dem
-	 * {@link #background} hinzugefügt.
+	 * {@link Zeichenleinwand} und erstellt daraus eine
+	 * {@link ImageLayer Bildebene}. Die Ebene wird automatisch der
+	 * {@link Zeichenleinwand} vor dem {@link #background} hinzugefügt.
 	 *
 	 * @return Die neue Bildebene.
 	 */
@@ -806,8 +913,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Zeigt den Mauszeiger wieder an, falls er zuvor {@link #hideCursor() versteckt}
-	 * wurde.
+	 * Zeigt den Mauszeiger wieder an, falls er zuvor
+	 * {@link #hideCursor() versteckt} wurde.
 	 * <p>
 	 * Nach dem Aufruf gilt {@code cursorVisible == true}.
 	 * <p>
@@ -846,6 +953,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * <pre>
 	 *     setCursor(Cursor.HAND_CURSOR);
 	 * </pre>
+	 *
 	 * @param pPredefinedCursor Eine der Cursor-Konstanten.
 	 * @see Cursor
 	 */
@@ -854,13 +962,14 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/**
-	 * Setzt den Mauszeiger auf das übergebenen Cursor-Objekt.
-	 * Wenn {@code pCursor} {@code null} ist, wird der Mauszeiger unsichtbar
-	 * gemacht (dies ist dasselbe wie der Aufruf von {@link #hideCursor()}).
+	 * Setzt den Mauszeiger auf das übergebenen Cursor-Objekt. Wenn
+	 * {@code pCursor} {@code null} ist, wird der Mauszeiger unsichtbar gemacht
+	 * (dies ist dasselbe wie der Aufruf von {@link #hideCursor()}).
+	 *
 	 * @param pCursor Ein Cursor-Objekt oder {@code null}.
-	 * <p>
-	 * Nach Aufruf der Methode kann über {@link #cursorVisible} abgefragt werden,
-	 * ob der Cursor zurzeit sichtbar ist oder nicht.
+	 * 	<p>
+	 * 	Nach Aufruf der Methode kann über {@link #cursorVisible} abgefragt
+	 * 	werden, ob der Cursor zurzeit sichtbar ist oder nicht.
 	 */
 	public final void setCursor( Cursor pCursor ) {
 		if( pCursor == null && cursorVisible ) {
@@ -887,7 +996,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 */
 
 	/**
-	 * Die Settings werden einmal beim Erstellten der Zeichenmaschine aufgerufen.
+	 * Die Settings werden einmal beim Erstellten der Zeichenmaschine
+	 * aufgerufen.
 	 * <p>
 	 * {@code settings()} wird nur selten benötigt, wenn das Zeichenfenster
 	 */
@@ -912,9 +1022,9 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	 * Aktualisierungen abhängig von der echten Verzögerung zwischen zwei Frames
 	 * zu berechnen.
 	 * <p>
-	 * {@code delta} wird in Sekunden angegeben. Um eine Form zum Beispiel
-	 * um {@code 50} Pixel pro Sekunde in {@code x}-Richtung zu bewegen,
-	 * kann so vorgegangen werden:
+	 * {@code delta} wird in Sekunden angegeben. Um eine Form zum Beispiel um
+	 * {@code 50} Pixel pro Sekunde in {@code x}-Richtung zu bewegen, kann so
+	 * vorgegangen werden:
 	 * <pre>
 	 * shape.move(50*delta, 0.0);
 	 * </pre>
@@ -928,23 +1038,24 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 
 	/**
 	 * {@code draw()} wird einmal pro Frame aufgerufen. Bei einer
-	 * {@link #getFramesPerSecond() Framerate} von 60 also in etwa 60-Mal
-	 * pro Sekunde. In der {@code draw}-Methode wird der Inhalt der Ebenen
+	 * {@link #getFramesPerSecond() Framerate} von 60 also in etwa 60-Mal pro
+	 * Sekunde. In der {@code draw}-Methode wird der Inhalt der Ebenen
 	 * manipuliert und deren Inhalte gezeichnet. Am Ende des Frames werden alle
 	 * Ebenen auf die {@link Zeichenleinwand} übertragen.
 	 * <p>
-	 * {@code draw()} stellt die wichtigste Methode für eine Zeichenmaschine dar,
-	 * da hier die Zeichnung des Programms erstellt wird.
+	 * {@code draw()} stellt die wichtigste Methode für eine Zeichenmaschine
+	 * dar, da hier die Zeichnung des Programms erstellt wird.
 	 */
 	public void draw() {
 		running = !stop_after_update;
 	}
 
 	/**
-	 * {@code teardown()} wird aufgerufen, sobald die Schleife des Hauptprogramms
-	 * beendet wurde. Dies passiert entweder nach dem ersten Durchlauf (wenn keine
-	 * eigene {@link #update(double)} erstellt wurde), nach dem Aufruf von
-	 * {@link #stop()} oder nachdem das {@link Zeichenfenster} geschlossen wurde.
+	 * {@code teardown()} wird aufgerufen, sobald die Schleife des
+	 * Hauptprogramms beendet wurde. Dies passiert entweder nach dem ersten
+	 * Durchlauf (wenn keine eigene {@link #update(double)} erstellt wurde),
+	 * nach dem Aufruf von {@link #stop()} oder nachdem das
+	 * {@link Zeichenfenster} geschlossen wurde.
 	 * <p>
 	 * In {@code teardown()} kann zum Beispiel der Abschlussbildschirm eines
 	 * Spiels oder der Abspann einer Animation angezeigt werden, oder mit
@@ -955,11 +1066,120 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	}
 
 	/*
+	 * Task scheduling
+	 */
+
+	public void scheduleTask( Runnable runnable, int delay ) {
+		taskQueue.add(new DelayedTask(delay, runnable));
+	}
+
+	public void scheduleTask( Runnable runnable, int delay, boolean concurrent ) {
+		DelayedTask task = new DelayedTask(delay, runnable);
+		task.concurrent = concurrent;
+		taskQueue.add(task);
+	}
+
+	private void runTasks() {
+		synchronized( taskQueue ) {
+			DelayedTask task = taskQueue.poll();
+			while( task != null ) {
+				if( task.concurrent ) {
+					// SwingUtilities.invokeLater(task.runnable);
+					TaskRunner.run(task.runnable);
+				} else {
+					task.runnable.run();
+				}
+
+				task = taskQueue.poll();
+			}
+		}
+	}
+
+	/*
 	 * Mouse handling
 	 */
-	@Override
-	public final void mouseClicked( MouseEvent e ) {
-		mouseEvent = e;
+	private void enqueueEvent( InputEvent evt ) {
+		eventQueue.add(evt);
+
+		if( isPaused() ) {
+			dispatchEvents();
+		}
+	}
+
+	private void dispatchEvents() {
+		synchronized( eventQueue ) {
+			while( !eventQueue.isEmpty() ) {
+				InputEvent evt = eventQueue.poll();
+
+				switch( evt.getID() ) {
+					case KeyEvent.KEY_TYPED:
+					case KeyEvent.KEY_PRESSED:
+					case KeyEvent.KEY_RELEASED:
+						handleKeyEvent((KeyEvent) evt);
+						break;
+
+					case MouseEvent.MOUSE_CLICKED:
+					case MouseEvent.MOUSE_PRESSED:
+					case MouseEvent.MOUSE_RELEASED:
+					case MouseEvent.MOUSE_MOVED:
+					case MouseEvent.MOUSE_DRAGGED:
+					case MouseEvent.MOUSE_WHEEL:
+						handleMouseEvent((MouseEvent) evt);
+						break;
+				}
+			}
+		}
+	}
+
+	private void handleKeyEvent( KeyEvent evt ) {
+		keyEvent = evt;
+		key = evt.getKeyChar();
+		keyCode = evt.getKeyCode();
+
+		switch( evt.getID() ) {
+			case KeyEvent.KEY_TYPED:
+				keyTyped(evt);
+				break;
+			case KeyEvent.KEY_PRESSED:
+				keyPressed = true;
+				keyPressed(evt);
+				break;
+			case KeyEvent.KEY_RELEASED:
+				keyPressed = false;
+				keyReleased(evt);
+				break;
+		}
+	}
+
+	private void handleMouseEvent( MouseEvent evt ) {
+		mouseEvent = evt;
+
+		switch( evt.getID() ) {
+			case MouseEvent.MOUSE_CLICKED:
+				mouseClicked(evt);
+				break;
+			case MouseEvent.MOUSE_PRESSED:
+				mousePressed = true;
+				mouseButton = evt.getButton();
+				mousePressed(evt);
+				break;
+			case MouseEvent.MOUSE_RELEASED:
+				mousePressed = false;
+				mouseButton = NOBUTTON;
+				mousePressed(evt);
+				break;
+			case MouseEvent.MOUSE_DRAGGED:
+				//saveMousePosition(evt);
+				mouseDragged(evt);
+				break;
+			case MouseEvent.MOUSE_MOVED:
+				//saveMousePosition(evt);
+				mouseMoved(evt);
+				break;
+		}
+	}
+
+	public void mouseClicked( MouseEvent e ) {
 		mouseClicked();
 	}
 
@@ -967,11 +1187,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		// Intentionally left blank
 	}
 
-	@Override
-	public final void mousePressed( MouseEvent e ) {
-		mouseEvent = e;
-		mousePressed = true;
-		mouseButton = e.getButton();
+	public void mousePressed( MouseEvent e ) {
 		mousePressed();
 	}
 
@@ -979,11 +1195,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		// Intentionally left blank
 	}
 
-	@Override
-	public final void mouseReleased( MouseEvent e ) {
-		mouseEvent = e;
-		mousePressed = false;
-		mouseButton = NOBUTTON;
+	public void mouseReleased( MouseEvent e ) {
 		mouseReleased();
 	}
 
@@ -991,19 +1203,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		// Intentionally left blank
 	}
 
-	@Override
-	public final void mouseEntered( MouseEvent e ) {
-		// Intentionally left blank
-	}
-
-	@Override
-	public final void mouseExited( MouseEvent e ) {
-		// Intentionally left blank
-	}
-
-	@Override
-	public final void mouseDragged( MouseEvent e ) {
-		mouseEvent = e;
+	public void mouseDragged( MouseEvent e ) {
 		mouseDragged();
 	}
 
@@ -1011,9 +1211,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		// Intentionally left blank
 	}
 
-	@Override
-	public final void mouseMoved( MouseEvent e ) {
-		mouseEvent = e;
+	public void mouseMoved( MouseEvent e ) {
 		mouseMoved();
 	}
 
@@ -1026,8 +1224,8 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 			pmouseX = mouseX;
 			pmouseY = mouseY;
 
-			mouseX = event.getX();
-			mouseY = event.getY();
+			mouseX = cmouseX;
+			mouseY = cmouseY;
 		}
 	}
 
@@ -1045,9 +1243,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 	/*
 	 * Keyboard handling
 	 */
-	@Override
-	public final void keyTyped( KeyEvent e ) {
-		saveKeys(e);
+	public void keyTyped( KeyEvent e ) {
 		keyTyped();
 	}
 
@@ -1055,10 +1251,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		// Intentionally left blank
 	}
 
-	@Override
-	public final void keyPressed( KeyEvent e ) {
-		saveKeys(e);
-		keyPressed = true;
+	public void keyPressed( KeyEvent e ) {
 		keyPressed();
 	}
 
@@ -1066,10 +1259,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		// Intentionally left blank
 	}
 
-	@Override
-	public final void keyReleased( KeyEvent e ) {
-		saveKeys(e);
-		keyPressed = false;
+	public void keyReleased( KeyEvent e ) {
 		keyReleased();
 	}
 
@@ -1077,11 +1267,14 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		// Intentionally left blank
 	}
 
-	private final void saveKeys( KeyEvent event ) {
-		keyEvent = event;
-		key = event.getKeyChar();
-		keyCode = event.getKeyCode();
+	// Window changes
+	public void fullscreenChanged() {
+		// Intentionally left blank
 	}
+
+	////
+	// Zeichenthread
+	////
 
 	class Zeichenthread extends Thread {
 
@@ -1125,12 +1318,16 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 						// canvas.invalidate();
 						// frame.repaint();
 					}
+
+					dispatchEvents();
 				}
+
+				runTasks();
 
 				// delta time in ns
 				long afterTime = System.nanoTime();
 				long dt = afterTime - beforeTime;
-				long sleep = ((1000000000L / framesPerSecond) - dt) - overslept;
+				long sleep = ((1000000000L / framesPerSecondInternal) - dt) - overslept;
 
 
 				if( sleep > 0 ) {
@@ -1143,13 +1340,13 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 					overslept = (System.nanoTime() - afterTime) - sleep;
 				} else {
 					overslept = 0L;
-
 				}
 
 				_tick += 1;
 				_runtime = System.currentTimeMillis() - start;
 				tick = _tick;
 				runtime = _runtime;
+				framesPerSecond = framesPerSecondInternal;
 
 				if( pause_pending ) {
 					state = Options.AppState.PAUSED;
@@ -1159,6 +1356,7 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 			state = Options.AppState.STOPPED;
 
 			teardown();
+			cleanup();
 			state = Options.AppState.TERMINATED;
 
 			if( quitAfterTeardown ) {
@@ -1183,5 +1381,95 @@ public class Zeichenmaschine extends Constants implements MouseInputListener, Ke
 		}
 
 	}
+
+	class DelayedTask implements Delayed {
+
+		long startTime; // in ms
+
+		Runnable runnable;
+
+		boolean concurrent = false;
+
+		public DelayedTask( int delay, Runnable runnable ) {
+			this.startTime = System.currentTimeMillis() + delay;
+			this.runnable = runnable;
+		}
+
+		@Override
+		public long getDelay( TimeUnit unit ) {
+			int diff = (int) (startTime - System.currentTimeMillis());
+			return unit.convert(diff, TimeUnit.MILLISECONDS);
+		}
+
+		@Override
+		public int compareTo( Delayed o ) {
+			return (int) (startTime - ((DelayedTask) o).startTime);
+		}
+
+	}
+
+	class InputListener implements MouseInputListener, MouseMotionListener, MouseWheelListener, KeyListener{
+		@Override
+		public void mouseClicked( MouseEvent e ) {
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void mousePressed( MouseEvent e ) {
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void mouseReleased( MouseEvent e ) {
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void mouseEntered( MouseEvent e ) {
+			// Intentionally left blank
+		}
+
+		@Override
+		public void mouseExited( MouseEvent e ) {
+			// Intentionally left blank
+		}
+
+		@Override
+		public void mouseDragged( MouseEvent e ) {
+			cmouseX = e.getX();
+			cmouseY = e.getY();
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void mouseMoved( MouseEvent e ) {
+			cmouseX = e.getX();
+			cmouseY = e.getY();
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void keyTyped( KeyEvent e ) {
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void keyPressed( KeyEvent e ) {
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void keyReleased( KeyEvent e ) {
+			enqueueEvent(e);
+		}
+
+		@Override
+		public void mouseWheelMoved( MouseWheelEvent e ) {
+			// enqueueEvent(e);
+		}
+
+	}
+
+	private static final Log LOG = Log.getLogger(Zeichenmaschine.class);
 
 }

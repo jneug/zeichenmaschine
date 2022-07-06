@@ -2,20 +2,40 @@ package schule.ngb.zm.shapes;
 
 import schule.ngb.zm.Options;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Eine {@code ShapwGroup} ist eine Sammlung von {@link Shape}s, die gemeinsam
+ * eine Gruppe bilden. Transformationen der Gruppe werden nach den
+ * Transformationen der einzelnen Formen auf die gesammte Gruppe angewandt. So
+ * kann ein Rechteck in der Gruppe zunächst um 45 Grad gedreht werden und dann
+ * die Gruppe um -45 Grad. Das Rechteck wird dann wieder waagerecht dargestellt,
+ * während alle anderen Formen der Gruppe nun gedreht erscheinen. Da die Gruppe
+ * selbst ein eigenes Drehzentrum hat, können so komplexe Strukturen als eine
+ * eigene, zusammenhängende Form verwendet werden. (Im Gegensatz zu einer
+ * {@link CustomShape} haben Formgruppen den Vorteil, dass die einzelnen Formen
+ * individuelle Farben und Konturen bekommen können.)
+ * <p>
+ * Da die Größe der Gruppe durch seine zugewiesenen Formen fefstgelegt wird,
+ * sollten Modifikation wie {@link #setAnchor(Options.Direction)},
+ * {@link #nextTo(Shape, Options.Direction)} oder
+ * {@link #alignTo(Shape, Options.Direction, double)}, die die Größe der Gruppe
+ * benötigen, erst nach Hinzufügen der Gruppenelemente ausgeführt werden.
+ * Nachdem sich die Zusammensetzung der Gruppe geändert hat, muss die Gruppe
+ * ggf. neu ausgerichtet werden.
+ */
 public class ShapeGroup extends Shape {
 
 	private List<Shape> shapes;
 
-	protected double width = -1.0;
+	private double groupWidth = -1.0;
 
-	protected double height = -1.0;
+	private double groupHeight = -1.0;
 
 	public ShapeGroup() {
 		super();
@@ -33,7 +53,6 @@ public class ShapeGroup extends Shape {
 		for( Shape pShape : shapes ) {
 			this.shapes.add(pShape);
 		}
-		this.anchor = Options.Direction.CENTER;
 	}
 
 	public Shape copy() {
@@ -68,9 +87,9 @@ public class ShapeGroup extends Shape {
 
 	public <ShapeType extends Shape> List<ShapeType> getShapes( Class<ShapeType> typeClass ) {
 		LinkedList<ShapeType> list = new LinkedList<>();
-		for( Shape s: shapes ) {
+		for( Shape s : shapes ) {
 			if( typeClass.getClass().isInstance(s) ) {
-				list.add((ShapeType)s);
+				list.add((ShapeType) s);
 			}
 		}
 		return list;
@@ -99,23 +118,23 @@ public class ShapeGroup extends Shape {
 
 	@Override
 	public double getWidth() {
-		if( width < 0 ) {
+		if( groupWidth < 0 ) {
 			calculateBounds();
 		}
-		return width;
+		return groupWidth;
 	}
 
 	@Override
 	public double getHeight() {
-		if( height < 0 ) {
+		if( groupHeight < 0 ) {
 			calculateBounds();
 		}
-		return height;
+		return groupHeight;
 	}
 
 	private void invalidateBounds() {
-		width = -1.0;
-		height = -1.0;
+		groupWidth = -1.0;
+		groupHeight = -1.0;
 	}
 
 	private void calculateBounds() {
@@ -124,13 +143,13 @@ public class ShapeGroup extends Shape {
 		for( Shape pShape : shapes ) {
 			Bounds bounds = pShape.getBounds();
 			minx = Math.min(minx, bounds.x);
-			maxx = Math.max(maxx, bounds.x+bounds.width);
+			maxx = Math.max(maxx, bounds.x + bounds.width);
 			miny = Math.min(miny, bounds.y);
-			maxy = Math.max(maxy, bounds.y+bounds.height);
+			maxy = Math.max(maxy, bounds.y + bounds.height);
 		}
 
-		width = maxx-minx;
-		height = maxy-miny;
+		groupWidth = maxx - minx;
+		groupHeight = maxy - miny;
 	}
 
 	@Override
@@ -156,7 +175,7 @@ public class ShapeGroup extends Shape {
 		verzerrung.translate(-anchor.x, -anchor.y);
 		*/
 
-		for( Shape f: shapes ) {
+		for( Shape f : shapes ) {
 			AffineTransform af = f.getTransform();
 			af.preConcatenate(transform);
 			f.draw(graphics, af);

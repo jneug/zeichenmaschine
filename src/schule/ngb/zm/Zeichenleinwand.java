@@ -29,6 +29,7 @@ public class Zeichenleinwand extends Canvas {
 
 	/**
 	 * Erstellt eine neue Zeichenleinwand mit einer festen Größe.
+	 *
 	 * @param width Breite der Zeichenleinwand.
 	 * @param height Höhe der Zeichenleinwand.
 	 */
@@ -42,8 +43,6 @@ public class Zeichenleinwand extends Canvas {
 		layers = new LinkedList<>();
 		synchronized( layers ) {
 			layers.add(new ColorLayer(width, height, Constants.STD_BACKGROUND));
-			layers.add(new DrawingLayer(width, height));
-			layers.add(new ShapesLayer(width, height));
 		}
 	}
 
@@ -53,7 +52,7 @@ public class Zeichenleinwand extends Canvas {
 	 * Bei einer Größenänderung wird auch die Größe aller bisher hinzugefügter
 	 * {@link Layer Ebenen} angepasst, sodass sie die gesamte Leinwand füllen.
 	 *
-	 * @param width  Neue Width der Leinwand in Pixeln.
+	 * @param width Neue Width der Leinwand in Pixeln.
 	 * @param height Neue Höhe der Leinwand in Pixeln.
 	 */
 	@Override
@@ -85,16 +84,24 @@ public class Zeichenleinwand extends Canvas {
 	}
 
 	/**
-	 * Fügt der Zeichenleinwand eine Ebene an einer bestimmten Stelle hinzu.
+	 * Fügt der Zeichenleinwand eine Ebene an einem bestimmten Index hinzu. Wenn
+	 * der Index noch nicht existiert (also größer als die
+	 * {@link #getLayerCount() Anzahl der Ebenen} ist, dann wird die neue Ebene
+	 * als letzte eingefügt. Die aufrufende Methode kann also nicht sicher sein,
+	 * dass die neue Ebene am Ende wirklich am Index {@code i} steht.
 	 *
-	 * @param i     Index der Ebene, beginnend mit <code>0</code>.
+	 * @param i Index der Ebene, beginnend mit <code>0</code>.
 	 * @param layer Die neue Ebene.
 	 */
 	public void addLayer( int i, Layer layer ) {
 		if( layer != null ) {
 			synchronized( layers ) {
 				layer.setSize(getWidth(), getHeight());
-				layers.add(i, layer);
+				if( i > layers.size() ) {
+					layers.add(layer);
+				} else {
+					layers.add(i, layer);
+				}
 			}
 		}
 	}
@@ -168,6 +175,20 @@ public class Zeichenleinwand extends Canvas {
 		return result;
 	}
 
+	public boolean removeLayer( Layer pLayer ) {
+		return layers.remove(pLayer);
+	}
+
+	public void removeLayers( Layer... pLayers ) {
+		for( Layer layer : pLayers ) {
+			layers.remove(layer);
+		}
+	}
+
+	public void clearLayers() {
+		layers.clear();
+	}
+
 	/**
 	 * Erstellt eine passende {@link BufferStrategy} für diese Ebene.
 	 */
@@ -193,6 +214,7 @@ public class Zeichenleinwand extends Canvas {
 
 	/**
 	 * Zeichnet den Inhalt aller {@link Layer Ebenen} in den Grafik-Kontext.
+	 *
 	 * @param graphics
 	 */
 	public void draw( Graphics graphics ) {

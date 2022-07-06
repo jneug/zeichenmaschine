@@ -73,7 +73,7 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 	}
 
 	/**
-	 * Erstellt einen neuen Puffer für dei Ebene mit der angegebenen Größe
+	 * Erstellt einen neuen Puffer für die Ebene mit der angegebenen Größe
 	 * und kopiert den Inhalt des alten Puffers in den Neuen.
 	 *
 	 * @param width  Width des neuen Puffers.

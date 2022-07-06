@@ -361,6 +361,9 @@ public class Vector extends Point2D.Double {
 	}
 
 	public Vector div( double scalar ) {
+		if( scalar == 0.0 ) {
+			throw new IllegalArgumentException("Can't divide by zero.");
+		}
 		x /= scalar;
 		y /= scalar;
 		return this;

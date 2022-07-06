@@ -3,6 +3,7 @@ package schule.ngb.zm.shapes;
 import schule.ngb.zm.Layer;
 
 import java.awt.Graphics2D;
+import java.util.Collection;
 import java.util.LinkedList;
 
 public class ShapesLayer extends Layer {
@@ -48,17 +49,35 @@ public class ShapesLayer extends Layer {
 		return result;
 	}
 
-	public void add( Shape... shape ) {
+	public void add( Shape... shapes ) {
 		synchronized( shapes ) {
-			for( Shape f : shape ) {
-				shapes.add(f);
+			for( Shape s : shapes ) {
+				this.shapes.add(s);
 			}
 		}
 	}
 
-	public void remove( Shape shape ) {
+	public void add( Collection<Shape> shapes ) {
 		synchronized( shapes ) {
-			shapes.remove(shape);
+			for( Shape s : shapes ) {
+				this.shapes.add(s);
+			}
+		}
+	}
+
+	public void remove( Shape... shapes ) {
+		synchronized( shapes ) {
+			for( Shape s: shapes ) {
+				this.shapes.remove(s);
+			}
+		}
+	}
+
+	public void remove( Collection<Shape> shapes ) {
+		synchronized( shapes ) {
+			for( Shape s: shapes ) {
+				this.shapes.remove(s);
+			}
 		}
 	}
 

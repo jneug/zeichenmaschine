@@ -45,4 +45,14 @@ class OptionsTest {
 		assertFalse(SOUTHWEST.contains(NORTHWEST));
 	}
 
+	@Test
+	public void testOppositeDirection() {
+		assertEquals(SOUTH, NORTH.inverse());
+		assertEquals(NORTH, SOUTH.inverse());
+		assertEquals(WEST, EAST.inverse());
+		assertEquals(EAST, WEST.inverse());
+
+		assertEquals(SOUTHEAST, NORTHWEST.inverse());
+	}
+
 }

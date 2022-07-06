@@ -27,7 +27,7 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	}
 
 	public void setStrokeColor( Color color , int alpha ) {
-		this.strokeColor = new Color(color, alpha);
+		setStrokeColor(new Color(color, alpha));
 	}
 
 	public void setStrokeColor( int gray ) {
@@ -35,7 +35,7 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	}
 
 	public void noStroke() {
-		strokeColor = null;
+		setStrokeColor(null);
 	}
 
 	public void setStrokeColor( int gray, int alpha ) {

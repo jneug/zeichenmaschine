@@ -14,9 +14,9 @@ public class Picture extends Shape {
 
 	private BufferedImage image;
 
-	private double width;
+	private double imgWidth;
 
-	private double height;
+	private double imgHeight;
 
 	public Picture( String source ) {
 		this(0, 0, source);
@@ -30,8 +30,8 @@ public class Picture extends Shape {
 			throw new IllegalArgumentException("Could not initialize image from source " + source);
 		}
 
-		width = image.getWidth();
-		height = image.getHeight();
+		imgWidth = image.getWidth();
+		imgHeight = image.getHeight();
 		this.anchor = Options.Direction.CENTER;
 	}
 
@@ -55,25 +55,25 @@ public class Picture extends Shape {
 			g.drawImage(pic.image, 0, 0, null);
 			g.dispose();
 
-			width = image.getWidth();
-			height = image.getHeight();
+			imgWidth = image.getWidth();
+			imgHeight = image.getHeight();
 		}
 	}
 
 	public double getWidth() {
-		return width;
+		return imgWidth;
 	}
 
 	public void setWidth( double width ) {
-		scale(width / this.width);
+		scale(width / this.imgWidth);
 	}
 
 	public double getHeight() {
-		return height;
+		return imgHeight;
 	}
 
 	public void setHeight( double height ) {
-		scale(height / this.height);
+		scale(height / this.imgHeight);
 	}
 
 	public BufferedImage getImage() {
@@ -83,13 +83,13 @@ public class Picture extends Shape {
 	@Override
 	public void scale( double factor ) {
 		super.scale(factor);
-		width *= factor;
-		height *= factor;
+		imgWidth *= factor;
+		imgHeight *= factor;
 	}
 
 	@Override
 	public java.awt.Shape getShape() {
-		return new Rectangle2D.Double(0, 0, width, height);
+		return new Rectangle2D.Double(0, 0, imgWidth, imgHeight);
 	}
 
 	/*
@@ -161,8 +161,8 @@ public class Picture extends Shape {
 		}
 
 		AffineTransform current = graphics.getTransform();
-		graphics.transform(getTransform());
-		graphics.drawImage(image, 0, 0, (int) width, (int) height, null);
+		graphics.transform(transform);
+		graphics.drawImage(image, 0, 0, (int) imgWidth, (int) imgHeight, null);
 		graphics.setTransform(current);
 	}
 
