@@ -28,7 +28,7 @@ public class Constants {
 	/**
 	 * Patchversion der Zeichenmaschine.
 	 */
-	public static final int APP_VERSION_REV = 12;
+	public static final int APP_VERSION_REV = 21;
 
 	/**
 	 * Version der Zeichenmaschine als Text-String.
