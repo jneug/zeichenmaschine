@@ -7,19 +7,17 @@ import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
-import java.util.Arrays;
 
 public class RingChart extends Circle {
 
 	public static String DEFAULT_LABEL = "%.2f";
 
 	public interface RingChartValue extends ChartValue {
-
 		double getMax();
-
 	}
 
 	private class BasicRingChartValue extends BasicChartValue implements RingChartValue {
+
 		public BasicRingChartValue( double maxValue, double value, String label, Color color ) {
 			super(maxValue, value, label, color);
 		}
@@ -27,6 +25,7 @@ public class RingChart extends Circle {
 		public double getMax() {
 			return getX();
 		}
+
 	}
 
 
@@ -87,14 +86,8 @@ public class RingChart extends Circle {
 		int outline = 1;
 		strokeWeight = (radius - gap * values.length) / len;
 
-		Stroke outlineStroke = new BasicStroke(
-			(float) strokeWeight,
-			BasicStroke.CAP_ROUND,
-			BasicStroke.JOIN_ROUND);
-		Stroke ringStroke = new BasicStroke(
-			(float) (strokeWeight - 2*outline),
-			BasicStroke.CAP_ROUND,
-			BasicStroke.JOIN_ROUND);
+		Stroke outlineStroke = new BasicStroke((float) strokeWeight, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+		Stroke ringStroke = new BasicStroke((float) (strokeWeight - 2 * outline), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
 
 		int startAngle = 90;
@@ -112,19 +105,19 @@ public class RingChart extends Circle {
 				if( rcv.getValue() > rcv.getMax() ) {
 					graphics.setStroke(outlineStroke);
 					graphics.setColor(strokeColor.getJavaColor());
-					graphics.drawArc(ringX, ringY, ringR, ringR, startAngle-angle+360, -60);
+					graphics.drawArc(ringX, ringY, ringR, ringR, startAngle - angle + 360, -60);
 
 					graphics.setStroke(ringStroke);
 					graphics.setColor(rcv.getColor().getJavaColor());
-					graphics.drawArc(ringX, ringY, ringR, ringR, startAngle-angle+360, -60);
+					graphics.drawArc(ringX, ringY, ringR, ringR, startAngle - angle + 360, -60);
 
 					graphics.setStroke(outlineStroke);
 					graphics.setColor(strokeColor.getJavaColor());
-					graphics.drawArc(ringX, ringY, ringR, ringR, startAngle-angle+330, -330);
+					graphics.drawArc(ringX, ringY, ringR, ringR, startAngle - angle + 330, -330);
 
 					graphics.setStroke(ringStroke);
 					graphics.setColor(rcv.getColor().getJavaColor());
-					graphics.drawArc(ringX, ringY, ringR, ringR, startAngle-angle+340, -340);
+					graphics.drawArc(ringX, ringY, ringR, ringR, startAngle - angle + 340, -340);
 				} else {
 					graphics.setStroke(outlineStroke);
 					graphics.setColor(strokeColor.getJavaColor());
@@ -132,7 +125,7 @@ public class RingChart extends Circle {
 
 					graphics.setStroke(ringStroke);
 					graphics.setColor(rcv.getColor().getJavaColor());
-					graphics.drawArc(ringX, ringY+outline, ringR, ringR, startAngle, -angle);
+					graphics.drawArc(ringX, ringY + outline, ringR, ringR, startAngle, -angle);
 				}
 			}
 		}
