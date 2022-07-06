@@ -2,6 +2,7 @@ package schule.ngb.zm;
 
 import schule.ngb.zm.shapes.ShapesLayer;
 import schule.ngb.zm.util.ImageLoader;
+import schule.ngb.zm.util.Log;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -11,8 +12,9 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.concurrent.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Hauptklasse der Zeichenmaschine.
