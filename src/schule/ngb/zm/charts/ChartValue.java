@@ -12,16 +12,23 @@ public interface ChartValue {
 
 	/**
 	 * Gibt den x-Wert des Datenpunktes zurück. Nicht alle Diagrammarten
-	 * benötigen einen x-Wert und ignorieren diesen. Soll die Klasse nur in
-	 * Diagrammen ohne x-Wert (zum Beispiel Kreis- oder Balkendiagramm)
-	 * dargestellt werden, wird empfohlen, dass immer 0 zurückgegeben wird.
+	 * benötigen einen x-Wert und ignorieren diesen dann gegebenenfalls. Soll
+	 * die Klasse nur in Diagrammen ohne x-Wert (zum Beispiel
+	 * {@link PieChart Kreis-} oder {@link BarChart Balkendiagramm}) dargestellt
+	 * werden, wird empfohlen, dass immer {@code 0} zurückgegeben wird.
 	 *
 	 * @return Der x-Wert des Datenpunktes.
 	 */
 	double getX();
 
 	/**
-	 * Gibt den Datenwertert des Datenpunktes zurück.
+	 * Gibt den Datenwert des Datenpunktes zurück.
+	 * <p>
+	 * Der Datenwert wird je nach Diagrammtyp anders interpretiert. In
+	 * {@link LineChart}s wird er im Zusammenhang mit dem {@link #getX() x-Wert}
+	 * als y-Wert eines Datenpunktes genommen. In
+	 * {@link PieChart Kreisdiagrammen} wird er als Anteil des Datums im Kreis
+	 * verstanden.
 	 *
 	 * @return Der Wert des Datenpunktes.
 	 */
@@ -29,6 +36,7 @@ public interface ChartValue {
 
 	/**
 	 * Ändert den Datenwert dieses Datenpunktes.
+	 *
 	 * @param pValue
 	 */
 	void setValue( double pValue );
@@ -44,6 +52,7 @@ public interface ChartValue {
 
 	/**
 	 * Ändert die Beschriftung dieses Datenpunktes.
+	 *
 	 * @param pLabel Die neue Beschriftung.
 	 */
 	void setLabel( String pLabel );
@@ -59,6 +68,7 @@ public interface ChartValue {
 
 	/**
 	 * Ändert die Farbe dieses Datenpunktes.
+	 *
 	 * @param pColor Die neue Farbe.
 	 */
 	void setColor( Color pColor );
