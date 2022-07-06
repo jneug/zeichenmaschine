@@ -1,5 +1,6 @@
-package schule.ngb.zm;
+package schule.ngb.zm.media;
 
+import schule.ngb.zm.tasks.TaskRunner;
 import schule.ngb.zm.util.ResourceStreamProvider;
 
 import javax.sound.sampled.*;
@@ -184,7 +185,7 @@ public class Music {
 		}
 	}
 
-	//private static final Logger LOGGER = Logger.getLogger("schule.ngb.zm.Music");
+	//private static final Logger LOGGER = Logger.getLogger("schule.ngb.zm.media.Music");
 	private static final Logger LOGGER = Logger.getLogger(Music.class.getName());
 
 }

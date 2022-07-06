@@ -1,4 +1,4 @@
-package schule.ngb.zm;
+package schule.ngb.zm.tasks;
 
 import javax.swing.*;
 import java.util.concurrent.Executors;

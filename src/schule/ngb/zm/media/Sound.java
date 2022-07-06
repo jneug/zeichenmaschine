@@ -1,4 +1,4 @@
-package schule.ngb.zm;
+package schule.ngb.zm.media;
 
 import schule.ngb.zm.util.ResourceStreamProvider;
 
