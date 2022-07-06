@@ -248,6 +248,11 @@ public class Constants {
 	 */
 
 	/**
+	 * Aktuell dargestellte Bilder pro Sekunde.
+	 */
+	public static int framesPerSecond = STD_FPS;
+
+	/**
 	 * Anzahl der Ticks (Frames), die das Programm bisher läuft.
 	 */
 	public static int tick = 0;

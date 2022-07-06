@@ -138,7 +138,7 @@ public class Zeichenmaschine extends Constants {
 	private boolean stop_after_update = false, run_once = true;
 
 	// Aktuelle Frames pro Sekunde der Zeichenmaschine.
-	private int framesPerSecond;
+	private int framesPerSecondInternal;
 
 	// Hauptthread der Zeichenmaschine.
 	private Thread mainThread;
@@ -312,7 +312,7 @@ public class Zeichenmaschine extends Constants {
 		shapes = getShapesLayer();
 
 		// FPS setzen
-		framesPerSecond = STD_FPS;
+		framesPerSecondInternal = STD_FPS;
 		this.run_once = run_once;
 
 		// Settings der Unterklasse aufrufen, falls das Fenster vor dem Öffnen
@@ -799,7 +799,7 @@ public class Zeichenmaschine extends Constants {
 	 * @return Angepeilte Frames pro Sekunde
 	 */
 	public final int getFramesPerSecond() {
-		return framesPerSecond;
+		return framesPerSecondInternal;
 	}
 
 	/**
@@ -808,7 +808,13 @@ public class Zeichenmaschine extends Constants {
 	 * @param pFramesPerSecond Neue FPS.
 	 */
 	public final void setFramesPerSecond( int pFramesPerSecond ) {
-		framesPerSecond = pFramesPerSecond;
+		if( pFramesPerSecond > 0 ) {
+			framesPerSecondInternal = pFramesPerSecond;
+		} else {
+			framesPerSecondInternal = 1;
+			// Logger ...
+		}
+		framesPerSecond = framesPerSecondInternal;
 	}
 
 	/**
@@ -1363,7 +1369,7 @@ public class Zeichenmaschine extends Constants {
 				// delta time in ns
 				long afterTime = System.nanoTime();
 				long dt = afterTime - beforeTime;
-				long sleep = ((1000000000L / framesPerSecond) - dt) - overslept;
+				long sleep = ((1000000000L / framesPerSecondInternal) - dt) - overslept;
 
 
 				if( sleep > 0 ) {
@@ -1382,6 +1388,7 @@ public class Zeichenmaschine extends Constants {
 				_runtime = System.currentTimeMillis() - start;
 				tick = _tick;
 				runtime = _runtime;
+				framesPerSecond = framesPerSecondInternal;
 
 				if( pause_pending ) {
 					state = Options.AppState.PAUSED;
@@ -1391,6 +1398,7 @@ public class Zeichenmaschine extends Constants {
 			state = Options.AppState.STOPPED;
 
 			teardown();
+			cleanup();
 			state = Options.AppState.TERMINATED;
 
 			if( quitAfterTeardown ) {
