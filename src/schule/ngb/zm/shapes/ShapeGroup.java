@@ -33,9 +33,9 @@ public class ShapeGroup extends Shape {
 
 	private List<Shape> shapes;
 
-	private double width = -1.0;
+	private double groupWidth = -1.0;
 
-	private double height = -1.0;
+	private double groupHeight = -1.0;
 
 	public ShapeGroup() {
 		super();
@@ -118,23 +118,23 @@ public class ShapeGroup extends Shape {
 
 	@Override
 	public double getWidth() {
-		if( width < 0 ) {
+		if( groupWidth < 0 ) {
 			calculateBounds();
 		}
-		return width;
+		return groupWidth;
 	}
 
 	@Override
 	public double getHeight() {
-		if( height < 0 ) {
+		if( groupHeight < 0 ) {
 			calculateBounds();
 		}
-		return height;
+		return groupHeight;
 	}
 
 	private void invalidateBounds() {
-		width = -1.0;
-		height = -1.0;
+		groupWidth = -1.0;
+		groupHeight = -1.0;
 	}
 
 	private void calculateBounds() {
@@ -148,8 +148,8 @@ public class ShapeGroup extends Shape {
 			maxy = Math.max(maxy, bounds.y + bounds.height);
 		}
 
-		width = maxx - minx;
-		height = maxy - miny;
+		groupWidth = maxx - minx;
+		groupHeight = maxy - miny;
 	}
 
 	@Override
