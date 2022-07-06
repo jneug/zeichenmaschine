@@ -246,11 +246,13 @@ public class Zeichenmaschine extends Constants {
 	 * 	Aufruf von {@code draw()}.
 	 */
 	public Zeichenmaschine( int width, int height, String title, boolean run_once ) {
+		LOG.info("Starting " + APP_NAME + " " + APP_VERSION);
+
 		// Setzen des "Look&Feel"
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch( Exception e ) {
-			System.err.println("Error setting the look and feel: " + e.getMessage());
+		} catch( Exception ex ) {
+			LOG.log(Level.SEVERE, "Error setting the look and feel: " + ex.getMessage(), ex);
 		}
 
 		// Wir suchen den Bildschirm, der derzeit den Mauszeiger enthält, um
@@ -1435,5 +1437,7 @@ public class Zeichenmaschine extends Constants {
 		}
 
 	}
+
+	private static final Log LOG = Log.getLogger(Zeichenmaschine.class);
 
 }
