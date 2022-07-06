@@ -143,6 +143,9 @@ public class Zeichenmaschine extends Constants {
 	// Hauptthread der Zeichenmaschine.
 	private Thread mainThread;
 
+	// Queue für geplante Aufgaben
+	private DelayQueue<DelayedTask> taskQueue = new DelayQueue<>();
+
 	// Queue für abgefangene InputEvents
 	private BlockingQueue<InputEvent> eventQueue = new LinkedBlockingQueue<>();
 
@@ -520,6 +523,23 @@ public class Zeichenmaschine extends Constants {
 	}
 
 	/**
+	 * Führt interne Aufräumarbeiten durch.
+	 * <p>
+	 * Wird nach dem {@link #stop() Stopp} der Zeichenmaschine aufgerufen und
+	 * verbleibende Threads, Tasks, etc. zu stoppen und aufzuräumen. Die
+	 * Äquivalente Methode für Unterklassen ist {@link #teardown()}, die direkt
+	 * vor {@code cleanup()} aufgerufen wird.
+	 */
+	private void cleanup() {
+		// Alle noch nicht ausgelösten Events werden entfernt
+		eventQueue.clear();
+		// Alle noch nicht ausgeführten Tasks werden entfernt
+		taskQueue.clear();
+		// TaskRunner stoppen
+		TaskRunner.shutdown();
+	}
+
+	/**
 	 * Beendet die Zeichenmaschine vollständig.
 	 * <p>
 	 * Das Programm wird {@link #quit() beendet} und alle geöffneten Fenster
@@ -568,8 +588,8 @@ public class Zeichenmaschine extends Constants {
 	 * sichergestellt hat, dass eine Änderung der Größe der Zeichenfläche
 	 * zulässig und sinnvoll ist.
 	 *
-	 * @param width Neue Breite der Zeichenleinwand.
-	 * @param height Neue Höhe der Zeichenleinwand.
+	 * @param newWidth Neue Breite der Zeichenleinwand.
+	 * @param newHeight Neue Höhe der Zeichenleinwand.
 	 * @see #setSize(int, int)
 	 * @see #setFullscreen(boolean)
 	 */
@@ -1048,12 +1068,11 @@ public class Zeichenmaschine extends Constants {
 	/*
 	 * Task scheduling
 	 */
-	private DelayQueue<DelayedTask> taskQueue = new DelayQueue<>();
 
 	public void scheduleTask( Runnable runnable, int delay ) {
 		taskQueue.add(new DelayedTask(delay, runnable));
 	}
-	
+
 	public void scheduleTask( Runnable runnable, int delay, boolean concurrent ) {
 		DelayedTask task = new DelayedTask(delay, runnable);
 		task.concurrent = concurrent;
@@ -1065,8 +1084,8 @@ public class Zeichenmaschine extends Constants {
 			DelayedTask task = taskQueue.poll();
 			while( task != null ) {
 				if( task.concurrent ) {
-					SwingUtilities.invokeLater(task.runnable);
-					// new Thread(task.runnable).start();
+					// SwingUtilities.invokeLater(task.runnable);
+					TaskRunner.run(task.runnable);
 				} else {
 					task.runnable.run();
 				}
@@ -1364,7 +1383,9 @@ public class Zeichenmaschine extends Constants {
 	}
 
 	class DelayedTask implements Delayed {
+
 		long startTime; // in ms
+
 		Runnable runnable;
 
 		boolean concurrent = false;
@@ -1376,13 +1397,16 @@ public class Zeichenmaschine extends Constants {
 
 		@Override
 		public long getDelay( TimeUnit unit ) {
-			int diff = (int)(startTime - System.currentTimeMillis());
+			int diff = (int) (startTime - System.currentTimeMillis());
 			return unit.convert(diff, TimeUnit.MILLISECONDS);
 		}
 
 		@Override
 		public int compareTo( Delayed o ) {
-			return (int) (startTime- ((DelayedTask)o).startTime);
+			return (int) (startTime - ((DelayedTask) o).startTime);
+		}
+
+	}
 
 	class InputListener implements MouseInputListener, MouseMotionListener, MouseWheelListener, KeyListener{
 		@Override
