@@ -14,6 +14,7 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Neue Package-Struktur:
   - `schule.ngb.zm.media` für Audio-Klassen (und ggf. zukünftig Video).
   - `schule.ngb.zm.tasks` für alles Rund um Parallelität.
+- `Zeichenthread` und `TaskRunner` setzen die Namen der Threads für besseres Debugging.
 
 ### Removed
 - Beispielprojekte in [eigenes Repository](https://github.com/jneug/zeichenmaschine-examples) verschoben.
