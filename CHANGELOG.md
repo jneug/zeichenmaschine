@@ -6,6 +6,18 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## Added
+- Interface `Audio` extrahiert, mit Basisfunktionen von `Sound` und `Music`.
+- Klasse `Mixer` steuert mehrere Audio-Objekte gleichzeitig. 
+
+## Changed
+- Neue Package-Struktur:
+  - `schule.ngb.zm.media` für Audio-Klassen (und ggf. zukünftig Video).
+  - `schule.ngb.zm.tasks` für alles Rund um Parallelität.
+
+### Removed
+- Beispielprojekte in [eigenes Repository](https://github.com/jneug/zeichenmaschine-examples) verschoben.
+
 ## Version 0.0.21
 
 ### Added
