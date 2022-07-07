@@ -77,9 +77,8 @@ public class TestShapes extends Zeichenmaschine {
 			r.alignTo(bounds, LEFT);
 		}
 
-		Text t = new TextBox(width/2, height/2, 200, 200, "Hello,\nWorld!");
-
-		shapes.add(t);
+		//Text t = new TextBox(width/2, height/2, 200, 200, "Hello,\nWorld!");
+		//shapes.add(t);
 	}
 
 	@Override
