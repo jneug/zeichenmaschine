@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
-public class Sound {
+public class Sound implements Audio {
 
 	private boolean playing = false;
 
@@ -19,7 +19,7 @@ public class Sound {
 
 	private boolean disposeAfterPlay = false;
 
-	private float volume = 1.0f;
+	private float volume = 0.8f;
 
 	public Sound( String source ) {
 		this.audioSource = source;

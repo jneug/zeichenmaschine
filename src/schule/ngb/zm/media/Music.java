@@ -9,7 +9,7 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Music {
+public class Music implements Audio {
 
 	// size of the byte buffer used to read/write the audio stream
 	private static final int BUFFER_SIZE = 4096;
@@ -25,16 +25,18 @@ public class Music {
 
 	private SourceDataLine audioLine;
 
-	private float volume = 1.0f;
+	private float volume = 0.8f;
 
 	public Music( String source ) {
 		this.audioSource = source;
 	}
 
+	@Override
 	public boolean isPlaying() {
 		return playing;
 	}
 
+	@Override
 	public boolean isLooping() {
 		if( !playing ) {
 			looping = false;
@@ -42,6 +44,7 @@ public class Music {
 		return looping;
 	}
 
+	@Override
 	public void setVolume( double volume ) {
 		this.volume = (float) volume;
 		if( audioLine != null ) {
@@ -58,6 +61,7 @@ public class Music {
 		gainControl.setValue(vol);
 	}
 
+	@Override
 	public void playOnce() {
 		if( openLine() ) {
 			TaskRunner.run(new Runnable() {
@@ -69,23 +73,27 @@ public class Music {
 		}
 	}
 
+	@Override
 	public void playOnceAndWait() {
 		if( openLine() ) {
 			stream();
 		}
 	}
 
+	@Override
 	public void loop() {
 		looping = true;
 		playOnce();
 	}
 
+	@Override
 	public void stop() {
 		playing = false;
 		looping = false;
 		dispose();
 	}
 
+	@Override
 	public void dispose() {
 		if( audioLine != null ) {
 			if( audioLine.isRunning() ) {
