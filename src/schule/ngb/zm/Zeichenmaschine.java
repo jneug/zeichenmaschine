@@ -1278,6 +1278,11 @@ public class Zeichenmaschine extends Constants {
 
 	class Zeichenthread extends Thread {
 
+		public Zeichenthread() {
+			super(Zeichenthread.class.getSimpleName());
+			//super(APP_NAME + " " + APP_VERSION);
+		}
+
 		@Override
 		public final void run() {
 			// Wait for full initialization before start

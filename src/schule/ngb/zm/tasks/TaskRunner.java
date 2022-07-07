@@ -1,10 +1,9 @@
 package schule.ngb.zm.tasks;
 
+import schule.ngb.zm.util.Log;
+
 import javax.swing.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 /**
@@ -26,14 +25,19 @@ public class TaskRunner {
 		return runner;
 	}
 
-	public static void run( Runnable task ) {
+	public static Future<?> run( Runnable task ) {
 		TaskRunner r = getTaskRunner();
-		r.pool.execute(task);
+		return r.pool.submit(task);
 	}
 
-	public static void schedule( Runnable task, int ms ) {
+	public static <T> Future<T> run( Runnable task, T result ) {
 		TaskRunner r = getTaskRunner();
-		r.pool.schedule(task, ms, TimeUnit.MILLISECONDS);
+		return r.pool.submit(task, result);
+	}
+
+	public static Future<?>  schedule( Runnable task, int ms ) {
+		TaskRunner r = getTaskRunner();
+		return r.pool.schedule(task, ms, TimeUnit.MILLISECONDS);
 	}
 
 	public static void invokeLater( Runnable task ) {
@@ -65,12 +69,13 @@ public class TaskRunner {
 			@Override
 			public Thread newThread( Runnable r ) {
 				Thread t = threadFactory.newThread(r);
+				t.setName("TaskRunner-" + t.getName());
 				t.setDaemon(true);
 				return t;
 			}
 		});
 	}
 
-	private static final Logger LOGGER = Logger.getLogger(TaskRunner.class.getName());
+	private static final Log LOG = Log.getLogger(TaskRunner.class);
 
 }
