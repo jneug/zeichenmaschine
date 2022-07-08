@@ -46,14 +46,14 @@ public abstract class DelayedTask extends Task implements Delayed {
 
 	@Override
 	public void run() {
-		long delay = getDelay(TimeUnit.MILLISECONDS);
-		while( delay > 0 ) {
+		while( getDelay(TimeUnit.MILLISECONDS) > 0 ) {
 			try {
-				wait(delay);
+				System.out.println("Waiting for " + getDelay(TimeUnit.MILLISECONDS) + " ms");
+				Thread.sleep(getDelay(TimeUnit.MILLISECONDS));
+				//wait(getDelay(TimeUnit.MILLISECONDS));
 			} catch( InterruptedException e ) {
 				// Keep waiting
 			}
-			delay = getDelay(TimeUnit.MILLISECONDS);
 		}
 
 		running = true;
