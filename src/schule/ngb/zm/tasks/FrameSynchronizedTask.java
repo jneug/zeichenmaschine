@@ -10,7 +10,7 @@ public abstract class FrameSynchronizedTask extends Task {
 	private static final Thread getMainThread() {
 		if( mainThread == null ) {
 			mainThread = Thread.currentThread();
-			if( !mainThread.getName().equals("Zeichenthread") ) {
+			if( !mainThread.getName().equals(Constants.APP_NAME) ) {
 				// Need to search for main Zeichenthread ...
 			}
 		}
@@ -21,7 +21,7 @@ public abstract class FrameSynchronizedTask extends Task {
 	public void run() {
 		running = true;
 		int lastTick = 0;
-		Thread lock = getMainThread();
+		Object lock = Zeichenmaschine.globalSyncLock;
 
 		while( running ) {
 			lastTick = Constants.tick;
@@ -29,12 +29,11 @@ public abstract class FrameSynchronizedTask extends Task {
 
 			synchronized( lock ) {
 				while( lastTick >= Constants.tick ) {
-					/*try {
+					try {
 						lock.wait();
 					} catch( InterruptedException e ) {
 						// We got interrupted ...
-					}*/
-					Thread.yield();
+					}
 				}
 			}
 		}
