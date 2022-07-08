@@ -7,7 +7,7 @@ import java.util.function.DoubleUnaryOperator;
  */
 public class Easing {
 
-	public static final DoubleUnaryOperator DEFAULT_EASING = Easing::cubicInOut;
+	public static final DoubleUnaryOperator DEFAULT_EASING = Easing::smooth;
 
 	public static final DoubleUnaryOperator thereAndBack() {
 		return Easing::thereAndBack;
@@ -49,6 +49,10 @@ public class Easing {
 		}
 	}
 
+
+	/*
+	 * Functions taken from easings.net
+	 */
 
 	public static final DoubleUnaryOperator linear() {
 		return Easing::linear;
@@ -190,11 +194,11 @@ public class Easing {
 		double n1 = 7.5625;
 		double d1 = 2.75;
 
-		if (t < 1.0 / d1) {
+		if( t < 1.0 / d1 ) {
 			return n1 * t * t;
-		} else if (t < 2.0 / d1) {
+		} else if( t < 2.0 / d1 ) {
 			return n1 * (t -= 1.5 / d1) * t + 0.75;
-		} else if (t < 2.5 / d1) {
+		} else if( t < 2.5 / d1 ) {
 			return n1 * (t -= 2.25 / d1) * t + 0.9375;
 		} else {
 			return n1 * (t -= 2.625 / d1) * t + 0.984375;
@@ -245,6 +249,70 @@ public class Easing {
 			? (Math.pow(2 * t, 2) * ((c2 + 1) * 2 * t - c2)) / 2
 			: (Math.pow(2 * t - 2, 2) * ((c2 + 1) * (t * 2 - 2) + c2) + 2) / 2;
 	}
+
+
+	/*
+	 * Functions from manim community
+	 */
+
+	public static final DoubleUnaryOperator smooth() {
+		return Easing::smooth;
+	}
+
+	public static final double smooth( double t ) {
+		double error = sigmoid(-INFLECTION / 2.0);
+		return Math.min(
+			Math.max(
+				(sigmoid(INFLECTION * (t - 0.5)) - error) / (1 - 2 * error),
+				0
+			),
+			1.0
+		);
+	}
+
+	public static final double rushIn( double t ) {
+		return 2 * smooth(t / 2.0);
+	}
+
+	public static final double rushOut( double t ) {
+		return 2 * smooth(t / 2.0 + 0.5) - 1;
+	}
+
+	public static final double doubleSmooth( double t ) {
+		if( t < 0.5 )
+			return 0.5 * smooth(2 * t);
+		else
+			return 0.5 * (1 + smooth(2 * t - 1));
+	}
+
+	public static final double hobbit( double t ) {
+		double new_t = t < 0.5 ? 2 * t : 2 * (1 - t);
+		return smooth(new_t);
+	}
+
+
+	public static final DoubleUnaryOperator wiggle() {
+		return Easing::wiggle;
+	}
+
+	public static final DoubleUnaryOperator wiggle( final int wiggles ) {
+		return (t) -> Easing.wiggle(t, wiggles);
+	}
+
+	public static final double wiggle( double t ) {
+		return wiggle(t, 2);
+	}
+
+	public static final double wiggle( double t, int wiggles ) {
+		return hobbit(t) * Math.sin(wiggles * Math.PI * t);
+	}
+
+	public static double INFLECTION = 10.0;
+
+	public static final double sigmoid( double x ) {
+		return 1.0 / (1 + Math.exp(-x));
+	}
+
 
 	private Easing() {
 	}

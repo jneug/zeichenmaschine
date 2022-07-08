@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import schule.ngb.zm.Color;
 import schule.ngb.zm.Constants;
+import schule.ngb.zm.Options;
 import schule.ngb.zm.Zeichenmaschine;
 import schule.ngb.zm.shapes.*;
 
@@ -62,7 +63,7 @@ class AnimationsTest {
 		Future<Shape> future = Animations.animate(
 			s, runtime,
 			easing,
-			( e ) -> Constants.interpolate(0, 400, e),
+			( e ) -> Constants.interpolate(0, zm.getWidth(), e),
 			( t, p ) -> {
 				t.moveTo(p, p);
 			}
@@ -233,6 +234,29 @@ class AnimationsTest {
 		} catch( InterruptedException | ExecutionException e ) {
 			fail(e);
 		}
+	}
+
+	@Test
+	void animateManim() {
+		Shape s = new Circle(0, 0, 10);
+		shapes.add(s);
+		Text t = new Text(0, 0, "Easing");
+		t.setAnchor(Options.Direction.EAST);
+		t.alignTo(Options.Direction.NORTHEAST, -20.0);
+		shapes.add(t);
+
+		t.setText("rushIn");
+		_animateMove(s, 2500, Easing::rushIn);
+		t.setText("rushOut");
+		_animateMove(s, 2500, Easing::rushOut);
+		t.setText("hobbit");
+		_animateMove(s, 2500, Easing::hobbit);
+		t.setText("wiggle(2)");
+		_animateMove(s, 2500, Easing::wiggle);
+		t.setText("wiggle(4)");
+		_animateMove(s, 2500, Easing.wiggle(4));
+		t.setText("doubleSmooth");
+		_animateMove(s, 2500, Easing::doubleSmooth);
 	}
 
 }
