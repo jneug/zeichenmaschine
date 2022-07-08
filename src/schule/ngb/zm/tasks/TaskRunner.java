@@ -40,8 +40,16 @@ public class TaskRunner {
 		return r.pool.submit(task, result);
 	}
 
-	public static void invokeLater( Runnable task ) {
-		SwingUtilities.invokeLater(task);
+	public static Future<?> invokeLater( Runnable task ) {
+		FutureTask<Object> future = new FutureTask<>(task, null);
+		SwingUtilities.invokeLater(future);
+		return future;
+	}
+
+	public static <T> Future<T> invokeLater( Runnable task, T result ) {
+		FutureTask<T> future = new FutureTask<>(task, result);
+		SwingUtilities.invokeLater(future);
+		return future;
 	}
 
 	public static void shutdown() {
