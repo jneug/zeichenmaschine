@@ -19,6 +19,8 @@ public abstract class FrameSynchronizedTask extends Task {
 
 	@Override
 	public void run() {
+		initialize();
+
 		running = true;
 		int lastTick = 0;
 		Object lock = Zeichenmaschine.globalSyncLock;
@@ -40,11 +42,14 @@ public abstract class FrameSynchronizedTask extends Task {
 
 		running = false;
 		done = true;
+
+		finish();
 	}
 
 	@Override
 	public boolean isActive() {
 		return false;
 	}
+
 
 }

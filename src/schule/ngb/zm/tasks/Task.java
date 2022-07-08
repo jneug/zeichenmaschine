@@ -21,4 +21,10 @@ public abstract class Task implements Runnable, Updatable {
 		running = false;
 	}
 
+	protected void initialize() {
+	}
+
+	protected void finish() {
+	}
+
 }
