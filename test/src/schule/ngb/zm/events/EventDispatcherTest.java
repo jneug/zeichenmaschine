@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class EventGeneratorTest {
+class EventDispatcherTest {
 
 	class TestEvent {
 
@@ -37,7 +37,7 @@ class EventGeneratorTest {
 
 	@Test
 	void eventRegistry() {
-		EventGenerator<TestEvent, TestListener> gen = new EventGenerator<>();
+		EventDispatcher<TestEvent, TestListener> gen = new EventDispatcher<>();
 
 		gen.registerEventType("start", ( event, listener ) -> listener.startEvent(event));
 		gen.registerEventType("stop", ( event, listener ) -> listener.stopEvent(event));

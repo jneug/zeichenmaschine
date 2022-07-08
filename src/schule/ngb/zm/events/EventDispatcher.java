@@ -1,22 +1,27 @@
 package schule.ngb.zm.events;
 
+import schule.ngb.zm.util.Validator;
+
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.BiConsumer;
 
-public class EventGenerator<E, L extends Listener<E>> {
+public class EventDispatcher<E, L extends Listener<E>> {
 
 	private CopyOnWriteArraySet<L> listeners;
 
 	private ConcurrentMap<String, BiConsumer<E, L>> eventRegistry;
 
-	public EventGenerator() {
+	public EventDispatcher() {
 		listeners = new CopyOnWriteArraySet<>();
 		eventRegistry = new ConcurrentHashMap<>();
 	}
 
 	public void registerEventType( String eventKey, BiConsumer<E, L> dispatcher ) {
+		Validator.requireNotNull(eventKey);
+		Validator.requireNotNull(dispatcher);
+
 		if( !eventRegistered(eventKey) ) {
 			eventRegistry.put(eventKey, dispatcher);
 		}
@@ -39,9 +44,12 @@ public class EventGenerator<E, L extends Listener<E>> {
 	}
 
 	public void dispatchEvent( String eventKey, final E event ) {
+		Validator.requireNotNull(eventKey);
+		Validator.requireNotNull(event);
+
 		if( eventRegistered(eventKey) ) {
 			final BiConsumer<E, L> dispatcher = eventRegistry.get(eventKey);
-			listeners.stream().forEach(( listener ) -> {
+			listeners.forEach(( listener ) -> {
 				dispatcher.accept(event, listener);
 			});
 		}

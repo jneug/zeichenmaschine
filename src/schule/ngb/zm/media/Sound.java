@@ -25,6 +25,10 @@ public class Sound implements Audio {
 		this.audioSource = source;
 	}
 
+	public String getSource() {
+		return audioSource;
+	}
+
 	public boolean isPlaying() {
 		// return audioClip != null && audioClip.isRunning();
 		return playing;

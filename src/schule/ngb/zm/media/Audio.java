@@ -5,6 +5,8 @@ package schule.ngb.zm.media;
  */
 public interface Audio {
 
+	String getSource();
+
 	/**
 	 * Prüft, ob das Medium gerade abgespielt wird.
 	 *

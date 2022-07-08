@@ -1,5 +1,6 @@
 package schule.ngb.zm.media;
 
+import schule.ngb.zm.events.EventDispatcher;
 import schule.ngb.zm.tasks.TaskRunner;
 import schule.ngb.zm.util.ResourceStreamProvider;
 
@@ -27,8 +28,27 @@ public class Music implements Audio {
 
 	private float volume = 0.8f;
 
+	EventDispatcher<Audio, AudioListener> events;
+	{
+		events = new EventDispatcher<>();
+		events.registerEventType("start", (a,l) -> l.start(a));
+		events.registerEventType("stop", (a,l) -> l.stop(a));
+	}
+
 	public Music( String source ) {
 		this.audioSource = source;
+	}
+
+	public String getSource() {
+		return audioSource;
+	}
+
+	public void addListener( AudioListener listener ) {
+		events.addListener(listener);
+	}
+
+	public void removeListener( AudioListener listener ) {
+		events.removeListener(listener);
 	}
 
 	@Override
@@ -119,6 +139,7 @@ public class Music implements Audio {
 	private void stream() {
 		audioLine.start();
 		playing = true;
+		events.dispatchEvent("start", Music.this);
 
 		byte[] bytesBuffer = new byte[BUFFER_SIZE];
 		int bytesRead = -1;
@@ -146,6 +167,7 @@ public class Music implements Audio {
 
 		playing = false;
 		streamingStopped();
+		events.dispatchEvent("stop", Music.this);
 	}
 
 	private boolean openLine() {
