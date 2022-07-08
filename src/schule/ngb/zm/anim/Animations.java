@@ -3,6 +3,7 @@ package schule.ngb.zm.anim;
 import schule.ngb.zm.Color;
 import schule.ngb.zm.Constants;
 import schule.ngb.zm.Vector;
+import schule.ngb.zm.tasks.FrameSynchronizedTask;
 import schule.ngb.zm.tasks.TaskRunner;
 import schule.ngb.zm.util.Log;
 import schule.ngb.zm.util.Validator;
@@ -143,7 +144,7 @@ public class Animations {
 	}
 
 	public static final <T> Future<T> animate( T target, int runtime, DoubleUnaryOperator easing, DoubleConsumer stepper ) {
-		final long starttime = System.currentTimeMillis();
+		/*final long starttime = System.currentTimeMillis();
 		return TaskRunner.run(() -> {
 			double t = 0.0;
 			do {
@@ -156,6 +157,22 @@ public class Animations {
 				t = (double) (System.currentTimeMillis() - starttime) / (double) runtime;
 			} while( t < 1.0 );
 			stepper.accept(easing.applyAsDouble(1.0));
+		}, target);*/
+		return TaskRunner.run(new FrameSynchronizedTask() {
+			double t = 0.0;
+			final long starttime = System.currentTimeMillis();
+			@Override
+			public void update( double delta ) {
+				// One animation step for t in [0,1]
+				stepper.accept(easing.applyAsDouble(t));
+				t = (double) (System.currentTimeMillis() - starttime) / (double) runtime;
+				running = (t <= 1.0);
+			}
+
+			@Override
+			protected void finish() {
+				stepper.accept(easing.applyAsDouble(1.0));
+			}
 		}, target);
 	}
 
@@ -168,7 +185,7 @@ public class Animations {
 		);
 	}
 
-	public static <T> Future<?> animate( Animation<T> animation ) {
+	/*public static <T> Future<?> animate( Animation<T> animation ) {
 		animation.start();
 		return null;
 	}
@@ -176,7 +193,7 @@ public class Animations {
 	public static <T> Future<?> animate( Animation<T> animation, DoubleUnaryOperator easing ) {
 		animation.start(easing);
 		return null;
-	}
+	}*/
 
 	public static final Log LOG = Log.getLogger(Animations.class);
 
