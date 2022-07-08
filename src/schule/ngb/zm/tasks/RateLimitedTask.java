@@ -10,6 +10,8 @@ public abstract class RateLimitedTask extends Task {
 			return;
 		}
 
+		initialize();
+
 		// current time in ns
 		long beforeTime = System.nanoTime();
 		// store for deltas
@@ -48,6 +50,8 @@ public abstract class RateLimitedTask extends Task {
 
 		running = false;
 		done = true;
+
+		finish();
 	}
 
 }

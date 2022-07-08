@@ -56,10 +56,14 @@ public abstract class DelayedTask extends Task implements Delayed {
 			}
 		}
 
+		initialize();
+
 		running = true;
 		this.update(0.0);
 		running = false;
 		done = true;
+
+		finish();
 	}
 
 }
