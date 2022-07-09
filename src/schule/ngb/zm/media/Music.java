@@ -4,8 +4,10 @@ import schule.ngb.zm.tasks.TaskRunner;
 import schule.ngb.zm.util.ResourceStreamProvider;
 
 import javax.sound.sampled.*;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -154,9 +156,9 @@ public class Music implements Audio {
 		}
 
 		try {
-			InputStream in = ResourceStreamProvider.getResourceStream(audioSource);
-			if( in != null ) {
-				final AudioInputStream inStream = AudioSystem.getAudioInputStream(in);
+			URL url = ResourceStreamProvider.getResourceURL(audioSource);
+			if( url != null ) {
+				final AudioInputStream inStream = AudioSystem.getAudioInputStream(url);
 				AudioFormat format = inStream.getFormat();
 
 				final int ch = format.getChannels();
@@ -185,11 +187,17 @@ public class Music implements Audio {
 	}
 
 	private void streamingStopped() {
-		playing = false;
 		dispose();
 
 		if( looping ) {
-			playOnce();
+			if( openLine() ) {
+				stream();
+			} else {
+				playing = false;
+				looping = false;
+			}
+		} else {
+			playing = false;
 		}
 	}
 
