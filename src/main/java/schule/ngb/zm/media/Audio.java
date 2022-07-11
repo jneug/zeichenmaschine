@@ -18,7 +18,7 @@ public interface Audio {
 	 * {@code isLooping() == true}, dann muss auch immer
 	 * {@code isPlaying() == true} gelten.
 	 *
-	 * @return @return {@code true}, wenn das Medium in einer Schleife
+	 * @return {@code true}, wenn das Medium in einer Schleife
 	 * 	abgespielt wird, {@code false} sonst.
 	 */
 	boolean isLooping();

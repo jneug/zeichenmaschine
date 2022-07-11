@@ -387,10 +387,10 @@ public class Constants {
 
 	/**
 	 * Erstellt eine graue Farbe. Der Parameter {@code gray} gibt einen Grauwert
-	 * zwischen <code>0</code> und <code>255</code> an, wobei
-	 * <code>0</code> schwarz und <code>255</code> weiß ist.
+	 * zwischen 0 und 255 an, wobei
+	 * 0 schwarz und 255 weiß ist.
 	 *
-	 * @param gray Grauwert zwischen <code>0</code> und <code>255</code>.
+	 * @param gray Grauwert zwischen 0 und 255.
 	 * @return Ein passendes Farbobjekt.
 	 */
 	public static final Color color( int gray ) {
@@ -399,16 +399,16 @@ public class Constants {
 
 	/**
 	 * Erstellt eine graue Farbe. Der Parameter {@code gray} gibt einen Grauwert
-	 * zwischen <code>0</code> und <code>255</code> an, wobei
-	 * <code>0</code> schwarz und <code>255</code> weiß ist.
+	 * zwischen 0 und 255 an, wobei
+	 * 0 schwarz und 255 weiß ist.
 	 * {@code alpha} gibt den den Transparentwert an (auch zwischen
-	 * <code>0</code> und <code>255</code>), wobei
-	 * <code>0</code> komplett durchsichtig ist und <code>255</code> komplett
+	 * 0 und 255), wobei
+	 * 0 komplett durchsichtig ist und 255 komplett
 	 * deckend.
 	 *
-	 * @param gray Grauwert zwischen <code>0</code> und <code>255</code>.
-	 * @param alpha Transparentwert zwischen <code>0</code> und
-	 * 	<code>255</code>.
+	 * @param gray Grauwert zwischen 0 und 255.
+	 * @param alpha Transparentwert zwischen 0 und
+	 * 	255.
 	 * @return Ein passendes Farbobjekt.
 	 */
 	public static final Color color( int gray, int alpha ) {
@@ -418,11 +418,11 @@ public class Constants {
 	/**
 	 * Erstellt eine Farbe. Die Parameter {@code red}, {@code green} und
 	 * {@code blue} geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
-	 * liegen zwischen <code>0</code> und <code>255</code>.
+	 * liegen zwischen 0 und 255.
 	 *
-	 * @param red Rotwert zwischen <code>0</code> und <code>255</code>.
-	 * @param green Grünwert zwischen <code>0</code> und <code>255</code>.
-	 * @param blue Blauwert zwischen <code>0</code> und <code>255</code>.
+	 * @param red Rotwert zwischen 0 und 255.
+	 * @param green Grünwert zwischen 0 und 255.
+	 * @param blue Blauwert zwischen 0 und 255.
 	 * @return Ein passendes Farbobjekt.
 	 */
 	public static final Color color( int red, int green, int blue ) {
@@ -432,17 +432,17 @@ public class Constants {
 	/**
 	 * Erstellt eine Farbe. Die Parameter {@code red}, {@code green} und
 	 * {@code blue} geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
-	 * liegen zwischen <code>0</code> und <code>255</code>. {@code alpha} gibt
-	 * den den Transparentwert an (auch zwischen code>0</code> und
-	 * <code>255</code>), wobei
-	 * <code>0</code> komplett durchsichtig ist und <code>255</code> komplett
+	 * liegen zwischen 0 und 255. {@code alpha} gibt
+	 * den den Transparentwert an (auch zwischen 0 und
+	 * 255), wobei
+	 * 0 komplett durchsichtig ist und 255 komplett
 	 * deckend.
 	 *
-	 * @param red Rotwert zwischen <code>0</code> und <code>255</code>.
-	 * @param green Grünwert zwischen <code>0</code> und <code>255</code>.
-	 * @param blue Blauwert zwischen <code>0</code> und <code>255</code>.
-	 * @param alpha Transparenzwert zwischen <code>0</code> und
-	 * 	<code>255</code>.
+	 * @param red Rotwert zwischen 0 und 255.
+	 * @param green Grünwert zwischen 0 und 255.
+	 * @param blue Blauwert zwischen 0 und 255.
+	 * @param alpha Transparenzwert zwischen 0 und
+	 * 	255.
 	 * @return Ein passendes Farbobjekt.
 	 */
 	public static final Color color( int red, int green, int blue, int alpha ) {
@@ -589,7 +589,7 @@ public class Constants {
 	 * Ermittelt das Vorzeichen der Zahl {@code x}.
 	 *
 	 * @param x Eine Zahl.
-	 * @return <code>-1</code>, <code>1</code> oder <code>0</code>.
+	 * @return -1, 1 oder 0.
 	 */
 	public static final double sign( double x ) {
 		return Math.signum(x);
@@ -670,7 +670,7 @@ public class Constants {
 	 * Ermittelt den Sinus der Zahl {@code x}.
 	 *
 	 * @param x Eine Zahl.
-	 * @return <code>sin(x)</code>.
+	 * @return {@code sin(x)}.
 	 */
 	public static final double sin( double x ) {
 		return Math.sin(x);
@@ -680,7 +680,7 @@ public class Constants {
 	 * Ermittelt den Kosinus der Zahl {@code x}.
 	 *
 	 * @param x Eine Zahl.
-	 * @return <code>cos(x)</code>.
+	 * @return {@code cos(x)}.
 	 */
 	public static final double cos( double x ) {
 		return Math.cos(x);
@@ -690,7 +690,7 @@ public class Constants {
 	 * Ermittelt den Tangens der Zahl {@code x}.
 	 *
 	 * @param x Eine Zahl.
-	 * @return <code>tan(x)</code>.
+	 * @return {@code tan(x)}.
 	 */
 	public static final double tan( double x ) {
 		return Math.tan(x);
@@ -700,7 +700,7 @@ public class Constants {
 	 * Ermittelt den Arkussinus der Zahl {@code x}.
 	 *
 	 * @param x Eine Zahl.
-	 * @return <code>asin(x)</code>.
+	 * @return {@code asin(x)}.
 	 */
 	public static final double arcsin( double x ) {
 		return Math.asin(x);
@@ -710,7 +710,7 @@ public class Constants {
 	 * Ermittelt den Arkuskosinus der Zahl {@code x}.
 	 *
 	 * @param x Eine Zahl.
-	 * @return <code>acos(x)</code>.
+	 * @return {@code acos(x)}.
 	 */
 	public static final double arccos( double x ) {
 		return Math.acos(x);
@@ -720,20 +720,20 @@ public class Constants {
 	 * Ermittelt den Arkusktangens der Zahl {@code x}.
 	 *
 	 * @param x Eine Zahl.
-	 * @return <code>atan(x)</code>.
+	 * @return {@code atan(x)}.
 	 */
 	public static final double arctan( double x ) {
 		return Math.atan(x);
 	}
 
 	/**
-	 * Beschränkt die Zahl {@code x} auf das Intervall <code>[min, max]</code>.
+	 * Beschränkt die Zahl {@code x} auf das Intervall {@code [min, max]}.
 	 * Liegt {@code x} außerhalb des Intervalls, wird eine der Grenzen
 	 * zurückgegeben.
 	 *
 	 * @param x Eine Zahl.
 	 * @param max Das Maximum des Intervalls.
-	 * @return Eine Zahl im Intervall <code>[min, max]</code>.
+	 * @return Eine Zahl im Intervall {@code [min, max]}.
 	 */
 	public static final double limit( double x, double min, double max ) {
 		if( x > max ) {
@@ -746,13 +746,13 @@ public class Constants {
 	}
 
 	/**
-	 * Beschränkt die Zahl {@code x} auf das Intervall <code>[min, max]</code>.
+	 * Beschränkt die Zahl {@code x} auf das Intervall {@code [min, max]}.
 	 * Liegt {@code x} außerhalb des Intervalls, wird eine der Grenzen
 	 * zurückgegeben.
 	 *
 	 * @param x Eine Zahl.
 	 * @param max Das Maximum des Intervalls.
-	 * @return Eine Zahl im Intervall <code>[min, max]</code>.
+	 * @return Eine Zahl im Intervall {@code [min, max]}.
 	 */
 	public static final int limit( int x, int min, int max ) {
 		if( x > max ) {
@@ -774,7 +774,7 @@ public class Constants {
 	 *
 	 * @param from Startwert
 	 * @param to Zielwert
-	 * @param t Wert zwischen <code>0</code> und <code>1</code>.
+	 * @param t Wert zwischen 0 und 1.
 	 * @return Das Ergebnis der linearen Interpolation.
 	 */
 	public static final double interpolate( double from, double to, double t ) {
@@ -885,8 +885,8 @@ public class Constants {
 	 * Erzeugt einen zufälligen Wahrheitswert. {@code true} wird mit der
 	 * Wahrscheinlichkeit {@code percent} Prozent erzeugt.
 	 *
-	 * @param percent Eine Prozentzahl zwischen <code>0</code> und
-	 * 	<code>100</code>.
+	 * @param percent Eine Prozentzahl zwischen 0 und
+	 * 	100.
 	 * @return Ein Wahrheitswert.
 	 */
 	public static final boolean randomBool( int percent ) {

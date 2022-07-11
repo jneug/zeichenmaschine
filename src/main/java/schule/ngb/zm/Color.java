@@ -3,12 +3,12 @@ package schule.ngb.zm;
 /**
  * Repräsentiert eine Farbe in der Zeichenmaschine.
  * <p>
- * Farben bestehen entweder aus einem Grauwert (zwischen <code>0</code> und
- * <code>255</code>) oder einem Rot-, Grün- und Blauanteil (jeweils zwischen
- * <code>0</code> und <code>255</code>).
+ * Farben bestehen entweder aus einem Grauwert (zwischen 0 und
+ * 255) oder einem Rot-, Grün- und Blauanteil (jeweils zwischen
+ * 0 und 255).
  * <p>
- * Eine Farbe hat außerdem einen Transparenzwert zwischen <code>0</code>
- * (unsichtbar) und <code>255</code> (deckend).
+ * Eine Farbe hat außerdem einen Transparenzwert zwischen 0
+ * (unsichtbar) und 255 (deckend).
  */
 public class Color {
 
@@ -106,7 +106,7 @@ public class Color {
 	/**
 	 * Erstellt eine graue Farbe entsprechend des Grauwertes <var>gray</var>.
 	 *
-	 * @param gray Ein Grauwert zwischen <code>0</code> und <code>255</code>.
+	 * @param gray Ein Grauwert zwischen 0 und 255.
 	 */
 	public Color( int gray ) {
 		this(gray, gray, gray, 255);
@@ -116,7 +116,7 @@ public class Color {
 	 * Erstellt eine graue Farbe entsprechend des Grauwertes <var>gray</var> und
 	 * des Transparentwertes <var>alpha</var>.
 	 *
-	 * @param gray Ein Grauwert zwischen <code>0</code> und <code>255</code>.
+	 * @param gray Ein Grauwert zwischen 0 und 255.
 	 */
 	public Color( int gray, int alpha ) {
 		this(gray, gray, gray, alpha);
@@ -125,12 +125,11 @@ public class Color {
 	/**
 	 * Erstellt eine Farbe. Die Parameter <var>red</var>, <var>green</var> und
 	 * <var>blue</var> geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
-	 * liegen zwischen <code>0</code> und <code>255</code>.
+	 * liegen zwischen 0 und 255.
 	 *
-	 * @param red   Rotwert zwischen <code>0</code> und <code>255</code>.
-	 * @param green Grünwert zwischen <code>0</code> und <code>255</code>.
-	 * @param blue  Blauwert zwischen <code>0</code> und <code>255</code>.
-	 * @return Ein passendes Farbobjekt.
+	 * @param red   Rotwert zwischen 0 und 255.
+	 * @param green Grünwert zwischen 0 und 255.
+	 * @param blue  Blauwert zwischen 0 und 255.
 	 */
 	public Color( int red, int green, int blue ) {
 		this(red, green, blue, 255);
@@ -139,17 +138,16 @@ public class Color {
 	/**
 	 * Erstellt eine Farbe. Die Parameter <var>red</var>, <var>green</var> und
 	 * <var>blue</var> geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
-	 * liegen zwischen <code>0</code> und <code>255</code>.
+	 * liegen zwischen 0 und 255.
 	 * <var>alpha</var> gibt den den Transparentwert an (auch zwischen
-	 * code>0</code> und <code>255</code>), wobei
-	 * <code>0</code> komplett durchsichtig ist und <code>255</code> komplett
+	 * 0 und 255), wobei
+	 * 0 komplett durchsichtig ist und 255 komplett
 	 * deckend.
 	 *
-	 * @param red   Rotwert zwischen <code>0</code> und <code>255</code>.
-	 * @param green Grünwert zwischen <code>0</code> und <code>255</code>.
-	 * @param blue  Blauwert zwischen <code>0</code> und <code>255</code>.
-	 * @param alpha Transparentwert zwischen <code>0</code> und <code>255</code>.
-	 * @return Ein passendes Farbobjekt.
+	 * @param red   Rotwert zwischen 0 und 255.
+	 * @param green Grünwert zwischen 0 und 255.
+	 * @param blue  Blauwert zwischen 0 und 255.
+	 * @param alpha Transparentwert zwischen 0 und 255.
 	 */
 	public Color( int red, int green, int blue, int alpha ) {
 		rgba = (alpha << 24) | (red << 16) | (green << 8) | blue;
@@ -239,7 +237,7 @@ public class Color {
 	/**
 	 * Erzeugt eine Farbe aus einem hexadezimalen Code. Der Hexcode kann
 	 * sechs- oder achtstellig sein (wenn ein Transparentwert vorhanden ist).
-	 * Dem Code kann ein <code>#</code> Zeichen vorangestellt sein.
+	 * Dem Code kann ein {@code #} Zeichen vorangestellt sein.
 	 *
 	 * @param hexcode
 	 * @return
