@@ -222,7 +222,7 @@ public abstract class Shape extends FilledShape {
 	 * {@code buff} nach oben verschoben.
 	 *
 	 * @param shape
-	 * @param anchor
+	 * @param dir
 	 * @param buff
 	 */
 	public void moveTo( Shape shape, Options.Direction dir, double buff ) {
