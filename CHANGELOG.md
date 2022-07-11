@@ -9,6 +9,7 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## Added
 - Interface `Audio` extrahiert, mit Basisfunktionen von `Sound` und `Music`.
 - Klasse `Mixer` steuert mehrere Audio-Objekte gleichzeitig. 
+- Klasse `tasks.RateLimitedTask`, `tasks.FramerateLimitedTask`, `tasks.FrameSynchronizedTask` und `tasks.DelayedTask`. 
 
 ## Changed
 - Neue Package-Struktur:

@@ -1277,10 +1277,37 @@ public class Zeichenmaschine extends Constants {
 	// Zeichenthread
 	////
 
+	/**
+	 * Globaler Monitor, der einmal pro Frame vom Zeichenthread freigegeben
+	 * wird. Andere Threads können {@link Object#wait()} auf dem Monitor
+	 * aufrufen, um sich mit dem Zeichenthread zu synchronisieren. Der
+	 * {@code wait()} Aufruf sollte sich zur Sicherheit in einer Schleife
+	 * befinden, die prüft, ob sich der Aktuelle {@link #tick} erhöht hat.
+	 * <pre><code>
+	 * int lastTick = Constants.tick;
+	 *
+	 * // Do some work
+	 *
+	 * while( lastTick >= Constants.tick ) {
+	 *     synchronized( Zeichenmaschine.globalSyncLock ) {
+	 *         try {
+	 *             Zeichenmaschine.globalSyncLock.wait();
+	 *         } catch( InterruptedException ex ) {}
+	 *     }
+	 * }
+	 * // Next frame has started
+	 * </code></pre>
+	 * <p>
+	 * Die {@link schule.ngb.zm.tasks.FrameSynchronizedTask} implementiert eine
+	 * {@link schule.ngb.zm.tasks.Task}, die sich automatisch auf diese Wiese
+	 * mit dem Zeichenthread synchronisiert.
+	 */
+	public static final Object globalSyncLock = new Object[0];
+
 	class Zeichenthread extends Thread {
 
 		public Zeichenthread() {
-			super(Zeichenthread.class.getSimpleName());
+			super(APP_NAME);
 			//super(APP_NAME + " " + APP_VERSION);
 		}
 
@@ -1329,6 +1356,9 @@ public class Zeichenmaschine extends Constants {
 				}
 
 				runTasks();
+				synchronized( globalSyncLock ) {
+					globalSyncLock.notifyAll();
+				}
 
 				// delta time in ns
 				long afterTime = System.nanoTime();
@@ -1414,7 +1444,8 @@ public class Zeichenmaschine extends Constants {
 
 	}
 
-	class InputListener implements MouseInputListener, MouseMotionListener, MouseWheelListener, KeyListener{
+	class InputListener implements MouseInputListener, MouseMotionListener, MouseWheelListener, KeyListener {
+
 		@Override
 		public void mouseClicked( MouseEvent e ) {
 			enqueueEvent(e);
