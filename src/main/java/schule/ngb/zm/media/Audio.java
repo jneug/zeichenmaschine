@@ -18,8 +18,8 @@ public interface Audio {
 	 * {@code isLooping() == true}, dann muss auch immer
 	 * {@code isPlaying() == true} gelten.
 	 *
-	 * @return @return {@code true}, wenn das Medium in einer Schleife
-	 * 	abgespielt wird, {@code false} sonst.
+	 * @return {@code true}, wenn das Medium in einer Schleife abgespielt wird,
+	 *    {@code false} sonst.
 	 */
 	boolean isLooping();
 
@@ -37,16 +37,27 @@ public interface Audio {
 	void setVolume( double volume );
 
 	/**
+	 * Gibt die aktuelle Lautstärkeeinstellung dieses Mediums zurück.
+	 * <p>
+	 * Die Lautstärke wird auf einer linearen Skale angegeben, wobei 0 kein Ton
+	 * und 1 volle Lautstärke bedeutet. Werte über 1 verstärken den Ton des
+	 * Mediums.
+	 *
+	 * @return Die Lautstärke als linear skalierter Wert.
+	 */
+	double getVolume();
+
+	/**
 	 * Startet die Wiedergabe des Mediums und beendet die Methode. Das
 	 * Audio-Medium wird einmal abgespielt und stoppt dann.
 	 */
-	void playOnce();
+	void play();
 
 	/**
 	 * Startet die Wiedergabe des Mediums und blockiert das Programm, bis die
 	 * Wiedergabe beendet ist.
 	 */
-	void playOnceAndWait();
+	void playAndWait();
 
 	/**
 	 * Spielt das Medium in einer kontinuierlichen Schleife ab. Die Methode

@@ -1,41 +1,82 @@
 package schule.ngb.zm.media;
 
 import schule.ngb.zm.tasks.TaskRunner;
+import schule.ngb.zm.util.Log;
 import schule.ngb.zm.util.ResourceStreamProvider;
+import schule.ngb.zm.util.Validator;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.net.URL;
 
+/**
+ * Ein Musikstück, dass im Projekt abgespielt werden soll.
+ * <p>
+ * Im gegensatz zu einem {@link Sound} sind Musikstücke längere Audiodateien,
+ * die zum Beispiel als Hintergrundmusik ablaufen sollen. Die Musik wird daher
+ * nicht komplett in den Speicher geladen, sondern direkt aus der Audioquelle
+ * gestreamt und wiedergegeben.
+ */
 public class Music implements Audio {
 
 	// size of the byte buffer used to read/write the audio stream
 	private static final int BUFFER_SIZE = 4096;
 
 
+	/**
+	 * Ob der Sound gerade abgespielt wird.
+	 */
 	private boolean playing = false;
 
+	/**
+	 * Ob der Sound gerade in einer Schleife abgespielt wird.
+	 */
 	private boolean looping = false;
 
+	/**
+	 * Die Quelle des Musikstücks.
+	 */
 	private String audioSource;
 
+	/**
+	 * Der AudioStream, um die AUdiosdaten zulsen, falls dieser schon geöffnet
+	 * wurde. Sonst {@code null}.
+	 */
 	private AudioInputStream audioStream;
 
+	/**
+	 * Die Line für die Ausgabe, falls diese schon geöffnet wurde. Sonst
+	 * {@code null}.
+	 */
 	private SourceDataLine audioLine;
 
+	/**
+	 * Die Lautstärke der Musik.
+	 */
 	private float volume = 0.8f;
 
+	/**
+	 * Erstellt eine Musik aus der angegebenen Datei oder Webadresse.
+	 *
+	 * @param source Ein Dateipfad oder eine Webadresse.
+	 * @throws NullPointerException Falls die Quelle {@code null} ist.
+	 */
 	public Music( String source ) {
+		Validator.requireNotNull(source);
 		this.audioSource = source;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isPlaying() {
 		return playing;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isLooping() {
 		if( !playing ) {
@@ -44,6 +85,9 @@ public class Music implements Audio {
 		return looping;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setVolume( double volume ) {
 		this.volume = (float) volume;
@@ -52,6 +96,18 @@ public class Music implements Audio {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public double getVolume() {
+		return volume;
+	}
+
+	/**
+	 * Interne Methode, um die gesetzte Lautstärke vor dem Abspielen
+	 * anzuwenden.
+	 */
 	private void applyVolume() {
 		FloatControl gainControl =
 			(FloatControl) audioLine.getControl(FloatControl.Type.MASTER_GAIN);
@@ -61,8 +117,11 @@ public class Music implements Audio {
 		gainControl.setValue(vol);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void playOnce() {
+	public void play() {
 		if( openLine() ) {
 			TaskRunner.run(new Runnable() {
 				@Override
@@ -73,19 +132,28 @@ public class Music implements Audio {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void playOnceAndWait() {
+	public void playAndWait() {
 		if( openLine() ) {
 			stream();
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void loop() {
 		looping = true;
-		playOnce();
+		play();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void stop() {
 		playing = false;
@@ -93,6 +161,9 @@ public class Music implements Audio {
 		dispose();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void dispose() {
 		if( audioLine != null ) {
@@ -110,7 +181,8 @@ public class Music implements Audio {
 			if( audioStream != null ) {
 				audioStream.close();
 			}
-		} catch( IOException ex ) {}
+		} catch( IOException ex ) {
+		}
 
 		audioLine = null;
 		audioStream = null;
@@ -124,15 +196,14 @@ public class Music implements Audio {
 		int bytesRead = -1;
 
 		try {
-			while (playing && (bytesRead = audioStream.read(bytesBuffer)) != -1) {
+			while( playing && (bytesRead = audioStream.read(bytesBuffer)) != -1 ) {
 				audioLine.write(bytesBuffer, 0, bytesRead);
 			}
 
 			audioLine.drain();
 			audioLine.stop();
 		} catch( IOException ex ) {
-			LOGGER.warning("Error while playing Music source <" + audioSource + ">");
-			LOGGER.throwing("Music", "stream", ex);
+			LOG.warn(ex, "Error while playing Music source <%s>", audioSource);
 		}
 
 		// Wait for the remaining audio to play
@@ -154,14 +225,14 @@ public class Music implements Audio {
 		}
 
 		try {
-			InputStream in = ResourceStreamProvider.getResourceStream(audioSource);
-			if( in != null ) {
-				final AudioInputStream inStream = AudioSystem.getAudioInputStream(in);
+			URL url = ResourceStreamProvider.getResourceURL(audioSource);
+			if( url != null ) {
+				final AudioInputStream inStream = AudioSystem.getAudioInputStream(url);
 				AudioFormat format = inStream.getFormat();
 
 				final int ch = format.getChannels();
 				final float rate = format.getSampleRate();
-				AudioFormat outFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, rate, 16, ch, ch*2, rate, false);
+				AudioFormat outFormat = new AudioFormat(AudioFormat.Encoding.PCM_SIGNED, rate, 16, ch, ch * 2, rate, false);
 
 				DataLine.Info info = new DataLine.Info(SourceDataLine.class, outFormat);
 
@@ -172,28 +243,33 @@ public class Music implements Audio {
 				audioStream = AudioSystem.getAudioInputStream(outFormat, inStream);
 				return true;
 			} else {
-				LOGGER.warning("Sound source <" + audioSource + "> could not be played: No audio source found.");
+				LOG.warn("Sound source <%s> could not be played: No audio source found.", audioSource);
 			}
 		} catch( UnsupportedAudioFileException ex ) {
-			LOGGER.log(Level.WARNING, "Sound source <" + audioSource + "> could not be played: The specified audio file is not supported.", ex);
+			LOG.warn(ex, "Sound source <%s> could not be played: The specified audio file is not supported.", audioSource);
 		} catch( LineUnavailableException ex ) {
-			LOGGER.log(Level.WARNING, "Sound source <" + audioSource + "> could not be played: Audio line for playing back is unavailable.", ex);
+			LOG.warn(ex, "Sound source <%s> could not be played: Audio line for playing back is unavailable.", audioSource);
 		} catch( IOException ex ) {
-			LOGGER.log(Level.WARNING, "Sound source <" + audioSource + "> could not be played: Error playing the audio file.", ex);
+			LOG.warn(ex, "Sound source <%s> could not be played: Error playing the audio file.", audioSource);
 		}
 		return false;
 	}
 
 	private void streamingStopped() {
-		playing = false;
 		dispose();
 
 		if( looping ) {
-			playOnce();
+			if( openLine() ) {
+				stream();
+			} else {
+				playing = false;
+				looping = false;
+			}
+		} else {
+			playing = false;
 		}
 	}
 
-	//private static final Logger LOGGER = Logger.getLogger("schule.ngb.zm.media.Music");
-	private static final Logger LOGGER = Logger.getLogger(Music.class.getName());
+	private static final Log LOG = Log.getLogger(Music.class);
 
 }

@@ -1,13 +1,13 @@
 package schule.ngb.zm;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class TestColor {
+class ColorTest {
 
 	@Test
-	public void colors() {
+	public void init() {
 		Color c;
 
 		c = new Color();
@@ -39,7 +39,7 @@ public class TestColor {
 	}
 
 	@Test
-	public void parseColors() {
+	public void parse() {
 		Color c;
 
 		c = Color.getRGBColor(0x00FF00FF);
@@ -86,7 +86,74 @@ public class TestColor {
 	}
 
 	@Test
-	public void hsl() {
+	void testEquals() {
+		Color c1 = new Color(254, 98, 12);
+		Color c2 = new Color(254, 98, 12);
+		assertNotSame(c1, c2);
+		assertEquals(c1, c2);
+		assertEquals(c1, c1);
+		c2 = new Color(c1);
+		assertNotSame(c1, c2);
+		assertEquals(c1, c2);
+
+		Color yellow = new Color(255, 255, 0);
+		assertEquals(java.awt.Color.YELLOW, yellow);
+		assertNotEquals(java.awt.Color.YELLOW, Color.YELLOW);
+	}
+
+	@Test
+	void construct() {
+		Color c;
+		// Empty color is white
+		c = new Color();
+		assertEquals(Color.BLACK, c);
+		// One arg is shade of gray
+		c = new Color(255);
+		assertEquals(Color.WHITE, c);
+		c = new Color(0);
+		assertEquals(Color.BLACK, c);
+		c = new Color(64);
+		assertEquals(Color.DARKGRAY, c);
+		c = new Color(192);
+		assertEquals(Color.LIGHTGRAY, c);
+		// RGB colors
+		c = new Color(0,0,0);
+		assertEquals(Color.BLACK, c);
+		c = new Color(255,0,0);
+		assertEquals(java.awt.Color.RED, c.getJavaColor());
+		c = new Color(0,255,0);
+		assertEquals(java.awt.Color.GREEN, c.getJavaColor());
+		c = new Color(0,0,255);
+		assertEquals(java.awt.Color.BLUE, c.getJavaColor());
+		// From java.awt.Color
+		c = new Color(java.awt.Color.YELLOW);
+		assertEquals(java.awt.Color.YELLOW, c.getJavaColor());
+	}
+
+	@Test
+	void getRGBColor() {
+		Color c1 = Color.getRGBColor(0xFFFF0000);
+		assertEquals(Color.RED, c1);
+	}
+
+	@Test
+	void getHSBColor() {
+	}
+
+	@Test
+	void getHSLColor() {
+	}
+
+	@Test
+	void parseHexcode() {
+	}
+
+	@Test
+	void morph() {
+	}
+
+	@Test
+	void RGBtoHSL() {
 		Color c;
 		float[] hsl;
 
@@ -101,45 +168,60 @@ public class TestColor {
 		assertEquals(.5647f, hsl[2], .0001f);
 	}
 
-	public static void main( String[] args ) {
-		new ColorPalette();
+	@Test
+	void HSLtoRGB() {
 	}
 
-	static class ColorPalette extends Zeichenmaschine {
-		public static final int SIZE = 10, COLORS = 16;
+	@Test
+	void testHSLtoRGB() {
+	}
 
-		public void setup() {
-			setSize(SIZE*COLORS, SIZE*COLORS);
-			setTitle("Colors");
+	@Test
+	void copy() {
+	}
 
-			drawing.noStroke();
-			drawing.setAnchor(NORTHWEST);
+	@Test
+	void getRGBA() {
+		Color yellow = new Color(255, 255, 0);
+		assertEquals(java.awt.Color.YELLOW.getRGB(), Color.YELLOW.getRGBA());
+	}
 
-			int steps = (int) (255.0/COLORS);
-			Color c;
-			for( int i = 0; i < COLORS; i++ ) {
-				for( int j = 0; j < COLORS; j++ ) {
-					c = new Color(i * steps, j * steps, (i+j)/2 * steps);
-					drawing.setFillColor(c);
-					drawing.rect(i*SIZE, j*SIZE, SIZE, SIZE);
-				}
-			}
-		}
+	@Test
+	void getRed() {
+	}
 
-		public void draw() {
-			Color c = Color.HGGREEN;
-			drawing.setFillColor(c);
-			drawing.rect(0, 0, width/2, height);
+	@Test
+	void getGreen() {
+	}
 
-			for( int p = 10; p < 100; p += 10 ) {
-				drawing.setFillColor(c.brighter(p));
-				drawing.rect(width / 2, 0, width / 2, height / 2);
-				drawing.setFillColor(c.darker(p));
-				drawing.rect(width / 2, height / 2, width / 2, height / 2);
+	@Test
+	void getBlue() {
+	}
 
-				delay(1000);
-			}
-		}
+	@Test
+	void getAlpha() {
+	}
+
+	@Test
+	void getJavaColor() {
+		assertEquals(java.awt.Color.YELLOW, Color.YELLOW.getJavaColor());
+		assertEquals(new java.awt.Color(255, 31, 124), new Color(255, 31, 124).getJavaColor());
+	}
+
+	@Test
+	void brighter() {
+	}
+
+	@Test
+	void testBrighter() {
+	}
+
+	@Test
+	void darker() {
+	}
+
+	@Test
+	void testDarker() {
 	}
 
 }

@@ -531,6 +531,7 @@ public class Zeichenmaschine extends Constants {
 	 * vor {@code cleanup()} aufgerufen wird.
 	 */
 	private void cleanup() {
+		LOG.debug("%s shutting down.", APP_NAME);
 		// Alle noch nicht ausgelösten Events werden entfernt
 		eventQueue.clear();
 		// Alle noch nicht ausgeführten Tasks werden entfernt
