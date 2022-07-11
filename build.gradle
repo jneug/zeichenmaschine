@@ -1,0 +1,46 @@
+plugins {
+	id 'idea'
+    id 'java-library'
+}
+
+/*properties {
+	zmVersion {
+		major = 0;
+		minor = 0;
+		rev = 21;
+	}
+}*/
+
+group 'schule.ngb'
+version '0.0.21-SNAPSHOT'
+//version '{$zmVersion.major}.{$zmVersion.minor}.{$zmVersion.rev}-SNAPSHOT'
+
+compileJava {
+    options.release = 11
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    runtimeOnly 'com.googlecode.soundlibs:jlayer:1.0.1.4'
+	runtimeOnly 'com.googlecode.soundlibs:tritonus-share:0.3.7.4'
+	runtimeOnly 'com.googlecode.soundlibs:mp3spi:1.9.5.4'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.register('jarMP3SPI', Jar) {
+	archiveClassifier = 'all'
+	duplicatesStrategy = 'exclude'
+	archivesBaseName = 'zeichenmaschine-mp3spi'
+	from {
+		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+	}
+}
