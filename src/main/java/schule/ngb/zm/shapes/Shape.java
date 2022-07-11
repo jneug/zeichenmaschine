@@ -169,7 +169,7 @@ public abstract class Shape extends FilledShape {
 	 * Unterklassen sollten diese Methode überschreiben, um weitere
 	 * Eigenschaften zu kopieren (zum Beispiel den Radius eines Kreises). Mit
 	 * dem Aufruf
-	 * <code>super.copyFrom(shape)</code> sollten die Basiseigenschaften
+	 * {@code super.copyFrom(shape)} sollten die Basiseigenschaften
 	 * kopiert werden.
 	 *
 	 * @param shape
