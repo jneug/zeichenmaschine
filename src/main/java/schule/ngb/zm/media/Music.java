@@ -194,7 +194,9 @@ public class Music implements Audio {
 	private void stream() {
 		audioLine.start();
 		playing = true;
-		eventDispatcher.dispatchEvent("start", Music.this);
+		if( eventDispatcher != null ) {
+			eventDispatcher.dispatchEvent("start", Music.this);
+		}
 
 		byte[] bytesBuffer = new byte[BUFFER_SIZE];
 		int bytesRead = -1;
@@ -221,7 +223,9 @@ public class Music implements Audio {
 
 		playing = false;
 		streamingStopped();
-		eventDispatcher.dispatchEvent("stop", Music.this);
+		if( eventDispatcher != null ) {
+			eventDispatcher.dispatchEvent("stop", Music.this);
+		}
 	}
 
 	private boolean openLine() {
