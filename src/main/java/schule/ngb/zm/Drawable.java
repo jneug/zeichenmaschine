@@ -12,7 +12,7 @@ public interface Drawable {
 	 * Gibt an, ob das Objekt derzeit sichtbar ist (also gezeichnet werden
 	 * muss).
 	 *
-	 * @return <code>true</code>, wenn das Objekt sichtbar ist.
+	 * @return {@code true}, wenn das Objekt sichtbar ist.
 	 */
 	boolean isVisible();
 

@@ -90,7 +90,7 @@ public class Zeichenleinwand extends Canvas {
 	 * als letzte eingefügt. Die aufrufende Methode kann also nicht sicher sein,
 	 * dass die neue Ebene am Ende wirklich am Index {@code i} steht.
 	 *
-	 * @param i Index der Ebene, beginnend mit <code>0</code>.
+	 * @param i Index der Ebene, beginnend mit 0.
 	 * @param layer Die neue Ebene.
 	 */
 	public void addLayer( int i, Layer layer ) {
@@ -125,10 +125,10 @@ public class Zeichenleinwand extends Canvas {
 	}
 
 	/**
-	 * Holt die Ebene am Index <var>i</var> (beginnend bei <code>0</code>).
+	 * Holt die Ebene am Index <var>i</var> (beginnend bei 0).
 	 *
-	 * @param i Index der Ebene (beginnend bei <code>0</code>).
-	 * @return Die Ebene am Index <var>i</var> oder <code>null</code>.
+	 * @param i Index der Ebene (beginnend bei 0).
+	 * @return Die Ebene am Index <var>i</var> oder {@code null}.
 	 * @throws IndexOutOfBoundsException Falls der Index nicht existiert.
 	 */
 	public Layer getLayer( int i ) {
@@ -141,7 +141,7 @@ public class Zeichenleinwand extends Canvas {
 
 	/**
 	 * Sucht die erste Ebene des angegebenen Typs aus der Liste der Ebenen.
-	 * Existiert keine solche Ebene, wird <code>null</code> zurückgegeben.
+	 * Existiert keine solche Ebene, wird {@code null} zurückgegeben.
 	 *
 	 * @param clazz Typ der Ebene.
 	 * @param <L>

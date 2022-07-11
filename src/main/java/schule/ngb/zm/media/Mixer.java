@@ -61,30 +61,53 @@ public class Mixer implements Audio {
 		audios.clear();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isPlaying() {
 		return audios.stream().anyMatch(aw -> aw.audio.isPlaying());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isLooping() {
 		return audios.stream().anyMatch(aw -> aw.audio.isLooping());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setVolume( double pVolume ) {
 		volume = (float) pVolume;
 		audios.stream().forEach(aw -> aw.audio.setVolume(aw.volumeFactor * pVolume));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void playOnce() {
-		audios.stream().forEach(aw -> aw.audio.playOnce());
+	public double getVolume() {
+		return volume;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void playOnceAndWait() {
-		audios.stream().forEach(aw -> aw.audio.playOnce());
+	public void play() {
+		audios.stream().forEach(aw -> aw.audio.play());
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void playAndWait() {
+		audios.stream().forEach(aw -> aw.audio.play());
 		while( audios.stream().anyMatch(aw -> aw.audio.isPlaying()) ) {
 			try {
 				Thread.sleep(10);
@@ -94,16 +117,25 @@ public class Mixer implements Audio {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void loop() {
 		audios.stream().forEach(aw -> aw.audio.loop());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void stop() {
 		audios.stream().forEach(aw -> aw.audio.stop());
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void dispose() {
 		if( isPlaying() ) {
@@ -112,6 +144,18 @@ public class Mixer implements Audio {
 		audios.stream().forEach(aw -> aw.audio.dispose());
 	}
 
+	/**
+	 * Ändert die Lautstärke aller hinzugefügten Audiomedien in der angegebenen
+	 * Zeit schrittweise, bis die angegebene Lautstärke erreicht ist.
+	 * <p>
+	 * Zu beachten ist, dass die Lautstärke des Mixers angepasst wird. Das
+	 * bedeutet, dass die Lautstärke der hinzugefügten Medien mit ihrem
+	 * Lautstärkefaktor multipliziert werden. Die Medien haben am Ende also
+	 * nicht unbedingt die Lautstärke {@code to}.
+	 *
+	 * @param to Der Zielwert für die Lautstärke.
+	 * @param time Die Zeit, nach der die Änderung abgeschlossen sein soll.
+	 */
 	public void fade( final double to, final int time ) {
 		TaskRunner.run(new Runnable() {
 			@Override
@@ -119,9 +163,6 @@ public class Mixer implements Audio {
 				final long start = System.currentTimeMillis();
 				double t = 0.0;
 				double from = volume;
-				if( !isPlaying() ) {
-					playOnce();
-				}
 				do {
 					setVolume(Constants.interpolate(from, to, t));
 					t = (double) (System.currentTimeMillis() - start) / (double) time;

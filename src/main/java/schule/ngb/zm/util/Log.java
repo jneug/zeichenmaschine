@@ -1,5 +1,11 @@
 package schule.ngb.zm.util;
 
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.function.Supplier;
@@ -30,6 +36,10 @@ public final class Log {
 
 	private static final String ROOT_LOGGER = "schule.ngb.zm";
 
+	private static final String DEFAULT_LOG_FORMAT = "[%1$tT] [%4$11s] %5$s %6$s%n";
+
+	private static final String DEFAULT_DEBUG_FORMAT = "[%1$tT] [%4$11s] (%2$s) %5$s %6$s%n";
+
 	private static boolean LOGGING_INIT = false;
 
 	/**
@@ -43,7 +53,7 @@ public final class Log {
 	 *
 	 * @see #enableGlobalLevel(Level)
 	 */
-	public static final void enableGlobalDebugging() {
+	public static void enableGlobalDebugging() {
 		enableGlobalLevel(ALL);
 	}
 
@@ -68,32 +78,18 @@ public final class Log {
 	 * @param level Das Level, auf das alle {@code Logger} und {@code Handler}
 	 * 	mindestens	herabgesenkt werden sollen.
 	 */
-	public static final void xenableGlobalLevel( Level level ) {
+	public static void enableGlobalLevel( Level level ) {
 		int lvl = Validator.requireNotNull(level).intValue();
+		ensureRootLoggerIntialized();
 
-		Logger rootLogger = Logger.getLogger(ROOT_LOGGER);
-		rootLogger.setLevel(level);
-
-		for( Handler handler : rootLogger.getHandlers() ) {
-			if( handler instanceof ConsoleHandler ) {
-				Level handlerLevel = handler.getLevel();
-				if( handlerLevel == null || handler.getLevel().intValue() > lvl ) {
-					handler.setLevel(level);
-				}
-			}
-		}
-	}
-
-	public static final void enableGlobalLevel( Level level ) {
-		int lvl = Validator.requireNotNull(level).intValue();
-
-		// Decrease level of root level ConsoleHandlers for outpu
+		// Decrease level of root level ConsoleHandlers for output
 		Logger rootLogger = Logger.getLogger("");
 		for( Handler handler : rootLogger.getHandlers() ) {
 			if( handler instanceof ConsoleHandler ) {
 				Level handlerLevel = handler.getLevel();
 				if( handlerLevel == null || handler.getLevel().intValue() > lvl ) {
 					handler.setLevel(level);
+					handler.setFormatter(new LogFormatter());
 				}
 			}
 		}
@@ -117,14 +113,40 @@ public final class Log {
 				}
 			}
 		}
+
+		Logger LOG = Logger.getLogger(ROOT_LOGGER);
+		LOG.fine("Debug logging enabled.");
 	}
 
-	public static final Log getLogger( Class<?> clazz ) {
-		if( !LOGGING_INIT ) {
-			Logger.getLogger(ROOT_LOGGER);
-			LOGGING_INIT = true;
-		}
+	public static Log getLogger( Class<?> clazz ) {
+		ensureRootLoggerIntialized();
 		return new Log(clazz);
+	}
+
+	private static void ensureRootLoggerIntialized() {
+		if( LOGGING_INIT ) {
+			return;
+		}
+
+		Logger rootLogger = Logger.getLogger(ROOT_LOGGER);
+		rootLogger.setLevel(Level.INFO);
+
+		if( System.getProperty("java.util.logging.SimpleFormatter.format") == null
+			&& LogManager.getLogManager().getProperty("java.util.logging.SimpleFormatter.format") == null ) {
+			System.setProperty("java.util.logging.SimpleFormatter.format", DEFAULT_LOG_FORMAT);
+			rootLogger.addHandler(new StreamHandler(System.err, new LogFormatter()));
+			rootLogger.setUseParentHandlers(false);
+		}
+		if( rootLogger.getUseParentHandlers() ) {
+			// This logger was not configured somewhere else
+			// Add a Handler and Formatter
+
+			//StreamHandler rootHandler = new StreamHandler(System.out, new SimpleFormatter());
+			//rootLogger.addHandler(rootHandler);
+			//rootLogger.setUseParentHandlers(false);
+		}
+
+		LOGGING_INIT = true;
 	}
 
 	private final Logger LOGGER;
@@ -313,6 +335,42 @@ public final class Log {
 
 	public void trace( final Throwable throwable, final Supplier<String> msgSupplier ) {
 		this.log(FINER, throwable, msgSupplier);
+	}
+
+	static final class LogFormatter extends Formatter {
+
+		@Override
+		public String format( LogRecord record ) {
+			ZonedDateTime zdt = ZonedDateTime.ofInstant(
+				record.getInstant(), ZoneId.systemDefault());
+			String source;
+			if (record.getSourceClassName() != null) {
+				source = record.getSourceClassName();
+				if (record.getSourceMethodName() != null) {
+					source += " " + record.getSourceMethodName();
+				}
+			} else {
+				source = record.getLoggerName();
+			}
+			String message = formatMessage(record);
+			String throwable = "";
+			if (record.getThrown() != null) {
+				StringWriter sw = new StringWriter();
+				PrintWriter pw = new PrintWriter(sw);
+				pw.println();
+				record.getThrown().printStackTrace(pw);
+				pw.close();
+				throwable = sw.toString();
+			}
+			return String.format(DEFAULT_LOG_FORMAT,
+				zdt,
+				source,
+				record.getLoggerName(),
+				record.getLevel().getLocalizedName(),
+				message,
+				throwable);
+		}
+
 	}
 
 }
