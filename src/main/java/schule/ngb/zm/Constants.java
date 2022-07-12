@@ -9,6 +9,38 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
+/**
+ * Basisklasse für die meisten Objekte der Zeichemaschine, die von Nutzern
+ * erweitert werden können.
+ * <p>
+ * Die Konstanten stellen viele Funktionen zur einfachen Programmierung bereit
+ * und enthält auch einige dynamische Werte, die von der Zeichenmaschine laufend
+ * aktuell gehalten werden (beispielsweise {@link #runtime}.
+ * <p>
+ * Für die Implementierung eigener Klassen ist es oft hilfreich von
+ * {@code Constants} zu erben, um die Methoden und Konstanten einfach im
+ * Programm nutzen zu können.
+ * <code><pre>
+ * class MyClass extends Constants {
+ *     public int summe( int a, int b ) {
+ *         // sum ist durch Vererbung verfügbar,
+ *         return sum(a, b);
+ *     }
+ * }
+ * </pre></code>
+ * <p>
+ * Alternativ können die statischen Klassenmethoden auch direkt genutzt werden:
+ * <code><pre>
+ * Constants.sum(1,2,3,4); // 10
+ * </pre></code>
+ * <p>
+ * Oder die Methoden statisch importiert werden:
+ * <code><pre>
+ * import static Constants.*;
+ *
+ * sum(1, 2, 3, 4); // 10
+ * </pre></code>
+ */
 @SuppressWarnings( "unused" )
 public class Constants {
 
@@ -1073,7 +1105,7 @@ public class Constants {
 	 * @param from Startwert
 	 * @param to Zielwert
 	 * @param t Wert zwischen 0 und 1.
-	 * @return
+	 * @return Das Ergebnis der linearen Interpolation.
 	 * @see #interpolate(double, double, double)
 	 */
 	public static final double morph( double from, double to, double t ) {
@@ -1301,6 +1333,7 @@ public class Constants {
 	/**
 	 * Erzeugt den nächsten Wert eines Perlin-Noise.
 	 *
+	 * @param x x-Wert für den Noise.
 	 * @return Ein zufälliger Wert.
 	 */
 	public static final double noise( double x ) {
@@ -1310,6 +1343,8 @@ public class Constants {
 	/**
 	 * Erzeugt den nächsten Wert eines zweidimensionalen Perlin-Noise.
 	 *
+	 * @param x x-Wert für den Noise.
+	 * @param y y-Wert für den Noise.
 	 * @return Ein zufälliger Wert.
 	 */
 	public static final double noise( double x, double y ) {
@@ -1319,6 +1354,9 @@ public class Constants {
 	/**
 	 * Erzeugt den nächsten Wert eines dreidimensionalen Perlin-Noise.
 	 *
+	 * @param x x-Wert für den Noise.
+	 * @param y y-Wert für den Noise.
+	 * @param z z-Wert für den Noise.
 	 * @return Ein zufälliger Wert.
 	 */
 	public static final double noise( double x, double y, double z ) {
