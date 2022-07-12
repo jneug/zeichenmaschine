@@ -56,7 +56,12 @@ public final class Options {
 		UP(NORTH),
 		DOWN(SOUTH),
 		LEFT(WEST),
-		RIGHT(EAST);
+		RIGHT(EAST),
+
+		UPLEFT(NORTHWEST),
+		DOWNLEFT(SOUTHWEST),
+		UPRIGHT(NORTHEAST),
+		DOWNRIGHT(SOUTHEAST);
 
 		public final byte x, y;
 

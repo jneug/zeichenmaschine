@@ -277,8 +277,8 @@ public class Zeichenmaschine extends Constants {
 		}
 
 		// Wir kennen nun den Bildschirm und können die Breite / Höhe abrufen.
-		this.width = width;
-		this.height = height;
+		this.canvasWidth = width;
+		this.canvasHeight = height;
 		java.awt.Rectangle displayBounds = displayDevice.getDefaultConfiguration().getBounds();
 		this.screenWidth = (int) displayBounds.getWidth();
 		this.screenHeight = (int) displayBounds.getHeight();
@@ -408,8 +408,8 @@ public class Zeichenmaschine extends Constants {
 				frame.setResizable(false); // Should be set anyway
 				displayDevice.setFullScreenWindow(frame);
 				// Update width / height
-				initialWidth = width;
-				initialHeight = height;
+				initialWidth = canvasWidth;
+				initialHeight = canvasHeight;
 				changeSize(screenWidth, screenHeight);
 				// Register ESC as exit fullscreen
 				canvas.addKeyListener(fullscreenExitListener);
@@ -595,11 +595,11 @@ public class Zeichenmaschine extends Constants {
 	 * @see #setFullscreen(boolean)
 	 */
 	private void changeSize( int newWidth, int newHeight ) {
-		width = Math.min(Math.max(newWidth, 100), screenWidth);
-		height = Math.min(Math.max(newHeight, 100), screenHeight);
+		canvasWidth = Math.min(Math.max(newWidth, 100), screenWidth);
+		canvasHeight = Math.min(Math.max(newHeight, 100), screenHeight);
 
 		if( canvas != null ) {
-			canvas.setSize(width, height);
+			canvas.setSize(canvasWidth, canvasHeight);
 		}
 	}
 
@@ -629,7 +629,7 @@ public class Zeichenmaschine extends Constants {
 	 * @return Die Breite der {@link Zeichenleinwand}.
 	 */
 	public final int getWidth() {
-		return width;
+		return canvasWidth;
 	}
 
 	/**
@@ -638,7 +638,7 @@ public class Zeichenmaschine extends Constants {
 	 * @return Die Höhe der {@link Zeichenleinwand}.
 	 */
 	public final int getHeight() {
-		return height;
+		return canvasHeight;
 	}
 
 	/**
@@ -718,7 +718,7 @@ public class Zeichenmaschine extends Constants {
 	public final ColorLayer getBackgroundLayer() {
 		ColorLayer layer = canvas.getLayer(ColorLayer.class);
 		if( layer == null ) {
-			layer = new ColorLayer(STD_BACKGROUND);
+			layer = new ColorLayer(DEFAULT_BACKGROUND);
 			canvas.addLayer(0, layer);
 		}
 		return layer;
@@ -812,7 +812,7 @@ public class Zeichenmaschine extends Constants {
 		BufferedImage img = ImageLoader.createImage(canvas.getWidth(), canvas.getHeight());
 
 		Graphics2D g = img.createGraphics();
-		g.setColor(STD_BACKGROUND.getJavaColor());
+		g.setColor(DEFAULT_BACKGROUND.getJavaColor());
 		g.fillRect(0, 0, img.getWidth(), img.getHeight());
 		canvas.draw(g);
 		g.dispose();
@@ -836,7 +836,7 @@ public class Zeichenmaschine extends Constants {
 		BufferedImage img = ImageLoader.createImage(canvas.getWidth(), canvas.getHeight());
 
 		Graphics2D g = img.createGraphics();
-		g.setColor(STD_BACKGROUND.getJavaColor());
+		g.setColor(DEFAULT_BACKGROUND.getJavaColor());
 		g.fillRect(0, 0, img.getWidth(), img.getHeight());
 		canvas.draw(g);
 		g.dispose();
@@ -1166,7 +1166,7 @@ public class Zeichenmaschine extends Constants {
 				break;
 			case MouseEvent.MOUSE_RELEASED:
 				mousePressed = false;
-				mouseButton = NOBUTTON;
+				mouseButton = NOMOUSE;
 				mousePressed(evt);
 				break;
 			case MouseEvent.MOUSE_DRAGGED:

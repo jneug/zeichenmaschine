@@ -243,7 +243,7 @@ public abstract class Shape extends FilledShape {
 	}
 
 	public void alignTo( Options.Direction dir, double buff ) {
-		Point2D anchorShape = Shape.getAnchorPoint(width, height, dir);
+		Point2D anchorShape = Shape.getAnchorPoint(canvasWidth, canvasHeight, dir);
 		Point2D anchorThis = this.getAbsAnchorPoint(dir);
 
 		this.x += Math.abs(dir.x) * (anchorShape.getX() - anchorThis.getX()) + dir.x * buff;

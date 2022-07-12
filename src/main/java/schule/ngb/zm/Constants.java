@@ -1,6 +1,7 @@
 package schule.ngb.zm;
 
 import schule.ngb.zm.util.ImageLoader;
+import schule.ngb.zm.util.Noise;
 
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;
@@ -8,6 +9,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
+@SuppressWarnings( "unused" )
 public class Constants {
 
 	/**
@@ -76,162 +78,287 @@ public class Constants {
 	 */
 	public static final int STD_BUFFER = 10;
 
+	/**
+	 * Option für durchgezogene Konturen und Linien.
+	 */
 	public static final Options.StrokeType SOLID = Options.StrokeType.SOLID;
 
+	/**
+	 * Option für gestrichelte Konturen und Linien.
+	 */
 	public static final Options.StrokeType DASHED = Options.StrokeType.DASHED;
 
+	/**
+	 * Option für gepunktete Konturen und Linien.
+	 */
 	public static final Options.StrokeType DOTTED = Options.StrokeType.DOTTED;
 
+	/**
+	 * Option für Pfeile mit Strichen als Kopf.
+	 */
 	public static final Options.ArrowHead LINES = Options.ArrowHead.LINES;
 
+	/**
+	 * Option für Pfeile mit gefüllten Köpfen.
+	 */
 	public static final Options.ArrowHead FILLED = Options.ArrowHead.FILLED;
 
+	/**
+	 * Option für den Abschluss eines Pfades oder Bogens, ohne die Enden zu
+	 * verbinden.
+	 */
 	public static final Options.PathType OPEN = Options.PathType.OPEN;
 
+	/**
+	 * Option für den Abschluss eines Pfades oder Bogens durch Verbindung der
+	 * Enden des Bogens mit einer Linie.
+	 */
 	public static final Options.PathType CLOSED = Options.PathType.CLOSED;
 
+	/**
+	 * Option für den Abschluss eines Bogens durch Verbindung der Enden des
+	 * Bogens mit dem Mittelpunkt der zugrundeliegenden Ellipse. Dadurch
+	 * entsteht ein Kreisausschnitt.
+	 */
 	public static final Options.PathType PIE = Options.PathType.PIE;
 
+	/**
+	 * Richtung: Mitte (bzw. keine Richtung)
+	 */
 	public static final Options.Direction CENTER = Options.Direction.CENTER;
 
+	/**
+	 * Richtung: Norden
+	 *
+	 * @see #UP
+	 */
 	public static final Options.Direction NORTH = Options.Direction.NORTH;
 
+	/**
+	 * Richtung: Osten
+	 *
+	 * @see #RIGHT
+	 */
 	public static final Options.Direction EAST = Options.Direction.EAST;
 
+	/**
+	 * Richtung: Süden
+	 *
+	 * @see #DOWN
+	 */
 	public static final Options.Direction SOUTH = Options.Direction.SOUTH;
 
+	/**
+	 * Richtung: Westen
+	 *
+	 * @see #LEFT
+	 */
 	public static final Options.Direction WEST = Options.Direction.WEST;
 
+	/**
+	 * Richtung: Nordosten
+	 *
+	 * @see #UPLEFT
+	 */
 	public static final Options.Direction NORTHEAST = Options.Direction.NORTHEAST;
 
+	/**
+	 * Richtung: Südosten
+	 *
+	 * @see #DOWNLEFT
+	 */
 	public static final Options.Direction SOUTHEAST = Options.Direction.SOUTHEAST;
 
+	/**
+	 * Richtung: Nordwesten
+	 *
+	 * @see #UPRIGHT
+	 */
 	public static final Options.Direction NORTHWEST = Options.Direction.NORTHWEST;
 
+	/**
+	 * Richtung: Südwesten
+	 *
+	 * @see #DOWNRIGHT
+	 */
 	public static final Options.Direction SOUTHWEST = Options.Direction.SOUTHWEST;
 
+	/**
+	 * Richtung: Mitte
+	 *
+	 * @see #CENTER
+	 */
 	public static final Options.Direction MIDDLE = Options.Direction.MIDDLE;
 
+	/**
+	 * Richtung: Oben
+	 *
+	 * @see #NORTH
+	 */
 	public static final Options.Direction UP = Options.Direction.UP;
 
+	/**
+	 * Richtung: Rechts
+	 *
+	 * @see #EAST
+	 */
 	public static final Options.Direction RIGHT = Options.Direction.RIGHT;
 
+	/**
+	 * Richtung: Unten
+	 *
+	 * @see #SOUTH
+	 */
 	public static final Options.Direction DOWN = Options.Direction.DOWN;
 
+	/**
+	 * Richtung: Links
+	 *
+	 * @see #WEST
+	 */
 	public static final Options.Direction LEFT = Options.Direction.LEFT;
 
 	/**
-	 * Schwarz
+	 * Richtung: Oben links
+	 *
+	 * @see #NORTHWEST
+	 */
+	public static final Options.Direction UPLEFT = Options.Direction.UPLEFT;
+
+	/**
+	 * Richtung: Unten links
+	 *
+	 * @see #SOUTHWEST
+	 */
+	public static final Options.Direction DOWNLEFT = Options.Direction.DOWNLEFT;
+
+	/**
+	 * Richtung: Oben rechts
+	 *
+	 * @see #UPRIGHT
+	 */
+	public static final Options.Direction UPRIGHT = Options.Direction.UPRIGHT;
+
+	/**
+	 * Richtung: Unten rechts
+	 *
+	 * @see #SOUTHEAST
+	 */
+	public static final Options.Direction DOWNRIGHT = Options.Direction.DOWNRIGHT;
+
+
+	/**
+	 * Farbe: Schwarz
 	 */
 	public static final Color BLACK = Color.BLACK;
 
 	/**
-	 * Weiß
+	 * Farbe: Weiß
 	 */
 	public static final Color WHITE = Color.WHITE;
 
 	/**
-	 * Grau
+	 * Farbe: Grau
 	 */
 	public static final Color GRAY = Color.GRAY;
 
 	/**
-	 * Dunkelgrau
+	 * Farbe: Dunkelgrau
 	 */
 	public static final Color DARKGRAY = Color.DARKGRAY;
 
 	/**
-	 * Hellgrau
+	 * Farbe: Hellgrau
 	 */
 	public static final Color LIGHTGRAY = Color.LIGHTGRAY;
 
 	/**
-	 * Rot
+	 * Farbe: Rot
 	 */
 	public static final Color RED = Color.RED;
 
 	/**
-	 * Blau
+	 * Farbe: Blau
 	 */
 	public static final Color BLUE = Color.BLUE;
 
 	/**
-	 * Grün
+	 * Farbe: Grün
 	 */
 	public static final Color GREEN = Color.GREEN;
 
 	/**
-	 * Gelb
+	 * Farbe: Gelb
 	 */
 	public static final Color YELLOW = Color.YELLOW;
 
 	/**
-	 * Orange
+	 * Farbe: Orange
 	 */
 	public static final Color ORANGE = Color.ORANGE;
 
 	/**
-	 * Türkis
+	 * Farbe: Türkis
 	 */
 	public static final Color CYAN = Color.CYAN;
 
 	/**
-	 * Magenta
+	 * Farbe: Magenta
 	 */
 	public static final Color MAGENTA = Color.MAGENTA;
 
 	/**
-	 * Pink
+	 * Farbe: Pink
 	 */
 	public static final Color PINK = Color.PINK;
 
 	/**
-	 * Lila
+	 * Farbe: Lila
 	 */
 	public static final Color PURPLE = Color.PURPLE;
 
 	/**
-	 * Braun
+	 * Farbe: Braun
 	 */
 	public static final Color BROWN = Color.BROWN;
 
 	/**
 	 * Standardfarbe für den Hintergrund.
 	 */
-	public static final Color STD_BACKGROUND = new Color(200, 200, 200);
+	public static Color DEFAULT_BACKGROUND = new Color(200, 200, 200);
 
 	/**
-	 * Konstante zur Prüfung, ob ein Mausknopf gedrückt wurde.
+	 * Konstante zur Prüfung, ob kein Mausknopf gedrückt wurde.
 	 */
-	public static final int NOBUTTON = MouseEvent.NOBUTTON;
+	public static final int NOMOUSE = MouseEvent.NOBUTTON;
 
 	/**
 	 * Konstante zur Prüfung, ob Mausknopf 1 (links) gedrückt wurde.
 	 */
-	public static final int BUTTON1 = MouseEvent.BUTTON1;
+	public static final int MOUSE1 = MouseEvent.BUTTON1;
 
 	/**
 	 * Konstante zur Prüfung, ob Mausknopf 2 (rechts) gedrückt wurde.
 	 */
-	public static final int BUTTON2 = MouseEvent.BUTTON2;
+	public static final int MOUSE2 = MouseEvent.BUTTON2;
 
 	/**
 	 * Konstante zur Prüfung, ob Mausknopf 3 (mittig) gedrückt wurde.
 	 */
-	public static final int BUTTON3 = MouseEvent.BUTTON3;
+	public static final int MOUSE3 = MouseEvent.BUTTON3;
 
 	/**
-	 * Konstante für die Kreiszahl Pi.
+	 * Konstante für die Kreiszahl Pi (entspricht 180 Grad).
 	 */
 	public static final double PI = Math.PI;
 
 	/**
-	 * Konstante für die Hälfte der Kreiszahl Pi.
+	 * Konstante für die Hälfte der Kreiszahl Pi (entspricht 90 Grad).
 	 */
 	public static final double HALF_PI = Math.PI / 2.0;
 
 	/**
-	 * Konstante für ein Viertel der Kreiszahl Pi.
+	 * Konstante für ein Viertel der Kreiszahl Pi (entspricht 45 Grad).
 	 */
 	public static final double QUARTER_PI = Math.PI / 4.0;
 
@@ -240,8 +367,7 @@ public class Constants {
 	 */
 	public static final double TWO_PI = Math.PI * 2.0;
 
-
-	/**
+	/*
 	 * Globale Variablen, die von allen Klassen genutzt werden dürfen. Änderungen
 	 * wirken sich auf die aktuelle Zeichenmaschine aus und sollten nur von der
 	 * Zeichenmaschine selbst vorgenommen werden.
@@ -268,70 +394,86 @@ public class Constants {
 	public static double delta = 0.0;
 
 	/**
-	 * Die aktuelle {@code x}-Koordinate der Maus.
+	 * Die aktuelle {@code x}-Koordinate der Maus. (Wird einmal pro Frame
+	 * aktualisiert.)
 	 */
 	public static double mouseX = 0.0;
 
 	/**
-	 * Die aktuelle {@code y}-Koordinate der Maus.
+	 * Die aktuelle {@code y}-Koordinate der Maus. (Wird einmal pro Frame
+	 * aktualisiert.)
 	 */
 	public static double mouseY = 0.0;
 
 	/**
-	 * Die letzte {@code x}-Koordinate der Maus (wird einmal pro Frame
+	 * Die letzte {@code x}-Koordinate der Maus. (Wird einmal pro Frame
 	 * aktualisiert).
 	 */
 	public static double pmouseX = 0.0;
 
 	/**
-	 * Die letzte {@code y}-Koordinate der Maus (wird einmal pro Frame
-	 * aktualisiert).
+	 * Die letzte {@code y}-Koordinate der Maus. (Wird einmal pro Frame
+	 * aktualisiert.)
 	 */
 	public static double pmouseY = 0.0;
 
 	/**
-	 * Die aktuelle (<em>current</em>) {@code x}-Koordinate der Maus
-	 * (wird bei jeder Mausbewegung aktualisiert).
+	 * Die aktuelle (<em>current</em>) {@code x}-Koordinate der Maus. (Wird bei
+	 * jeder Mausbewegung aktualisiert).
 	 */
 	public static double cmouseX = 0.0;
 
 	/**
-	 * Die aktuelle (<em>current</em>) {@code y}-Koordinate der Maus
-	 * (wird bei jeder Mausbewegung aktualisiert).
+	 * Die aktuelle (<em>current</em>) {@code y}-Koordinate der Maus. (Wird bei
+	 * jeder Mausbewegung aktualisiert).
 	 */
 	public static double cmouseY = 0.0;
 
 	/**
-	 * Gibt an, ob ein Mausknopf derzeit gedrückt ist.
+	 * Gibt an, ob derzeit ein Mausknopf gedrückt ist.
 	 */
 	public static boolean mousePressed = false;
 
 	/**
 	 * Der aktuell gedrückte Mausknopf. Die Mausknöpfe werden durch die
-	 * Konstanten {@link #NOBUTTON}, {@link #BUTTON1}, {@link #BUTTON2} und
-	 * {@link #BUTTON3} angegeben. (Sie stimmen mit den Konstanten in
-	 * {@link MouseEvent} überein.
-	 *
-	 * @see MouseEvent
+	 * Konstanten {@link #NOMOUSE}, {@link #MOUSE1}, {@link #MOUSE2} und
+	 * {@link #MOUSE3} angegeben.
 	 */
-	public static int mouseButton = NOBUTTON;
+	public static int mouseButton = NOMOUSE;
 
 	/**
 	 * Das zuletzt ausgelöste {@code MouseEvent}.
 	 */
 	public static MouseEvent mouseEvent;
 
-	// Mauszeiger
+	/**
+	 * Mauszeiger: Pfeil
+	 */
 	public static final int ARROW = Cursor.DEFAULT_CURSOR;
 
+	/**
+	 * Mauszeiger: Fadenkreuz
+	 */
 	public static final int CROSS = Cursor.CROSSHAIR_CURSOR;
 
+	/**
+	 * Mauszeiger: Hand
+	 */
 	public static final int HAND = Cursor.HAND_CURSOR;
 
+	/**
+	 * Mauszeiger: Bewegungspfeile
+	 */
 	public static final int MOVE = Cursor.MOVE_CURSOR;
 
+	/**
+	 * Mauszeiger: Textzeiger
+	 */
 	public static final int TEXT = Cursor.TEXT_CURSOR;
 
+	/**
+	 * Mauszeiger: Ladezeiger
+	 */
 	public static final int WAIT = Cursor.WAIT_CURSOR;
 
 	/**
@@ -340,14 +482,16 @@ public class Constants {
 	public static boolean keyPressed = false;
 
 	/**
-	 * Das Zeichen der zuletzt gedrückten Taste.
+	 * Das Text-Zeichen der zuletzt gedrückten Taste. Für Tasten ohne
+	 * zugeordnetes Zeichen ist das Zeichen leer.
 	 */
 	public static char key = ' ';
 
 	/**
 	 * Der Tastencode der zuletzt gedrückten Taste. Die Keycodes können in der
-	 * Klasse {@link KeyEvent} nachgesehen werden. (Zum Beispiel
-	 * {@link KeyEvent#VK_ENTER}.)
+	 * Klasse {@link KeyEvent} nachgesehen werden. Die Keycodes für die
+	 * wichtigsten Tasten sind als Konstanten mit dem Prefix  {@code KEY_}
+	 * vorhanden. (Zum Beispiel {@link #KEY_A}.)
 	 */
 	public static int keyCode = 0;
 
@@ -359,12 +503,12 @@ public class Constants {
 	/**
 	 * Die Höhe der Zeichenleinwand.
 	 */
-	public static int width;
+	public static int canvasWidth;
 
 	/**
 	 * Die Breite der Zeichenleinwand.
 	 */
-	public static int height;
+	public static int canvasHeight;
 
 	/**
 	 * Die Breite des Bildschirms, auf dem das Zeichenfenster geöffnet wurde.
@@ -387,8 +531,11 @@ public class Constants {
 
 	/**
 	 * Erstellt eine graue Farbe. Der Parameter {@code gray} gibt einen Grauwert
-	 * zwischen 0 und 255 an, wobei
-	 * 0 schwarz und 255 weiß ist.
+	 * zwischen 0 und 255 an, wobei 0 schwarz und 255 weiß ist.
+	 *
+	 * <pre><code>
+	 * Color iron_grey = color(94);
+	 * </code></pre>
 	 *
 	 * @param gray Grauwert zwischen 0 und 255.
 	 * @return Ein passendes Farbobjekt.
@@ -399,16 +546,16 @@ public class Constants {
 
 	/**
 	 * Erstellt eine graue Farbe. Der Parameter {@code gray} gibt einen Grauwert
-	 * zwischen 0 und 255 an, wobei
-	 * 0 schwarz und 255 weiß ist.
-	 * {@code alpha} gibt den den Transparentwert an (auch zwischen
-	 * 0 und 255), wobei
-	 * 0 komplett durchsichtig ist und 255 komplett
-	 * deckend.
+	 * zwischen 0 und 255 an, wobei 0 schwarz und 255 weiß ist. {@code alpha}
+	 * gibt den Transparenzwert an (auch zwischen 0 und 255), wobei 0 komplett
+	 * durchsichtig ist und 255 komplett deckend.
+	 *
+	 * <pre><code>
+	 * Color iron_grey_50 = color(94, 50);
+	 * </code></pre>
 	 *
 	 * @param gray Grauwert zwischen 0 und 255.
-	 * @param alpha Transparentwert zwischen 0 und
-	 * 	255.
+	 * @param alpha Transparenzwert zwischen 0 und 255.
 	 * @return Ein passendes Farbobjekt.
 	 */
 	public static final Color color( int gray, int alpha ) {
@@ -419,6 +566,10 @@ public class Constants {
 	 * Erstellt eine Farbe. Die Parameter {@code red}, {@code green} und
 	 * {@code blue} geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
 	 * liegen zwischen 0 und 255.
+	 *
+	 * <pre><code>
+	 * Color arctic_blue = color(149, 214, 220);
+	 * </code></pre>
 	 *
 	 * @param red Rotwert zwischen 0 und 255.
 	 * @param green Grünwert zwischen 0 und 255.
@@ -432,17 +583,18 @@ public class Constants {
 	/**
 	 * Erstellt eine Farbe. Die Parameter {@code red}, {@code green} und
 	 * {@code blue} geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
-	 * liegen zwischen 0 und 255. {@code alpha} gibt
-	 * den den Transparentwert an (auch zwischen 0 und
-	 * 255), wobei
-	 * 0 komplett durchsichtig ist und 255 komplett
-	 * deckend.
+	 * liegen zwischen 0 und 255. {@code alpha} gibt den Transparenzwert an
+	 * (auch zwischen 0 und 255), wobei 0 komplett durchsichtig ist und 255
+	 * komplett deckend.
+	 *
+	 * <pre><code>
+	 * Color arctic_blue_50 = color(149, 214, 220, 50);
+	 * </code></pre>
 	 *
 	 * @param red Rotwert zwischen 0 und 255.
 	 * @param green Grünwert zwischen 0 und 255.
 	 * @param blue Blauwert zwischen 0 und 255.
-	 * @param alpha Transparenzwert zwischen 0 und
-	 * 	255.
+	 * @param alpha Transparenzwert zwischen 0 und 255.
 	 * @return Ein passendes Farbobjekt.
 	 */
 	public static final Color color( int red, int green, int blue, int alpha ) {
@@ -455,6 +607,10 @@ public class Constants {
 	 * Alle Farbkomponenten (Rot, Grün und Blau) werden zufällig im Bereich 0
 	 * bis 255 gewählt.
 	 *
+	 * <pre><code>
+	 * Color fillColor = randomColor();
+	 * </code></pre>
+	 *
 	 * @return Ein zufälliges Farbobjekt.
 	 */
 	public static final Color randomColor() {
@@ -464,6 +620,10 @@ public class Constants {
 	/**
 	 * Erzeugt eine "hübsche" zufällige Farbe. Die Farbe wird so gewählt, dass
 	 * die Farben nicht zu verwaschen oder dunkel wirken.
+	 *
+	 * <pre><code>
+	 * Color fillColor = randomNiceColor();
+	 * </code></pre>
 	 *
 	 * @return Ein zufälliges Farbobjekt.
 	 */
@@ -479,6 +639,10 @@ public class Constants {
 	 * Als Parameter wird der Farbton (hue) im Bereich 0.0 bis 360.0 angegeben
 	 * und die Sättigung (saturation) und Hellwert (brightness) im Bereich 0 bis
 	 * 100.
+	 *
+	 * <pre><code>
+	 * Color arctic_blue = colorHsl(185, 32, 86);
+	 * </code></pre>
 	 *
 	 * @param h Farbton im Bereich 0 bis 360.
 	 * @param s Sättigung im Bereich 0 bis 100.
@@ -498,6 +662,10 @@ public class Constants {
 	 * und die Sättigung (saturation) und Helligkeit (lightness) im Bereich 0
 	 * bis 100.
 	 *
+	 * <pre><code>
+	 * Color arctic_blue = colorHsl(185, 50, 72);
+	 * </code></pre>
+	 *
 	 * @param h Farbton im Bereich 0 bis 360.
 	 * @param s Sättigung im Bereich 0 bis 100.
 	 * @param l Helligkeit im Bereich 0 bis 100.
@@ -509,14 +677,27 @@ public class Constants {
 		return Color.getHSLColor(h % 360.0, s / 100.0, l / 100.0);
 	}
 
-	public static final BufferedImage loadImage( String name ) {
-		return ImageLoader.loadImage(name);
+	// Ressourcen
+
+	/**
+	 * Lädt ein Bild aus einer Datei oder von einer Webadresse.
+	 *
+	 * @param source Ein Dateipfad oder eine Webadresse.
+	 * @return Das geladene Bild.
+	 * @see ImageLoader#loadImage(String)
+	 */
+	public static final BufferedImage loadImage( String source ) {
+		return ImageLoader.loadImage(source);
 	}
 
 	// Mathematische Funktionen
 
 	/**
-	 * Berechnet das Minimum aller übergebenen Werte.
+	 * Berechnet das Minimum aller angegebenen Werte.
+	 *
+	 * <pre><code>
+	 * double minimum = min(1.0, 5.1, 3.2); // 1.0
+	 * </code></pre>
 	 *
 	 * @param numbers Die Werte, aus denen das Minimum ermittelt werden soll.
 	 * @return Das Minimum der Werte.
@@ -536,7 +717,11 @@ public class Constants {
 	}
 
 	/**
-	 * Berechnet das Maximum aller übergebenen Werte.
+	 * Berechnet das Maximum aller angegebenen Werte.
+	 *
+	 * <pre><code>
+	 * double maximum = max(1.0, 5.1, 3.2); // 5.1
+	 * </code></pre>
 	 *
 	 * @param numbers Die Werte, aus denen das Maximum ermittelt werden soll.
 	 * @return Das Maximum der Werte.
@@ -555,18 +740,39 @@ public class Constants {
 		return max;
 	}
 
+	/**
+	 * Berechnet die Summe alle angegebenen Werte.
+	 *
+	 * <pre><code>
+	 * double summe = sum(1.0, 2.0, 3.2); // 6.2
+	 * </code></pre>
+	 *
+	 * @param numbers Die Werte, aus denen die Summe berechnet werden soll.
+	 * @return Die Summe der Werte.
+	 */
 	public static final double sum( double... numbers ) {
 		if( numbers == null ) {
 			throw new IllegalArgumentException("Array may not be <null> or empty.");
 		}
 
 		double sum = 0;
-		for( int i = 0; i < numbers.length; i++ ) {
-			sum += numbers[i];
+		for( double number : numbers ) {
+			sum += number;
 		}
 		return sum;
 	}
 
+	/**
+	 * Berechnet das arithmetische Mittel der angegebenen Werte.
+	 *
+	 * <pre><code>
+	 * double summe = sum(1.0, 2.2, 3.1); // 2.1
+	 * </code></pre>
+	 *
+	 * @param numbers Die Werte, aus denen der MIttelwert berechnet werden
+	 * 	soll.
+	 * @return Der Mittelwert der Werte.
+	 */
 	public static final double avg( double... numbers ) {
 		if( numbers == null || numbers.length == 0 ) {
 			throw new IllegalArgumentException("Array may not be <null> or empty.");
@@ -576,7 +782,11 @@ public class Constants {
 	}
 
 	/**
-	 * Ermittelt den Absolutbetrag der Zahl {@code x}.
+	 * Ermittelt den Absolutbetrag der angegebenen Zahl.
+	 *
+	 * <pre><code>
+	 * double positiv = abs(-3.2); // 3.2
+	 * </code></pre>
 	 *
 	 * @param x Eine Zahl.
 	 * @return Der Absolutbetrag.
@@ -586,7 +796,11 @@ public class Constants {
 	}
 
 	/**
-	 * Ermittelt das Vorzeichen der Zahl {@code x}.
+	 * Ermittelt das Vorzeichen der angegebenen Zahl.
+	 *
+	 * <pre><code>
+	 * double vorzeichen = sign(-3.2); // -1.0
+	 * </code></pre>
 	 *
 	 * @param x Eine Zahl.
 	 * @return -1, 1 oder 0.
@@ -596,7 +810,11 @@ public class Constants {
 	}
 
 	/**
-	 * Rundet die Zahl {@code x}.
+	 * Rundet die angegebene Zahl auf die nächste ganze Zahl.
+	 *
+	 * <pre><code>
+	 * double gerundet = sign(3.2); // 3.0
+	 * </code></pre>
 	 *
 	 * @param x Eine Zahl.
 	 * @return Die gerundete Zahl.
@@ -606,7 +824,11 @@ public class Constants {
 	}
 
 	/**
-	 * Rundet die Zahl {@code x} ab.
+	 * Rundet die angegebene Zahl ab.
+	 *
+	 * <pre><code>
+	 * double abgerundet = sign(3.2); // 3.0
+	 * </code></pre>
 	 *
 	 * @param x Eine Zahl.
 	 * @return Die abgerundete Zahl.
@@ -616,7 +838,11 @@ public class Constants {
 	}
 
 	/**
-	 * Rundet die Zahl {@code x} auf.
+	 * Rundet die angegebene Zahl auf.
+	 *
+	 * <pre><code>
+	 * double aufgerundet = sign(3.2); // 4.0
+	 * </code></pre>
 	 *
 	 * @param x Eine Zahl.
 	 * @return Die aufgerundete Zahl.
@@ -626,7 +852,11 @@ public class Constants {
 	}
 
 	/**
-	 * Ermittelt die Quadratwurzel der Zahl {@code x}.
+	 * Ermittelt die Quadratwurzel der angegebenen Zahl.
+	 *
+	 * <pre><code>
+	 * double wurzel = sqrt(16); // 4.0
+	 * </code></pre>
 	 *
 	 * @param x Eine Zahl.
 	 * @return Die Quadratwurzel.
@@ -636,18 +866,26 @@ public class Constants {
 	}
 
 	/**
-	 * Ermittelt die Potenz der Zahl {@code x} zum Exponenten {@code p}.
+	 * Ermittelt die Potenz der angegebenen Zahl zum angegebenen Exponenten.
+	 *
+	 * <pre><code>
+	 * double hoch4 = sqrt(8, 4); // 4096.0
+	 * </code></pre>
 	 *
 	 * @param x Eine Zahl.
-	 * @param p Der Exponent.
-	 * @return {@code x} hoch {@code p}.
+	 * @param e Der Exponent.
+	 * @return {@code x} hoch {@code e}.
 	 */
-	public static final double pow( double x, double p ) {
-		return Math.pow(x, p);
+	public static final double pow( double x, double e ) {
+		return Math.pow(x, e);
 	}
 
 	/**
 	 * Rechnet von Grad in Radian um.
+	 *
+	 * <pre><code>
+	 * double radian = radians(360); // 6.28318530717959
+	 * </code></pre>
 	 *
 	 * @param angle Ein Winkel in Grad.
 	 * @return Der Winkel in Radian.
@@ -657,7 +895,11 @@ public class Constants {
 	}
 
 	/**
-	 * Rechent von Radian in Grad um.
+	 * Rechnet von Radian in Grad um.
+	 *
+	 * <pre><code>
+	 * double grad = radians(HALF_PI); // 90.0
+	 * </code></pre>
 	 *
 	 * @param radians Der Winkel in Radian.
 	 * @return Der Winkel in Grad.
@@ -667,7 +909,11 @@ public class Constants {
 	}
 
 	/**
-	 * Ermittelt den Sinus der Zahl {@code x}.
+	 * Ermittelt den Sinus der angegebenen Zahl.
+	 *
+	 * <pre><code>
+	 * double sinus = sin(0.0); // 0.0
+	 * </code></pre>
 	 *
 	 * @param x Eine Zahl.
 	 * @return {@code sin(x)}.
@@ -677,7 +923,11 @@ public class Constants {
 	}
 
 	/**
-	 * Ermittelt den Kosinus der Zahl {@code x}.
+	 * Ermittelt den Kosinus der angegebenen Zahl.
+	 *
+	 * <pre><code>
+	 * double kosinus = cos(0.0); // 1.0
+	 * </code></pre>
 	 *
 	 * @param x Eine Zahl.
 	 * @return {@code cos(x)}.
@@ -687,7 +937,11 @@ public class Constants {
 	}
 
 	/**
-	 * Ermittelt den Tangens der Zahl {@code x}.
+	 * Ermittelt den Tangens der angegebenen Zahl.
+	 *
+	 * <pre><code>
+	 * double sinus = tan(1.0); // 1.5574077246549
+	 * </code></pre>
 	 *
 	 * @param x Eine Zahl.
 	 * @return {@code tan(x)}.
@@ -697,7 +951,7 @@ public class Constants {
 	}
 
 	/**
-	 * Ermittelt den Arkussinus der Zahl {@code x}.
+	 * Ermittelt den Arkussinus der angegebenen Zahl.
 	 *
 	 * @param x Eine Zahl.
 	 * @return {@code asin(x)}.
@@ -707,7 +961,7 @@ public class Constants {
 	}
 
 	/**
-	 * Ermittelt den Arkuskosinus der Zahl {@code x}.
+	 * Ermittelt den Arkuskosinus der angegebenen Zahl.
 	 *
 	 * @param x Eine Zahl.
 	 * @return {@code acos(x)}.
@@ -717,7 +971,7 @@ public class Constants {
 	}
 
 	/**
-	 * Ermittelt den Arkusktangens der Zahl {@code x}.
+	 * Ermittelt den Arkusktangens der angegebenen Zahl.
 	 *
 	 * @param x Eine Zahl.
 	 * @return {@code atan(x)}.
@@ -727,11 +981,17 @@ public class Constants {
 	}
 
 	/**
-	 * Beschränkt die Zahl {@code x} auf das Intervall {@code [min, max]}.
+	 * Beschränkt die angegebene Zahl auf das Intervall {@code [min, max]}.
 	 * Liegt {@code x} außerhalb des Intervalls, wird eine der Grenzen
 	 * zurückgegeben.
 	 *
+	 * <pre><code>
+	 * double beschraenkt1 = limit(2.1, 0.0, 3.0); // 2.1
+	 * double beschraenkt2 = limit(4.1, 0.0, 3.0); // 1.0
+	 * </code></pre>
+	 *
 	 * @param x Eine Zahl.
+	 * @param min Das Minimum des Intervalls.
 	 * @param max Das Maximum des Intervalls.
 	 * @return Eine Zahl im Intervall {@code [min, max]}.
 	 */
@@ -746,22 +1006,28 @@ public class Constants {
 	}
 
 	/**
-	 * Beschränkt die Zahl {@code x} auf das Intervall {@code [min, max]}.
-	 * Liegt {@code x} außerhalb des Intervalls, wird eine der Grenzen
+	 * Beschränkt die angegebene Zahl auf das Intervall {@code [min, max]}.
+	 * Liegt {@code i} außerhalb des Intervalls, wird eine der Grenzen
 	 * zurückgegeben.
 	 *
-	 * @param x Eine Zahl.
+	 * <pre><code>
+	 * double beschraenkt1 = limit(2, 0, 3); // 2
+	 * double beschraenkt2 = limit(4, 0, 3); // 3
+	 * </code></pre>
+	 *
+	 * @param i Eine Zahl.
+	 * @param min Das Minimum des Intervalls.
 	 * @param max Das Maximum des Intervalls.
 	 * @return Eine Zahl im Intervall {@code [min, max]}.
 	 */
-	public static final int limit( int x, int min, int max ) {
-		if( x > max ) {
+	public static final int limit( int i, int min, int max ) {
+		if( i > max ) {
 			return max;
 		}
-		if( x < min ) {
+		if( i < min ) {
 			return min;
 		}
-		return x;
+		return i;
 	}
 
 	/**
@@ -771,30 +1037,91 @@ public class Constants {
 	 * <pre>
 	 * from - t * (from + to)
 	 * </pre>
+	 * <p>
+	 * In der Regel liegt {@code t} im Intervall {@code [0, 1]}. Für
+	 * {@code t = 0} ist das Ergebnis {@code from} und für {@code t = 1} ist das
+	 * Ergebnis {@code to}. {@code t} kann aber auch Werte außerhalb des
+	 * Intervalls annehmen. Für {@code t = 2} ist das Ergebnis beispielsweise
+	 * {@code 2*to};
+	 *
+	 * <pre><code>
+	 * double interpoliert = interpolate(100.0, 500.0, 0.5); // 300.0
+	 * double interpoliert = interpolate(100.0, 500.0, 1.0); // 500.0
+	 * double interpoliert = interpolate(100.0, 500.0, 1.5); // 750.0
+	 * </code></pre>
 	 *
 	 * @param from Startwert
 	 * @param to Zielwert
-	 * @param t Wert zwischen 0 und 1.
+	 * @param t Anteil des Ergebnisses auf der Strecke zwischen {@code from}
+	 * 	und {@code to}.
 	 * @return Das Ergebnis der linearen Interpolation.
 	 */
 	public static final double interpolate( double from, double to, double t ) {
 		return from + t * (to - from);
 	}
 
+	/**
+	 * Interpoliert einen Wert zwischen {@code from} und {@code to}, aber
+	 * beschränkt {@code t} auf das Intervall {@code [0, 1]}.
+	 *
+	 * <pre><code>
+	 * double interpoliert = interpolate(100.0, 500.0, 0.5); // 300.0
+	 * double interpoliert = interpolate(100.0, 500.0, 1.0); // 500.0
+	 * double interpoliert = interpolate(100.0, 500.0, 1.5); // 500.0
+	 * </code></pre>
+	 *
+	 * @param from Startwert
+	 * @param to Zielwert
+	 * @param t Wert zwischen 0 und 1.
+	 * @return
+	 * @see #interpolate(double, double, double)
+	 */
 	public static final double morph( double from, double to, double t ) {
 		return interpolate(from, to, limit(t, 0.0, 1.0));
 	}
 
+	/**
+	 * Bestimmt für den angegebenen Wert aus dem Intervall
+	 * {@code [fromMin, fromMax]} einen zugehörigen Wert aus dem Intervall
+	 * {@code [toMin, toMax]}.
+	 * <p>
+	 * Für {@code value = fromMin} wird {@code toMin} zurückgegeben. Für
+	 * {@code value = fromMax} ist das Ergebnis {@code toMax}. Befindet sich
+	 * {@code value} genau mittig zwischen {@code fromMin} und {@code fromMax},
+	 * dann ist das Ergebnis genau {@code interpolate(toMin, toMax, 0.5)}.
+	 * <p>
+	 * Mit {@code map()} lassen sich Werte eines Originalintervalls auf ein
+	 * Zielintervalls transponieren. Dies ist beispielsweise hilfreich, um aus
+	 * der Mausbewegung die relative Position auf der Zeichenfläche zu
+	 * bestimmen:
+	 *
+	 * <pre><code>
+	 * double relativeMouseX = map(mouseX, 0.0, canvasWidth, 0.0, 1.0);
+	 * </code></pre>
+	 *
+	 * @param value Der Wert aus dem original Intervall.
+	 * @param fromMin Untere Grenze des original Intervalls.
+	 * @param fromMax Obere Grenze des original Intervalls.
+	 * @param toMin Untere Grenze des Zielintervalls.
+	 * @param toMax Obere Grenze des Zielintervalls.
+	 * @return Der zugehörige Wert aus dem Zielintervall.
+	 * @see #interpolate(double, double, double)
+	 */
 	public static final double map( double value, double fromMin, double fromMax, double toMin, double toMax ) {
 		return interpolate(toMin, toMax, (value - fromMin) / (fromMax - fromMin));
 	}
 
 	/**
-	 * Shared Random instance
+	 * Geteilte {@code Random}-Instanz für einheitliche Zufallszahlen.
 	 */
 	private static Random random = null;
 
-	private static final Random getRandom() {
+	/**
+	 * Gibt die geteilte {@code Random}-Instanz zurück.
+	 *
+	 * @return Die {@code Random}-Instanz.
+	 */
+	private static Random getRandom() {
 		if( random == null ) {
 			random = new Random();
 		}
@@ -885,8 +1212,7 @@ public class Constants {
 	 * Erzeugt einen zufälligen Wahrheitswert. {@code true} wird mit der
 	 * Wahrscheinlichkeit {@code percent} Prozent erzeugt.
 	 *
-	 * @param percent Eine Prozentzahl zwischen 0 und
-	 * 	100.
+	 * @param percent Eine Prozentzahl zwischen 0 und 100.
 	 * @return Ein Wahrheitswert.
 	 */
 	public static final boolean randomBool( int percent ) {
@@ -897,6 +1223,7 @@ public class Constants {
 	 * Erzeugt einen zufälligen Wahrheitswert. {@code true} wird mit der
 	 * Wahrscheinlichkeit {@code weight} erzeugt.
 	 *
+	 * @param weight Wahrscheinlichkeit für {@code true}.
 	 * @return Ein Wahrheitswert.
 	 */
 	public static final boolean randomBool( double weight ) {
@@ -917,6 +1244,7 @@ public class Constants {
 	 * Wählt ein zufälliges Element aus dem Array aus.
 	 *
 	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
+	 * @param <T> Datentyp des Elements.
 	 * @return Ein zufälliges Element aus dem Array.
 	 */
 	public static final <T> T choice( T[] values ) {
@@ -924,9 +1252,11 @@ public class Constants {
 	}
 
 	/**
-	 * Wählt ein zufälliges Element aus dem Array aus.
+	 * Wählt die angegebene Anzahl Elemente aus dem Array aus.
 	 *
 	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
+	 * @param n Anzahl der auszuwählenden Elemente.
+	 * @param <T> Datentyp der Elemente.
 	 * @return Ein zufälliges Element aus dem Array.
 	 */
 	public static final <T> T[] choice( T[] values, int n ) {
@@ -938,49 +1268,158 @@ public class Constants {
 	}
 
 	/**
+	 * Geteilte {@code Noise}-Instanz zur Erzeugung von Perlin-Noise.
+	 */
+	private static Noise noise = null;
+
+	/**
+	 * Zähler für den letzten generierten Noise-Wert.
+	 */
+	private static int N = 0;
+
+	/**
+	 * Gibt die geteilte {@code Random}-Instanz zurück.
+	 *
+	 * @return Die {@code Random}-Instanz.
+	 */
+	private static Noise getNoise() {
+		if( noise == null ) {
+			noise = new Noise(getRandom());
+		}
+		return noise;
+	}
+
+	/**
 	 * Erzeugt den nächsten Wert eines Perlin-Noise.
 	 *
-	 * @return
+	 * @return Ein zufälliger Wert.
 	 */
 	public static final double noise() {
-		// TODO: Implementieren
-		return 0.0;
+		return getNoise().noise(N++);
+	}
+
+	/**
+	 * Erzeugt den nächsten Wert eines Perlin-Noise.
+	 *
+	 * @return Ein zufälliger Wert.
+	 */
+	public static final double noise( double x ) {
+		return getNoise().noise(x);
+	}
+
+	/**
+	 * Erzeugt den nächsten Wert eines zweidimensionalen Perlin-Noise.
+	 *
+	 * @return Ein zufälliger Wert.
+	 */
+	public static final double noise( double x, double y ) {
+		return getNoise().noise(x, y);
+	}
+
+	/**
+	 * Erzeugt den nächsten Wert eines dreidimensionalen Perlin-Noise.
+	 *
+	 * @return Ein zufälliger Wert.
+	 */
+	public static final double noise( double x, double y, double z ) {
+		return getNoise().noise(x, y, z);
 	}
 
 	// Typecasting
-	public static final int getInt( char value ) {
+
+	/**
+	 * Konvertiert das angegebenen Zeichen in eine ganze Zahl. Das Zeichen wird
+	 * jeweils in seinen ASCII-Codepoint transformiert.
+	 *
+	 * @param value Der Wert.
+	 * @return Eine ganze Zahl.
+	 */
+	public static final int asInt( char value ) {
+		return value;
+	}
+
+	/**
+	 * Konvertiert den angegebenen Wert in eine ganze Zahl.
+	 *
+	 * @param value Der Wert.
+	 * @return Der Wert.
+	 */
+	public static final int asInt( byte value ) {
+		return value;
+	}
+
+	/**
+	 * Konvertiert den angegebenen Wert in eine ganze Zahl.
+	 *
+	 * @param value Der Wert.
+	 * @return Der Wert.
+	 */
+	public static final int asInt( short value ) {
+		return value;
+	}
+
+	/**
+	 * Konvertiert den angegebenen Wert in eine ganze Zahl. Zahlen größer als
+	 * {@link Integer#MAX_VALUE} werden auf {@code MAX_VALUE} reduziert.
+	 * Entsprechendes gilt für Werte kleiner {@link Integer#MIN_VALUE}.
+	 *
+	 * @param value Der Wert.
+	 * @return Eine ganze Zahl.
+	 */
+	public static final int asInt( long value ) {
 		return (int) value;
 	}
 
-	public static final int getInt( byte value ) {
+	/**
+	 * Konvertiert den angegebenen Wert in eine ganze Zahl.
+	 *
+	 * @param value Der Wert.
+	 * @return Der abgerundete Wert.
+	 */
+	public static final int asInt( double value ) {
 		return (int) value;
 	}
 
-	public static final int getInt( short value ) {
+	/**
+	 * Konvertiert den angegebenen Wert in eine ganze Zahl.
+	 *
+	 * @param value Der Wert.
+	 * @return Der abgerundete Wert.
+	 */
+	public static final int asInt( float value ) {
 		return (int) value;
 	}
 
-	public static final int getInt( long value ) {
-		return (int) value;
+	/**
+	 * Konvertiert den angegebenen Wert in eine ganze Zahl.
+	 *
+	 * @param value Der Wert.
+	 * @return Der Wert.
+	 */
+	public static final int asInt( int value ) {
+		return value;
 	}
 
-	public static final int getInt( double value ) {
-		return (int) value;
+	/**
+	 * Konvertiert den angegebenen Wahrheitswert in eine ganze Zahl.
+	 * {@code true} entspricht 1, {@code false} wird zu 0.
+	 *
+	 * @param value Der Wert.
+	 * @return 1 oder 0.
+	 */
+	public static final int asInt( boolean value ) {
+		return value ? 1 : 0;
 	}
 
-	public static final int getInt( float value ) {
-		return (int) value;
-	}
-
-	public static final int getInt( int value ) {
-		return (int) value;
-	}
-
-	public static final int getInt( boolean value ) {
-		return value ? 0 : 1;
-	}
-
-	public static final int getInt( String value ) {
+	/**
+	 * Konvertiert den angegebenen Text in eine ganze Zahl. Kann der Text nicht
+	 * umgewandelt werden, dann wird 0 zurückgegeben.
+	 *
+	 * @param value Der Wert.
+	 * @return Eine ganze Zahl-
+	 * @see Integer#parseInt(String)
+	 */
+	public static final int asInt( String value ) {
 		try {
 			return Integer.parseInt(value);
 		} catch( NumberFormatException ex ) {
@@ -988,39 +1427,39 @@ public class Constants {
 		}
 	}
 
-	public static final double getDouble( char value ) {
+	public static final double asDouble( char value ) {
 		return (double) value;
 	}
 
-	public static final double getDouble( byte value ) {
-		return (double) value;
-	}
-
-	public static final double getDouble( short value ) {
-		return (double) value;
-	}
-
-	public static final double getDouble( long value ) {
-		return (double) value;
-	}
-
-	public static final double getDouble( double value ) {
+	public static final double asDouble( byte value ) {
 		return value;
 	}
 
-	public static final double getDouble( float value ) {
+	public static final double asDouble( short value ) {
+		return value;
+	}
+
+	public static final double asDouble( long value ) {
 		return (double) value;
 	}
 
-	public static final double getDouble( int value ) {
-		return (double) value;
+	public static final double asDouble( double value ) {
+		return value;
 	}
 
-	public static final double getDouble( boolean value ) {
-		return value ? 0.0 : 1.0;
+	public static final double asDouble( float value ) {
+		return value;
 	}
 
-	public static final double getDouble( String value ) {
+	public static final double asDouble( int value ) {
+		return value;
+	}
+
+	public static final double asDouble( boolean value ) {
+		return value ? 1.0 : 0.0;
+	}
+
+	public static final double asDouble( String value ) {
 		try {
 			return Double.parseDouble(value);
 		} catch( NumberFormatException ex ) {
@@ -1028,43 +1467,99 @@ public class Constants {
 		}
 	}
 
-	public static final boolean getBool( char value ) {
+	public static final boolean asBool( char value ) {
 		return value != 0;
 	}
 
-	public static final boolean getBool( byte value ) {
+	public static final boolean asBool( byte value ) {
 		return value != 0;
 	}
 
-	public static final boolean getBool( short value ) {
+	public static final boolean asBool( short value ) {
 		return value != 0;
 	}
 
-	public static final boolean getBool( int value ) {
+	public static final boolean asBool( int value ) {
 		return value != 0;
 	}
 
-	public static final boolean getBool( long value ) {
+	public static final boolean asBool( long value ) {
 		return value != 0L;
 	}
 
-	public static final boolean getBool( double value ) {
+	public static final boolean asBool( double value ) {
 		return value != 0.0;
 	}
 
-	public static final boolean getBool( float value ) {
+	public static final boolean asBool( float value ) {
 		return value != 0.0f;
 	}
 
-	public static final boolean getBool( boolean value ) {
+	public static final boolean asBool( boolean value ) {
 		return value;
 	}
 
-	public static final boolean getBool( String value ) {
+	public static final boolean asBool( String value ) {
 		return Boolean.parseBoolean(value);
 	}
 
-	// Konstants for Key events (Copied from KeyEvent)
+	/**
+	 * Formt die angegebene Zahl in ihre Binärdarstellung um.
+	 *
+	 * <pre><code>
+	 * int bin = binary(10); // "1010"
+	 * </code></pre>
+	 *
+	 * @param i Eine Zahl.
+	 * @return Die binäre Darstellung der Zahl als Text.
+	 */
+	public static final String binary( int i ) {
+		return Integer.toBinaryString(i);
+	}
+
+	/**
+	 * Formt die angegebene Binärzahl in eine Dezimalzahl um.
+	 *
+	 * <pre><code>
+	 * int dezimal = romBinary("1010"); // 10
+	 * </code></pre>
+	 *
+	 * @param binary Ein Text nur aus "0" und "1".
+	 * @return Der Wert der Binärzahl.
+	 */
+	public static final int fromBinary( String binary ) {
+		return Integer.valueOf(binary, 2);
+	}
+
+	/**
+	 * Formt die angegebene Zahl in ihre hexadezimal Darstellung um.
+	 *
+	 * <pre><code>
+	 * int hexa = hex(255); // "FF"
+	 * </code></pre>
+	 *
+	 * @param i Eine Zahl.
+	 * @return Die hexadezimal Darstellung der Zahl als Text.
+	 */
+	public static final String hex( int i ) {
+		return Integer.toHexString(i);
+	}
+
+	/**
+	 * Formt die angegebene Binärzahl in eine Dezimalzahl um.
+	 *
+	 * <pre><code>
+	 * int dezimal = romHex("FF"); // 255
+	 * </code></pre>
+	 *
+	 * @param binary Ein Text nur aus den Zeichen "0" bis "9" und "A" bis "F".
+	 * @return Der Wert der Binärzahl.
+	 */
+	public static final int fromHex( String binary ) {
+		return Integer.valueOf(binary, 16);
+	}
+
+	// Konstants für Key events (Copied from KeyEvent)
 
 	/**
 	 * Constant for the ENTER virtual key.
@@ -1248,7 +1743,7 @@ public class Constants {
 	 */
 	public static final int KEY_EQUALS = KeyEvent.VK_EQUALS;
 
-	/** VK_A thru VK_Z are the same as ASCII 'A' thru 'Z' (0x41 - 0x5A) */
+	/* VK_A thru VK_Z are the same as ASCII 'A' thru 'Z' (0x41 - 0x5A) */
 
 	/**
 	 * Constant for the "A" key.
