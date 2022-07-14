@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-public class ImageLoader {
+public final class ImageLoader {
 
 	public static boolean caching = true;
 
