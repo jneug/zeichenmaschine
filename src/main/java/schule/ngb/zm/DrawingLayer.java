@@ -191,7 +191,8 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void pixel( double x, double y ) {
-		square(x, y, 1);
+		// square(x, y, 1);
+		buffer.setRGB((int)x, (int)y, fillColor.getRGBA());
 	}
 
 	public void square( double x, double y, double w ) {

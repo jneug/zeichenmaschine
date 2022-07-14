@@ -3,15 +3,13 @@ package schule.ngb.zm;
 /**
  * Repräsentiert eine Farbe in der Zeichenmaschine.
  * <p>
- * Farben bestehen entweder aus einem Grauwert (zwischen 0 und
- * 255) oder einem Rot-, Grün- und Blauanteil (jeweils zwischen
- * 0 und 255).
+ * Farben bestehen entweder aus einem Grauwert (zwischen 0 und 255) oder einem
+ * Rot-, Grün- und Blauanteil (jeweils zwischen 0 und 255).
  * <p>
- * Eine Farbe hat außerdem einen Transparenzwert zwischen 0
- * (unsichtbar) und 255 (deckend).
+ * Eine Farbe hat außerdem einen Transparenzwert zwischen 0 (unsichtbar) und 255
+ * (deckend).
  */
 public class Color {
-
 
 
 	//@formatter:off
@@ -124,12 +122,12 @@ public class Color {
 
 	/**
 	 * Erstellt eine Farbe. Die Parameter <var>red</var>, <var>green</var> und
-	 * <var>blue</var> geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
-	 * liegen zwischen 0 und 255.
+	 * <var>blue</var> geben die Rot-, Grün- und Blauanteile der Farbe. Die
+	 * Werte liegen zwischen 0 und 255.
 	 *
-	 * @param red   Rotwert zwischen 0 und 255.
+	 * @param red Rotwert zwischen 0 und 255.
 	 * @param green Grünwert zwischen 0 und 255.
-	 * @param blue  Blauwert zwischen 0 und 255.
+	 * @param blue Blauwert zwischen 0 und 255.
 	 */
 	public Color( int red, int green, int blue ) {
 		this(red, green, blue, 255);
@@ -137,20 +135,18 @@ public class Color {
 
 	/**
 	 * Erstellt eine Farbe. Die Parameter <var>red</var>, <var>green</var> und
-	 * <var>blue</var> geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
-	 * liegen zwischen 0 und 255.
+	 * <var>blue</var> geben die Rot-, Grün- und Blauanteile der Farbe. Die
+	 * Werte liegen zwischen 0 und 255.
 	 * <var>alpha</var> gibt den den Transparentwert an (auch zwischen
-	 * 0 und 255), wobei
-	 * 0 komplett durchsichtig ist und 255 komplett
-	 * deckend.
+	 * 0 und 255), wobei 0 komplett durchsichtig ist und 255 komplett deckend.
 	 *
-	 * @param red   Rotwert zwischen 0 und 255.
+	 * @param red Rotwert zwischen 0 und 255.
 	 * @param green Grünwert zwischen 0 und 255.
-	 * @param blue  Blauwert zwischen 0 und 255.
+	 * @param blue Blauwert zwischen 0 und 255.
 	 * @param alpha Transparentwert zwischen 0 und 255.
 	 */
 	public Color( int red, int green, int blue, int alpha ) {
-		rgba = (alpha << 24) | (red << 16) | (green << 8) | blue;
+		rgba = ((alpha&0xFF) << 24) | ((red&0xFF) << 16) | ((green&0xFF) << 8) | ((blue&0xFF) << 0);
 	}
 
 	/**
@@ -184,10 +180,11 @@ public class Color {
 	/**
 	 * Interner Konstruktor für die Initialisierung einer Farbe mit einem
 	 * RGBA-Wert.
-	 *
+	 * <p>
 	 * Da der Konstruktor {@link #Color(int)} schon besetzt ist, muss hier der
-	 * Parameter {@code isRGBA} auf {@code true} gesetzt werden, damit {@code rgba}
-	 * korrekt interpretiert wird.
+	 * Parameter {@code isRGBA} auf {@code true} gesetzt werden, damit
+	 * {@code rgba} korrekt interpretiert wird.
+	 *
 	 * @param rgba RGBA-wert der Farbe.
 	 * @param isRGBA Sollte immer {@code true} sein.
 	 */
@@ -210,12 +207,12 @@ public class Color {
 		return c;
 	}
 
-	public static Color getHSBColor(double h, double s, double b) {
-		return new Color(java.awt.Color.getHSBColor((float)h, (float)s, (float)b));
+	public static Color getHSBColor( double h, double s, double b ) {
+		return new Color(java.awt.Color.getHSBColor((float) h, (float) s, (float) b));
 	}
 
-	public static Color getHSLColor(double h, double s, double l) {
-		int rgb = Color.HSLtoRGB(new float[]{(float)h, (float)s, (float)l});
+	public static Color getHSLColor( double h, double s, double l ) {
+		int rgb = Color.HSLtoRGB(new float[]{(float) h, (float) s, (float) l});
 		return Color.getRGBColor(rgb);
 	}
 
@@ -235,9 +232,9 @@ public class Color {
 	}
 
 	/**
-	 * Erzeugt eine Farbe aus einem hexadezimalen Code. Der Hexcode kann
-	 * sechs- oder achtstellig sein (wenn ein Transparentwert vorhanden ist).
-	 * Dem Code kann ein {@code #} Zeichen vorangestellt sein.
+	 * Erzeugt eine Farbe aus einem hexadezimalen Code. Der Hexcode kann sechs-
+	 * oder achtstellig sein (wenn ein Transparentwert vorhanden ist). Dem Code
+	 * kann ein {@code #} Zeichen vorangestellt sein.
 	 *
 	 * @param hexcode
 	 * @return
@@ -336,10 +333,11 @@ public class Color {
 	/**
 	 * Konvertiert eine Farbe mit Komponenten im HSL-Farbraum in den
 	 * RGB-Farbraum.
-	 *
+	 * <p>
 	 * Die Farbkomponenten werden als Float-Array übergeben. Im Index 0 steht
 	 * der h-Wert im Bereich 0 bis 360, Index 1 und 2 enthalten den s- und
 	 * l-Wert im Bereich von 0 bis 1.
+	 *
 	 * @param hsl Die Farbkomponenten im HSL-Farbraum.
 	 * @param alpha Ein Transparenzwert im Bereich 0 bis 255.
 	 * @return Der RGBA-Wert der Farbe.
@@ -392,6 +390,7 @@ public class Color {
 
 	/**
 	 * Erzeugt eine Kopie dieser Farbe.
+	 *
 	 * @return Ein neues Farbobjekt.
 	 */
 	public Color copy() {
@@ -400,10 +399,11 @@ public class Color {
 
 	/**
 	 * Gibt den RGBA-Wert dieser Farbe zurück.
-	 *
-	 * Eine Farbe wird als 32-Bit Integer gespeichert. Bits 24-31 enthalten
-	 * den Transparenzwert, 16-23 den Rotwert, 8-15 den Grünwert und 0-7 den
+	 * <p>
+	 * Eine Farbe wird als 32-Bit Integer gespeichert. Bits 24-31 enthalten den
+	 * Transparenzwert, 16-23 den Rotwert, 8-15 den Grünwert und 0-7 den
 	 * Blauwert der Farbe.
+	 *
 	 * @return Der RGBA-Wert der Farbe.
 	 * @see #getRed()
 	 * @see #getGreen()
@@ -416,6 +416,7 @@ public class Color {
 
 	/**
 	 * Gibt den Rotwert dieser Farbe zurück.
+	 *
 	 * @return Der Rotwert der Farbe zwischen 0 und 255.
 	 */
 	public int getRed() {
@@ -424,6 +425,7 @@ public class Color {
 
 	/**
 	 * Gibt den Grünwert dieser Farbe zurück.
+	 *
 	 * @return Der Grünwert der Farbe zwischen 0 und 255.
 	 */
 	public int getGreen() {
@@ -432,6 +434,7 @@ public class Color {
 
 	/**
 	 * Gibt den Blauwert dieser Farbe zurück.
+	 *
 	 * @return Der Blauwert der Farbe zwischen 0 und 255.
 	 */
 	public int getBlue() {
@@ -440,6 +443,7 @@ public class Color {
 
 	/**
 	 * Gibt den Transparenzwert dieser Farbe zurück.
+	 *
 	 * @return Der Transparenzwert der Farbe zwischen 0 und 255.
 	 */
 	public int getAlpha() {
@@ -448,9 +452,10 @@ public class Color {
 
 	/**
 	 * Erzeugt ein {@link java.awt.Color}-Objekt aus dieser Farbe.
+	 * <p>
+	 * Das erzeugte Farbobjekt hat dieselben Rot-, Grün-, Blau- und
+	 * Transparenzwerte wie diese Farbe.
 	 *
-	 * Das erzeugte Farbobjekt hat dieselben Rot-, Grün-, Blau-
-	 * und Transparenzwerte wie diese Farbe.
 	 * @return Ein Java-Farbobjekt.
 	 */
 	public java.awt.Color getJavaColor() {
@@ -468,11 +473,18 @@ public class Color {
 	 * @return {@code true}, wenn die Objekte gleich sind, sonst {@code false}.
 	 */
 	public boolean equals( Object obj ) {
-		return obj instanceof Color && ((Color)obj).getRGBA() == this.rgba;
+		if( obj == null ) { return false; }
+		if( obj instanceof Color ) {
+			return ((Color) obj).getRGBA() == this.rgba;
+		} else if( obj instanceof java.awt.Color ) {
+			return ((java.awt.Color) obj).getRGB() == this.rgba;
+		}
+		return false;
 	}
 
 	/**
 	 * Erzeugt einen Text-String, der diese Farbe beschreibt.
+	 *
 	 * @return Eine Textversion der Farbe.
 	 */
 	@Override
@@ -482,6 +494,7 @@ public class Color {
 
 	/**
 	 * Berechnet einen Hashcode für dieses Farbobjekt.
+	 *
 	 * @return Ein Hashcode für diese Rabe.
 	 */
 	@Override
@@ -490,7 +503,8 @@ public class Color {
 	}
 
 	/**
-	 *  Erzeugt eine um 30% hellere Version dieser Farbe.
+	 * Erzeugt eine um 30% hellere Version dieser Farbe.
+	 *
 	 * @return Ein Farbobjekt mit einer helleren Farbe.
 	 */
 	public Color brighter() {
@@ -499,6 +513,7 @@ public class Color {
 
 	/**
 	 * Erzeugt eine um {@code percent} hellere Version dieser Farbe.
+	 *
 	 * @param percent Eine Prozentzahl zwischen 0 und 100.
 	 * @return Ein Farbobjekt mit einer helleren Farbe.
 	 */
@@ -510,6 +525,7 @@ public class Color {
 
 	/**
 	 * Erzeugt eine um 30% dunklere Version dieser Farbe.
+	 *
 	 * @return Ein Farbobjekt mit einer dunkleren Farbe.
 	 */
 	public Color darker() {
@@ -518,6 +534,7 @@ public class Color {
 
 	/**
 	 * Erzeugt eine um {@code percent} dunklere Version dieser Farbe.
+	 *
 	 * @param percent Eine Prozentzahl zwischen 0 und 100.
 	 * @return Ein Farbobjekt mit einer dunkleren Farbe.
 	 */
@@ -528,11 +545,12 @@ public class Color {
 	}
 
 	public Color greyscale() {
-		return new Color((int)(getRed()*.299 + getGreen()*.587 + getBlue()*0.114));
+		return new Color((int) (getRed() * .299 + getGreen() * .587 + getBlue() * 0.114));
 	}
 
 	/**
 	 * Erzeugt eine zu dieser invertierte Farbe.
+	 *
 	 * @return Ein Farbobjekt mit der invertierten Farbe.
 	 */
 	public Color inverted() {
@@ -542,6 +560,7 @@ public class Color {
 
 	/**
 	 * Erzeugt die Komplementärfarbe zu dieser.
+	 *
 	 * @return Ein Farbobjekt mit der Komplementärfarbe.
 	 */
 	public Color complement() {
@@ -554,11 +573,12 @@ public class Color {
 	 * Wählt entweder {@link #WHITE weiß} oder {@link #BLACK schwarz} aus, je
 	 * nachdem, welche der Farben besser als Textfarbe mit dieser Farbe als
 	 * Hintergrund funktioniert (besser lesbar ist).
+	 *
 	 * @return Schwarz oder weiß.
 	 */
 	public Color textcolor() {
 		// Basiert auf https://stackoverflow.com/questions/946544/good-text-foreground-color-for-a-given-background-color
-		if( (getRed()*.299 + getGreen()*.587 + getBlue()*0.114) < 186 ) {
+		if( (getRed() * .299 + getGreen() * .587 + getBlue() * 0.114) < 186 ) {
 			return WHITE;
 		} else {
 			return BLACK;

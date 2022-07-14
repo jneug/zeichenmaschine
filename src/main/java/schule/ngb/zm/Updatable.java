@@ -9,7 +9,7 @@ public interface Updatable {
 
 	/**
 	 * Gibt an, ob das Objekt gerade auf Aktualisierungen reagiert.
-	 * @return <code>true</code>, wenn das Objekt aktiv ist.
+	 * @return {@code true}, wenn das Objekt aktiv ist.
 	 */
 	public boolean isActive();
 

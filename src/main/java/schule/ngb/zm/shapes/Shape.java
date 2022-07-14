@@ -168,8 +168,7 @@ public abstract class Shape extends FilledShape {
 	 * <p>
 	 * Unterklassen sollten diese Methode überschreiben, um weitere
 	 * Eigenschaften zu kopieren (zum Beispiel den Radius eines Kreises). Mit
-	 * dem Aufruf
-	 * <code>super.copyFrom(shape)</code> sollten die Basiseigenschaften
+	 * dem Aufruf {@code super.copyFrom(shape)} sollten die Basiseigenschaften
 	 * kopiert werden.
 	 *
 	 * @param shape
@@ -243,7 +242,7 @@ public abstract class Shape extends FilledShape {
 	}
 
 	public void alignTo( Options.Direction dir, double buff ) {
-		Point2D anchorShape = Shape.getAnchorPoint(width, height, dir);
+		Point2D anchorShape = Shape.getAnchorPoint(canvasWidth, canvasHeight, dir);
 		Point2D anchorThis = this.getAbsAnchorPoint(dir);
 
 		this.x += Math.abs(dir.x) * (anchorShape.getX() - anchorThis.getX()) + dir.x * buff;

@@ -17,7 +17,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
-public class ImageLoader {
+public final class ImageLoader {
 
 	public static boolean caching = true;
 
@@ -47,7 +47,7 @@ public class ImageLoader {
 
 	/**
 	 * Lädt ein Bild von der angegebenen Quelle <var>source</var> und gibt das
-	 * Bild zurück oder <code>null</code>, wenn das Bild nicht geladen werden
+	 * Bild zurück oder {@code null}, wenn das Bild nicht geladen werden
 	 * konnte. Ist ein Bild mit der angegebenen Quelle im Cache, wird das
 	 * gespeicherte Bild zurückgegeben. Dies kann mit {@code caching = false}
 	 * verhindert werden.
