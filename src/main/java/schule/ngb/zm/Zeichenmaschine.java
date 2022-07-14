@@ -291,6 +291,7 @@ public class Zeichenmaschine extends Constants {
 		// Das Icon des Fensters ändern
 
 		try {
+			// TODO: Add image sizes
 			ImageIcon icon = new ImageIcon(ImageIO.read(new File("res/icon_64.png")));
 
 			if( MACOS ) {
@@ -334,7 +335,10 @@ public class Zeichenmaschine extends Constants {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing( WindowEvent e ) {
-				exit();
+				//exit();
+				teardown();
+				cleanup();
+				quit(true);
 			}
 		});
 
@@ -1033,7 +1037,7 @@ public class Zeichenmaschine extends Constants {
 	 * @param delta
 	 */
 	public void update( double delta ) {
-		//running = !run_once;
+		running = !run_once;
 		stop_after_update = run_once;
 	}
 
@@ -1048,7 +1052,7 @@ public class Zeichenmaschine extends Constants {
 	 * dar, da hier die Zeichnung des Programms erstellt wird.
 	 */
 	public void draw() {
-		running = !stop_after_update;
+		//running = !stop_after_update;
 	}
 
 	/**
