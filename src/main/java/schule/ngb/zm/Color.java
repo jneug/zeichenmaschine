@@ -146,7 +146,7 @@ public class Color {
 	 * @param alpha Transparentwert zwischen 0 und 255.
 	 */
 	public Color( int red, int green, int blue, int alpha ) {
-		rgba = (alpha << 24) | (red << 16) | (green << 8) | blue;
+		rgba = ((alpha&0xFF) << 24) | ((red&0xFF) << 16) | ((green&0xFF) << 8) | ((blue&0xFF) << 0);
 	}
 
 	/**
@@ -473,7 +473,13 @@ public class Color {
 	 * @return {@code true}, wenn die Objekte gleich sind, sonst {@code false}.
 	 */
 	public boolean equals( Object obj ) {
-		return obj instanceof Color && ((Color) obj).getRGBA() == this.rgba;
+		if( obj == null ) { return false; }
+		if( obj instanceof Color ) {
+			return ((Color) obj).getRGBA() == this.rgba;
+		} else if( obj instanceof java.awt.Color ) {
+			return ((java.awt.Color) obj).getRGB() == this.rgba;
+		}
+		return false;
 	}
 
 	/**
