@@ -71,7 +71,7 @@ class ConstantsTest {
 	}
 
 	@Test
-	void b() {
+	void asBool() {
 		assertTrue(Constants.asBool(true));
 		assertFalse(Constants.asBool(false));
 		assertTrue(Constants.asBool(1));
@@ -126,6 +126,47 @@ class ConstantsTest {
 		}
 
 		assertEquals(.8f, Math.abs(t/(t+f)), .01f);
+	}
+
+	@Test
+	void noise() {
+		double lastNoise = -1.0;
+		for( int i = 0; i < 100; i++ ) {
+			double thisNoise = Constants.noise(i * 0.005);
+
+			assertInRange(thisNoise);
+			assertNotEquals(lastNoise, thisNoise);
+			assertEquals(thisNoise, Constants.noise(i * 0.005), 0.0001);
+
+			lastNoise = thisNoise;
+		}
+
+		lastNoise = -1.0;
+		for( int i = 0; i < 100; i++ ) {
+			double thisNoise = Constants.noise(i * 0.005, 0.1);
+
+			assertInRange(thisNoise);
+			assertNotEquals(lastNoise, thisNoise);
+			assertEquals(thisNoise, Constants.noise(i * 0.005, 0.1), 0.0001);
+
+			lastNoise = thisNoise;
+		}
+
+		lastNoise = -1.0;
+		for( int i = 0; i < 100; i++ ) {
+			double thisNoise = Constants.noise(i * 0.005, 5.5, 100.0/(i+1));
+
+			assertInRange(thisNoise);
+			assertNotEquals(lastNoise, thisNoise);
+			assertEquals(thisNoise, Constants.noise(i * 0.005, 5.5, 100.0/(i+1)), 0.0001);
+
+			lastNoise = thisNoise;
+		}
+	}
+
+	private void assertInRange( double d ) {
+		assertFalse(Double.isNaN(d), "Noise value can't be NaN.");
+		assertTrue(0.0 <= d && 1.0 >= d, "Noise should be in Range 0 to 1. Was <" + d + ">.");
 	}
 
 }
