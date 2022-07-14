@@ -1327,7 +1327,7 @@ public class Constants {
 	 * @return Ein zufälliger Wert.
 	 */
 	public static final double noise() {
-		return getNoise().noise(N++);
+		return getNoise().noise(0.005 * N++);
 	}
 
 	/**
