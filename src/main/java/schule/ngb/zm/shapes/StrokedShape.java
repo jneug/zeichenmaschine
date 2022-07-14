@@ -4,8 +4,14 @@ import schule.ngb.zm.Color;
 import schule.ngb.zm.Constants;
 import schule.ngb.zm.Drawable;
 import schule.ngb.zm.Options;
+import schule.ngb.zm.util.Noise;
 
 import java.awt.*;
+import java.awt.Shape;
+import java.awt.geom.FlatteningPathIterator;
+import java.awt.geom.GeneralPath;
+import java.awt.geom.PathIterator;
+import java.util.Arrays;
 
 
 public abstract class StrokedShape extends Constants implements Drawable {
@@ -26,7 +32,7 @@ public abstract class StrokedShape extends Constants implements Drawable {
 		this.strokeColor = color;
 	}
 
-	public void setStrokeColor( Color color , int alpha ) {
+	public void setStrokeColor( Color color, int alpha ) {
 		setStrokeColor(new Color(color, alpha));
 	}
 
@@ -66,10 +72,11 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	/**
 	 * Setzt den Typ der Kontur. Erlaubte Werte sind {@link #DASHED},
 	 * {@link #DOTTED} und {@link #SOLID}.
+	 *
 	 * @param type
 	 */
 	public void setStrokeType( Options.StrokeType type ) {
-		this.strokeType = DASHED;
+		this.strokeType = type;
 		this.stroke = null;
 	}
 
@@ -78,9 +85,11 @@ public abstract class StrokedShape extends Constants implements Drawable {
 
 	/**
 	 * Erstellt ein {@link Stroke} Objekt für den Konturtyp.
+	 *
 	 * @return
 	 */
 	protected Stroke createStroke() {
+		// TODO: Used global cached Stroke Objects?
 		if( stroke == null ) {
 			switch( strokeType ) {
 				case DOTTED:
