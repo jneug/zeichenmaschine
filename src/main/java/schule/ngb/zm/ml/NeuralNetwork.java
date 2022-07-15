@@ -1,8 +1,109 @@
 package schule.ngb.zm.ml;
 
 import schule.ngb.zm.util.Log;
+import schule.ngb.zm.util.ResourceStreamProvider;
+
+import java.io.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 public class NeuralNetwork {
+
+	public static void saveToFile( String source, NeuralNetwork network ) {
+		try(
+			Writer writer = ResourceStreamProvider.getWriter(source);
+			PrintWriter out = new PrintWriter(writer)
+		) {
+			for( NeuronLayer layer: network.layers ) {
+				out.print(layer.getNeuronCount());
+				out.print(' ');
+				out.print(layer.getInputCount());
+				out.println();
+
+				for( int i = 0; i < layer.getInputCount(); i++ ) {
+					for( int j = 0; j < layer.getNeuronCount(); j++ ) {
+						out.print(layer.weights.coefficients[i][j]);
+						out.print(' ');
+					}
+					out.println();
+				}
+				for( int j = 0; j < layer.getNeuronCount(); j++ ) {
+					out.print(layer.biases[j]);
+					out.print(' ');
+				}
+				out.println();
+			}
+			out.flush();
+		} catch( IOException ex ) {
+			LOG.warn(ex, "");
+		}
+	}
+
+	public static NeuralNetwork loadFromFile( String source ) {
+		try(
+			Reader reader = ResourceStreamProvider.getReader(source);
+			BufferedReader in = new BufferedReader(reader)
+		) {
+			List<NeuronLayer> layers = new LinkedList<>();
+			String line;
+			while( (line = in.readLine()) != null ) {
+				String[] split = line.split(" ");
+				int neurons = Integer.parseInt(split[0]);
+				int inputs = Integer.parseInt(split[1]);
+
+				NeuronLayer layer = new NeuronLayer(neurons, inputs);
+				for( int i = 0; i < inputs; i++ ) {
+					split = in.readLine().split(" ");
+					for( int j = 0; j < neurons; j++ ) {
+						layer.weights.coefficients[i][j] = Double.parseDouble(split[j]);
+					}
+				}
+				// Load Biases
+				split = in.readLine().split(" ");
+				for( int j = 0; j < neurons; j++ ) {
+					layer.biases[j] = Double.parseDouble(split[j]);
+				}
+
+				layers.add(layer);
+			}
+
+			return new NeuralNetwork(layers);
+		} catch( IOException | NoSuchElementException ex ) {
+			LOG.warn(ex, "Could not load neural network from source <%s>", source);
+		}
+		return null;
+	}
+
+	/*public static NeuralNetwork loadFromFile( String source ) {
+		try(
+			InputStream stream = ResourceStreamProvider.getInputStream(source);
+			Scanner in = new Scanner(stream)
+		) {
+			List<NeuronLayer> layers = new LinkedList<>();
+			while( in.hasNext() ) {
+				int neurons = in.nextInt();
+				int inputs = in.nextInt();
+
+				NeuronLayer layer = new NeuronLayer(neurons, inputs);
+				for( int i = 0; i < inputs; i++ ) {
+					for( int j = 0; j < neurons; j++ ) {
+						layer.weights.coefficients[i][j] = in.nextDouble();
+					}
+				}
+				for( int j = 0; j < neurons; j++ ) {
+					layer.biases[j] = in.nextDouble();
+				}
+
+				layers.add(layer);
+			}
+
+			return new NeuralNetwork(layers);
+		} catch( IOException | NoSuchElementException ex ) {
+			LOG.warn(ex, "Could not load neural network from source <%s>", source);
+		}
+		return null;
+	}*/
 
 	private NeuronLayer[] layers;
 
@@ -18,26 +119,35 @@ public class NeuralNetwork {
 		this(new NeuronLayer(layer1, inputs), new NeuronLayer(layer2, layer1), new NeuronLayer(outputs, layer2));
 	}
 
-	public NeuralNetwork( NeuronLayer layer1, NeuronLayer layer2 ) {
-		this.layers = new NeuronLayer[2];
-		this.layers[0] = layer1;
-		this.layers[1] = layer2;
-		layer1.connect(null, layer2);
-		layer2.connect(layer1, null);
+	public NeuralNetwork( int inputs, int layer1, int layer2, int layer3, int outputs ) {
+		this(new NeuronLayer(layer1, inputs), new NeuronLayer(layer2, layer1), new NeuronLayer(layer3, layer2), new NeuronLayer(outputs, layer3));
 	}
 
-	public NeuralNetwork( NeuronLayer layer1, NeuronLayer layer2, NeuronLayer layer3 ) {
-		this.layers = new NeuronLayer[3];
-		this.layers[0] = layer1;
-		this.layers[1] = layer2;
-		this.layers[2] = layer3;
-		layer1.connect(null, layer2);
-		layer2.connect(layer1, layer3);
-		layer3.connect(layer2, null);
+	public NeuralNetwork( List<NeuronLayer> layers ) {
+		this.layers = new NeuronLayer[layers.size()];
+		for( int i = 0; i < layers.size(); i++ ) {
+			this.layers[i] = layers.get(i);
+			if( i > 0 ) {
+				this.layers[i-1].setNextLayer(this.layers[i]);
+			}
+		}
+	}
+
+	public NeuralNetwork( NeuronLayer... layers ) {
+		this.layers = new NeuronLayer[layers.length];
+		for( int i = 0; i < layers.length; i++ ) {
+			this.layers[i] = layers[i];
+			if( i > 0 ) {
+				this.layers[i-1].setNextLayer(this.layers[i]);
+			}
+		}
 	}
 
 	public int getLayerCount() {
 		return layers.length;
+	}
+	public NeuronLayer[] getLayers() {
+		return layers;
 	}
 
 	public NeuronLayer getLayer( int i ) {
@@ -63,7 +173,7 @@ public class NeuralNetwork {
 	}
 
 	public void learn( double[][] expected ) {
-		layers[layers.length-1].backprop(expected, learningRate);
+		layers[layers.length - 1].backprop(expected, learningRate);
 	}
 
 	public void train( double[][] inputs, double[][] expected, int iterations/*, double minChange, int timeout */ ) {

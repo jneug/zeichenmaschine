@@ -1,6 +1,6 @@
 package schule.ngb.zm.util;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 public final class FileLoader {
@@ -61,10 +60,10 @@ public final class FileLoader {
 				.lines(Paths.get(ResourceStreamProvider.getResourceURL(source).toURI()), charset)
 				.skip(n)
 				.map(
-					(line) -> Arrays
+					( line ) -> Arrays
 						.stream(line.split(Character.toString(separator)))
 						.mapToDouble(
-							(value) -> {
+							( value ) -> {
 								try {
 									return Double.parseDouble(value);
 								} catch( NumberFormatException nfe ) {

@@ -34,7 +34,7 @@ public class FontLoader {
 		}
 
 		// Load userfonts
-		try( InputStream in = ResourceStreamProvider.getResourceStream(source) ) {
+		try( InputStream in = ResourceStreamProvider.getInputStream(source) ) {
 			font = Font.createFont(Font.TRUETYPE_FONT, in).deriveFont(Font.PLAIN);
 
 			if( font != null ) {
