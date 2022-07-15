@@ -25,6 +25,11 @@ public class TaskRunner {
 		return runner;
 	}
 
+	public static Future<?> run( Task task ) {
+		TaskRunner r = getTaskRunner();
+		return r.pool.submit(task);
+	}
+
 	public static Future<?> run( Runnable task ) {
 		TaskRunner r = getTaskRunner();
 		return r.pool.submit(task);
@@ -35,18 +40,13 @@ public class TaskRunner {
 		return r.pool.submit(task, result);
 	}
 
-	public static Future<?>  schedule( Runnable task, int ms ) {
-		TaskRunner r = getTaskRunner();
-		return r.pool.schedule(task, ms, TimeUnit.MILLISECONDS);
-	}
-
 	public static void invokeLater( Runnable task ) {
 		SwingUtilities.invokeLater(task);
 	}
 
 	public static void shutdown() {
 		if( runner != null ) {
-			runner.pool.shutdown();
+			/*runner.pool.shutdown();
 			try {
 				runner.pool.awaitTermination(SHUTDOWN_TIME, TimeUnit.MILLISECONDS);
 			} catch( InterruptedException ex ) {
@@ -55,15 +55,27 @@ public class TaskRunner {
 				if( !runner.pool.isTerminated() ) {
 					runner.pool.shutdownNow();
 				}
-			}
+			}*/
+			runner.pool.shutdownNow();
 		}
 	}
 
-	ScheduledExecutorService pool;
+	ExecutorService pool;
 
 	private TaskRunner() {
 		//pool = new ScheduledThreadPoolExecutor(4);
-		pool = Executors.newScheduledThreadPool(POOL_SIZE, new ThreadFactory() {
+		/*pool = Executors.newScheduledThreadPool(POOL_SIZE, new ThreadFactory() {
+			private final ThreadFactory threadFactory = Executors.defaultThreadFactory();
+
+			@Override
+			public Thread newThread( Runnable r ) {
+				Thread t = threadFactory.newThread(r);
+				t.setName("TaskRunner-" + t.getName());
+				t.setDaemon(true);
+				return t;
+			}
+		});*/
+		pool = Executors.newCachedThreadPool(new ThreadFactory() {
 			private final ThreadFactory threadFactory = Executors.defaultThreadFactory();
 
 			@Override

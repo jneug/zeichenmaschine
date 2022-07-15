@@ -1,5 +1,8 @@
 package schule.ngb.zm.media;
 
+import schule.ngb.zm.anim.Animation;
+import schule.ngb.zm.anim.AnimationListener;
+import schule.ngb.zm.events.EventDispatcher;
 import schule.ngb.zm.tasks.TaskRunner;
 import schule.ngb.zm.util.Log;
 import schule.ngb.zm.util.ResourceStreamProvider;
@@ -55,15 +58,15 @@ public class Music implements Audio {
 	 */
 	private float volume = 0.8f;
 
-	/**
-	 * Erstellt eine Musik aus der angegebenen Datei oder Webadresse.
-	 *
-	 * @param source Ein Dateipfad oder eine Webadresse.
-	 * @throws NullPointerException Falls die Quelle {@code null} ist.
-	 */
+	EventDispatcher<Audio, AudioListener> eventDispatcher;
+
 	public Music( String source ) {
 		Validator.requireNotNull(source);
 		this.audioSource = source;
+	}
+
+	public String getSource() {
+		return audioSource;
 	}
 
 	/**
@@ -191,6 +194,9 @@ public class Music implements Audio {
 	private void stream() {
 		audioLine.start();
 		playing = true;
+		if( eventDispatcher != null ) {
+			eventDispatcher.dispatchEvent("start", Music.this);
+		}
 
 		byte[] bytesBuffer = new byte[BUFFER_SIZE];
 		int bytesRead = -1;
@@ -217,6 +223,9 @@ public class Music implements Audio {
 
 		playing = false;
 		streamingStopped();
+		if( eventDispatcher != null ) {
+			eventDispatcher.dispatchEvent("stop", Music.this);
+		}
 	}
 
 	private boolean openLine() {
@@ -268,6 +277,28 @@ public class Music implements Audio {
 		} else {
 			playing = false;
 		}
+	}
+
+	public void addListener( AudioListener listener ) {
+		initializeEventDispatcher().addListener(listener);
+	}
+
+	public void removeListener( AudioListener listener ) {
+		initializeEventDispatcher().removeListener(listener);
+	}
+
+	/**
+	 * Interne Methode, um den Listener-Mechanismus zu initialisieren. Wird erst
+	 * aufgerufen, soblad sich auch ein Listener registrieren möchte.
+	 * @return
+	 */
+	private EventDispatcher<Audio, AudioListener> initializeEventDispatcher() {
+		if( eventDispatcher == null ) {
+			eventDispatcher = new EventDispatcher<>();
+			eventDispatcher.registerEventType("start", (a,l) -> l.start(a));
+			eventDispatcher.registerEventType("stop", (a,l) -> l.stop(a));
+		}
+		return eventDispatcher;
 	}
 
 	private static final Log LOG = Log.getLogger(Music.class);

@@ -65,6 +65,10 @@ public class Sound implements Audio {
 		this.audioSource = source;
 	}
 
+	public String getSource() {
+		return audioSource;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
