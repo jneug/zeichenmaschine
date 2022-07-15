@@ -145,6 +145,37 @@ public final class MLMath {
 		return -sum / batch_size;
 	}
 
+	public static double[][] biasAdd( double[][] A, double[] V ) {
+		if( A[0].length != V.length ) {
+			throw new IllegalArgumentException("Can't add bias vector to matrix with wrong column count");
+		}
+
+		double[][] result = new double[A.length][A[0].length];
+		for( int j = 0; j < A[0].length; j++ ) {
+			for( int i = 0; i < A.length; i++ ) {
+				result[i][j] = A[i][j] + V[j];
+			}
+		}
+
+		return result;
+	}
+
+	public static double[] biasAdjust( double[] biases, double[][] delta ) {
+		if( biases.length != delta[0].length ) {
+			throw new IllegalArgumentException("Can't add adjust bias vector by delta with wrong column count");
+		}
+
+		double[] result = new double[biases.length];
+		for( int j = 0; j < delta[0].length; j++ ) {
+			for( int i = 0; i < delta.length; i++ ) {
+				result[j] += biases[j] - delta[i][j];
+			}
+			result[j] /= delta.length;
+		}
+
+		return result;
+	}
+
 	private MLMath() {
 
 	}

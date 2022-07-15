@@ -1,11 +1,37 @@
 package schule.ngb.zm.ml;
 
+import java.util.Arrays;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 
 public class NeuronLayer implements Function<double[][], double[][]> {
 
+	public static NeuronLayer fromArray( double[][] weights ) {
+		NeuronLayer layer = new NeuronLayer(weights[0].length, weights.length);
+		for( int i = 0; i < weights[0].length; i++ ) {
+			for( int j = 0; j < weights.length; j++ ) {
+				layer.weights.coefficients[i][j] = weights[i][j];
+			}
+		}
+		return layer;
+	}
+
+	public static NeuronLayer fromArray( double[][] weights, double[] biases ) {
+		NeuronLayer layer = new NeuronLayer(weights[0].length, weights.length);
+		for( int i = 0; i < weights[0].length; i++ ) {
+			for( int j = 0; j < weights.length; j++ ) {
+				layer.weights.coefficients[i][j] = weights[i][j];
+			}
+		}
+		for( int j = 0; j < biases.length; j++ ) {
+			layer.biases[j] = biases[j];
+		}
+		return layer;
+	}
+	
 	Matrix weights;
+
+	double[] biases;
 
 	NeuronLayer previous, next;
 
@@ -16,6 +42,9 @@ public class NeuronLayer implements Function<double[][], double[][]> {
 	public NeuronLayer( int neurons, int inputs ) {
 		weights = new Matrix(inputs, neurons);
 		weights.initializeRandom(-1, 1);
+
+		biases = new double[neurons];
+		Arrays.fill(biases, 0.0); // TODO: Random?
 
 		activationFunction = MLMath::sigmoid;
 		activationFunctionDerivative = MLMath::sigmoidDerivative;
@@ -82,13 +111,19 @@ public class NeuronLayer implements Function<double[][], double[][]> {
 
 	@Override
 	public String toString() {
-		return weights.toString();
+		return weights.toString() + "\n" + Arrays.toString(biases);
 	}
 
 	@Override
 	public double[][] apply( double[][] inputs ) {
 		lastInput = inputs;
-		lastOutput = MLMath.matrixApply(MLMath.matrixMultiply(inputs, weights.coefficients), activationFunction);
+		lastOutput = MLMath.matrixApply(
+			MLMath.biasAdd(
+				MLMath.matrixMultiply(inputs, weights.coefficients),
+				biases
+			),
+			activationFunction
+		);
 		if( next != null ) {
 			return next.apply(lastOutput);
 		} else {
@@ -114,10 +149,15 @@ public class NeuronLayer implements Function<double[][], double[][]> {
 			error = MLMath.matrixMultiply(expected, MLMath.matrixTranspose(next.weights.coefficients));
 		}
 
-		delta = MLMath.matrixScale(error, MLMath.matrixApply(this.lastOutput,this.activationFunctionDerivative));
+		delta = MLMath.matrixScale(error, MLMath.matrixApply(this.lastOutput, this.activationFunctionDerivative));
+		// Hier schon leraningRate anwenden?
+		// See https://towardsdatascience.com/understanding-and-implementing-neural-networks-in-java-from-scratch-61421bb6352c
+		//delta = MLMath.matrixApply(delta, ( x ) -> learningRate * x);
 		if( previous != null ) {
 			previous.backprop(delta, learningRate);
 		}
+
+		biases = MLMath.biasAdjust(biases, MLMath.matrixApply(delta, ( x ) -> learningRate * x));
 
 		adjustment = MLMath.matrixMultiply(MLMath.matrixTranspose(lastInput), delta);
 		adjustment = MLMath.matrixApply(adjustment, ( x ) -> learningRate * x);

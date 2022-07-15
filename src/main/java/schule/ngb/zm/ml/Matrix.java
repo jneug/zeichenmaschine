@@ -1,7 +1,11 @@
 package schule.ngb.zm.ml;
 
+import schule.ngb.zm.Constants;
+
 import java.util.Arrays;
 
+// TODO: Move Math into Matrix class
+// TODO: Implement support for optional sci libs
 public class Matrix {
 
 	private int columns, rows;
@@ -37,11 +41,11 @@ public class Matrix {
 	}
 
 	public void initializeRandom() {
-		coefficients = MLMath.matrixApply(coefficients, (d) -> Math.random());
+		coefficients = MLMath.matrixApply(coefficients, (d) -> Constants.randomGaussian());
 	}
 
 	public void initializeRandom( double lower, double upper ) {
-		coefficients = MLMath.matrixApply(coefficients, (d) -> ((upper-lower) * Math.random()) + lower);
+		coefficients = MLMath.matrixApply(coefficients, (d) -> ((upper-lower) * (Constants.randomGaussian()+1) * .5) + lower);
 	}
 
 	public void initializeIdentity() {
