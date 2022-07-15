@@ -136,13 +136,46 @@ public class Validator {
 	}
 	*/
 
+
+	public static final <T> T[] requireNotEmpty( T[] arr ) {
+		return requireNotEmpty(arr, (Supplier<String>)null);
+	}
+
+	public static final <T> T[] requireNotEmpty( T[] arr, CharSequence msg ) {
+		return requireNotEmpty(arr, msg::toString);
+	}
+
 	public static final <T> T[] requireNotEmpty( T[] arr, Supplier<String> msg ) {
-		return requireSize(arr, 0, ()->"Parameter array may not be empty");
+		if( arr.length == 0 )
+			throw new IllegalArgumentException(msg == null ? String.format("Parameter array may not be empty") : msg.get());
+		return arr;
+	}
+
+	public static final <T> T[] requireSize( T[] arr, int size ) {
+		return requireSize(arr, size, (Supplier<String>)null);
+	}
+
+	public static final <T> T[] requireSize( T[] arr, int size, CharSequence msg ) {
+		return requireSize(arr, size, msg::toString);
 	}
 
 	public static final <T> T[] requireSize( T[] arr, int size, Supplier<String> msg ) {
 		if( arr.length != size )
 			throw new IllegalArgumentException(msg == null ? String.format("Parameter array must have <%d> elements (<%d> provided)", size) : msg.get());
+		return arr;
+	}
+
+	public static final <T> T[] requireValid( T[] arr ) {
+		return requireValid(arr, (Supplier<String>)null);
+	}
+
+	public static final<T> T[] requireValid( T[] arr, CharSequence msg ) {
+		return requireValid(arr, msg::toString);
+	}
+
+	public static final <T> T[] requireValid( T[] arr, Supplier<String> msg ) {
+		if( arr == null || arr.length > 0 )
+			throw new IllegalArgumentException(msg == null ? String.format("Parameter array may not be null or empty") : msg.get());
 		return arr;
 	}
 

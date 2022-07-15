@@ -71,23 +71,23 @@ class ConstantsTest {
 	}
 
 	@Test
-	void b() {
-		assertTrue(Constants.getBool(true));
-		assertFalse(Constants.getBool(false));
-		assertTrue(Constants.getBool(1));
-		assertFalse(Constants.getBool(0));
-		assertTrue(Constants.getBool(4.0));
-		assertFalse(Constants.getBool(0.0));
-		assertTrue(Constants.getBool(4.0f));
-		assertFalse(Constants.getBool(0.0f));
-		assertTrue(Constants.getBool(4L));
-		assertFalse(Constants.getBool(0L));
-		assertTrue(Constants.getBool("true"));
-		assertTrue(Constants.getBool("True"));
-		assertFalse(Constants.getBool("1"));
-		assertFalse(Constants.getBool("false"));
-		assertFalse(Constants.getBool("yes"));
-		assertFalse(Constants.getBool("no"));
+	void asBool() {
+		assertTrue(Constants.asBool(true));
+		assertFalse(Constants.asBool(false));
+		assertTrue(Constants.asBool(1));
+		assertFalse(Constants.asBool(0));
+		assertTrue(Constants.asBool(4.0));
+		assertFalse(Constants.asBool(0.0));
+		assertTrue(Constants.asBool(4.0f));
+		assertFalse(Constants.asBool(0.0f));
+		assertTrue(Constants.asBool(4L));
+		assertFalse(Constants.asBool(0L));
+		assertTrue(Constants.asBool("true"));
+		assertTrue(Constants.asBool("True"));
+		assertFalse(Constants.asBool("1"));
+		assertFalse(Constants.asBool("false"));
+		assertFalse(Constants.asBool("yes"));
+		assertFalse(Constants.asBool("no"));
 	}
 
 	@Test
@@ -126,6 +126,47 @@ class ConstantsTest {
 		}
 
 		assertEquals(.8f, Math.abs(t/(t+f)), .01f);
+	}
+
+	@Test
+	void noise() {
+		double lastNoise = -1.0;
+		for( int i = 0; i < 100; i++ ) {
+			double thisNoise = Constants.noise(i * 0.005);
+
+			assertInRange(thisNoise);
+			assertNotEquals(lastNoise, thisNoise);
+			assertEquals(thisNoise, Constants.noise(i * 0.005), 0.0001);
+
+			lastNoise = thisNoise;
+		}
+
+		lastNoise = -1.0;
+		for( int i = 0; i < 100; i++ ) {
+			double thisNoise = Constants.noise(i * 0.005, 0.1);
+
+			assertInRange(thisNoise);
+			assertNotEquals(lastNoise, thisNoise);
+			assertEquals(thisNoise, Constants.noise(i * 0.005, 0.1), 0.0001);
+
+			lastNoise = thisNoise;
+		}
+
+		lastNoise = -1.0;
+		for( int i = 0; i < 100; i++ ) {
+			double thisNoise = Constants.noise(i * 0.005, 5.5, 100.0/(i+1));
+
+			assertInRange(thisNoise);
+			assertNotEquals(lastNoise, thisNoise);
+			assertEquals(thisNoise, Constants.noise(i * 0.005, 5.5, 100.0/(i+1)), 0.0001);
+
+			lastNoise = thisNoise;
+		}
+	}
+
+	private void assertInRange( double d ) {
+		assertFalse(Double.isNaN(d), "Noise value can't be NaN.");
+		assertTrue(0.0 <= d && 1.0 >= d, "Noise should be in Range 0 to 1. Was <" + d + ">.");
 	}
 
 }

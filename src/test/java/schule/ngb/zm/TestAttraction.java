@@ -38,7 +38,7 @@ public class TestAttraction extends Zeichenmaschine {
         posC = new Vector(200, 100);
         velC = new Vector(1, 14);
 
-        drawing.translate(width /2, height /2);
+        drawing.translate(canvasWidth /2, canvasHeight /2);
         drawing.shear(0.1, 0.5);
 
         recht = new Rectangle(50, 50, 150, 75);
@@ -84,7 +84,7 @@ public class TestAttraction extends Zeichenmaschine {
 
         shapes.clear();
 				double x = recht.getX();
-        x = (x+100*delta)% width;
+        x = (x+100*delta)% canvasWidth;
 				recht.setX(x);
     }
 

@@ -42,6 +42,7 @@ public final class Options {
 
 	public enum Direction {
 		CENTER(0, 0),
+
 		NORTH(0, -1),
 		EAST(1, 0),
 		SOUTH(0, 1),
@@ -49,14 +50,19 @@ public final class Options {
 
 		NORTHEAST(1, -1),
 		SOUTHEAST(1, 1),
-		NORTHWEST(-1, -1),
 		SOUTHWEST(-1, 1),
+		NORTHWEST(-1, -1),
 
 		MIDDLE(CENTER),
 		UP(NORTH),
+		RIGHT(EAST),
 		DOWN(SOUTH),
 		LEFT(WEST),
-		RIGHT(EAST);
+
+		UPLEFT(NORTHWEST),
+		DOWNLEFT(SOUTHWEST),
+		DOWNRIGHT(SOUTHEAST),
+		UPRIGHT(NORTHEAST);
 
 		public final byte x, y;
 

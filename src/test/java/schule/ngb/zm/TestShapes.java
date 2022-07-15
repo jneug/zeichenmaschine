@@ -7,7 +7,6 @@ import schule.ngb.zm.shapes.Rectangle;
 import schule.ngb.zm.shapes.Shape;
 
 import java.awt.geom.Point2D;
-import java.util.Random;
 
 public class TestShapes extends Zeichenmaschine {
 
@@ -65,7 +64,7 @@ public class TestShapes extends Zeichenmaschine {
 
 	public void shapePositions() {
 		int pad = 24;
-		Rectangle bounds = new Rectangle(pad, pad, width-pad, height-pad);
+		Rectangle bounds = new Rectangle(pad, pad, canvasWidth -pad, canvasHeight -pad);
 
 		Rectangle[] rects = new Rectangle[5];
 		for( int i = 0; i < rects.length; i++ ) {
