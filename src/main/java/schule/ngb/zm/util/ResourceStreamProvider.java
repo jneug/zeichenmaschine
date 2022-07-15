@@ -5,6 +5,7 @@ import schule.ngb.zm.Zeichenmaschine;
 import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.stream.StreamSupport;
 
 /**
@@ -149,11 +150,17 @@ public class ResourceStreamProvider {
 		return new URL(source);
 	}
 
+	/**
+	 * Ver
+	 * @param source
+	 * @return
+	 * @throws IOException
+	 */
 	public static OutputStream getOutputStream( String source ) throws IOException {
 		Validator.requireNotNull(source, "Resource source may not be null");
 		Validator.requireNotEmpty(source, "Resource source may not be empty.");
-
-		return getOutputStream(new File(source));
+		URL url = getResourceURL(source);
+		return getOutputStream(new File(url.getPath()));
 	}
 
 	public static OutputStream getOutputStream( File file ) throws IOException {

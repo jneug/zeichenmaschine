@@ -29,7 +29,7 @@ public final class FileLoader {
 		try {
 			return Files.readAllLines(Paths.get(ResourceStreamProvider.getResourceURL(source).toURI()), charset);
 		} catch( IOException | URISyntaxException ex ) {
-			LOG.warn(ex, "Error while loading lines from source <%s>", source);
+			LOG.error(ex, "Error while loading lines from source <%s>", source);
 		}
 
 		return Collections.EMPTY_LIST;
@@ -43,17 +43,37 @@ public final class FileLoader {
 		try {
 			return Files.readString(Paths.get(ResourceStreamProvider.getResourceURL(source).toURI()), charset);
 		} catch( IOException | URISyntaxException ex ) {
-			LOG.warn(ex, "Error while loading text from source <%s>", source);
+			LOG.error(ex, "Error while loading text from source <%s>", source);
 		}
 
 		return "";
 	}
 
-	public static double[][] loadDoubles( String source, char separator, boolean skipFirst ) {
-		return loadDoubles(source, separator, skipFirst, UTF8);
+	public static String[][] loadCsv( String source, boolean skipFirst ) {
+		return loadCsv(source, ',', skipFirst, UTF8);
 	}
 
-	public static double[][] loadDoubles( String source, char separator, boolean skipFirst, Charset charset ) {
+	public static String[][] loadCsv( String source, char separator, boolean skipFirst, Charset charset ) {
+		try {
+			int n = skipFirst ? 1 : 0;
+			return Files
+				.lines(Paths.get(ResourceStreamProvider.getResourceURL(source).toURI()), charset)
+				.skip(n)
+				.map(
+					( line ) -> line.split(Character.toString(separator))
+				).toArray(String[][]::new);
+		} catch( IOException | URISyntaxException ex ) {
+			LOG.error(ex, "Error while loading csv source <%s>", source);
+		}
+
+		return new String[0][0];
+	}
+
+	public static double[][] loadValues( String source, char separator, boolean skipFirst ) {
+		return loadValues(source, separator, skipFirst, UTF8);
+	}
+
+	public static double[][] loadValues( String source, char separator, boolean skipFirst, Charset charset ) {
 		try {
 			int n = skipFirst ? 1 : 0;
 			return Files
@@ -73,7 +93,7 @@ public final class FileLoader {
 						).toArray()
 				).toArray(double[][]::new);
 		} catch( IOException | URISyntaxException ex ) {
-			LOG.warn(ex, "Error while loading double values from csv source <%s>", source);
+			LOG.error(ex, "Error while loading double values from csv source <%s>", source);
 		}
 
 		return new double[0][0];

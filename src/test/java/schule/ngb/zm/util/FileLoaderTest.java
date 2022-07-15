@@ -2,7 +2,6 @@ package schule.ngb.zm.util;
 
 import org.junit.jupiter.api.Test;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -62,7 +61,7 @@ class FileLoaderTest {
 	}
 
 	@Test
-	void loadCsv() {
+	void loadValues() {
 		double[][] data;
 		double[][] csv;
 
@@ -71,10 +70,43 @@ class FileLoaderTest {
 			{2.1,2.2,2.3},
 			{3.1,3.2,3.3}
 		};
-		csv = FileLoader.loadDoubles("data_comma.csv", ',', true);
+		csv = FileLoader.loadValues("data_comma.csv", ',', true);
 		assertArrayEquals(data, csv);
 
-		csv = FileLoader.loadDoubles("data_semicolon_latin.csv", ';', true, FileLoader.ISO_8859_1);
+		csv = FileLoader.loadValues("data_semicolon_latin.csv", ';', true, FileLoader.ISO_8859_1);
+		assertArrayEquals(data, csv);
+	}
+
+	@Test
+	void loadCsv() {
+		String[][] data;
+		String[][] csv;
+
+		data = new String[][]{
+			{"Header1","Header2","Header3"},
+			{"1.1","1.2","1.3"},
+			{"2.1","2.2","2.3"},
+			{"3.1","3.2","3.3"}
+		};
+		csv = FileLoader.loadCsv("data_comma.csv", false);
+		assertArrayEquals(data, csv);
+
+		data = new String[][]{
+			{"1.1","1.2","1.3"},
+			{"2.1","2.2","2.3"},
+			{"3.1","3.2","3.3"}
+		};
+		csv = FileLoader.loadCsv("data_semicolon.csv", ';', true, FileLoader.UTF8);
+		assertArrayEquals(data, csv);
+
+		data = new String[][]{
+			{"Nöme","Häder2","Straße"},
+			{"1.1","1.2","1.3"},
+			{"2.1","2.2","2.3"},
+			{"3.1","3.2","3.3"}
+		};
+
+		csv = FileLoader.loadCsv("data_semicolon_latin.csv", ';', false, FileLoader.ISO_8859_1);
 		assertArrayEquals(data, csv);
 	}
 
