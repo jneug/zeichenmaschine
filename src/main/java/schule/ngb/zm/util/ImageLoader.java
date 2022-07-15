@@ -13,11 +13,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Logger;
 
-public class ImageLoader {
+public final class ImageLoader {
 
 	public static boolean caching = true;
 
@@ -29,7 +27,7 @@ public class ImageLoader {
 	 * Lädt ein Bild von der angegebenen Quelle {@code source}.
 	 * <p>
 	 * Die Bilddatei wird nach den Regeln von
-	 * {@link ResourceStreamProvider#getResourceStream(String)} gesucht und
+	 * {@link ResourceStreamProvider#getInputStream(String)} gesucht und
 	 * geöffnet. Tritt dabei ein Fehler auf oder konnte keine passende Datei
 	 * gefunden werden, wird {@code null} zurückgegeben.
 	 * <p>
@@ -70,7 +68,7 @@ public class ImageLoader {
 		}
 
 		BufferedImage img = null;
-		try( InputStream in = ResourceStreamProvider.getResourceStream(source) ) {
+		try( InputStream in = ResourceStreamProvider.getInputStream(source) ) {
 			//URL url = ResourceStreamProvider.getResourceURL(source);
 			//BufferedImage img = ImageIO.read(url);
 

@@ -41,6 +41,10 @@ public class Mixer implements Audio {
 		this.audios = new ArrayList<>(4);
 	}
 
+	public String getSource() {
+		return "";
+	}
+
 	public void add( Audio pAudio ) {
 		add(pAudio, 1f);
 	}
@@ -48,6 +52,13 @@ public class Mixer implements Audio {
 	public void add( Audio pAudio, double pVolumeFactor ) {
 		audios.add(new AudioWrapper(pAudio, (float) pVolumeFactor));
 		pAudio.setVolume(pVolumeFactor * volume);
+	}
+
+	public void remove( Audio pAudio ) {
+	}
+
+	public void removeAll() {
+		audios.clear();
 	}
 
 	/**

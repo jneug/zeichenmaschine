@@ -3,10 +3,9 @@ package schule.ngb.zm.util;
 import schule.ngb.zm.Zeichenmaschine;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.LogManager;
-import java.util.logging.Logger;
+import java.util.stream.StreamSupport;
 
 /**
  * Helferklasse, um {@link InputStream}s für Resourcen zu erhalten.
@@ -50,15 +49,11 @@ public class ResourceStreamProvider {
 	 *                                  einer bestehenden Resource oder falls
 	 *                                  keine passende Resource gefunden wurde.
 	 */
-	public static InputStream getResourceStream( String source ) throws NullPointerException, IllegalArgumentException, IOException {
-		if( source == null ) {
-			throw new NullPointerException("Resource source may not be null");
-		}
-		if( source.length() == 0 ) {
-			throw new IllegalArgumentException("Resource source may not be empty.");
-		}
+	public static InputStream getInputStream( String source ) throws NullPointerException, IllegalArgumentException, IOException {
+		Validator.requireNotNull(source, "Resource source may not be null");
+		Validator.requireNotEmpty(source, "Resource source may not be empty.");
 
-		InputStream in;
+		InputStream in = null;
 
 		// See if source is a readable file
 		File file = new File(source);
@@ -72,7 +67,9 @@ public class ResourceStreamProvider {
 		}
 		// File does not exist, try other means
 		// load ressource relative to .class-file
-		in = Zeichenmaschine.class.getResourceAsStream(source);
+		if( in == null ) {
+			in = Zeichenmaschine.class.getResourceAsStream(source);
+		}
 
 		// relative to ClassLoader
 		if( in == null ) {
@@ -87,6 +84,16 @@ public class ResourceStreamProvider {
 		// One of the above got a valid Stream,
 		// otherwise an Exception was thrown
 		return in;
+	}
+
+	public static InputStream getInputStream( File file ) throws IOException {
+		Validator.requireNotNull(file, "Provided file can't be null.");
+		return new FileInputStream(file);
+	}
+
+	public static InputStream getInputStream( URL url ) throws IOException {
+		Validator.requireNotNull(url, "Provided URL can't be null.");
+		return url.openStream();
 	}
 
 	/**
@@ -119,12 +126,8 @@ public class ResourceStreamProvider {
 	 *                                  einer bestehenden Resource.
 	 */
 	public static URL getResourceURL( String source ) throws NullPointerException, IllegalArgumentException, IOException {
-		if( source == null ) {
-			throw new NullPointerException("Resource source may not be null");
-		}
-		if( source.length() == 0 ) {
-			throw new IllegalArgumentException("Resource source may not be empty.");
-		}
+		Validator.requireNotNull(source, "Resource source may not be null");
+		Validator.requireNotEmpty(source, "Resource source may not be empty.");
 
 		File file = new File(source);
 		if( file.isFile() ) {
@@ -146,20 +149,24 @@ public class ResourceStreamProvider {
 		return new URL(source);
 	}
 
-	public static InputStream getResourceStream( File file ) throws FileNotFoundException, SecurityException {
-		if( file == null ) {
-			throw new NullPointerException("Provided file can't be null.");
-		}
+	public static OutputStream getOutputStream( String source ) throws IOException {
+		Validator.requireNotNull(source, "Resource source may not be null");
+		Validator.requireNotEmpty(source, "Resource source may not be empty.");
 
-		return new FileInputStream(file);
+		return getOutputStream(new File(source));
 	}
 
-	public static InputStream getResourceStream( URL url ) throws IOException {
-		if( url == null ) {
-			throw new NullPointerException("Provided URL can't be null.");
-		}
+	public static OutputStream getOutputStream( File file ) throws IOException {
+		Validator.requireNotNull(file, "Provided file can't be null.");
+		return new FileOutputStream(file);
+	}
 
-		return url.openStream();
+	public static Reader getReader( String source ) throws IOException {
+		return new InputStreamReader(getInputStream(source));
+	}
+
+	public static Writer getWriter( String source ) throws IOException {
+		return new OutputStreamWriter(getOutputStream(source));
 	}
 
 	private ResourceStreamProvider() {

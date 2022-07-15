@@ -17,9 +17,9 @@ class ColorTest {
 		assertEquals(255, c.getAlpha());
 
 		c = Color.BLUE;
-		assertEquals(0, c.getRed());
-		assertEquals(0, c.getGreen());
-		assertEquals(255, c.getBlue());
+		assertEquals(49, c.getRed());
+		assertEquals(197, c.getGreen());
+		assertEquals(244, c.getBlue());
 		assertEquals(255, c.getAlpha());
 
 		c = new Color(50, 133, 64, 33);
@@ -28,7 +28,7 @@ class ColorTest {
 		assertEquals(64, c.getBlue());
 		assertEquals(33, c.getAlpha());
 
-		c = new Color(255, 0, 0);
+		c = new Color(240, 80, 37);
 		assertEquals(Color.RED, c);
 
 		c = new Color(33, 50);
@@ -97,8 +97,9 @@ class ColorTest {
 		assertEquals(c1, c2);
 
 		Color yellow = new Color(255, 255, 0);
-		assertEquals(java.awt.Color.YELLOW, yellow);
-		assertNotEquals(java.awt.Color.YELLOW, Color.YELLOW);
+		assertNotEquals(java.awt.Color.YELLOW, yellow);
+		assertEquals(yellow, java.awt.Color.YELLOW);
+		assertNotEquals(Color.YELLOW, java.awt.Color.YELLOW);
 	}
 
 	@Test
@@ -132,7 +133,7 @@ class ColorTest {
 
 	@Test
 	void getRGBColor() {
-		Color c1 = Color.getRGBColor(0xFFFF0000);
+		Color c1 = Color.getRGBColor(0xFFF05025);
 		assertEquals(Color.RED, c1);
 	}
 
@@ -157,7 +158,7 @@ class ColorTest {
 		Color c;
 		float[] hsl;
 
-		c = Color.RED;
+		c = new Color(255, 0, 0);
 		hsl = Color.RGBtoHSL(c.getRGBA(), null);
 		assertArrayEquals(new float[]{0f,1f,.5f}, hsl, 0.0001f);
 
@@ -183,28 +184,37 @@ class ColorTest {
 	@Test
 	void getRGBA() {
 		Color yellow = new Color(255, 255, 0);
-		assertEquals(java.awt.Color.YELLOW.getRGB(), Color.YELLOW.getRGBA());
+		assertEquals(java.awt.Color.YELLOW.getRGB(), yellow.getRGBA());
 	}
 
 	@Test
 	void getRed() {
+		Color clr = new Color(123, 92, 0);
+		assertEquals(123, clr.getRed());
 	}
 
 	@Test
 	void getGreen() {
+		Color clr = new Color(123, 92, 0);
+		assertEquals(92, clr.getGreen());
 	}
 
 	@Test
 	void getBlue() {
+		Color clr = new Color(123, 92, 0);
+		assertEquals(0, clr.getBlue());
 	}
 
 	@Test
 	void getAlpha() {
+		Color clr = new Color(123, 92, 0);
+		assertEquals(255, clr.getAlpha());
+		Color clr2 = new Color(123, 92, 0, 45);
+		assertEquals(45, clr2.getAlpha());
 	}
 
 	@Test
 	void getJavaColor() {
-		assertEquals(java.awt.Color.YELLOW, Color.YELLOW.getJavaColor());
 		assertEquals(new java.awt.Color(255, 31, 124), new Color(255, 31, 124).getJavaColor());
 	}
 
@@ -213,15 +223,7 @@ class ColorTest {
 	}
 
 	@Test
-	void testBrighter() {
-	}
-
-	@Test
 	void darker() {
-	}
-
-	@Test
-	void testDarker() {
 	}
 
 }
