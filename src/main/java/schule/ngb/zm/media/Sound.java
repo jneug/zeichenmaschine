@@ -7,7 +7,6 @@ import schule.ngb.zm.util.Validator;
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Logger;
 
 /**
  * Wiedergabe kurzer Soundclips, die mehrmals wiederverwendet werden.
@@ -245,7 +244,7 @@ public class Sound implements Audio {
 		}
 
 		try {
-			InputStream in = ResourceStreamProvider.getResourceStream(audioSource);
+			InputStream in = ResourceStreamProvider.getInputStream(audioSource);
 			if( in != null ) {
 				AudioInputStream audioStream = AudioSystem.getAudioInputStream(in);
 				AudioFormat format = audioStream.getFormat();
