@@ -1408,6 +1408,10 @@ public class Zeichenmaschine extends Constants {
 			if( state == Options.AppState.RUNNING ) {
 				state = Options.AppState.UPDATING;
 				update(delta);
+
+				for( Layer l: canvas.getLayers() ) {
+					l.update(delta);
+				}
 				state = Options.AppState.RUNNING;
 			}
 		}

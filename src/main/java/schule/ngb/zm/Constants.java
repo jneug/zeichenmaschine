@@ -1,5 +1,6 @@
 package schule.ngb.zm;
 
+import schule.ngb.zm.anim.Easing;
 import schule.ngb.zm.util.ImageLoader;
 import schule.ngb.zm.util.Noise;
 
@@ -8,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Random;
+import java.util.function.DoubleUnaryOperator;
 
 /**
  * Basisklasse für die meisten Objekte der Zeichemaschine, die von Nutzern
@@ -109,6 +111,10 @@ public class Constants {
 	 * Standardwert für den Abstand von Formen.
 	 */
 	public static final int STD_BUFFER = 10;
+
+	public static int DEFAULT_ANIM_RUNTIME = 1000;
+
+	public static DoubleUnaryOperator DEFAULT_EASING = Easing.DEFAULT_EASING;
 
 	/**
 	 * Option für durchgezogene Konturen und Linien.

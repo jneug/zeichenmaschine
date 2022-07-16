@@ -20,17 +20,31 @@ public abstract class FrameSynchronizedTask extends Task {
 	@Override
 	public void run() {
 		initialize();
-
 		running = true;
-		int lastTick = 0;
+
 		Object lock = Zeichenmaschine.globalSyncLock;
 
+		// start of thread in ms
+		final long start = System.currentTimeMillis();
+		// current time in ns
+		long beforeTime = System.nanoTime();
+		// store for deltas
+		long overslept = 0L;
+		// internal counters for tick and runtime
+		int _tick = 0;
+
+		double delta = 0.0;
+
 		while( running ) {
-			lastTick = Constants.tick;
-			this.update(lastTick);
+			// delta in seconds
+			delta = (System.nanoTime() - beforeTime) / 1000000000.0;
+			beforeTime = System.nanoTime();
+
+			_tick = Constants.tick;
+			this.update(delta);
 
 			synchronized( lock ) {
-				while( lastTick >= Constants.tick ) {
+				while( _tick >= Constants.tick ) {
 					try {
 						lock.wait();
 					} catch( InterruptedException e ) {
@@ -44,11 +58,6 @@ public abstract class FrameSynchronizedTask extends Task {
 		done = true;
 
 		finish();
-	}
-
-	@Override
-	public boolean isActive() {
-		return false;
 	}
 
 

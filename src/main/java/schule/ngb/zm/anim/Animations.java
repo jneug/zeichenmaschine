@@ -4,6 +4,7 @@ import schule.ngb.zm.Color;
 import schule.ngb.zm.Constants;
 import schule.ngb.zm.Vector;
 import schule.ngb.zm.tasks.FrameSynchronizedTask;
+import schule.ngb.zm.tasks.FramerateLimitedTask;
 import schule.ngb.zm.tasks.TaskRunner;
 import schule.ngb.zm.util.Log;
 import schule.ngb.zm.util.Validator;
@@ -158,7 +159,7 @@ public class Animations {
 			} while( t < 1.0 );
 			stepper.accept(easing.applyAsDouble(1.0));
 		}, target);*/
-		return TaskRunner.run(new FrameSynchronizedTask() {
+		return TaskRunner.run(new FramerateLimitedTask() {
 			double t = 0.0;
 			final long starttime = System.currentTimeMillis();
 			@Override
@@ -185,15 +186,36 @@ public class Animations {
 		);
 	}
 
-	/*public static <T> Future<?> animate( Animation<T> animation ) {
-		animation.start();
-		return null;
+	public static <T> Future<?> animate( Animation<T> animation ) {
+		return TaskRunner.run(new FramerateLimitedTask() {
+			@Override
+			protected void initialize() {
+				animation.start();
+			}
+
+			@Override
+			public void update( double delta ) {
+				animation.update(delta);
+				running = animation.isActive();
+			}
+		}, animation);
 	}
 
-	public static <T> Future<?> animate( Animation<T> animation, DoubleUnaryOperator easing ) {
-		animation.start(easing);
-		return null;
-	}*/
+	public static <T> Future<Animation<T>> animate( Animation<T> animation, DoubleUnaryOperator easing ) {
+		final AnimationFacade<T> facade = new AnimationFacade<>(animation, animation.getRuntime(), easing);
+		return TaskRunner.run(new FramerateLimitedTask() {
+			@Override
+			protected void initialize() {
+				facade.start();
+			}
+
+			@Override
+			public void update( double delta ) {
+				facade.update(delta);
+				running = facade.isActive();
+			}
+		}, animation);
+	}
 
 	public static final Log LOG = Log.getLogger(Animations.class);
 

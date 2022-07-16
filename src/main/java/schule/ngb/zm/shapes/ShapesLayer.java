@@ -1,25 +1,35 @@
 package schule.ngb.zm.shapes;
 
 import schule.ngb.zm.Layer;
+import schule.ngb.zm.anim.Animation;
+import schule.ngb.zm.anim.AnimationFacade;
+import schule.ngb.zm.anim.Easing;
 
 import java.awt.Graphics2D;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.function.DoubleUnaryOperator;
 
 public class ShapesLayer extends Layer {
 
 	protected boolean clearBeforeDraw = true;
 
-	private LinkedList<Shape> shapes;
+	private List<Shape> shapes;
+
+	private List<Animation<? extends Shape>> animations;
 
 	public ShapesLayer() {
 		super();
-		shapes = new LinkedList<Shape>();
+		shapes = new LinkedList<>();
+		animations = new LinkedList<>();
 	}
 
 	public ShapesLayer( int width, int height ) {
 		super(width, height);
-		shapes = new LinkedList<Shape>();
+		shapes = new LinkedList<>();
+		animations = new LinkedList<>();
 	}
 
 	public Shape getShape( int index ) {
@@ -99,6 +109,33 @@ public class ShapesLayer extends Layer {
 		synchronized( shapes ) {
 			for( Shape pShape : shapes ) {
 				pShape.hide();
+			}
+		}
+	}
+
+	public <S extends Shape> void play( Animation<S> anim ) {
+		this.animations.add(anim);
+		anim.start();
+	}
+
+	public <S extends Shape> void play( Animation<S> anim, int runtime ) {
+		play(anim, runtime, Easing.DEFAULT_EASING);
+	}
+
+	public <S extends Shape> void play( Animation<S> anim, int runtime, DoubleUnaryOperator easing ) {
+		AnimationFacade<S> facade = new AnimationFacade<>(anim, runtime, easing);
+		play(facade);
+	}
+
+	@Override
+	public void update( double delta ) {
+		Iterator<Animation<? extends Shape>> it = animations.iterator();
+		while( it.hasNext() ) {
+			Animation<? extends Shape> anim = it.next();
+			anim.update(delta);
+
+			if( !anim.isActive() ) {
+				animations.remove(anim);
 			}
 		}
 	}
