@@ -11,6 +11,7 @@ import schule.ngb.zm.util.Validator;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.*;
 
@@ -145,20 +146,6 @@ public class Animations {
 	}
 
 	public static final <T> Future<T> animate( T target, int runtime, DoubleUnaryOperator easing, DoubleConsumer stepper ) {
-		/*final long starttime = System.currentTimeMillis();
-		return TaskRunner.run(() -> {
-			double t = 0.0;
-			do {
-				// One animation step for t in [0,1]
-				stepper.accept(easing.applyAsDouble(t));
-				try {
-					Thread.sleep(1000 / Constants.framesPerSecond);
-				} catch( InterruptedException ex ) {
-				}
-				t = (double) (System.currentTimeMillis() - starttime) / (double) runtime;
-			} while( t < 1.0 );
-			stepper.accept(easing.applyAsDouble(1.0));
-		}, target);*/
 		return TaskRunner.run(new FramerateLimitedTask() {
 			double t = 0.0;
 			final long starttime = System.currentTimeMillis();
@@ -177,6 +164,21 @@ public class Animations {
 		}, target);
 	}
 
+	public static final <T> T animateAndWait( T target, int runtime, DoubleUnaryOperator easing, DoubleConsumer stepper ) {
+		Future<T> future = animate(target, runtime, easing, stepper);
+		while( !future.isDone() ) {
+			try {
+				return future.get();
+			} catch( InterruptedException iex ) {
+				// Keep waiting
+			} catch( ExecutionException eex ) {
+				LOG.error(eex.getCause(), "Animation task terminated with exception");
+				return target;
+			}
+		}
+		return target;
+	}
+
 	public static final <T, R> Future<T> animate( T target, int runtime, Animator<T, R> animator ) {
 		return animate(
 			target, runtime,
@@ -186,7 +188,7 @@ public class Animations {
 		);
 	}
 
-	public static <T> Future<?> animate( Animation<T> animation ) {
+	public static <T> Future<Animation<T>> animate( Animation<T> animation ) {
 		return TaskRunner.run(new FramerateLimitedTask() {
 			@Override
 			protected void initialize() {
@@ -199,6 +201,12 @@ public class Animations {
 				running = animation.isActive();
 			}
 		}, animation);
+	}
+
+	public static <T> Animation<T> animateAndWait( Animation<T> animation ) {
+		Future<Animation<T>> future = animate(animation);
+		animation.await();
+		return animation;
 	}
 
 	public static <T> Future<Animation<T>> animate( Animation<T> animation, DoubleUnaryOperator easing ) {
