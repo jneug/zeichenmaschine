@@ -1,5 +1,6 @@
 package schule.ngb.zm;
 
+import schule.ngb.zm.anim.Animation;
 import schule.ngb.zm.shapes.ShapesLayer;
 import schule.ngb.zm.tasks.TaskRunner;
 import schule.ngb.zm.util.ImageLoader;
@@ -23,6 +24,7 @@ import java.util.logging.Level;
  * Die Klasse übernimmt die Initialisierung eines Programmfensters und der
  * nötigen Komponenten.
  */
+// TODO: Refactorings (besonders in Bezug auf Nebenläufigkeit)
 public class Zeichenmaschine extends Constants {
 
 	/**
@@ -34,10 +36,19 @@ public class Zeichenmaschine extends Constants {
 		IN_BLUEJ = System.getProperty("java.class.path").contains("bluej");
 	}
 
+	/**
+	 * Gibt an, ob die Zeichenmaschine unter macOS gestartet wurde.
+	 */
 	public static final boolean MACOS;
 
+	/**
+	 * Gibt an, ob die Zeichenmaschine unter Windows gestartet wurde.
+	 */
 	public static final boolean WINDOWS;
 
+	/**
+	 * Gibt an, ob die Zeichenmaschine unter Linux gestartet wurde.
+	 */
 	public static final boolean LINUX;
 
 	static {
@@ -95,10 +106,21 @@ public class Zeichenmaschine extends Constants {
 	 * Interne Attribute zur Steuerung der Zeichenmaschine.
 	 */
 	//@formatter:off
-	// Das Zeichenfenster der Zeichenmaschine
+
+	/**
+	 * Das Zeichenfenster der Zeichenmaschine
+	 */
 	private JFrame frame;
-	// Die Graphics-Objekte für das aktuelle Fenster.
+
+	/**
+	 * Die Graphics-Umgebung für das aktuelle Fenster.
+	 */
 	private GraphicsEnvironment environment;
+
+	/**
+	 * Das Anzeigefenster, auf dem die ZM gestartet wurde (muss nicht gleich
+	 * dem Aktuellen sein, wenn das Fenster verschoben wurde).
+	 */
 	private GraphicsDevice displayDevice;
 
 	/**
@@ -116,11 +138,11 @@ public class Zeichenmaschine extends Constants {
 	private int initialWidth, initialHeight;
 
 	/**
-	 * KeyListener, um den Vollbild-Modus mit der Escape-Taste zu verlassen.
-	 * Wird von {@link #setFullscreen(boolean)} automatisch einzugefügt und
-	 * entfernt.
+	 * {@code KeyListener}, um den Vollbild-Modus mit der Escape-Taste zu
+	 * verlassen. Wird von {@link #setFullscreen(boolean)} automatisch
+	 * hinzugefügt und entfernt.
 	 */
-	KeyListener fullscreenExitListener = new KeyAdapter() {
+	private KeyListener fullscreenExitListener = new KeyAdapter() {
 		@Override
 		public void keyPressed( KeyEvent e ) {
 			if( e.getKeyCode() == KeyEvent.VK_ESCAPE ) {
@@ -131,30 +153,69 @@ public class Zeichenmaschine extends Constants {
 	};
 
 	// Aktueller Zustand der Zeichenmaschine.
+
+	/**
+	 * Zustand der Zeichenmaschine insgesamt
+	 */
 	private Options.AppState state = Options.AppState.INITIALIZING;
+
+	/**
+	 * Zustand des update/draw Threads
+	 */
+	private Options.AppState updateState = Options.AppState.STOPPED;
+
+	/**
+	 * Ob der Zeichenthread noch laufen soll, oder beendet.
+	 */
 	private boolean running = false;
+
+	/**
+	 * Ob die ZM nach dem nächsten Frame pausiert werden soll.
+	 */
 	private boolean pause_pending = false;
 
-	private boolean stop_after_update = false, run_once = true;
+	/**
+	 * Ob die ZM bei nicht überschriebener update() Methode stoppen soll,
+	 * oder trotzdem weiterläuft.
+	 */
+	private boolean run_once = true;
 
-	// Aktuelle Frames pro Sekunde der Zeichenmaschine.
+	/**
+	 * Aktuelle Frames pro Sekunde der Zeichenmaschine.
+	 */
 	private int framesPerSecondInternal;
 
-	// Hauptthread der Zeichenmaschine.
+	/**
+	 * Hauptthread der Zeichenmaschine.
+	 */
 	private Thread mainThread;
 
-	// Queue für geplante Aufgaben
+	/**
+	 * Queue für geplante Aufgaben
+	 */
 	private DelayQueue<DelayedTask> taskQueue = new DelayQueue<>();
 
-	// Queue für abgefangene InputEvents
+	/**
+	 * Queue für abgefangene InputEvents
+	 */
 	private BlockingQueue<InputEvent> eventQueue = new LinkedBlockingQueue<>();
 
-	// Gibt an, ob nach Ende des Hauptthreads das Programm beendet werden soll,
-	// oder das Zeichenfenster weiter geöffnet bleibt.
+	/**
+	 * Gibt an, ob nach Ende des Hauptthreads das Programm beendet werden soll,
+	 * oder das Zeichenfenster weiter geöffnet bleibt.
+	 */
 	private boolean quitAfterTeardown = false;
 
-	// Mauscursor
+	// Mauszeiger
+	/**
+	 * Cache für den unsichtbaren Mauszeiger, wenn {@link #hideCursor()}
+	 * aufgerufen wurde.
+	 */
 	private Cursor invisibleCursor = null;
+
+	/**
+	 * Ob der Mauszeiger derzeit sichtbar ist (bzw. sein sollte).
+	 */
 	protected boolean cursorVisible = true;
 	//@formatter:on
 
@@ -335,10 +396,19 @@ public class Zeichenmaschine extends Constants {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing( WindowEvent e ) {
-				//exit();
-				teardown();
-				cleanup();
-				quit(true);
+				if( running ) {
+					running = false;
+					teardown();
+					cleanup();
+				}
+				// Give the app a minimum amount of time to shut down
+				// then kill it.
+				try {
+					Thread.sleep(5);
+				} catch( InterruptedException ex ) {
+				} finally {
+					quit(true);
+				}
 			}
 		});
 
@@ -882,8 +952,13 @@ public class Zeichenmaschine extends Constants {
 			return;
 		}
 
+		if( state != Options.AppState.RUNNING ) {
+			LOG.warn("Don't use delay(int) from within settings() or setup().");
+			return;
+		}
+
 		long timer = 0L;
-		if( state == Options.AppState.DRAWING ) {
+		if( updateState == Options.AppState.DRAWING ) {
 			// Falls gerade draw() ausgeführt wird, zeigen wir den aktuellen
 			// Stand der Zeichnung auf der Leinwand an. Die Zeit für das
 			// Rendern wird gemessen und von der Wartezeit abgezogen.
@@ -1038,7 +1113,6 @@ public class Zeichenmaschine extends Constants {
 	 */
 	public void update( double delta ) {
 		running = !run_once;
-		stop_after_update = run_once;
 	}
 
 	/**
@@ -1052,7 +1126,7 @@ public class Zeichenmaschine extends Constants {
 	 * dar, da hier die Zeichnung des Programms erstellt wird.
 	 */
 	public void draw() {
-		//running = !stop_after_update;
+		// Intentionally left blank
 	}
 
 	/**
@@ -1322,10 +1396,14 @@ public class Zeichenmaschine extends Constants {
 				delay(1);
 			}
 
+			// ThreadExecutor for the update/draw Thread
+			final UpdateThreadExecutor updateThreadExecutor = new UpdateThreadExecutor();
+
 			// start of thread in ms
 			final long start = System.currentTimeMillis();
 			// current time in ns
 			long beforeTime = System.nanoTime();
+			long updateBeforeTime = System.nanoTime();
 			// store for deltas
 			long overslept = 0L;
 			// internal counters for tick and runtime
@@ -1341,24 +1419,61 @@ public class Zeichenmaschine extends Constants {
 			state = Options.AppState.RUNNING;
 			while( running ) {
 				// delta in seconds
-				delta = (System.nanoTime() - beforeTime) / 1000000000.0;
 				beforeTime = System.nanoTime();
 
 				saveMousePosition(mouseEvent);
 
 				if( state != Options.AppState.PAUSED ) {
-					handleUpdate(delta);
-					handleDraw();
+					//handleUpdate(delta);
+					//handleDraw();
 
+					// Update and draw are executed in a new thread,
+					// but we wait for them to finish unless the user
+					// did call any blocking method, that would also block
+					// rendering of new frames.
+					if( !updateThreadExecutor.isRunning() ) {
+						delta = (System.nanoTime() - updateBeforeTime) / 1000000000.0;
+						updateBeforeTime = System.nanoTime();
+
+						updateThreadExecutor.execute(() -> {
+							if( state == Options.AppState.RUNNING
+								&& updateState == Options.AppState.IDLE ) {
+								// Call to update()
+								updateState = Options.AppState.UPDATING;
+								Zeichenmaschine.this.update(delta);
+								// Update Layers
+								canvas.updateLayers(delta);
+								// Call to draw()
+								updateState = Options.AppState.DRAWING;
+								Zeichenmaschine.this.draw();
+								updateState = Options.AppState.IDLE;
+								// Send latest input events after finishing draw
+								// since these may also block
+								dispatchEvents();
+							}
+						});
+					}
+
+					// Wait for the update/draw Thread to finish
+					while( updateThreadExecutor.isRunning()
+						&& !updateThreadExecutor.isWaiting() ) {
+						Thread.yield();
+					}
+
+					// Display the current buffer content
 					if( canvas != null ) {
 						canvas.render();
 						// canvas.invalidate();
 						// frame.repaint();
 					}
 
-					dispatchEvents();
+
+					// dispatchEvents();
 				}
 
+				// Running pending tasks and notify any
+				// waiting FrameSynchonizedTasks
+				// TODO: should this this also happen in the updateThread?
 				runTasks();
 				synchronized( globalSyncLock ) {
 					globalSyncLock.notifyAll();
@@ -1369,7 +1484,7 @@ public class Zeichenmaschine extends Constants {
 				long dt = afterTime - beforeTime;
 				long sleep = ((1000000000L / framesPerSecondInternal) - dt) - overslept;
 
-
+				// Sleep before next frame
 				if( sleep > 0 ) {
 					try {
 						Thread.sleep(sleep / 1000000L, (int) (sleep % 1000000L));
@@ -1382,19 +1497,24 @@ public class Zeichenmaschine extends Constants {
 					overslept = 0L;
 				}
 
+				// Update stats
 				_tick += 1;
 				_runtime = System.currentTimeMillis() - start;
 				tick = _tick;
 				runtime = _runtime;
 				framesPerSecond = framesPerSecondInternal;
 
+				// If pause requested, we pause now
 				if( pause_pending ) {
 					state = Options.AppState.PAUSED;
 					pause_pending = false;
 				}
 			}
+			// Shutdown the updateThreads
+			updateThreadExecutor.shutdownNow();
 			state = Options.AppState.STOPPED;
 
+			// Cleanup
 			teardown();
 			cleanup();
 			state = Options.AppState.TERMINATED;
@@ -1408,10 +1528,7 @@ public class Zeichenmaschine extends Constants {
 			if( state == Options.AppState.RUNNING ) {
 				state = Options.AppState.UPDATING;
 				update(delta);
-
-				for( Layer l: canvas.getLayers() ) {
-					l.update(delta);
-				}
+				canvas.updateLayers(delta);
 				state = Options.AppState.RUNNING;
 			}
 		}
@@ -1426,6 +1543,7 @@ public class Zeichenmaschine extends Constants {
 
 	}
 
+	// TODO: Remove
 	class DelayedTask implements Delayed {
 
 		long startTime; // in ms
@@ -1511,6 +1629,60 @@ public class Zeichenmaschine extends Constants {
 		@Override
 		public void mouseWheelMoved( MouseWheelEvent e ) {
 			// enqueueEvent(e);
+		}
+
+	}
+
+	class UpdateThreadExecutor extends ThreadPoolExecutor {
+
+		private Thread updateThread;
+
+		private boolean running = false, waiting = false;
+
+		public UpdateThreadExecutor() {
+			super(1, 1, 0L,
+				TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+			updateState = Options.AppState.IDLE;
+		}
+
+		@Override
+		protected void beforeExecute( Thread t, Runnable r ) {
+			// We store the one Thread this Executor holds
+			// but it might change if a new Thread needed to be spawned
+			// due to en error.
+			updateThread = t;
+			running = true;
+		}
+
+		@Override
+		protected void afterExecute( Runnable r, Throwable t ) {
+			running = false;
+			updateState = Options.AppState.IDLE;
+		}
+
+		/**
+		 * Ermittelt, ob der interne Thread gerade eine update/draw Task
+		 * ausführt.
+		 *
+		 * @return
+		 */
+		public boolean isRunning() {
+			return running;
+		}
+
+		/**
+		 * Ermittelt, ob der interne Thread gerade eine update/draw Task
+		 * ausführt und dabei in einen Wartezustand versetzt wurde. Das bedeutet
+		 * in der Regel, dass innerhalb von {@link #update(double)} oder
+		 * {@link #draw()} ein {@link #delay(int)} ausgeführt wurde, oder aus
+		 * einem anderen Grund beispielsweise {@link Thread#sleep(long)}
+		 * aufgerufen wurde. (Dies kann zum Beispiel beim
+		 * {@link Animation#await() Warten auf Animationen} der Fall sein.)
+		 *
+		 * @return
+		 */
+		public boolean isWaiting() {
+			return running && updateThread.getState() == Thread.State.TIMED_WAITING;
 		}
 
 	}

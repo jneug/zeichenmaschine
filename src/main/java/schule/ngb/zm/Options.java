@@ -29,6 +29,9 @@ public final class Options {
 		}
 	}
 
+	/**
+	 * Zustände in denen sich die Zeichenmaschine befinden kann.
+	 */
 	public enum AppState {
 		INITIALIZING,
 		INITIALIZED,
@@ -37,9 +40,16 @@ public final class Options {
 		DRAWING,
 		PAUSED,
 		STOPPED,
-		TERMINATED
+		TERMINATED,
+		IDLE
 	}
 
+	/**
+	 * Richtungen für die Ausrichtung von Formen. Richtungen sind durch
+	 * Einheitsvektoren bzw. deren Kombination repräsentiert, wodurch mit ihnen
+	 * gerechnet werden kann. Jede Richtung ist zusätzlich als Himmelsrichtung
+	 * definiert.
+	 */
 	public enum Direction {
 		CENTER(0, 0),
 
@@ -67,8 +77,8 @@ public final class Options {
 		public final byte x, y;
 
 		Direction( int x, int y ) {
-			this.x = (byte)x;
-			this.y = (byte)y;
+			this.x = (byte) x;
+			this.y = (byte) y;
 		}
 
 		Direction( Direction original ) {
@@ -90,10 +100,11 @@ public final class Options {
 
 		/**
 		 * Gibt die entgegengesetzte Richtung zu dieser zurück.
+		 *
 		 * @return
 		 */
 		public Direction inverse() {
-			for( Direction dir: Direction.values() ) {
+			for( Direction dir : Direction.values() ) {
 				if( dir.x == -this.x && dir.y == -this.y ) {
 					return dir;
 				}
