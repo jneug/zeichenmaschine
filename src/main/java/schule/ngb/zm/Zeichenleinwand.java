@@ -174,17 +174,31 @@ public class Zeichenleinwand extends Canvas {
 	}
 
 	public boolean removeLayer( Layer pLayer ) {
-		return layers.remove(pLayer);
+		synchronized( layers ) {
+			return layers.remove(pLayer);
+		}
 	}
 
 	public void removeLayers( Layer... pLayers ) {
-		for( Layer layer : pLayers ) {
-			layers.remove(layer);
+		synchronized( layers ) {
+			for( Layer layer : pLayers ) {
+				layers.remove(layer);
+			}
 		}
 	}
 
 	public void clearLayers() {
-		layers.clear();
+		synchronized( layers ) {
+			layers.clear();
+		}
+	}
+
+	public void updateLayers( double delta ) {
+		synchronized( layers ) {
+			for( Layer layer : layers ) {
+				layer.update(delta);
+			}
+		}
 	}
 
 	/**

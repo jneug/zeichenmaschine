@@ -1,7 +1,9 @@
 package schule.ngb.zm;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
 public abstract class Layer extends Constants implements Drawable, Updatable {
@@ -49,7 +51,7 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 	/**
 	 * Erstellt einen neuen Puffer für die Ebene und konfiguriert diesen.
 	 *
-	 * @param width  Width des neuen Puffers.
+	 * @param width Width des neuen Puffers.
 	 * @param height Höhe des neuen Puffers.
 	 */
 	private void createCanvas( int width, int height ) {
@@ -73,10 +75,10 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 	}
 
 	/**
-	 * Erstellt einen neuen Puffer für die Ebene mit der angegebenen Größe
-	 * und kopiert den Inhalt des alten Puffers in den Neuen.
+	 * Erstellt einen neuen Puffer für die Ebene mit der angegebenen Größe und
+	 * kopiert den Inhalt des alten Puffers in den Neuen.
 	 *
-	 * @param width  Width des neuen Puffers.
+	 * @param width Width des neuen Puffers.
 	 * @param height Höhe des neuen Puffers.
 	 */
 	private void recreateCanvas( int width, int height ) {
@@ -86,8 +88,8 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 	}
 
 	/**
-	 * Leert die Ebene und löscht alles bisher gezeichnete. Alle Pixel der
-	 * Ebene werden transparent, damit unterliegende Ebenen durchscheinen können.
+	 * Leert die Ebene und löscht alles bisher gezeichnete. Alle Pixel der Ebene
+	 * werden transparent, damit unterliegende Ebenen durchscheinen können.
 	 */
 	public void clear() {
 		// https://stackoverflow.com/questions/31149206/set-pixels-of-bufferedimage-as-transparent
