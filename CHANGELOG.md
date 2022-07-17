@@ -6,12 +6,22 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
-## Added
+### Added
+- System für EventListener erstellt
+  - `AudioListener` und `AnimationListener` als erste Anwendungsfälle.
+- Pakete für Animationen und Maschinelles-Lernen hinzugefügt
+
+### Changed
+- `update(double)` und `draw()` werden nun in einem eigenen Thread aufgerufen. 
+
+## Version 0.0.22
+
+### Added
 - Interface `Audio` extrahiert, mit Basisfunktionen von `Sound` und `Music`.
 - Klasse `Mixer` steuert mehrere Audio-Objekte gleichzeitig. 
 - Klasse `tasks.RateLimitedTask`, `tasks.FramerateLimitedTask`, `tasks.FrameSynchronizedTask` und `tasks.DelayedTask`. 
 
-## Changed
+### Changed
 - Neue Package-Struktur:
   - `schule.ngb.zm.media` für Audio-Klassen (und ggf. zukünftig Video).
   - `schule.ngb.zm.tasks` für alles Rund um Parallelität.
