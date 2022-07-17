@@ -7,6 +7,7 @@ import schule.ngb.zm.util.Validator;
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
 /**
  * Wiedergabe kurzer Soundclips, die mehrmals wiederverwendet werden.
@@ -248,9 +249,9 @@ public class Sound implements Audio {
 		}
 
 		try {
-			InputStream in = ResourceStreamProvider.getInputStream(audioSource);
-			if( in != null ) {
-				AudioInputStream audioStream = AudioSystem.getAudioInputStream(in);
+			URL url = ResourceStreamProvider.getResourceURL(audioSource);
+			if( url != null ) {
+				final AudioInputStream audioStream = AudioSystem.getAudioInputStream(url);
 				AudioFormat format = audioStream.getFormat();
 				DataLine.Info info = new DataLine.Info(Clip.class, format);
 
