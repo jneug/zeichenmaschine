@@ -14,6 +14,8 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Changed
 - `update(double)` und `draw()` werden nun in einem eigenen Thread aufgerufen. 
+- Die Standardwerte in `Constants` wurden mit dem Prefix `DEFAULT_` benannt (vorher `STD_`).
+- Die Standardwerte sind nun nicht mehr `final` und können vom Nutzer manuell gesetzt werden.
 
 ## Version 0.0.22
 
