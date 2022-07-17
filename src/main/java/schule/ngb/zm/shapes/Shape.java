@@ -226,7 +226,6 @@ public abstract class Shape extends FilledShape {
 	 * Unterklasse. In {@link Rectangle} sieht die Umsetzung beispielsweise so
 	 * aus:
 	 * <pre><code>
-	 * @Override
 	 * public Rectangle copy() {
 	 *     return new Rectangle(this);
 	 * }

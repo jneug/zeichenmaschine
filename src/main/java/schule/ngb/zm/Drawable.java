@@ -18,7 +18,7 @@ public interface Drawable {
 
 	/**
 	 * Wird aufgerufen, um das Objekt auf die Zeichenfläche <var>graphics</var>
-	 * zu draw.
+	 * zu zeichnen.
 	 * <p>
 	 * Das Objekt muss dafür Sorge tragen, dass der Zustand der Zeichenfläche
 	 * (Transformationsmatrix, Farbe, ...) erhalten bleibt. Das Objekt sollte

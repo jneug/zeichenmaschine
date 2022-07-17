@@ -39,7 +39,7 @@ public abstract class FilledShape extends StrokedShape {
 	 * Setzt die Füllfarbe auf die angegebene Farbe.
 	 *
 	 * @param color Die neue Füllfarbe oder {@code null}.
-	 * @see Color#Color(Color)
+	 * @see Color
 	 */
 	public void setFillColor( Color color ) {
 		fillColor = color;
@@ -50,7 +50,7 @@ public abstract class FilledShape extends StrokedShape {
 	 * auf den angegebenen Wert. 0 is komplett durchsichtig und 255 komplett
 	 * deckend.
 	 *
-	 * @param color Die neue Füllfarbe oder {@null}.
+	 * @param color Die neue Füllfarbe oder {@code null}.
 	 * @param alpha Ein Transparenzwert zwischen 0 und 255.
 	 * @see Color#Color(Color, int)
 	 */
@@ -136,12 +136,12 @@ public abstract class FilledShape extends StrokedShape {
 	 * ({@code fromX}, {@code fromY}) mit der Farbe {@code from} startet und am
 	 * Punkt (({@code toX}, {@code toY}) mit der Farbe {@code to} endet.
 	 *
-	 * @param fromX
-	 * @param fromY
-	 * @param from
-	 * @param toX
-	 * @param toY
-	 * @param to
+	 * @param fromX x-Koordinate des Startpunktes.
+	 * @param fromY y-Koordinate des Startpunktes.
+	 * @param from Farbe am Startpunkt.
+	 * @param toX x-Koordinate des Endpunktes.
+	 * @param toY y-Koordinate des Endpunktes.
+	 * @param to Farbe am Endpunkt.
 	 */
 	public void setGradient( double fromX, double fromY, Color from, double toX, double toY, Color to ) {
 		setFillColor(from);
@@ -158,11 +158,11 @@ public abstract class FilledShape extends StrokedShape {
 	 * endet am Rand des durch den Radius beschriebenen Kreises mit der Farbe
 	 * {@code to}.
 	 *
-	 * @param centerX
-	 * @param centerY
-	 * @param radius
-	 * @param from
-	 * @param to
+	 * @param centerX x-Koordinate des Kreismittelpunktes.
+	 * @param centerY y-Koordinate des Kreismittelpunktes.
+	 * @param radius Radius des Kreises.
+	 * @param from Farbe im Zentrum des Kreises.
+	 * @param to Farbe am Rand des Kreises.
 	 */
 	public void setGradient( double centerX, double centerY, double radius, Color from, Color to ) {
 		setFillColor(from);
@@ -180,11 +180,11 @@ public abstract class FilledShape extends StrokedShape {
 	}
 
 	/**
-	 * Hilfsmethode für Unterklassen, um die angegebene Form mit der gesetzten
+	 * Hilfsmethode für Unterklassen, um die angegebene Form mit der aktuellen
 	 * Füllung auf den Grafik-Kontext zu zeichnen. Die Methode verändert
 	 * gegebenenfalls die aktuelle Farbe des Grafikobjekts und setzt sie nicht
-	 * auf den Ursprungswert zurück. Dies sollte die aufrufende Unterklasse
-	 * übernehmen.
+	 * auf den Ursprungswert zurück, wie von {@link #draw(Graphics2D)}
+	 * gefordert. Dies sollte die aufrufende Unterklasse übernehmen.
 	 *
 	 * @param shape Die zu zeichnende Java-AWT Form
 	 * @param graphics Das Grafikobjekt.
