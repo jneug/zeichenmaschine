@@ -88,7 +88,7 @@ public class ColorLayer extends Layer {
 	}
 
 	public void setGradient( double fromX, double fromY, Color from, double toX, double toY, Color to ) {
-		setColor(from);
+		this.color = from;
 		background = new GradientPaint(
 			(float)fromX, (float)fromY, from.getJavaColor(),
 			(float)toX, (float)toY, to.getJavaColor()
@@ -101,7 +101,7 @@ public class ColorLayer extends Layer {
 	}
 
 	public void setGradient( double centerX, double centerY, double radius, Color from, Color to ) {
-		setColor(from);
+		this.color = from;
 		background = new RadialGradientPaint(
 			(float)centerX, (float)centerY, (float)radius,
 			new float[]{0f, 1f},
