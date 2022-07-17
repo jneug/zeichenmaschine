@@ -22,26 +22,26 @@ import java.util.function.DoubleUnaryOperator;
  * Für die Implementierung eigener Klassen ist es oft hilfreich von
  * {@code Constants} zu erben, um die Methoden und Konstanten einfach im
  * Programm nutzen zu können.
- * <code><pre>
+ * <pre><code>
  * class MyClass extends Constants {
  *     public int summe( int a, int b ) {
  *         // sum ist durch Vererbung verfügbar,
  *         return sum(a, b);
  *     }
  * }
- * </pre></code>
+ * </code></pre>
  * <p>
  * Alternativ können die statischen Klassenmethoden auch direkt genutzt werden:
- * <code><pre>
+ * <pre><code>
  * Constants.sum(1,2,3,4); // 10
- * </pre></code>
+ * </code></pre>
  * <p>
  * Oder die Methoden statisch importiert werden:
- * <code><pre>
+ * <pre><code>
  * import static Constants.*;
  *
  * sum(1, 2, 3, 4); // 10
- * </pre></code>
+ * </code></pre>
  */
 @SuppressWarnings( "unused" )
 public class Constants {
@@ -64,7 +64,7 @@ public class Constants {
 	/**
 	 * Patchversion der Zeichenmaschine.
 	 */
-	public static final int APP_VERSION_REV = 21;
+	public static final int APP_VERSION_REV = 22;
 
 	/**
 	 * Version der Zeichenmaschine als Text-String.
