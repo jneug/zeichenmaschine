@@ -952,7 +952,8 @@ public class Zeichenmaschine extends Constants {
 			return;
 		}
 
-		if( state != Options.AppState.RUNNING ) {
+		if( state == Options.AppState.INITIALIZING ||
+			state == Options.AppState.INITIALIZED ) {
 			LOG.warn("Don't use delay(int) from within settings() or setup().");
 			return;
 		}
