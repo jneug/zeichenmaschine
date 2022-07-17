@@ -5,11 +5,11 @@ import java.util.LinkedList;
 
 public final class Shape2DLayer extends Layer {
 
-	protected Color strokeColor = STD_STROKECOLOR;
+	protected Color strokeColor = DEFAULT_STROKECOLOR;
 
-	protected Color fillColor = STD_FILLCOLOR;
+	protected Color fillColor = DEFAULT_FILLCOLOR;
 
-	protected double strokeWeight = STD_STROKEWEIGHT;
+	protected double strokeWeight = DEFAULT_STROKEWEIGHT;
 
 	protected Options.StrokeType strokeType = SOLID;
 

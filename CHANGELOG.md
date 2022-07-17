@@ -7,9 +7,10 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ## [Unreleased]
 
 ### Added
-- System für EventListener erstellt
+- System für EventListener.
   - `AudioListener` und `AnimationListener` als erste Anwendungsfälle.
-- Pakete für Animationen und Maschinelles-Lernen hinzugefügt
+- Pakete für Animationen und Maschinelles-Lernen.
+- Farbverläufe als Füllung.
 
 ### Changed
 - `update(double)` und `draw()` werden nun in einem eigenen Thread aufgerufen. 

@@ -22,7 +22,7 @@ public class Text extends Shape {
 	protected int width = 0, height = 0, ascent = 0;
 
 	public Text( double x, double y, String text ) {
-		this(x, y, text, new Font(Font.SANS_SERIF, Font.PLAIN, STD_FONTSIZE));
+		this(x, y, text, new Font(Font.SANS_SERIF, Font.PLAIN, DEFAULT_FONTSIZE));
 	}
 	public Text( double x, double y, String text, String fontname ) {
 		super(x, y);
@@ -30,7 +30,7 @@ public class Text extends Shape {
 		if( userfont != null ) {
 			font = userfont;
 		} else {
-			font = new Font(Font.SANS_SERIF, Font.PLAIN, STD_FONTSIZE);
+			font = new Font(Font.SANS_SERIF, Font.PLAIN, DEFAULT_FONTSIZE);
 		}
 		setText(text);
 		fillColor = null;

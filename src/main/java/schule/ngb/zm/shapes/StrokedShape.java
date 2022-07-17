@@ -4,21 +4,20 @@ import schule.ngb.zm.Color;
 import schule.ngb.zm.Constants;
 import schule.ngb.zm.Drawable;
 import schule.ngb.zm.Options;
-import schule.ngb.zm.util.Noise;
 
-import java.awt.*;
-import java.awt.Shape;
-import java.awt.geom.FlatteningPathIterator;
-import java.awt.geom.GeneralPath;
-import java.awt.geom.PathIterator;
-import java.util.Arrays;
+import java.awt.BasicStroke;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 
 
+/**
+ * Basisklasse für Formen, die eine Konturlinie besitzen.
+ */
 public abstract class StrokedShape extends Constants implements Drawable {
 
-	protected Color strokeColor = STD_STROKECOLOR;
+	protected Color strokeColor = DEFAULT_STROKECOLOR;
 
-	protected double strokeWeight = STD_STROKEWEIGHT;
+	protected double strokeWeight = DEFAULT_STROKEWEIGHT;
 
 	protected Options.StrokeType strokeType = SOLID;
 
@@ -80,6 +79,12 @@ public abstract class StrokedShape extends Constants implements Drawable {
 		this.stroke = null;
 	}
 
+	public void resetStroke() {
+		setStrokeColor(DEFAULT_STROKECOLOR);
+		setStrokeWeight(DEFAULT_STROKEWEIGHT);
+		setStrokeType(SOLID);
+	}
+
 	@Override
 	public abstract void draw( Graphics2D graphics );
 
@@ -118,10 +123,13 @@ public abstract class StrokedShape extends Constants implements Drawable {
 		return stroke;
 	}
 
-	public void resetStroke() {
-		setStrokeColor(STD_STROKECOLOR);
-		setStrokeWeight(STD_STROKEWEIGHT);
-		setStrokeType(SOLID);
+	protected void strokeShape( java.awt.Shape shape, Graphics2D graphics ) {
+		if( strokeColor != null && strokeColor.getAlpha() > 0
+			&& strokeWeight > 0.0 ) {
+			graphics.setColor(strokeColor.getJavaColor());
+			graphics.setStroke(createStroke());
+			graphics.draw(shape);
+		}
 	}
 
 }

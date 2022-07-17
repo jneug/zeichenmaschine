@@ -1,6 +1,5 @@
 package schule.ngb.zm;
 
-import java.awt.Graphics;
 import java.util.LinkedList;
 
 public class Spielemaschine extends Zeichenmaschine {
@@ -12,7 +11,7 @@ public class Spielemaschine extends Zeichenmaschine {
 	private GraphicsLayer mainLayer;
 
 	public Spielemaschine( String title ) {
-		this(STD_WIDTH, STD_HEIGHT, title);
+		this(DEFAULT_WIDTH, DEFAULT_HEIGHT, title);
 	}
 
 

@@ -8,11 +8,11 @@ import java.util.Stack;
 
 public class DrawingLayer extends Layer {
 
-	protected Color fillColor = STD_FILLCOLOR;
+	protected Color fillColor = DEFAULT_FILLCOLOR;
 
-	protected Color strokeColor = STD_STROKECOLOR;
+	protected Color strokeColor = DEFAULT_STROKECOLOR;
 
-	protected double strokeWeight = STD_STROKEWEIGHT;
+	protected double strokeWeight = DEFAULT_STROKEWEIGHT;
 
 	protected Options.StrokeType strokeType = SOLID;
 
@@ -147,8 +147,8 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void resetStroke() {
-		setStrokeColor(STD_STROKECOLOR);
-		setStrokeWeight(STD_STROKEWEIGHT);
+		setStrokeColor(DEFAULT_STROKECOLOR);
+		setStrokeWeight(DEFAULT_STROKEWEIGHT);
 		setStrokeType(SOLID);
 	}
 

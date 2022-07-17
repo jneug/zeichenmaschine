@@ -75,42 +75,42 @@ public class Constants {
 	/**
 	 * Standardbreite eines Zeichenfensters.
 	 */
-	public static final int STD_WIDTH = 400;
+	public static final int DEFAULT_WIDTH = 400;
 
 	/**
 	 * Standardhöhe eines Zeichenfensters.
 	 */
-	public static final int STD_HEIGHT = 400;
+	public static final int DEFAULT_HEIGHT = 400;
 
 	/**
 	 * Standardwert für die Frames pro Sekunde einer Zeichenmaschine.
 	 */
-	public static final int STD_FPS = 60;
+	public static final int DEFAULT_FPS = 60;
 
 	/**
 	 * Standardfarbe der Füllungen.
 	 */
-	public static final Color STD_FILLCOLOR = Color.WHITE;
+	public static Color DEFAULT_FILLCOLOR = Color.WHITE;
 
 	/**
 	 * Standardfarbe der Konturen.
 	 */
-	public static final Color STD_STROKECOLOR = Color.BLACK;
+	public static Color DEFAULT_STROKECOLOR = Color.BLACK;
 
 	/**
 	 * Standardwert für die Dicke der Konturen.
 	 */
-	public static final double STD_STROKEWEIGHT = 1.0;
+	public static double DEFAULT_STROKEWEIGHT = 1.0;
 
 	/**
 	 * Standardwert für die Schriftgröße.
 	 */
-	public static final int STD_FONTSIZE = 14;
+	public static int DEFAULT_FONTSIZE = 14;
 
 	/**
 	 * Standardwert für den Abstand von Formen.
 	 */
-	public static final int STD_BUFFER = 10;
+	public static int DEFAULT_BUFFER = 10;
 
 	public static int DEFAULT_ANIM_RUNTIME = 1000;
 
@@ -414,7 +414,7 @@ public class Constants {
 	/**
 	 * Aktuell dargestellte Bilder pro Sekunde.
 	 */
-	public static int framesPerSecond = STD_FPS;
+	public static int framesPerSecond = DEFAULT_FPS;
 
 	/**
 	 * Anzahl der Ticks (Frames), die das Programm bisher läuft.

@@ -18,7 +18,7 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 
 
 	public Layer() {
-		this(STD_WIDTH, STD_HEIGHT);
+		this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 
 	public Layer( int width, int height ) {

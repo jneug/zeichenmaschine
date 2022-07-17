@@ -255,7 +255,7 @@ public class Zeichenmaschine extends Constants {
 	 * @param title Der Titel, der oben im Fenster steht.
 	 */
 	public Zeichenmaschine( String title ) {
-		this(STD_WIDTH, STD_HEIGHT, title, true);
+		this(DEFAULT_WIDTH, DEFAULT_HEIGHT, title, true);
 	}
 
 	/**
@@ -270,7 +270,7 @@ public class Zeichenmaschine extends Constants {
 	 * 	Aufruf von {@code draw()}.
 	 */
 	public Zeichenmaschine( String title, boolean run_once ) {
-		this(STD_WIDTH, STD_HEIGHT, title, run_once);
+		this(DEFAULT_WIDTH, DEFAULT_HEIGHT, title, run_once);
 	}
 
 	/**
@@ -377,7 +377,7 @@ public class Zeichenmaschine extends Constants {
 		shapes = getShapesLayer();
 
 		// FPS setzen
-		framesPerSecondInternal = STD_FPS;
+		framesPerSecondInternal = DEFAULT_FPS;
 		this.run_once = run_once;
 
 		// Settings der Unterklasse aufrufen, falls das Fenster vor dem Öffnen

@@ -80,6 +80,17 @@ public abstract class Shape extends FilledShape {
 		return scale;
 	}
 
+	public void setGradient( schule.ngb.zm.Color from, schule.ngb.zm.Color to, Options.Direction dir ) {
+		Point2D apDir = getAbsAnchorPoint(dir);
+		Point2D apInv = getAbsAnchorPoint(dir.inverse());
+		setGradient(apInv.getX(), apInv.getY(), from, apDir.getX(), apDir.getY(), to);
+	}
+
+	public void setGradient( schule.ngb.zm.Color from, schule.ngb.zm.Color to ) {
+		Point2D ap = getAbsAnchorPoint(CENTER);
+		setGradient(ap.getX(), ap.getY(), Math.min(ap.getX(), ap.getY()), from, to);
+	}
+
 	public boolean isVisible() {
 		return visible;
 	}
@@ -117,6 +128,19 @@ public abstract class Shape extends FilledShape {
 		}
 	}
 
+	/**
+	 * Bestimmt die relativen Koordinaten des angegebenen Ankerpunkt basierend
+	 * auf der angegebenen Breite und Höhe des umschließenden Rechtecks.
+	 * <p>
+	 * Die Koordinaten des Ankerpunkt werden relativ zur oberen linken Ecke des
+	 * Rechtecks mit der Breite {@code width} und der Höhe {@code height}
+	 * bestimmt.
+	 *
+	 * @param width Breite des umschließdenden Rechtecks.
+	 * @param height Höhe des umschließdenden Rechtecks.
+	 * @param anchor Gesuchter Ankerpunkt.
+	 * @return Ein {@link Point2D} mit den relativen Koordinaten.
+	 */
 	protected static Point2D.Double getAnchorPoint( double width, double height, Options.Direction anchor ) {
 		double wHalf = width * .5, hHalf = height * .5;
 
@@ -164,14 +188,22 @@ public abstract class Shape extends FilledShape {
 	}
 
 	/**
-	 * Kopiert die Eigenschaften der übergebenen Form in diese.
+	 * Kopiert die Eigenschaften der angegebenen Form in diese.
 	 * <p>
 	 * Unterklassen sollten diese Methode überschreiben, um weitere
-	 * Eigenschaften zu kopieren (zum Beispiel den Radius eines Kreises). Mit
-	 * dem Aufruf {@code super.copyFrom(shape)} sollten die Basiseigenschaften
-	 * kopiert werden.
+	 * Eigenschaften zu kopieren (zum Beispiel den Radius eines Kreises).
+	 * Unterklassen sollten immer mit dem Aufruf {@code super.copyFrom(shape)}
+	 * die Basiseigenschaften kopieren.
+	 * <p>
+	 * Die Methode sollte so viele Eigenschaften wie möglich von der anderen
+	 * Form in diese kopieren. Wenn die andere Form einen anderen Typ hat, dann
+	 * werden trotzdem die Basiseigenschaften (Konturlinie, Füllung, Position,
+	 * Rotation, Skalierung, Sichtbarkeit und Ankerpunkt) in diese Form kopiert.
+	 * Implementierende Unterklassen können soweit sinnvoll auch andere Werte
+	 * übernehmen. Eine {@link Ellipse} kann beispielsweise auch die Breite und
+	 * Höhe eines {@link Rectangle} übernehmen.
 	 *
-	 * @param shape
+	 * @param shape Die Originalform, von der kopiert werden soll.
 	 */
 	public void copyFrom( Shape shape ) {
 		if( shape != null ) {
@@ -187,6 +219,26 @@ public abstract class Shape extends FilledShape {
 		}
 	}
 
+	/**
+	 * Erzeugt eine Kopie dieser Form mit denselben Eigenschaften.
+	 * <p>
+	 * Unterklassen implementieren diese Methode mit dem genauen Typ der
+	 * Unterklasse. In {@link Rectangle} sieht die Umsetzung beispielsweise so
+	 * aus:
+	 * <pre><code>
+	 * @Override
+	 * public Rectangle copy() {
+	 *     return new Rectangle(this);
+	 * }
+	 * </code></pre>
+	 * <p>
+	 * Die Methode kann beliebig umgesetzt werden, um eine 1-zu-1-Kopie dieser
+	 * Form zu erhalten. In der Regel sollte aber jede Form einen Konstruktor
+	 * besitzen, die alle Werte einer andern Form übernimmt. Die gezeigte
+	 * Implementierung dürfte daher im Regelfall ausreichend sein.
+	 *
+	 * @return Eine genaue Kopie dieser Form.
+	 */
 	public abstract Shape copy();
 
 	public abstract java.awt.Shape getShape();
@@ -273,7 +325,7 @@ public abstract class Shape extends FilledShape {
 	}
 
 	public void nextTo( Shape shape, Options.Direction dir ) {
-		nextTo(shape, dir, STD_BUFFER);
+		nextTo(shape, dir, DEFAULT_BUFFER);
 	}
 
 	/**
@@ -376,6 +428,9 @@ public abstract class Shape extends FilledShape {
 			}
 
 			Color currentColor = graphics.getColor();
+			fillShape(shape, graphics);
+			strokeShape(shape, graphics);
+			/*
 			if( fillColor != null && fillColor.getAlpha() > 0 ) {
 				graphics.setColor(fillColor.getJavaColor());
 				graphics.fill(shape);
@@ -386,6 +441,7 @@ public abstract class Shape extends FilledShape {
 				graphics.setStroke(createStroke());
 				graphics.draw(shape);
 			}
+			*/
 			graphics.setColor(currentColor);
 		}
 	}

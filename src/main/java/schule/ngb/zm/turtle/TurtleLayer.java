@@ -336,7 +336,7 @@ public class TurtleLayer extends Layer {
 			if( strokeColor != null ) {
 				graphics.setColor(strokeColor.getJavaColor());
 			} else {
-				graphics.setColor(STD_STROKECOLOR.getJavaColor());
+				graphics.setColor(DEFAULT_STROKECOLOR.getJavaColor());
 			}
 			graphics.fill(shape);
 			graphics.setColor(Color.BLACK.getJavaColor());

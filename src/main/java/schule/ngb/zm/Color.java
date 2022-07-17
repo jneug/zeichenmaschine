@@ -1,5 +1,10 @@
 package schule.ngb.zm;
 
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.ColorModel;
+
 /**
  * Repräsentiert eine Farbe in der Zeichenmaschine.
  * <p>
@@ -9,7 +14,7 @@ package schule.ngb.zm;
  * Eine Farbe hat außerdem einen Transparenzwert zwischen 0 (unsichtbar) und 255
  * (deckend).
  */
-public class Color {
+public class Color implements Paint {
 
 
 	//@formatter:off
@@ -146,7 +151,7 @@ public class Color {
 	 * @param alpha Transparentwert zwischen 0 und 255.
 	 */
 	public Color( int red, int green, int blue, int alpha ) {
-		rgba = ((alpha&0xFF) << 24) | ((red&0xFF) << 16) | ((green&0xFF) << 8) | ((blue&0xFF) << 0);
+		rgba = ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | ((blue & 0xFF) << 0);
 	}
 
 	/**
@@ -463,6 +468,23 @@ public class Color {
 	}
 
 	@Override
+	public PaintContext createContext( ColorModel cm, Rectangle deviceBounds, Rectangle2D userBounds, AffineTransform xform, RenderingHints hints ) {
+		return getJavaColor().createContext(cm, deviceBounds, userBounds, xform, hints);
+	}
+
+	@Override
+	public int getTransparency() {
+		int alpha = getAlpha();
+		if( alpha == 0xff ) {
+			return Transparency.OPAQUE;
+		} else if( alpha == 0 ) {
+			return Transparency.BITMASK;
+		} else {
+			return Transparency.TRANSLUCENT;
+		}
+	}
+
+	@Override
 	/**
 	 * Prüft, ob ein anderes Objekt zu diesem gleich ist.
 	 *
@@ -473,7 +495,9 @@ public class Color {
 	 * @return {@code true}, wenn die Objekte gleich sind, sonst {@code false}.
 	 */
 	public boolean equals( Object obj ) {
-		if( obj == null ) { return false; }
+		if( obj == null ) {
+			return false;
+		}
 		if( obj instanceof Color ) {
 			return ((Color) obj).getRGBA() == this.rgba;
 		} else if( obj instanceof java.awt.Color ) {
