@@ -6,22 +6,11 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MatrixTest {
-
-	@Test
-	void initializeIdentity() {
-		Matrix m = new Matrix(4, 4);
-		m.initializeIdentity();
-
-		assertArrayEquals(new double[]{1.0, 0.0, 0.0, 0.0}, m.coefficients[0]);
-		assertArrayEquals(new double[]{0.0, 1.0, 0.0, 0.0}, m.coefficients[1]);
-		assertArrayEquals(new double[]{0.0, 0.0, 1.0, 0.0}, m.coefficients[2]);
-		assertArrayEquals(new double[]{0.0, 0.0, 0.0, 1.0}, m.coefficients[3]);
-	}
+class DoubleMatrixTest {
 
 	@Test
 	void initializeOne() {
-		Matrix m = new Matrix(4, 4);
+		DoubleMatrix m = new DoubleMatrix(4, 4);
 		m.initializeOne();
 
 		double[] ones = new double[]{1.0, 1.0, 1.0, 1.0};
@@ -33,7 +22,7 @@ class MatrixTest {
 
 	@Test
 	void initializeZero() {
-		Matrix m = new Matrix(4, 4);
+		DoubleMatrix m = new DoubleMatrix(4, 4);
 		m.initializeZero();
 
 		double[] zeros = new double[]{0.0, 0.0, 0.0, 0.0};
@@ -45,7 +34,7 @@ class MatrixTest {
 
 	@Test
 	void initializeRandom() {
-		Matrix m = new Matrix(4, 4);
+		DoubleMatrix m = new DoubleMatrix(4, 4);
 		m.initializeRandom(-1, 1);
 
 		assertTrue(Arrays.stream(m.coefficients[0]).allMatch((d) -> -1.0 <= d && d < 1.0));

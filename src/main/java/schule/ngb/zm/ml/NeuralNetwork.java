@@ -23,13 +23,13 @@ public class NeuralNetwork {
 
 				for( int i = 0; i < layer.getInputCount(); i++ ) {
 					for( int j = 0; j < layer.getNeuronCount(); j++ ) {
-						out.print(layer.weights.coefficients[i][j]);
+						//out.print(layer.weights.coefficients[i][j]);
 						out.print(' ');
 					}
 					out.println();
 				}
 				for( int j = 0; j < layer.getNeuronCount(); j++ ) {
-					out.print(layer.biases[j]);
+					//out.print(layer.biases[j]);
 					out.print(' ');
 				}
 				out.println();
@@ -56,13 +56,13 @@ public class NeuralNetwork {
 				for( int i = 0; i < inputs; i++ ) {
 					split = in.readLine().split(" ");
 					for( int j = 0; j < neurons; j++ ) {
-						layer.weights.coefficients[i][j] = Double.parseDouble(split[j]);
+						//layer.weights.coefficients[i][j] = Double.parseDouble(split[j]);
 					}
 				}
 				// Load Biases
 				split = in.readLine().split(" ");
 				for( int j = 0; j < neurons; j++ ) {
-					layer.biases[j] = Double.parseDouble(split[j]);
+					//layer.biases[j] = Double.parseDouble(split[j]);
 				}
 
 				layers.add(layer);
@@ -107,7 +107,7 @@ public class NeuralNetwork {
 
 	private NeuronLayer[] layers;
 
-	private double[][] output;
+	private Matrix output;
 
 	private double learningRate = 0.1;
 
@@ -162,17 +162,25 @@ public class NeuralNetwork {
 		this.learningRate = pLearningRate;
 	}
 
-	public double[][] getOutput() {
+	public Matrix getOutput() {
 		return output;
 	}
 
-	public double[][] predict( double[][] inputs ) {
+	public Matrix predict( double[][] inputs ) {
 		//this.output = layers[1].apply(layers[0].apply(inputs));
+		return predict(MatrixFactory.create(inputs));
+	}
+
+	public Matrix predict( Matrix inputs ) {
 		this.output = layers[0].apply(inputs);
 		return this.output;
 	}
 
 	public void learn( double[][] expected ) {
+		learn(MatrixFactory.create(expected));
+	}
+
+	public void learn( Matrix expected ) {
 		layers[layers.length - 1].backprop(expected, learningRate);
 	}
 

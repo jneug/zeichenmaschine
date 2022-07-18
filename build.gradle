@@ -28,6 +28,8 @@ dependencies {
 	runtimeOnly 'com.googlecode.soundlibs:tritonus-share:0.3.7.4'
 	runtimeOnly 'com.googlecode.soundlibs:mp3spi:1.9.5.4'
 
+	api 'colt:colt:1.2.0'
+
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
