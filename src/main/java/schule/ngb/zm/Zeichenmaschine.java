@@ -1638,7 +1638,7 @@ public class Zeichenmaschine extends Constants {
 
 		private Thread updateThread;
 
-		private boolean running = false, waiting = false;
+		private boolean running = false;
 
 		public UpdateThreadExecutor() {
 			super(1, 1, 0L,
@@ -1647,12 +1647,17 @@ public class Zeichenmaschine extends Constants {
 		}
 
 		@Override
+		public void execute( Runnable command ) {
+			running = true;
+			super.execute(command);
+		}
+
+		@Override
 		protected void beforeExecute( Thread t, Runnable r ) {
-			// We store the one Thread this Executor holds
+			// We store the one Thread this Executor holds,
 			// but it might change if a new Thread needed to be spawned
 			// due to en error.
 			updateThread = t;
-			running = true;
 		}
 
 		@Override
@@ -1683,7 +1688,10 @@ public class Zeichenmaschine extends Constants {
 		 * @return
 		 */
 		public boolean isWaiting() {
-			return running && updateThread.getState() == Thread.State.TIMED_WAITING;
+			//return running && updateThread.getState() == Thread.State.TIMED_WAITING;
+			return running && updateThread != null && updateThread.getState() == Thread.State.TIMED_WAITING;
+				//|| updateThread.getState() == Thread.State.WAITING
+				//|| updateThread.getState() == Thread.State.BLOCKED;
 		}
 
 	}
