@@ -6,14 +6,40 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 
+/**
+ * Basisklasse für Ebenen der {@link Zeichenleinwand}.
+ * <p>
+ * Die {@code Zeichenleinwand} besteht aus einer Reihe von Ebenen, die
+ * übereinandergelegt und von "unten" nach "oben" gezeichnet werden. Die Inhalte
+ * der oberen Ebenen können also Inhalte der darunterliegenden verdecken.
+ *
+ * Ebenen sind ein zentraler Bestandteil bei der Implementierung einer {@link Zeichenmaschine}.
+ * Es werden
+ * Sie erben von {@code Constants}, damit sie beim
+ */
 public abstract class Layer extends Constants implements Drawable, Updatable {
 
+	/**
+	 * Interner Puffer für die Ebene, der einmal pro Frame auf die
+	 * Zeichenleinwand übertragen wird.
+	 */
 	protected BufferedImage buffer;
 
+	/**
+	 * Der Grafikkontext der Ebene, der zum Zeichnen der Inhalte verwendet
+	 * wird.
+	 */
 	protected Graphics2D drawing;
 
+	/**
+	 * Ob die Ebene derzeit sichtbar ist.
+	 */
 	protected boolean visible = true;
 
+	/**
+	 * Ob die Ebene aktiv ist, also {@link #update(double) Updates} empfangen
+	 * soll.
+	 */
 	protected boolean active = true;
 
 
@@ -33,6 +59,12 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 		return buffer.getHeight();
 	}
 
+	/**
+	 * Ändert die Größe der Ebene auf die angegebene Größe.
+	 *
+	 * @param width Die neue Breite.
+	 * @param height Die neue Höhe.
+	 */
 	public void setSize( int width, int height ) {
 		if( buffer != null ) {
 			if( buffer.getWidth() != width || buffer.getHeight() != height ) {
@@ -44,8 +76,13 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 
 	}
 
+	/**
+	 * Gibt die Resourcen der Ebene frei.
+	 */
 	public void dispose() {
 		drawing.dispose();
+		drawing = null;
+		buffer = null;
 	}
 
 	/**

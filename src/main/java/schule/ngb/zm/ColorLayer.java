@@ -28,12 +28,22 @@ public class ColorLayer extends Layer {
 	 */
 	private Paint background;
 
+	/**
+	 * Erstellt eine neue Farbebene mit der angegebenen Farbe.
+	 * @param color Die Hintergrundfarbe.
+	 */
 	public ColorLayer( Color color ) {
 		this.color = color;
 		this.background = color.getJavaColor();
 		clear();
 	}
 
+	/**
+	 * Erstellt eine neue Farbebene mit der angegebenen Größe und Farbe.
+	 * @param width Breite der Ebene.
+	 * @param height Höhe der Ebene.
+	 * @param color Die Hintergrundfarbe.
+	 */
 	public ColorLayer( int width, int height, Color color ) {
 		super(width, height);
 		this.color = color;
@@ -41,16 +51,27 @@ public class ColorLayer extends Layer {
 		clear();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setSize( int width, int height ) {
 		super.setSize(width, height);
 		clear();
 	}
 
+	/**
+	 * Gibt die Hintergrundfarbe der Ebene zurück.
+	 * @return Die aktuelle Hintergrundfarbe.
+	 */
 	public Color getColor() {
 		return color;
 	}
 
+	/**
+	 * Setzt die Farbe der Ebene neu.
+	 * @param color Die neue Hintergrundfarbe.
+	 */
 	public void setColor( Color color ) {
 		this.color = color;
 		this.background = color.getJavaColor();
