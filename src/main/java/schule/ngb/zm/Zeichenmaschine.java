@@ -1246,7 +1246,7 @@ public class Zeichenmaschine extends Constants {
 			case MouseEvent.MOUSE_RELEASED:
 				mousePressed = false;
 				mouseButton = NOMOUSE;
-				mousePressed(evt);
+				mouseReleased(evt);
 				break;
 			case MouseEvent.MOUSE_DRAGGED:
 				//saveMousePosition(evt);
