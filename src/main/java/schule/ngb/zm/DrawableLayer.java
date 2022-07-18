@@ -1,11 +1,13 @@
 package schule.ngb.zm;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 public class DrawableLayer extends Layer {
 
-	protected LinkedList<Drawable> drawables = new LinkedList<>();
+	protected List<Drawable> drawables = new LinkedList<>();
 
 	protected boolean clearBeforeDraw = true;
 
@@ -43,7 +45,8 @@ public class DrawableLayer extends Layer {
 		}
 
 		synchronized( drawables ) {
-			for( Drawable d : drawables ) {
+			List<Drawable> it = Collections.unmodifiableList(drawables);
+			for( Drawable d : it ) {
 				if( d.isVisible() ) {
 					d.draw(drawing);
 				}

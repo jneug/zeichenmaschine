@@ -1,12 +1,16 @@
 package schule.ngb.zm;
 
+import schule.ngb.zm.shapes.Shape;
+
 import java.awt.Canvas;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Eine Leinwand ist die Hauptkomponente einer Zeichenmaschine. Sie besteht aus
@@ -195,7 +199,8 @@ public class Zeichenleinwand extends Canvas {
 
 	public void updateLayers( double delta ) {
 		synchronized( layers ) {
-			for( Layer layer : layers ) {
+			List<Layer> it = List.copyOf(layers);
+			for( Layer layer : it ) {
 				layer.update(delta);
 			}
 		}
@@ -232,7 +237,8 @@ public class Zeichenleinwand extends Canvas {
 	public void draw( Graphics graphics ) {
 		Graphics2D g2d = (Graphics2D) graphics.create();
 		synchronized( layers ) {
-			for( Layer layer : layers ) {
+			List<Layer> it = List.copyOf(layers);
+			for( Layer layer : it ) {
 				layer.draw(g2d);
 			}
 		}
@@ -256,7 +262,8 @@ public class Zeichenleinwand extends Canvas {
 						g2d.clearRect(0, 0, getWidth(), getHeight());
 
 						synchronized( layers ) {
-							for( Layer layer : layers ) {
+							List<Layer> it = List.copyOf(layers);
+							for( Layer layer : it ) {
 								layer.draw(g2d);
 							}
 						}

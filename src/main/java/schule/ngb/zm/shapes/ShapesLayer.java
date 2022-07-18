@@ -6,10 +6,7 @@ import schule.ngb.zm.anim.AnimationFacade;
 import schule.ngb.zm.anim.Easing;
 
 import java.awt.Graphics2D;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 
 public class ShapesLayer extends Layer {
@@ -45,12 +42,12 @@ public class ShapesLayer extends Layer {
 		return null;
 	}
 
-	public java.util.List<Shape> getShapes() {
+	public List<Shape> getShapes() {
 		return shapes;
 	}
 
-	public <ST extends Shape> java.util.List<ST> getShapes( Class<ST> shapeClass ) {
-		java.util.List<ST> result = new LinkedList<>();
+	public <ST extends Shape> List<ST> getShapes( Class<ST> shapeClass ) {
+		List<ST> result = new LinkedList<>();
 		for( Shape s : shapes ) {
 			if( shapeClass.isInstance(s) ) {
 				result.add((ST) s);
@@ -60,7 +57,7 @@ public class ShapesLayer extends Layer {
 	}
 
 	public void add( Shape... shapes ) {
-		synchronized( shapes ) {
+		synchronized( this.shapes ) {
 			for( Shape s : shapes ) {
 				this.shapes.add(s);
 			}
@@ -68,7 +65,7 @@ public class ShapesLayer extends Layer {
 	}
 
 	public void add( Collection<Shape> shapes ) {
-		synchronized( shapes ) {
+		synchronized( this.shapes ) {
 			for( Shape s : shapes ) {
 				this.shapes.add(s);
 			}
@@ -76,16 +73,16 @@ public class ShapesLayer extends Layer {
 	}
 
 	public void remove( Shape... shapes ) {
-		synchronized( shapes ) {
-			for( Shape s: shapes ) {
+		synchronized( this.shapes ) {
+			for( Shape s : shapes ) {
 				this.shapes.remove(s);
 			}
 		}
 	}
 
 	public void remove( Collection<Shape> shapes ) {
-		synchronized( shapes ) {
-			for( Shape s: shapes ) {
+		synchronized( this.shapes ) {
+			for( Shape s : shapes ) {
 				this.shapes.remove(s);
 			}
 		}
@@ -99,16 +96,16 @@ public class ShapesLayer extends Layer {
 
 	public void showAll() {
 		synchronized( shapes ) {
-			for( Shape pShape : shapes ) {
-				pShape.show();
+			for( Shape s : shapes ) {
+				s.show();
 			}
 		}
 	}
 
 	public void hideAll() {
 		synchronized( shapes ) {
-			for( Shape pShape : shapes ) {
-				pShape.hide();
+			for( Shape s : shapes ) {
+				s.hide();
 			}
 		}
 	}
@@ -147,9 +144,10 @@ public class ShapesLayer extends Layer {
 		}
 
 		synchronized( shapes ) {
-			for( Shape pShape : shapes ) {
-				if( pShape.isVisible() ) {
-					pShape.draw(drawing);
+			List<Shape> it = List.copyOf(shapes);
+			for( Shape s : it ) {
+				if( s.isVisible() ) {
+					s.draw(drawing);
 				}
 			}
 		}

@@ -1,7 +1,12 @@
 package schule.ngb.zm;
 
+import java.awt.Graphics2D;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
+@SuppressWarnings( "unused" )
 public class Spielemaschine extends Zeichenmaschine {
 
 	private LinkedList<Drawable> drawables;
@@ -78,9 +83,10 @@ public class Spielemaschine extends Zeichenmaschine {
 	@Override
 	public final void update( double delta ) {
 		synchronized( updatables ) {
-			for( Updatable updatable : updatables ) {
-				if( updatable.isActive() ) {
-					updatable.update(delta);
+			List<Updatable> it = Collections.unmodifiableList(updatables);
+			for( Updatable u: it ) {
+				if( u.isActive() ) {
+					u.update(delta);
 				}
 			}
 		}
@@ -92,12 +98,21 @@ public class Spielemaschine extends Zeichenmaschine {
 	public final void draw() {
 		mainLayer.clear();
 		synchronized( drawables ) {
-			for( Drawable drawable : drawables ) {
-				if( drawable.isVisible() ) {
-					drawable.draw(mainLayer.getGraphics());
+			List<Drawable> it = Collections.unmodifiableList(drawables);
+			for( Drawable d: it ) {
+				if( d.isVisible() ) {
+					d.draw(mainLayer.getGraphics());
 				}
 			}
 		}
+	}
+
+	static class GraphicsLayer extends Layer {
+
+		public Graphics2D getGraphics() {
+			return drawing;
+		}
+
 	}
 
 }
