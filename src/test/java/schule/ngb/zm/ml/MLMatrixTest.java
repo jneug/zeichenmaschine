@@ -18,6 +18,23 @@ class MLMatrixTest {
 
 	@ParameterizedTest
 	@ValueSource( classes = {DoubleMatrix.class, MatrixFactory.ColtMatrix.class} )
+	void get( Class<? extends MLMatrix> mType ) {
+		MatrixFactory.matrixType = mType;
+
+		MLMatrix M = MatrixFactory.create(new double[][]{
+			{1, 2, 3},
+			{4, 5, 6}
+		});
+
+		assertEquals(mType, M.getClass());
+
+		assertEquals(1.0, M.get(0,0));
+		assertEquals(4.0, M.get(1,0));
+		assertEquals(6.0, M.get(1,2));
+	}
+
+	@ParameterizedTest
+	@ValueSource( classes = {DoubleMatrix.class, MatrixFactory.ColtMatrix.class} )
 	void initializeOne( Class<? extends MLMatrix> mType ) {
 		MatrixFactory.matrixType = mType;
 

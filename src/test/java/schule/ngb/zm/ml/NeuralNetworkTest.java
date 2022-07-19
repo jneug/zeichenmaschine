@@ -20,8 +20,8 @@ class NeuralNetworkTest {
 	@BeforeAll
 	static void setupMatrixLibrary() {
 		Constants.setSeed(1001);
-		MatrixFactory.matrixType = MatrixFactory.ColtMatrix.class;
-		//MatrixFactory.matrixType = DoubleMatrix.class;
+		//MatrixFactory.matrixType = MatrixFactory.ColtMatrix.class;
+		MatrixFactory.matrixType = DoubleMatrix.class;
 	}
 
 	/*@Test
@@ -153,12 +153,11 @@ class NeuralNetworkTest {
 	}
 
 	private List<TestData> createTrainingSet( int trainingSetSize, CalcType operation ) {
-		Random random = new Random();
 		List<TestData> tuples = new ArrayList<>();
 
 		for( int i = 0; i < trainingSetSize; i++ ) {
-			double s1 = random.nextDouble() * 0.5;
-			double s2 = random.nextDouble() * 0.5;
+			double s1 = Constants.random() * 0.5;
+			double s2 = Constants.random() * 0.5;
 
 			switch( operation ) {
 				case ADD:
