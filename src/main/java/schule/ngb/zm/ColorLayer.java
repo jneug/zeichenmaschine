@@ -1,13 +1,8 @@
 package schule.ngb.zm;
 
-import schule.ngb.zm.shapes.Shape;
-
 import java.awt.GradientPaint;
-import java.awt.MultipleGradientPaint;
 import java.awt.Paint;
 import java.awt.RadialGradientPaint;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
 
 /**
  * Eine Ebene, die nur aus einer Farbe (oder einem Farbverlauf) besteht.
@@ -16,6 +11,7 @@ import java.awt.geom.Rectangle2D;
  * Hintergundfarbe für eine Szene dienen, oder als halbtransparente "Abdeckung",
  * wenn ein {@code ColorLayer} über den anderen Ebenen eingefügt wird.
  */
+@SuppressWarnings( "unused" )
 public class ColorLayer extends Layer {
 
 	/**
@@ -30,6 +26,7 @@ public class ColorLayer extends Layer {
 
 	/**
 	 * Erstellt eine neue Farbebene mit der angegebenen Farbe.
+	 *
 	 * @param color Die Hintergrundfarbe.
 	 */
 	public ColorLayer( Color color ) {
@@ -40,6 +37,7 @@ public class ColorLayer extends Layer {
 
 	/**
 	 * Erstellt eine neue Farbebene mit der angegebenen Größe und Farbe.
+	 *
 	 * @param width Breite der Ebene.
 	 * @param height Höhe der Ebene.
 	 * @param color Die Hintergrundfarbe.
@@ -62,6 +60,7 @@ public class ColorLayer extends Layer {
 
 	/**
 	 * Gibt die Hintergrundfarbe der Ebene zurück.
+	 *
 	 * @return Die aktuelle Hintergrundfarbe.
 	 */
 	public Color getColor() {
@@ -70,6 +69,7 @@ public class ColorLayer extends Layer {
 
 	/**
 	 * Setzt die Farbe der Ebene neu.
+	 *
 	 * @param color Die neue Hintergrundfarbe.
 	 */
 	public void setColor( Color color ) {
@@ -95,15 +95,15 @@ public class ColorLayer extends Layer {
 	}
 
 	public void setGradient( Color from, Color to, Options.Direction dir ) {
-		double halfW = getWidth()*.5;
-		double halfH = getHeight()*.5;
+		double halfW = getWidth() * .5;
+		double halfH = getHeight() * .5;
 
 		Options.Direction inv = dir.inverse();
-		int fromX = (int)(halfW + inv.x * halfW);
-		int fromY = (int)(halfH + inv.x * halfH);
+		int fromX = (int) (halfW + inv.x * halfW);
+		int fromY = (int) (halfH + inv.y * halfH);
 
-		int toX = (int)(halfW + dir.x * halfW);
-		int toY = (int)(halfH + dir.x * halfH);
+		int toX = (int) (halfW + dir.x * halfW);
+		int toY = (int) (halfH + dir.y * halfH);
 
 		setGradient(fromX, fromY, from, toX, toY, to);
 	}
@@ -111,20 +111,20 @@ public class ColorLayer extends Layer {
 	public void setGradient( double fromX, double fromY, Color from, double toX, double toY, Color to ) {
 		this.color = from;
 		background = new GradientPaint(
-			(float)fromX, (float)fromY, from.getJavaColor(),
-			(float)toX, (float)toY, to.getJavaColor()
+			(float) fromX, (float) fromY, from.getJavaColor(),
+			(float) toX, (float) toY, to.getJavaColor()
 		);
 		clear();
 	}
 
 	public void setGradient( Color from, Color to ) {
-		setGradient(getWidth()*.5, getHeight()*.5, Math.min(getWidth()*.5, getHeight()*.5), from, to);
+		setGradient(getWidth() * .5, getHeight() * .5, Math.min(getWidth() * .5, getHeight() * .5), from, to);
 	}
 
 	public void setGradient( double centerX, double centerY, double radius, Color from, Color to ) {
 		this.color = from;
 		background = new RadialGradientPaint(
-			(float)centerX, (float)centerY, (float)radius,
+			(float) centerX, (float) centerY, (float) radius,
 			new float[]{0f, 1f},
 			new java.awt.Color[]{from.getJavaColor(), to.getJavaColor()});
 		clear();
