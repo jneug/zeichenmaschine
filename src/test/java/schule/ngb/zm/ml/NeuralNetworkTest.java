@@ -2,6 +2,7 @@ package schule.ngb.zm.ml;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import schule.ngb.zm.Constants;
 import schule.ngb.zm.util.Log;
 import schule.ngb.zm.util.Timer;
 
@@ -14,6 +15,13 @@ class NeuralNetworkTest {
 	@BeforeAll
 	static void enableDebugging() {
 		Log.enableGlobalDebugging();
+	}
+
+	@BeforeAll
+	static void setupMatrixLibrary() {
+		Constants.setSeed(1001);
+		MatrixFactory.matrixType = MatrixFactory.ColtMatrix.class;
+		//MatrixFactory.matrixType = DoubleMatrix.class;
 	}
 
 	/*@Test
@@ -107,7 +115,7 @@ class NeuralNetworkTest {
 		for( int i = 0; i < trainingData.size(); i++ ) {
 			inputs[i][0] = trainingData.get(i).a;
 			inputs[i][1] = trainingData.get(i).b;
-			outputs[i][0] = trainingData.get(i).result;
+			outputs[i][0] = trainingData.get(i).getResult();
 		}
 
 		Timer timer = new Timer();
@@ -139,8 +147,8 @@ class NeuralNetworkTest {
 			"Prediction on data (%.2f, %.2f) was %.4f, expected %.2f (of by %.4f)\n",
 			data.a, data.b,
 			net.getOutput().get(0, 0),
-			data.result,
-			net.getOutput().get(0, 0) - data.result
+			data.getResult(),
+			net.getOutput().get(0, 0) - data.getResult()
 		);
 	}
 
@@ -183,13 +191,14 @@ class NeuralNetworkTest {
 
 		double a;
 		double b;
-		double result;
 		CalcType type;
 
 		TestData( double a, double b ) {
 			this.a = a;
 			this.b = b;
 		}
+
+		abstract double getResult();
 
 	}
 
@@ -199,7 +208,9 @@ class NeuralNetworkTest {
 
 		public AddData( double a, double b ) {
 			super(a, b);
-			result = a + b;
+		}
+		double getResult() {
+			return a+b;
 		}
 
 	}
@@ -210,7 +221,9 @@ class NeuralNetworkTest {
 
 		public SubData( double a, double b ) {
 			super(a, b);
-			result = a - b;
+		}
+		double getResult() {
+			return a-b;
 		}
 
 	}
@@ -221,7 +234,9 @@ class NeuralNetworkTest {
 
 		public MulData( double a, double b ) {
 			super(a, b);
-			result = a * b;
+		}
+		double getResult() {
+			return a*b;
 		}
 
 	}
@@ -235,7 +250,9 @@ class NeuralNetworkTest {
 			if( b == 0.0 ) {
 				b = .1;
 			}
-			result = a / b;
+		}
+		double getResult() {
+			return a/b;
 		}
 
 	}
@@ -246,7 +263,12 @@ class NeuralNetworkTest {
 
 		public ModData( double b, double a ) {
 			super(b, a);
-			result = a % b;
+			if( b == 0.0 ) {
+				b = .1;
+			}
+		}
+		double getResult() {
+			return a%b;
 		}
 
 	}

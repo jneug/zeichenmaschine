@@ -41,10 +41,10 @@ public class NeuronLayer implements Function<MLMatrix, MLMatrix> {
 	public NeuronLayer( int neurons, int inputs ) {
 		weights = MatrixFactory
 			.create(inputs, neurons)
-			.initializeRandom(-1, 1);
+			.initializeRandom();
 
 		biases = MatrixFactory
-			.create(neurons, 1)
+			.create(1, neurons)
 			.initializeZero();
 
 		activationFunction = MLMath::sigmoid;
@@ -110,10 +110,6 @@ public class NeuronLayer implements Function<MLMatrix, MLMatrix> {
 		weights = newWeights.duplicate();
 	}
 
-	public void adjustWeights( MLMatrix adjustment ) {
-		weights.add(adjustment);
-	}
-
 	@Override
 	public String toString() {
 		return weights.toString() + "\n" + biases.toString();
@@ -121,10 +117,10 @@ public class NeuronLayer implements Function<MLMatrix, MLMatrix> {
 
 	@Override
 	public MLMatrix apply( MLMatrix inputs ) {
-		lastInput = inputs;
+		lastInput = inputs.duplicate();
 		lastOutput = inputs
 			.multiplyAddBias(weights, biases)
-			.apply(activationFunction);
+			.applyInPlace(activationFunction);
 
 		if( next != null ) {
 			return next.apply(lastOutput);
@@ -144,14 +140,16 @@ public class NeuronLayer implements Function<MLMatrix, MLMatrix> {
 	}
 
 	public void backprop( MLMatrix expected, double learningRate ) {
-		MLMatrix error, delta, adjustment;
+		MLMatrix error, adjustment;
 		if( next == null ) {
-			error = expected.duplicate().sub(lastOutput);
+			error = expected.sub(lastOutput);
 		} else {
-			error = expected.duplicate().multiply(next.weights.transpose());
+			error = expected.multiplyTransposed(next.weights);
 		}
 
-		error.scale(lastOutput.duplicate().apply(this.activationFunctionDerivative));
+		error.scaleInPlace(
+			lastOutput.apply(this.activationFunctionDerivative)
+		);
 		// Hier schon leraningRate anwenden?
 		// See https://towardsdatascience.com/understanding-and-implementing-neural-networks-in-java-from-scratch-61421bb6352c
 		//delta = MLMath.matrixApply(delta, ( x ) -> learningRate * x);
@@ -159,10 +157,14 @@ public class NeuronLayer implements Function<MLMatrix, MLMatrix> {
 			previous.backprop(error, learningRate);
 		}
 
-		// biases = MLMath.biasAdjust(biases, MLMath.matrixApply(delta, ( x ) -> learningRate * x));
+		biases.addInPlace(
+			error.colSums().scaleInPlace(
+				-learningRate / (double) error.rows()
+			)
+		);
 
-		adjustment = lastInput.duplicate().transpose().multiply(error).apply((d) -> learningRate*d);
-		this.adjustWeights(adjustment);
+		adjustment = lastInput.transposedMultiplyAndScale(error, learningRate);
+		weights.addInPlace(adjustment);
 	}
 
 }
