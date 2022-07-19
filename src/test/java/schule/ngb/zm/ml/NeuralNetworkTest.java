@@ -5,12 +5,9 @@ import org.junit.jupiter.api.Test;
 import schule.ngb.zm.util.Log;
 import schule.ngb.zm.util.Timer;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class NeuralNetworkTest {
 
@@ -79,7 +76,7 @@ class NeuralNetworkTest {
 		}
 
 		// calculate predictions
-		Matrix predictions = net.predict(inputs);
+		MLMatrix predictions = net.predict(inputs);
 		for( int i = 0; i < 4; i++ ) {
 			int parsed_pred = predictions.get(i, 0) < 0.5 ? 0 : 1;
 

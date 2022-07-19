@@ -1,10 +1,9 @@
 package schule.ngb.zm.ml;
 
-import java.util.Arrays;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 
-public class NeuronLayer implements Function<Matrix, Matrix> {
+public class NeuronLayer implements Function<MLMatrix, MLMatrix> {
 
 	/*public static NeuronLayer fromArray( double[][] weights ) {
 		NeuronLayer layer = new NeuronLayer(weights[0].length, weights.length);
@@ -29,15 +28,15 @@ public class NeuronLayer implements Function<Matrix, Matrix> {
 		return layer;
 	}*/
 
-	Matrix weights;
+	MLMatrix weights;
 
-	Matrix biases;
+	MLMatrix biases;
 
 	NeuronLayer previous, next;
 
 	DoubleUnaryOperator activationFunction, activationFunctionDerivative;
 
-	Matrix lastOutput, lastInput;
+	MLMatrix lastOutput, lastInput;
 
 	public NeuronLayer( int neurons, int inputs ) {
 		weights = MatrixFactory
@@ -87,11 +86,11 @@ public class NeuronLayer implements Function<Matrix, Matrix> {
 		}
 	}
 
-	public Matrix getWeights() {
+	public MLMatrix getWeights() {
 		return weights;
 	}
 
-	public Matrix getBiases() {
+	public MLMatrix getBiases() {
 		return biases;
 	}
 
@@ -103,15 +102,15 @@ public class NeuronLayer implements Function<Matrix, Matrix> {
 		return weights.rows();
 	}
 
-	public Matrix getLastOutput() {
+	public MLMatrix getLastOutput() {
 		return lastOutput;
 	}
 
-	public void setWeights( Matrix newWeights ) {
+	public void setWeights( MLMatrix newWeights ) {
 		weights = newWeights.duplicate();
 	}
 
-	public void adjustWeights( Matrix adjustment ) {
+	public void adjustWeights( MLMatrix adjustment ) {
 		weights.add(adjustment);
 	}
 
@@ -121,7 +120,7 @@ public class NeuronLayer implements Function<Matrix, Matrix> {
 	}
 
 	@Override
-	public Matrix apply( Matrix inputs ) {
+	public MLMatrix apply( MLMatrix inputs ) {
 		lastInput = inputs;
 		lastOutput = inputs
 			.multiplyAddBias(weights, biases)
@@ -135,17 +134,17 @@ public class NeuronLayer implements Function<Matrix, Matrix> {
 	}
 
 	@Override
-	public <V> Function<V, Matrix> compose( Function<? super V, ? extends Matrix> before ) {
+	public <V> Function<V, MLMatrix> compose( Function<? super V, ? extends MLMatrix> before ) {
 		return ( in ) -> apply(before.apply(in));
 	}
 
 	@Override
-	public <V> Function<Matrix, V> andThen( Function<? super Matrix, ? extends V> after ) {
+	public <V> Function<MLMatrix, V> andThen( Function<? super MLMatrix, ? extends V> after ) {
 		return ( in ) -> after.apply(apply(in));
 	}
 
-	public void backprop( Matrix expected, double learningRate ) {
-		Matrix error, delta, adjustment;
+	public void backprop( MLMatrix expected, double learningRate ) {
+		MLMatrix error, delta, adjustment;
 		if( next == null ) {
 			error = expected.duplicate().sub(lastOutput);
 		} else {

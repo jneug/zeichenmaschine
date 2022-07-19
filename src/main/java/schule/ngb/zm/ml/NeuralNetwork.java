@@ -107,7 +107,7 @@ public class NeuralNetwork {
 
 	private NeuronLayer[] layers;
 
-	private Matrix output;
+	private MLMatrix output;
 
 	private double learningRate = 0.1;
 
@@ -162,16 +162,16 @@ public class NeuralNetwork {
 		this.learningRate = pLearningRate;
 	}
 
-	public Matrix getOutput() {
+	public MLMatrix getOutput() {
 		return output;
 	}
 
-	public Matrix predict( double[][] inputs ) {
+	public MLMatrix predict( double[][] inputs ) {
 		//this.output = layers[1].apply(layers[0].apply(inputs));
 		return predict(MatrixFactory.create(inputs));
 	}
 
-	public Matrix predict( Matrix inputs ) {
+	public MLMatrix predict( MLMatrix inputs ) {
 		this.output = layers[0].apply(inputs);
 		return this.output;
 	}
@@ -180,7 +180,7 @@ public class NeuralNetwork {
 		learn(MatrixFactory.create(expected));
 	}
 
-	public void learn( Matrix expected ) {
+	public void learn( MLMatrix expected ) {
 		layers[layers.length - 1].backprop(expected, learningRate);
 	}
 

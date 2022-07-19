@@ -7,7 +7,7 @@ import java.util.function.DoubleUnaryOperator;
 
 // TODO: Move Math into Matrix class
 // TODO: Implement support for optional sci libs
-public class DoubleMatrix implements Matrix {
+public class DoubleMatrix implements MLMatrix {
 
 	private int columns, rows;
 
@@ -33,7 +33,7 @@ public class DoubleMatrix implements Matrix {
 		return rows;
 	}
 
-	public double[][] getCoefficients() {
+	public double[][] coefficients() {
 		return coefficients;
 	}
 
@@ -41,27 +41,27 @@ public class DoubleMatrix implements Matrix {
 		return coefficients[row][col];
 	}
 
-	public Matrix set( int row, int col, double value ) {
+	public MLMatrix set( int row, int col, double value ) {
 		coefficients[row][col] = value;
 		return this;
 	}
 
-	public Matrix initializeRandom() {
+	public MLMatrix initializeRandom() {
 		coefficients = MLMath.matrixApply(coefficients, (d) -> Constants.randomGaussian());
 		return this;
 	}
 
-	public Matrix initializeRandom( double lower, double upper ) {
+	public MLMatrix initializeRandom( double lower, double upper ) {
 		coefficients = MLMath.matrixApply(coefficients, (d) -> ((upper-lower) * (Constants.randomGaussian()+1) * .5) + lower);
 		return this;
 	}
 
-	public Matrix initializeOne() {
+	public MLMatrix initializeOne() {
 		coefficients = MLMath.matrixApply(coefficients, (d) -> 1.0);
 		return this;
 	}
 
-	public Matrix initializeZero() {
+	public MLMatrix initializeZero() {
 		coefficients = MLMath.matrixApply(coefficients, (d) -> 0.0);
 		return this;
 	}
@@ -83,64 +83,64 @@ public class DoubleMatrix implements Matrix {
 	}
 
 	@Override
-	public Matrix transpose() {
+	public MLMatrix transpose() {
 		coefficients = MLMath.matrixTranspose(coefficients);
 		return this;
 	}
 
 	@Override
-	public Matrix multiply( Matrix B ) {
-		coefficients = MLMath.matrixMultiply(coefficients, B.getCoefficients());
+	public MLMatrix multiply( MLMatrix B ) {
+		coefficients = MLMath.matrixMultiply(coefficients, B.coefficients());
 		return this;
 	}
 
 	@Override
-	public Matrix multiplyAddBias( Matrix B, Matrix C ) {
-		double[] biases = Arrays.stream(C.getCoefficients()).mapToDouble((arr) -> arr[0]).toArray();
+	public MLMatrix multiplyAddBias( MLMatrix B, MLMatrix C ) {
+		double[] biases = Arrays.stream(C.coefficients()).mapToDouble(( arr) -> arr[0]).toArray();
 		coefficients = MLMath.biasAdd(
-			MLMath.matrixMultiply(coefficients, B.getCoefficients()),
+			MLMath.matrixMultiply(coefficients, B.coefficients()),
 			biases
 		);
 		return this;
 	}
 
 	@Override
-	public Matrix multiplyLeft( Matrix B ) {
-		coefficients = MLMath.matrixMultiply(B.getCoefficients(), coefficients);
+	public MLMatrix multiplyLeft( MLMatrix B ) {
+		coefficients = MLMath.matrixMultiply(B.coefficients(), coefficients);
 		return this;
 	}
 
 	@Override
-	public Matrix add( Matrix B ) {
-		coefficients = MLMath.matrixAdd(coefficients, B.getCoefficients());
+	public MLMatrix add( MLMatrix B ) {
+		coefficients = MLMath.matrixAdd(coefficients, B.coefficients());
 		return this;
 	}
 
 	@Override
-	public Matrix sub( Matrix B ) {
-		coefficients = MLMath.matrixSub(coefficients, B.getCoefficients());
+	public MLMatrix sub( MLMatrix B ) {
+		coefficients = MLMath.matrixSub(coefficients, B.coefficients());
 		return this;
 	}
 
 	@Override
-	public Matrix scale( double scalar ) {
+	public MLMatrix scale( double scalar ) {
 		return this;
 	}
 
 	@Override
-	public Matrix scale( Matrix S ) {
-		coefficients = MLMath.matrixScale(coefficients, S.getCoefficients());
+	public MLMatrix scale( MLMatrix S ) {
+		coefficients = MLMath.matrixScale(coefficients, S.coefficients());
 		return this;
 	}
 
 	@Override
-	public Matrix apply( DoubleUnaryOperator op ) {
+	public MLMatrix apply( DoubleUnaryOperator op ) {
 		this.coefficients = MLMath.matrixApply(coefficients, op);
 		return this;
 	}
 
 	@Override
-	public Matrix duplicate() {
+	public MLMatrix duplicate() {
 		return new DoubleMatrix(MLMath.copyMatrix(coefficients));
 	}
 
