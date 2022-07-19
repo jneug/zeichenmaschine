@@ -583,6 +583,10 @@ public class Zeichenmaschine extends Constants {
 		return state == Options.AppState.PAUSED;
 	}
 
+	public final boolean isStopped() {
+		return state == Options.AppState.STOPPED || state == Options.AppState.TERMINATED;
+	}
+
 	/**
 	 * Stoppt die Zeichenmaschine.
 	 * <p>
@@ -1181,7 +1185,7 @@ public class Zeichenmaschine extends Constants {
 	private void enqueueEvent( InputEvent evt ) {
 		eventQueue.add(evt);
 
-		if( isPaused() ) {
+		if( isPaused() || isStopped()) {
 			dispatchEvents();
 		}
 	}
