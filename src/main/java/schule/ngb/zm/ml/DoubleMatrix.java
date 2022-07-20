@@ -4,12 +4,60 @@ import schule.ngb.zm.Constants;
 
 import java.util.function.DoubleUnaryOperator;
 
-// TODO: Move Math into Matrix class
-// TODO: Implement support for optional sci libs
+/**
+ * Eine einfache Implementierung der {@link MLMatrix} zur Verwendung in
+ * {@link NeuralNetwork}s.
+ * <p>
+ * Diese Klasse stellt die interne Implementierung der Matrixoperationen dar,
+ * die zur Berechnung der Gewichte in einem {@link NeuronLayer} notwendig sind.
+ * <p>
+ * Die Klasse ist nur minimal optimiert und sollte nur für kleine Netze
+ * verwendet werden. Für größere Netze sollte auf eine der optionalen
+ * Bibliotheken wie
+ * <a href="">Colt</a> zurückgegriffen werden.
+ */
 public final class DoubleMatrix implements MLMatrix {
 
-	private int columns, rows;
+	/**
+	 * Anzahl Zeilen der Matrix.
+	 */
+	private int rows;
 
+	/**
+	 * Anzahl Spalten der Matrix.
+	 */
+	private int columns;
+
+	/**
+	 * Die Koeffizienten der Matrix.
+	 * <p>
+	 * Um den Overhead bei Speicher und Zugriffszeiten von zweidimensionalen
+	 * Arrays zu vermeiden wird ein eindimensionales Array verwendet und die
+	 * Indizes mit Spaltenpriorität berechnet. Der Index i des Koeffizienten
+	 * {@code r,c} in Zeile {@code r} und Spalte {@code c} wird bestimmt durch
+	 * <pre>
+	 * i = c * rows + r
+	 * </pre>
+	 * <p>
+	 * Die Werte einer Spalte liegen also hintereinander im Array. Dies sollte
+	 * einen leichten Vorteil bei der {@link #colSums() Spaltensummen} geben.
+	 * Generell sollte eine Iteration über die Matrix der Form
+	 * <pre><code>
+	 * for( int j = 0; j < columns; j++ ) {
+	 *     for( int i = 0; i < rows; i++ ) {
+	 *         // ...
+	 *     }
+	 * }
+	 * </code></pre>
+	 * etwas schneller sein als
+	 * <pre><code>
+	 * for( int i = 0; i < rows; i++ ) {
+	 *     for( int j = 0; j < columns; j++ ) {
+	 *         // ...
+	 *     }
+	 * }
+	 * </code></pre>
+	 */
 	double[] coefficients;
 
 	public DoubleMatrix( int rows, int cols ) {
@@ -29,6 +77,11 @@ public final class DoubleMatrix implements MLMatrix {
 		}
 	}
 
+	/**
+	 * Initialisiert diese Matrix als Kopie der angegebenen Matrix.
+	 *
+	 * @param other Die zu kopierende Matrix.
+	 */
 	public DoubleMatrix( DoubleMatrix other ) {
 		this.rows = other.rows();
 		this.columns = other.columns();
@@ -39,55 +92,100 @@ public final class DoubleMatrix implements MLMatrix {
 			rows * columns);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public int columns() {
 		return columns;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public int rows() {
 		return rows;
 	}
 
-	public double[][] coefficients() {
-		return new double[rows][columns];
-	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	int idx( int r, int c ) {
 		return c * rows + r;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public double get( int row, int col ) {
-		return coefficients[idx(row, col)];
+		try {
+			return coefficients[idx(row, col)];
+		} catch( ArrayIndexOutOfBoundsException ex ) {
+			throw new IllegalArgumentException("No element at row=" + row + ", column=" + col, ex);
+		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public MLMatrix set( int row, int col, double value ) {
-		coefficients[idx(row, col)] = value;
+		try {
+			coefficients[idx(row, col)] = value;
+		} catch( ArrayIndexOutOfBoundsException ex ) {
+			throw new IllegalArgumentException("No element at row=" + row + ", column=" + col, ex);
+		}
 		return this;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public MLMatrix initializeRandom() {
 		return initializeRandom(-1.0, 1.0);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public MLMatrix initializeRandom( double lower, double upper ) {
 		applyInPlace(( d ) -> ((upper - lower) * Constants.random()) + lower);
 		return this;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public MLMatrix initializeOne() {
 		applyInPlace(( d ) -> 1.0);
 		return this;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public MLMatrix initializeZero() {
 		applyInPlace(( d ) -> 0.0);
 		return this;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public MLMatrix duplicate() {
 		return new DoubleMatrix(this);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public MLMatrix multiplyTransposed( MLMatrix B ) {
 		/*return new DoubleMatrix(IntStream.range(0, rows).parallel().mapToObj(
@@ -109,6 +207,9 @@ public final class DoubleMatrix implements MLMatrix {
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public MLMatrix multiplyAddBias( final MLMatrix B, final MLMatrix C ) {
 		/*return new DoubleMatrix(IntStream.range(0, rows).parallel().mapToObj(
@@ -131,6 +232,9 @@ public final class DoubleMatrix implements MLMatrix {
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public MLMatrix transposedMultiplyAndScale( final MLMatrix B, final double scalar ) {
 		/*return new DoubleMatrix(IntStream.range(0, columns).parallel().mapToObj(
@@ -153,6 +257,9 @@ public final class DoubleMatrix implements MLMatrix {
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public MLMatrix add( MLMatrix B ) {
 		/*return new DoubleMatrix(IntStream.range(0, rows).parallel().mapToObj(
@@ -169,6 +276,9 @@ public final class DoubleMatrix implements MLMatrix {
 		return sum;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public MLMatrix addInPlace( MLMatrix B ) {
 		for( int j = 0; j < columns; j++ ) {
@@ -179,6 +289,9 @@ public final class DoubleMatrix implements MLMatrix {
 		return this;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public MLMatrix sub( MLMatrix B ) {
 		/*return new DoubleMatrix(IntStream.range(0, rows).parallel().mapToObj(
@@ -195,6 +308,9 @@ public final class DoubleMatrix implements MLMatrix {
 		return diff;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public MLMatrix colSums() {
 		/*DoubleMatrix colSums = new DoubleMatrix(1, columns);
@@ -214,6 +330,9 @@ public final class DoubleMatrix implements MLMatrix {
 		return colSums;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public MLMatrix scaleInPlace( final double scalar ) {
 		for( int i = 0; i < coefficients.length; i++ ) {
@@ -222,6 +341,9 @@ public final class DoubleMatrix implements MLMatrix {
 		return this;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public MLMatrix scaleInPlace( final MLMatrix S ) {
 		for( int j = 0; j < columns; j++ ) {
@@ -232,6 +354,9 @@ public final class DoubleMatrix implements MLMatrix {
 		return this;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public MLMatrix apply( DoubleUnaryOperator op ) {
 		DoubleMatrix result = new DoubleMatrix(rows, columns);
@@ -241,6 +366,9 @@ public final class DoubleMatrix implements MLMatrix {
 		return result;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public MLMatrix applyInPlace( DoubleUnaryOperator op ) {
 		for( int i = 0; i < coefficients.length; i++ ) {

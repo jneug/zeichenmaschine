@@ -3,30 +3,45 @@ package schule.ngb.zm.ml;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 
+/**
+ * Implementierung einer Neuronenebene in einem Neuonalen Netz.
+ * <p>
+ * Eine Ebene besteht aus einer Anzahl an <em>Neuronen</em> die jeweils eine
+ * Anzahl <em>Eingänge</em> haben. Die Eingänge erhalten als Signal die Ausgabe
+ * der vorherigen Ebene und berechnen die Ausgabe des jeweiligen Neurons.
+ */
 public class NeuronLayer implements Function<MLMatrix, MLMatrix> {
 
-	/*public static NeuronLayer fromArray( double[][] weights ) {
-		NeuronLayer layer = new NeuronLayer(weights[0].length, weights.length);
+	public static NeuronLayer fromArray( double[][] weights, boolean transpose ) {
+		NeuronLayer layer;
+		if( transpose ) {
+			layer = new NeuronLayer(weights.length, weights[0].length);
+		} else {
+			layer = new NeuronLayer(weights[0].length, weights.length);
+		}
+
 		for( int i = 0; i < weights[0].length; i++ ) {
 			for( int j = 0; j < weights.length; j++ ) {
-				layer.weights.coefficients[i][j] = weights[i][j];
+				if( transpose ) {
+					layer.weights.set(j, i, weights[i][j]);
+				} else {
+					layer.weights.set(i, j, weights[i][j]);
+				}
 			}
 		}
+
 		return layer;
 	}
 
-	public static NeuronLayer fromArray( double[][] weights, double[] biases ) {
-		NeuronLayer layer = new NeuronLayer(weights[0].length, weights.length);
-		for( int i = 0; i < weights[0].length; i++ ) {
-			for( int j = 0; j < weights.length; j++ ) {
-				layer.weights.coefficients[i][j] = weights[i][j];
-			}
-		}
+	public static NeuronLayer fromArray( double[][] weights, double[] biases, boolean transpose ) {
+		NeuronLayer layer = fromArray(weights, transpose);
+
 		for( int j = 0; j < biases.length; j++ ) {
-			layer.biases[j] = biases[j];
+			layer.biases.set(0, j, biases[j]);
 		}
+
 		return layer;
-	}*/
+	}
 
 	MLMatrix weights;
 
@@ -112,7 +127,7 @@ public class NeuronLayer implements Function<MLMatrix, MLMatrix> {
 
 	@Override
 	public String toString() {
-		return weights.toString() + "\n" + biases.toString();
+		return "weights:\n" + weights.toString() + "\nbiases:\n" + biases.toString();
 	}
 
 	@Override

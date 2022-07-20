@@ -1,9 +1,11 @@
 package schule.ngb.zm.ml;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import schule.ngb.zm.util.Timer;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -387,6 +389,38 @@ class MLMatrixTest {
 		String testName = this.info.getTestMethod().get().getName();
 		String className = MatrixFactory.matrixType.getSimpleName();
 		return String.format("[" + testName + "(" + className + ") " + methodName + "()] " + msg, args);
+	}
+
+	//@ParameterizedTest
+	//@ValueSource( classes = {MatrixFactory.ColtMatrix.class, DoubleMatrix.class} )
+	void speed( Class<? extends MLMatrix> mType ) {
+		MatrixFactory.matrixType = mType;
+
+		int N = 10;
+		int rows  = 1000;
+		int cols  = 1000;
+
+		Timer timer = new Timer();
+
+		MLMatrix M = MatrixFactory.create(rows, cols);
+		timer.start();
+		for( int i = 0; i < N; i++ ) {
+			M.initializeRandom();
+		}
+		timer.stop();
+		System.err.println(msg("%d iterations: %d ms", "initializeRandom", N, timer.getMillis()));
+
+		timer.reset();
+
+		MLMatrix B = MatrixFactory.create(rows*2, M.columns());
+		B.initializeRandom();
+
+		timer.start();
+		for( int i = 0; i < N; i++ ) {
+			M.multiplyTransposed(B);
+		}
+		timer.stop();
+		System.err.println(msg("%d iterations: %d ms", "multiplyTransposed", N, timer.getMillis()));
 	}
 
 }

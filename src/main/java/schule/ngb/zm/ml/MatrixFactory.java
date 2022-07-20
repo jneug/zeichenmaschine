@@ -6,14 +6,27 @@ import schule.ngb.zm.util.Log;
 
 import java.util.function.DoubleUnaryOperator;
 
+/**
+ * Zentrale Klasse zur Erstellung neuer Matrizen. Generell sollten neue Matrizen
+ * nicht direkt erstellt werden, sondern durch den Aufruf von
+ * {@link #create(int, int)} oder {@link #create(double[][])}. Die Fabrik
+ * ermittelt automatisch die beste verfügbare Implementierung und initialisiert
+ * eine entsprechende Implementierung von {@link MLMatrix}.
+ * <p>
+ * Derzeit werden die optionale Bibliothek <a
+ * href="https://dst.lbl.gov/ACSSoftware/colt/">Colt</a> und die interne
+ * Implementierung {@link DoubleMatrix} unterstützt.
+ */
 public class MatrixFactory {
 
-	public static void main( String[] args ) {
-		System.out.println(
-			MatrixFactory.create(new double[][]{{1.0, 0.0}, {0.0, 1.0}}).toString()
-		);
-	}
-
+	/**
+	 * Erstellt eine neue Matrix mit den angegebenen Dimensionen und
+	 * initialisiert alle Werte mit 0.
+	 *
+	 * @param rows Anzahl der Zeilen.
+	 * @param cols Anzahl der Spalten.
+	 * @return Eine {@code rows} x {@code cols} Matrix.
+	 */
 	public static final MLMatrix create( int rows, int cols ) {
 		try {
 			return getMatrixType().getDeclaredConstructor(int.class, int.class).newInstance(rows, cols);
@@ -23,6 +36,14 @@ public class MatrixFactory {
 		return new DoubleMatrix(rows, cols);
 	}
 
+	/**
+	 * Erstellt eine neue Matrix mit den Dimensionen des angegebenen Arrays und
+	 * initialisiert die Werte mit den entsprechenden Werten des Arrays.
+	 *
+	 * @param values Die Werte der Matrix.
+	 * @return Eine {@code values.length} x {@code values[0].length} Matrix mit
+	 * 	den Werten des Arrays.
+	 */
 	public static final MLMatrix create( double[][] values ) {
 		try {
 			return getMatrixType().getDeclaredConstructor(double[][].class).newInstance((Object) values);
@@ -32,8 +53,17 @@ public class MatrixFactory {
 		return new DoubleMatrix(values);
 	}
 
+	/**
+	 * Die verwendete {@link MLMatrix} Implementierung, aus der Matrizen erzeugt
+	 * werden.
+	 */
 	static Class<? extends MLMatrix> matrixType = null;
 
+	/**
+	 * Ermittelt die beste verfügbare Implementierung von {@link MLMatrix}.
+	 *
+	 * @return Die verwendete {@link MLMatrix} Implementierung.
+	 */
 	private static final Class<? extends MLMatrix> getMatrixType() {
 		if( matrixType == null ) {
 			try {
@@ -50,6 +80,10 @@ public class MatrixFactory {
 
 	private static final Log LOG = Log.getLogger(MatrixFactory.class);
 
+	/**
+	 * Interner Wrapper der DoubleMatrix2D Klasse aus der Colt Bibliothek, um
+	 * das {@link MLMatrix} Interface zu implementieren.
+	 */
 	static class ColtMatrix implements MLMatrix {
 
 		cern.colt.matrix.DoubleMatrix2D matrix;
@@ -85,11 +119,6 @@ public class MatrixFactory {
 		public MLMatrix set( int row, int col, double value ) {
 			matrix.set(row, col, value);
 			return this;
-		}
-
-		@Override
-		public double[][] coefficients() {
-			return this.matrix.toArray();
 		}
 
 		@Override
