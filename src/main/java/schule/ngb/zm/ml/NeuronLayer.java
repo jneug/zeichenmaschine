@@ -1,50 +1,66 @@
 package schule.ngb.zm.ml;
 
-import java.util.Arrays;
 import java.util.function.DoubleUnaryOperator;
 import java.util.function.Function;
 
-public class NeuronLayer implements Function<double[][], double[][]> {
+/**
+ * Implementierung einer Neuronenebene in einem Neuonalen Netz.
+ * <p>
+ * Eine Ebene besteht aus einer Anzahl an <em>Neuronen</em> die jeweils eine
+ * Anzahl <em>Eingänge</em> haben. Die Eingänge erhalten als Signal die Ausgabe
+ * der vorherigen Ebene und berechnen die Ausgabe des jeweiligen Neurons.
+ */
+public class NeuronLayer implements Function<MLMatrix, MLMatrix> {
 
-	public static NeuronLayer fromArray( double[][] weights ) {
-		NeuronLayer layer = new NeuronLayer(weights[0].length, weights.length);
+	public static NeuronLayer fromArray( double[][] weights, boolean transpose ) {
+		NeuronLayer layer;
+		if( transpose ) {
+			layer = new NeuronLayer(weights.length, weights[0].length);
+		} else {
+			layer = new NeuronLayer(weights[0].length, weights.length);
+		}
+
 		for( int i = 0; i < weights[0].length; i++ ) {
 			for( int j = 0; j < weights.length; j++ ) {
-				layer.weights.coefficients[i][j] = weights[i][j];
+				if( transpose ) {
+					layer.weights.set(j, i, weights[i][j]);
+				} else {
+					layer.weights.set(i, j, weights[i][j]);
+				}
 			}
 		}
+
 		return layer;
 	}
 
-	public static NeuronLayer fromArray( double[][] weights, double[] biases ) {
-		NeuronLayer layer = new NeuronLayer(weights[0].length, weights.length);
-		for( int i = 0; i < weights[0].length; i++ ) {
-			for( int j = 0; j < weights.length; j++ ) {
-				layer.weights.coefficients[i][j] = weights[i][j];
-			}
-		}
+	public static NeuronLayer fromArray( double[][] weights, double[] biases, boolean transpose ) {
+		NeuronLayer layer = fromArray(weights, transpose);
+
 		for( int j = 0; j < biases.length; j++ ) {
-			layer.biases[j] = biases[j];
+			layer.biases.set(0, j, biases[j]);
 		}
+
 		return layer;
 	}
-	
-	Matrix weights;
 
-	double[] biases;
+	MLMatrix weights;
+
+	MLMatrix biases;
 
 	NeuronLayer previous, next;
 
 	DoubleUnaryOperator activationFunction, activationFunctionDerivative;
 
-	double[][] lastOutput, lastInput;
+	MLMatrix lastOutput, lastInput;
 
 	public NeuronLayer( int neurons, int inputs ) {
-		weights = new Matrix(inputs, neurons);
-		weights.initializeRandom(-1, 1);
+		weights = MatrixFactory
+			.create(inputs, neurons)
+			.initializeRandom();
 
-		biases = new double[neurons];
-		Arrays.fill(biases, 0.0); // TODO: Random?
+		biases = MatrixFactory
+			.create(1, neurons)
+			.initializeZero();
 
 		activationFunction = MLMath::sigmoid;
 		activationFunctionDerivative = MLMath::sigmoidDerivative;
@@ -85,45 +101,42 @@ public class NeuronLayer implements Function<double[][], double[][]> {
 		}
 	}
 
-	public Matrix getWeights() {
+	public MLMatrix getWeights() {
 		return weights;
 	}
 
+	public MLMatrix getBiases() {
+		return biases;
+	}
+
 	public int getNeuronCount() {
-		return weights.coefficients[0].length;
+		return weights.columns();
 	}
 
 	public int getInputCount() {
-		return weights.coefficients.length;
+		return weights.rows();
 	}
 
-	public double[][] getLastOutput() {
+	public MLMatrix getLastOutput() {
 		return lastOutput;
 	}
 
-	public void setWeights( double[][] newWeights ) {
-		weights.coefficients = MLMath.copyMatrix(newWeights);
-	}
-
-	public void adjustWeights( double[][] adjustment ) {
-		weights.coefficients = MLMath.matrixAdd(weights.coefficients, adjustment);
+	public void setWeights( MLMatrix newWeights ) {
+		weights = newWeights.duplicate();
 	}
 
 	@Override
 	public String toString() {
-		return weights.toString() + "\n" + Arrays.toString(biases);
+		return "weights:\n" + weights.toString() + "\nbiases:\n" + biases.toString();
 	}
 
 	@Override
-	public double[][] apply( double[][] inputs ) {
-		lastInput = inputs;
-		lastOutput = MLMath.matrixApply(
-			MLMath.biasAdd(
-				MLMath.matrixMultiply(inputs, weights.coefficients),
-				biases
-			),
-			activationFunction
-		);
+	public MLMatrix apply( MLMatrix inputs ) {
+		lastInput = inputs.duplicate();
+		lastOutput = inputs
+			.multiplyAddBias(weights, biases)
+			.applyInPlace(activationFunction);
+
 		if( next != null ) {
 			return next.apply(lastOutput);
 		} else {
@@ -132,36 +145,41 @@ public class NeuronLayer implements Function<double[][], double[][]> {
 	}
 
 	@Override
-	public <V> Function<V, double[][]> compose( Function<? super V, ? extends double[][]> before ) {
+	public <V> Function<V, MLMatrix> compose( Function<? super V, ? extends MLMatrix> before ) {
 		return ( in ) -> apply(before.apply(in));
 	}
 
 	@Override
-	public <V> Function<double[][], V> andThen( Function<? super double[][], ? extends V> after ) {
+	public <V> Function<MLMatrix, V> andThen( Function<? super MLMatrix, ? extends V> after ) {
 		return ( in ) -> after.apply(apply(in));
 	}
 
-	public void backprop( double[][] expected, double learningRate ) {
-		double[][] error, delta, adjustment;
+	public void backprop( MLMatrix expected, double learningRate ) {
+		MLMatrix error, adjustment;
 		if( next == null ) {
-			error = MLMath.matrixSub(expected, this.lastOutput);
+			error = expected.sub(lastOutput);
 		} else {
-			error = MLMath.matrixMultiply(expected, MLMath.matrixTranspose(next.weights.coefficients));
+			error = expected.multiplyTransposed(next.weights);
 		}
 
-		delta = MLMath.matrixScale(error, MLMath.matrixApply(this.lastOutput, this.activationFunctionDerivative));
+		error.scaleInPlace(
+			lastOutput.apply(this.activationFunctionDerivative)
+		);
 		// Hier schon leraningRate anwenden?
 		// See https://towardsdatascience.com/understanding-and-implementing-neural-networks-in-java-from-scratch-61421bb6352c
 		//delta = MLMath.matrixApply(delta, ( x ) -> learningRate * x);
 		if( previous != null ) {
-			previous.backprop(delta, learningRate);
+			previous.backprop(error, learningRate);
 		}
 
-		biases = MLMath.biasAdjust(biases, MLMath.matrixApply(delta, ( x ) -> learningRate * x));
+		biases.addInPlace(
+			error.colSums().scaleInPlace(
+				-learningRate / (double) error.rows()
+			)
+		);
 
-		adjustment = MLMath.matrixMultiply(MLMath.matrixTranspose(lastInput), delta);
-		adjustment = MLMath.matrixApply(adjustment, ( x ) -> learningRate * x);
-		this.adjustWeights(adjustment);
+		adjustment = lastInput.transposedMultiplyAndScale(error, learningRate);
+		weights.addInPlace(adjustment);
 	}
 
 }

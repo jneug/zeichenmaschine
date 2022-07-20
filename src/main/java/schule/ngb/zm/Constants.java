@@ -1269,7 +1269,8 @@ public class Constants {
 	}
 
 	/**
-	 * Erzeugt eine Pseudozufallszahl nach einer Gaussverteilung.
+	 * Erzeugt eine Pseudozufallszahl zwischen -1 und 1 nach einer
+	 * Normalverteilung mit Mittelwert 0 und Standardabweichung 1.
 	 *
 	 * @return Eine Zufallszahl.
 	 * @see Random#nextGaussian()
