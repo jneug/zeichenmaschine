@@ -1,8 +1,11 @@
 package schule.ngb.zm;
 
 import schule.ngb.zm.anim.Animation;
-import schule.ngb.zm.shapes.ShapesLayer;
-import schule.ngb.zm.tasks.TaskRunner;
+import schule.ngb.zm.layers.ColorLayer;
+import schule.ngb.zm.layers.DrawingLayer;
+import schule.ngb.zm.layers.ImageLayer;
+import schule.ngb.zm.layers.ShapesLayer;
+import schule.ngb.zm.util.tasks.TaskRunner;
 import schule.ngb.zm.util.ImageLoader;
 import schule.ngb.zm.util.Log;
 
@@ -1381,8 +1384,8 @@ public class Zeichenmaschine extends Constants {
 	 * // Next frame has started
 	 * </code></pre>
 	 * <p>
-	 * Die {@link schule.ngb.zm.tasks.FrameSynchronizedTask} implementiert eine
-	 * {@link schule.ngb.zm.tasks.Task}, die sich automatisch auf diese Wiese
+	 * Die {@link schule.ngb.zm.util.tasks.FrameSynchronizedTask} implementiert eine
+	 * {@link schule.ngb.zm.util.tasks.Task}, die sich automatisch auf diese Wiese
 	 * mit dem Zeichenthread synchronisiert.
 	 */
 	public static final Object globalSyncLock = new Object[0];

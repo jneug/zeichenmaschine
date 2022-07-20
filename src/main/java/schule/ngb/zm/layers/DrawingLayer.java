@@ -1,5 +1,7 @@
-package schule.ngb.zm;
+package schule.ngb.zm.layers;
 
+import schule.ngb.zm.Layer;
+import schule.ngb.zm.Options;
 import schule.ngb.zm.util.ImageLoader;
 
 import java.awt.*;
@@ -8,9 +10,9 @@ import java.util.Stack;
 
 public class DrawingLayer extends Layer {
 
-	protected Color fillColor = DEFAULT_FILLCOLOR;
+	protected schule.ngb.zm.Color fillColor = DEFAULT_FILLCOLOR;
 
-	protected Color strokeColor = DEFAULT_STROKECOLOR;
+	protected schule.ngb.zm.Color strokeColor = DEFAULT_STROKECOLOR;
 
 	protected double strokeWeight = DEFAULT_STROKEWEIGHT;
 
@@ -43,7 +45,7 @@ public class DrawingLayer extends Layer {
 		fontMetrics = drawing.getFontMetrics();
 	}
 
-	public Color getColor() {
+	public schule.ngb.zm.Color getColor() {
 		return fillColor;
 	}
 
@@ -51,7 +53,7 @@ public class DrawingLayer extends Layer {
 		setFillColor(gray, gray, gray, 255);
 	}
 
-	public void setFillColor( Color color ) {
+	public void setFillColor( schule.ngb.zm.Color color ) {
 		fillColor = color;
 		drawing.setColor(color.getJavaColor());
 	}
@@ -69,10 +71,10 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void setFillColor( int red, int green, int blue, int alpha ) {
-		setFillColor(new Color(red, green, blue, alpha));
+		setFillColor(new schule.ngb.zm.Color(red, green, blue, alpha));
 	}
 
-	public Color getStrokeColor() {
+	public schule.ngb.zm.Color getStrokeColor() {
 		return strokeColor;
 	}
 
@@ -80,7 +82,7 @@ public class DrawingLayer extends Layer {
 		setStrokeColor(gray, gray, gray, 255);
 	}
 
-	public void setStrokeColor( Color color ) {
+	public void setStrokeColor( schule.ngb.zm.Color color ) {
 		strokeColor = color;
 		drawing.setColor(color.getJavaColor());
 	}
@@ -98,7 +100,7 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void setStrokeColor( int red, int green, int blue, int alpha ) {
-		setStrokeColor(new Color(red, green, blue, alpha));
+		setStrokeColor(new schule.ngb.zm.Color(red, green, blue, alpha));
 	}
 
 	public void setStrokeWeight( double pWeight ) {
@@ -169,10 +171,10 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void clear( int red, int green, int blue, int alpha ) {
-		clear(new Color(red, green, blue, alpha));
+		clear(new schule.ngb.zm.Color(red, green, blue, alpha));
 	}
 
-	public void clear( Color pColor ) {
+	public void clear( schule.ngb.zm.Color pColor ) {
         /*graphics.setBackground(pColor);
         graphics.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());*/
 		java.awt.Color currentColor = drawing.getColor();

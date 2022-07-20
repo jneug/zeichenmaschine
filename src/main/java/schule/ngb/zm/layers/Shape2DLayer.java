@@ -1,13 +1,17 @@
-package schule.ngb.zm;
+package schule.ngb.zm.layers;
+
+import schule.ngb.zm.Color;
+import schule.ngb.zm.Layer;
+import schule.ngb.zm.Options;
 
 import java.awt.*;
 import java.util.LinkedList;
 
 public final class Shape2DLayer extends Layer {
 
-	protected Color strokeColor = DEFAULT_STROKECOLOR;
+	protected schule.ngb.zm.Color strokeColor = DEFAULT_STROKECOLOR;
 
-	protected Color fillColor = DEFAULT_FILLCOLOR;
+	protected schule.ngb.zm.Color fillColor = DEFAULT_FILLCOLOR;
 
 	protected double strokeWeight = DEFAULT_STROKEWEIGHT;
 
@@ -39,7 +43,7 @@ public final class Shape2DLayer extends Layer {
 		this.instantDraw = instantDraw;
 	}
 
-	public Color getFillColor() {
+	public schule.ngb.zm.Color getFillColor() {
 		return fillColor;
 	}
 
@@ -47,7 +51,7 @@ public final class Shape2DLayer extends Layer {
 		setFillColor(gray, gray, gray, 255);
 	}
 
-	public void setFillColor( Color pColor ) {
+	public void setFillColor( schule.ngb.zm.Color pColor ) {
 		fillColor = pColor;
 		drawing.setColor(pColor.getJavaColor());
 	}
@@ -65,10 +69,10 @@ public final class Shape2DLayer extends Layer {
 	}
 
 	public void setFillColor( int red, int green, int blue, int alpha ) {
-		setFillColor(new Color(red, green, blue, alpha));
+		setFillColor(new schule.ngb.zm.Color(red, green, blue, alpha));
 	}
 
-	public Color getStrokeColor() {
+	public schule.ngb.zm.Color getStrokeColor() {
 		return strokeColor;
 	}
 
@@ -76,7 +80,7 @@ public final class Shape2DLayer extends Layer {
 		setStrokeColor(gray, gray, gray, 255);
 	}
 
-	public void setStrokeColor( Color pColor ) {
+	public void setStrokeColor( schule.ngb.zm.Color pColor ) {
 		strokeColor = pColor;
 		drawing.setColor(pColor.getJavaColor());
 	}

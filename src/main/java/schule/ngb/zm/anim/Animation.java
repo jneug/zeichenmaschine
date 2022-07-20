@@ -2,9 +2,7 @@ package schule.ngb.zm.anim;
 
 import schule.ngb.zm.Constants;
 import schule.ngb.zm.Updatable;
-import schule.ngb.zm.events.EventDispatcher;
-import schule.ngb.zm.tasks.FrameSynchronizedTask;
-import schule.ngb.zm.tasks.TaskRunner;
+import schule.ngb.zm.util.events.EventDispatcher;
 
 import java.util.function.DoubleUnaryOperator;
 

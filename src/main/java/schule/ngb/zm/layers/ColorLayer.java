@@ -1,4 +1,8 @@
-package schule.ngb.zm;
+package schule.ngb.zm.layers;
+
+import schule.ngb.zm.Color;
+import schule.ngb.zm.Layer;
+import schule.ngb.zm.Options;
 
 import java.awt.GradientPaint;
 import java.awt.Paint;

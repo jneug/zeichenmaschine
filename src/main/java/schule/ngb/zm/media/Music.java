@@ -1,9 +1,7 @@
 package schule.ngb.zm.media;
 
-import schule.ngb.zm.anim.Animation;
-import schule.ngb.zm.anim.AnimationListener;
-import schule.ngb.zm.events.EventDispatcher;
-import schule.ngb.zm.tasks.TaskRunner;
+import schule.ngb.zm.util.events.EventDispatcher;
+import schule.ngb.zm.util.tasks.TaskRunner;
 import schule.ngb.zm.util.Log;
 import schule.ngb.zm.util.ResourceStreamProvider;
 import schule.ngb.zm.util.Validator;

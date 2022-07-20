@@ -27,7 +27,7 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 ### Changed
 - Neue Package-Struktur:
   - `schule.ngb.zm.media` für Audio-Klassen (und ggf. zukünftig Video).
-  - `schule.ngb.zm.tasks` für alles Rund um Parallelität.
+  - `schule.ngb.zm.util.tasks` für alles Rund um Parallelität.
 - `Zeichenthread` und `TaskRunner` setzen die Namen der Threads für besseres Debugging.
 
 ### Removed

@@ -1,9 +1,6 @@
-package schule.ngb.zm.tasks;
-
-import schule.ngb.zm.Zeichenmaschine;
+package schule.ngb.zm.util.tasks;
 
 import java.util.concurrent.Delayed;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 public abstract class DelayedTask extends Task implements Delayed {

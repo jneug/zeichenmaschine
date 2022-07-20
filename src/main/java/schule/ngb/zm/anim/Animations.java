@@ -3,9 +3,9 @@ package schule.ngb.zm.anim;
 import schule.ngb.zm.Color;
 import schule.ngb.zm.Constants;
 import schule.ngb.zm.Vector;
-import schule.ngb.zm.tasks.FrameSynchronizedTask;
-import schule.ngb.zm.tasks.FramerateLimitedTask;
-import schule.ngb.zm.tasks.TaskRunner;
+import schule.ngb.zm.util.tasks.FrameSynchronizedTask;
+import schule.ngb.zm.util.tasks.FramerateLimitedTask;
+import schule.ngb.zm.util.tasks.TaskRunner;
 import schule.ngb.zm.util.Log;
 import schule.ngb.zm.util.Validator;
 

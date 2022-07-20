@@ -1,4 +1,4 @@
-package schule.ngb.zm.events;
+package schule.ngb.zm.util.events;
 
 import org.junit.jupiter.api.Test;
 

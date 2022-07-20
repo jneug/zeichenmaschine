@@ -1,10 +1,9 @@
-package schule.ngb.zm.tasks;
+package schule.ngb.zm.util.tasks;
 
 import schule.ngb.zm.util.Log;
 
 import javax.swing.*;
 import java.util.concurrent.*;
-import java.util.logging.Logger;
 
 /**
  * Führt Aufgaben (Tasks) parallel zum Hauptprogramm aus.

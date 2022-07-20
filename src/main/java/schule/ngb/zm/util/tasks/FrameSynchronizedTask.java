@@ -1,4 +1,4 @@
-package schule.ngb.zm.tasks;
+package schule.ngb.zm.util.tasks;
 
 import schule.ngb.zm.Constants;
 import schule.ngb.zm.Zeichenmaschine;

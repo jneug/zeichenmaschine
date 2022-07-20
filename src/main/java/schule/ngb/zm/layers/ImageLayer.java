@@ -1,8 +1,9 @@
-package schule.ngb.zm;
+package schule.ngb.zm.layers;
 
 import java.awt.Graphics2D;
 import java.awt.Image;
 
+import schule.ngb.zm.Layer;
 import schule.ngb.zm.util.ImageLoader;
 
 public class ImageLayer extends Layer {

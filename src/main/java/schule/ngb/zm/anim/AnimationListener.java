@@ -1,6 +1,6 @@
 package schule.ngb.zm.anim;
 
-import schule.ngb.zm.events.Listener;
+import schule.ngb.zm.util.events.Listener;
 
 public interface AnimationListener extends Listener<Animation> {
 

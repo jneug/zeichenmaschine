@@ -1,7 +1,7 @@
 package schule.ngb.zm.media;
 
 import schule.ngb.zm.Constants;
-import schule.ngb.zm.tasks.TaskRunner;
+import schule.ngb.zm.util.tasks.TaskRunner;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,7 +1,6 @@
-package schule.ngb.zm.charts;
+package schule.ngb.zm.shapes.charts;
 
 import schule.ngb.zm.Color;
-import schule.ngb.zm.Constants;
 import schule.ngb.zm.Options;
 import schule.ngb.zm.shapes.Rectangle;
 

@@ -1,7 +1,7 @@
 package schule.ngb.zm;
 
-import schule.ngb.zm.turtle.TurtleLayer;
-import schule.ngb.zm.turtle.TurtleLayer.Turtle;
+import schule.ngb.zm.layers.TurtleLayer;
+import schule.ngb.zm.layers.TurtleLayer.Turtle;
 
 public class TestTurtle extends Zeichenmaschine {
 

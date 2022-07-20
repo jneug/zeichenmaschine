@@ -1,4 +1,7 @@
-package schule.ngb.zm;
+package schule.ngb.zm.layers;
+
+import schule.ngb.zm.Drawable;
+import schule.ngb.zm.Layer;
 
 import java.awt.Graphics2D;
 import java.util.Collections;

@@ -1,4 +1,4 @@
-package schule.ngb.zm.tasks;
+package schule.ngb.zm.util.tasks;
 
 public abstract class RateLimitedTask extends Task {
 

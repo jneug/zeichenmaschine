@@ -1,6 +1,6 @@
 package schule.ngb.zm;
 
-import schule.ngb.zm.shapes.Shape;
+import schule.ngb.zm.layers.ColorLayer;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 

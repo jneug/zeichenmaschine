@@ -1,9 +1,10 @@
-package schule.ngb.zm.shapes;
+package schule.ngb.zm.layers;
 
 import schule.ngb.zm.Layer;
 import schule.ngb.zm.anim.Animation;
 import schule.ngb.zm.anim.AnimationFacade;
 import schule.ngb.zm.anim.Easing;
+import schule.ngb.zm.shapes.Shape;
 
 import java.awt.Graphics2D;
 import java.util.*;

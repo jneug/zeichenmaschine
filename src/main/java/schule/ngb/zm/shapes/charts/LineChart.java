@@ -1,7 +1,6 @@
-package schule.ngb.zm.charts;
+package schule.ngb.zm.shapes.charts;
 
 import schule.ngb.zm.shapes.Rectangle;
-import schule.ngb.zm.util.Validator;
 
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;

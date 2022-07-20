@@ -9,6 +9,7 @@ import schule.ngb.zm.Color;
 import schule.ngb.zm.Constants;
 import schule.ngb.zm.Options;
 import schule.ngb.zm.Zeichenmaschine;
+import schule.ngb.zm.layers.ShapesLayer;
 import schule.ngb.zm.shapes.*;
 
 import java.util.concurrent.ExecutionException;
