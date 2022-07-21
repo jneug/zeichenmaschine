@@ -5,9 +5,9 @@ import schule.ngb.zm.layers.ColorLayer;
 import schule.ngb.zm.layers.DrawingLayer;
 import schule.ngb.zm.layers.ImageLayer;
 import schule.ngb.zm.layers.ShapesLayer;
-import schule.ngb.zm.util.tasks.TaskRunner;
 import schule.ngb.zm.util.ImageLoader;
 import schule.ngb.zm.util.Log;
+import schule.ngb.zm.util.tasks.TaskRunner;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -17,6 +17,8 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.concurrent.*;
 import java.util.logging.Level;
 
@@ -353,20 +355,27 @@ public class Zeichenmaschine extends Constants {
 		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		// Das Icon des Fensters ändern
-
 		try {
-			// TODO: Add image sizes
-			ImageIcon icon = new ImageIcon(ImageIO.read(new File("res/icon_64.png")));
-
 			if( MACOS ) {
+				//Image icon = ImageIO.read(new File("resources/icon_512.png"));
+				URL iconUrl = Zeichenmaschine.class.getResource("icon_512.png");
+				Image icon = ImageIO.read(iconUrl);
 				// Dock Icon in macOS setzen
 				Taskbar taskbar = Taskbar.getTaskbar();
-				taskbar.setIconImage(icon.getImage());
+				taskbar.setIconImage(icon);
 			} else {
-				// Kleines Icon des Frames setzen
-				frame.setIconImage(icon.getImage());
+				ArrayList<Image> icons = new ArrayList<>(4);
+				for( int size = 32; size <= 512; size *= size ) {
+					icons.add(ImageIO.read(new File("icon_" + size + ".png")));
+				}
+
+				frame.setIconImages(icons);
 			}
-		} catch( IOException e ) {
+		} catch( IllegalArgumentException | IOException e ) {
+			LOG.warn(e, "Could not load image icons. Some icons may be missing.");
+		} catch( SecurityException | UnsupportedOperationException macex ) {
+			// Dock Icon in macOS konnte nicht gesetzt werden :(
+			LOG.warn(macex, "Could not set dock icon.");
 		}
 
 
