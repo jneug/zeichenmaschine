@@ -41,7 +41,8 @@ public final class Options {
 		PAUSED,
 		STOPPED,
 		TERMINATED,
-		IDLE
+		IDLE,
+		DELAYED
 	}
 
 	/**

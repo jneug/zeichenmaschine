@@ -27,7 +27,7 @@ import java.util.logging.Level;
  * Die Klasse übernimmt die Initialisierung eines Programmfensters und der
  * nötigen Komponenten.
  */
-// TODO: Refactorings (besonders in Bezug auf Nebenläufigkeit)
+@SuppressWarnings( "unused" )
 public class Zeichenmaschine extends Constants {
 
 	/**
@@ -966,6 +966,7 @@ public class Zeichenmaschine extends Constants {
 		}
 
 		long timer = 0L;
+		/*
 		if( updateState == Options.AppState.DRAWING ) {
 			// Falls gerade draw() ausgeführt wird, zeigen wir den aktuellen
 			// Stand der Zeichnung auf der Leinwand an. Die Zeit für das
@@ -974,7 +975,9 @@ public class Zeichenmaschine extends Constants {
 			canvas.render();
 			timer = System.nanoTime() - timer;
 		}
+		*/
 
+		Options.AppState oldState = updateState;
 		try {
 			int sub = (int) Math.ceil(timer / 1000000.0);
 
@@ -982,9 +985,12 @@ public class Zeichenmaschine extends Constants {
 				return;
 			}
 
+			updateState = Options.AppState.DELAYED;
 			Thread.sleep(ms - sub, (int) (timer % 1000000L));
 		} catch( InterruptedException ex ) {
 			// Nothing
+		} finally {
+			updateState = oldState;
 		}
 	}
 
@@ -1188,7 +1194,7 @@ public class Zeichenmaschine extends Constants {
 	private void enqueueEvent( InputEvent evt ) {
 		eventQueue.add(evt);
 
-		if( isPaused() || isStopped()) {
+		if( isPaused() || isStopped() ) {
 			dispatchEvents();
 		}
 	}
@@ -1384,9 +1390,9 @@ public class Zeichenmaschine extends Constants {
 	 * // Next frame has started
 	 * </code></pre>
 	 * <p>
-	 * Die {@link schule.ngb.zm.util.tasks.FrameSynchronizedTask} implementiert eine
-	 * {@link schule.ngb.zm.util.tasks.Task}, die sich automatisch auf diese Wiese
-	 * mit dem Zeichenthread synchronisiert.
+	 * Die {@link schule.ngb.zm.util.tasks.FrameSynchronizedTask} implementiert
+	 * eine {@link schule.ngb.zm.util.tasks.Task}, die sich automatisch auf
+	 * diese Wiese mit dem Zeichenthread synchronisiert.
 	 */
 	public static final Object globalSyncLock = new Object[0];
 
@@ -1696,9 +1702,8 @@ public class Zeichenmaschine extends Constants {
 		 */
 		public boolean isWaiting() {
 			//return running && updateThread.getState() == Thread.State.TIMED_WAITING;
-			return running && updateThread != null && updateThread.getState() == Thread.State.TIMED_WAITING;
-				//|| updateThread.getState() == Thread.State.WAITING
-				//|| updateThread.getState() == Thread.State.BLOCKED;
+			//return running && updateThread != null && updateThread.getState() == Thread.State.TIMED_WAITING;
+			return running && updateThread != null && updateState == Options.AppState.DELAYED;
 		}
 
 	}
