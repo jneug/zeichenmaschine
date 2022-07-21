@@ -192,8 +192,11 @@ public class NeuralNetwork {
 		return output;
 	}
 
+	public MLMatrix predict( double[] inputs ) {
+		return predict(MatrixFactory.create(new double[][]{inputs}));
+	}
+
 	public MLMatrix predict( double[][] inputs ) {
-		//this.output = layers[1].apply(layers[0].apply(inputs));
 		return predict(MatrixFactory.create(inputs));
 	}
 
