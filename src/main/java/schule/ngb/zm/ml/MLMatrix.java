@@ -115,7 +115,7 @@ public interface MLMatrix {
 	 * C = this . B + V'
 	 * </pre>
 	 * wobei {@code this} dieses Matrixobjekt ist und {@code .} für die
-	 * Matrixmultiplikation steht. {@vode V'} ist die Matrix {@code V}
+	 * Matrixmultiplikation steht. {@code V'} ist die Matrix {@code V}
 	 * {@code rows()}-mal untereinander wiederholt.
 	 * <p>
 	 * Wenn diese Matrix die Dimension r x c hat, dann muss die Matrix {@code B}

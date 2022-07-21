@@ -14,7 +14,8 @@ import java.util.function.DoubleUnaryOperator;
  * Die Klasse ist nur minimal optimiert und sollte nur für kleine Netze
  * verwendet werden. Für größere Netze sollte auf eine der optionalen
  * Bibliotheken wie
- * <a href="">Colt</a> zurückgegriffen werden.
+ * <a href="https://dst.lbl.gov/ACSSoftware/colt/">Colt</a> zurückgegriffen
+ * werden.
  */
 public final class DoubleMatrix implements MLMatrix {
 
