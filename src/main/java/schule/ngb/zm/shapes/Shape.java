@@ -7,41 +7,152 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
+/**
+ * Basisklasse für alle Formen in der Zeichenmaschine.
+ * <p>
+ * Alle Formen sind als Unterklassen von {@code Shape} implementiert.
+ * <p>
+ * Neben den abstrakten Methoden implementieren Unterklassen mindestens zwei
+ * Konstruktoren. Einen Konstruktor, der die Form mit vom Nutzer gegebenen
+ * Parametern initialisiert und einen, der die Werten einer anderen Form
+ * desselben Typs übernimmt. In der Klasse {@link Circle} sind die Konstruktoren
+ * beispielsweise so implementiert:
+ *
+ * <pre><code>
+ * public Circle( double x, double y, double radius ) {
+ *     super(x, y);
+ *     this.radius = radius;
+ * }
+ *
+ * public Circle( Circle circle ) {
+ *     super(circle.x, circle.y);
+ *     copyFrom(circle);
+ * }
+ * </code></pre>
+ * <p>
+ * Außerdem implementieren Unterklassen eine passende {@link #toString()} und
+ * eine {@link #equals(Object)} Methode.
+ */
+@SuppressWarnings( "unused" )
 public abstract class Shape extends FilledShape {
 
+	/**
+	 * x-Koordinate der Form.
+	 */
 	protected double x;
 
+	/**
+	 * y-Koordinate der Form.
+	 */
 	protected double y;
 
+	/**
+	 * Rotation in Grad um den Punkt (x, y).
+	 */
 	protected double rotation = 0.0;
 
+	/**
+	 * Skalierungsfaktor.
+	 */
 	protected double scale = 1.0;
 
+	/**
+	 * Ob die Form angezeigt werden soll.
+	 */
 	protected boolean visible = true;
 
+	/**
+	 * Ankerpunkt der Form.
+	 */
 	protected Options.Direction anchor = Options.Direction.CENTER;
 
+	/**
+	 * Zwischenspeicher für die AWT-Shape zu dieser Form.
+	 */
+	protected java.awt.Shape awtShape = null;
+
+	/**
+	 * Setzt die x- und y-Koordinate der Form auf 0.
+	 */
+	public Shape() {
+		this(0.0, 0.0);
+	}
+
+	/**
+	 * Setzt die x- und y-Koordinate der Form.
+	 *
+	 * @param x
+	 * @param y
+	 */
 	public Shape( double x, double y ) {
 		this.x = x;
 		this.y = y;
 	}
 
-	public Shape() {
-		this(0.0, 0.0);
+	/**
+	 * Ob die Form angezeigt wird oder nicht.
+	 *
+	 * @return {@code true}, wenn die From angezeigt werden soll, {@code false}
+	 * 	sonst.
+	 */
+	public boolean isVisible() {
+		return visible;
 	}
 
+	/**
+	 * Versteckt die Form.
+	 */
+	public void hide() {
+		visible = false;
+	}
+
+	/**
+	 * Zeigt die Form an.
+	 */
+	public void show() {
+		visible = true;
+	}
+
+	/**
+	 * Versteckt die Form, wenn sie derzeit angezeigt wird und zeigt sie
+	 * andernfalls an.
+	 */
+	public void toggle() {
+		visible = !visible;
+	}
+
+	/**
+	 * Gibt die x-Koordinate der Form zurück.
+	 *
+	 * @return Die x-Koordinate.
+	 */
 	public double getX() {
 		return x;
 	}
 
+	/**
+	 * Setzt die x-Koordinate der Form.
+	 *
+	 * @param x Die neue x-Koordinate.
+	 */
 	public void setX( double x ) {
 		this.x = x;
 	}
 
+	/**
+	 * Gibt die y-Koordinate der Form zurück.
+	 *
+	 * @return Die y-Koordinate.
+	 */
 	public double getY() {
 		return y;
 	}
 
+	/**
+	 * Setzt die y-Koordinate der Form.
+	 *
+	 * @param y Die neue y-Koordinate.
+	 */
 	public void setY( double y ) {
 		this.y = y;
 	}
@@ -49,8 +160,9 @@ public abstract class Shape extends FilledShape {
 	/**
 	 * Gibt die Breite dieser Form zurück.
 	 * <p>
-	 * Die Breite einer Form ist immer die Breite ihrer Begrenzung, <b>bevor</b>
-	 * Drehungen und andere Transformationen auf sei angewandt wurden.
+	 * Die Breite einer Form ist immer die Breite ihrer Begrenzung,
+	 * <strong>bevor</strong> Drehungen und andere Transformationen auf sie
+	 * angewandt wurden.
 	 * <p>
 	 * Die Begrenzungen der tatsächlich gezeichneten Form kann mit
 	 * {@link #getBounds()} abgerufen werden.
@@ -62,8 +174,9 @@ public abstract class Shape extends FilledShape {
 	/**
 	 * Gibt die Höhe dieser Form zurück.
 	 * <p>
-	 * Die Höhe einer Form ist immer die Höhe ihrer Begrenzung, <b>bevor</b>
-	 * Drehungen und andere Transformationen auf sei angewandt wurden.
+	 * Die Höhe einer Form ist immer die Höhe ihrer Begrenzung,
+	 * <strong>bevor</strong> Drehungen und andere Transformationen auf sie
+	 * angewandt wurden.
 	 * <p>
 	 * Die Begrenzungen der tatsächlich gezeichneten Form kann mit
 	 * {@link #getBounds()} abgerufen werden.
@@ -72,12 +185,59 @@ public abstract class Shape extends FilledShape {
 	 */
 	public abstract double getHeight();
 
+	/**
+	 * Gibt die Rotation in Grad zurück.
+	 *
+	 * @return Rotation in Grad.
+	 */
 	public double getRotation() {
 		return rotation;
 	}
 
+	/**
+	 * Dreht die Form um den angegebenen Winkel um ihren Ankerpunkt.
+	 * @param angle Drehwinkel in Grad.
+	 */
+	public void rotate( double angle ) {
+		this.rotation += angle % 360;
+	}
+
+	public void rotateTo( double angle ) {
+		this.rotation = angle % 360;
+	}
+
+	public void rotate( Point2D center, double angle ) {
+		rotate(center.getX(), center.getY(), angle);
+	}
+
+	public void rotate( double x, double y, double angle ) {
+		this.rotation += angle % 360;
+
+		// Rotate x/y position
+		double x1 = this.x - x, y1 = this.y - y;
+
+		double rad = Math.toRadians(angle);
+		double x2 = x1 * Math.cos(rad) - y1 * Math.sin(rad);
+		double y2 = x1 * Math.sin(rad) + y1 * Math.cos(rad);
+
+		this.x = x2 + x;
+		this.y = y2 + y;
+	}
+
+	/**
+	 * Gibt den aktuellen Skalierungsfaktor zurück.
+	 *
+	 * @return Der Skalierungsfaktor.
+	 */
 	public double getScale() {
 		return scale;
+	}
+	public void scale( double factor ) {
+		scale = factor;
+	}
+
+	public void scaleBy( double factor ) {
+		scale(scale * factor);
 	}
 
 	public void setGradient( schule.ngb.zm.Color from, schule.ngb.zm.Color to, Options.Direction dir ) {
@@ -89,22 +249,6 @@ public abstract class Shape extends FilledShape {
 	public void setGradient( schule.ngb.zm.Color from, schule.ngb.zm.Color to ) {
 		Point2D ap = getAbsAnchorPoint(CENTER);
 		setGradient(ap.getX(), ap.getY(), Math.min(ap.getX(), ap.getY()), from, to);
-	}
-
-	public boolean isVisible() {
-		return visible;
-	}
-
-	public void hide() {
-		visible = false;
-	}
-
-	public void show() {
-		visible = true;
-	}
-
-	public void toggle() {
-		visible = !visible;
 	}
 
 	public Options.Direction getAnchor() {
@@ -240,8 +384,44 @@ public abstract class Shape extends FilledShape {
 	 */
 	public abstract Shape copy();
 
+	/**
+	 * Gibt eine {@link java.awt.Shape Java-AWT Shape} Version dieser Form
+	 * zurück. Intern werden die AWT Shapes benutzt, um sie auf den
+	 * {@link Graphics2D Grafikkontext} zu zeichnen.
+	 * <p>
+	 * Da die AWT-Shape bei jedem Zeichnen (also mindestens einmal pro Frame)
+	 * benötigt wird, wird das aktuelle Shape-Objekt in {@link #awtShape}
+	 * zwischengespeichert. Bei Änderungen der Objekteigenschaften muss daher
+	 * intern {@link #invalidate()} aufgerufen werden, damit beim nächsten
+	 * Aufruf von {@link #draw(Graphics2D)} die Shape mit einem Aufurf von
+	 * {@code getShape()} neu erzeugt wird. Unterklassen können aber auch die
+	 * zwischengespeicherte Shape direkt modifizieren, um eine Neugenerierung zu
+	 * vermeiden.
+	 * <p>
+	 * Wenn diese Form nicht durch eine AWT-Shape dargstellt wird, kann die
+	 * Methode {@code null} zurückgeben.
+	 *
+	 * @return Eine Java-AWT {@code Shape} die diess Form repräsentiert oder
+	 *    {@code null}.
+	 */
 	public abstract java.awt.Shape getShape();
 
+	/**
+	 * Interne Methode, um den Zwischenspeicher der Java-AWT Shape zu löschen.
+	 */
+	protected void invalidate() {
+		awtShape = null;
+	}
+
+	/**
+	 * Gibt die Begrenzungen der Form zurück.
+	 * <p>
+	 * Ein {@code Bounds}-Objekt beschreibt eine "<a
+	 * href="https://gdbooks.gitbooks.io/3dcollisions/content/Chapter1/aabb.html">Axis
+	 * Aligned Bounding Box</a>" (AABB).
+	 *
+	 * @return Die Abgrenzungen der Form nach Anwendung der Transformationen.
+	 */
 	public Bounds getBounds() {
 		return new Bounds(this);
 	}
@@ -346,40 +526,6 @@ public abstract class Shape extends FilledShape {
 		this.y += (anchorShape.getY() - anchorThis.getY()) + dir.y * buff;
 	}
 
-	public void scale( double factor ) {
-		scale = factor;
-	}
-
-	public void scaleBy( double factor ) {
-		scale(scale * factor);
-	}
-
-	public void rotate( double angle ) {
-		this.rotation += angle % 360;
-	}
-
-	public void rotateTo( double angle ) {
-		this.rotation = angle % 360;
-	}
-
-	public void rotate( Point2D center, double angle ) {
-		rotate(center.getX(), center.getY(), angle);
-	}
-
-	public void rotate( double x, double y, double angle ) {
-		this.rotation += angle % 360;
-
-		// Rotate x/y position
-		double x1 = this.x - x, y1 = this.y - y;
-
-		double rad = Math.toRadians(angle);
-		double x2 = x1 * Math.cos(rad) - y1 * Math.sin(rad);
-		double y2 = x1 * Math.sin(rad) + y1 * Math.cos(rad);
-
-		this.x = x2 + x;
-		this.y = y2 + y;
-	}
-
     /*public void shear( double dx, double dy ) {
         verzerrung.shear(dx, dy);
     }*/
@@ -420,8 +566,12 @@ public abstract class Shape extends FilledShape {
 			return;
 		}
 
-		java.awt.Shape shape = getShape();
-		if( shape != null ) {
+		if( awtShape == null ) {
+			awtShape = getShape();
+		}
+
+		if( awtShape != null ) {
+			java.awt.Shape shape = awtShape;
 			if( transform != null ) {
 				shape = transform.createTransformedShape(shape);
 			}
@@ -429,18 +579,6 @@ public abstract class Shape extends FilledShape {
 			Color currentColor = graphics.getColor();
 			fillShape(shape, graphics);
 			strokeShape(shape, graphics);
-			/*
-			if( fillColor != null && fillColor.getAlpha() > 0 ) {
-				graphics.setColor(fillColor.getJavaColor());
-				graphics.fill(shape);
-			}
-			if( strokeColor != null && strokeColor.getAlpha() > 0
-				&& strokeWeight > 0.0 ) {
-				graphics.setColor(strokeColor.getJavaColor());
-				graphics.setStroke(createStroke());
-				graphics.draw(shape);
-			}
-			*/
 			graphics.setColor(currentColor);
 		}
 	}

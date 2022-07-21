@@ -24,9 +24,25 @@ public class Rectangle extends Shape {
 		copyFrom(pRechteck);
 	}
 
+	public Rectangle( Bounds pBounds ) {
+		this(
+			pBounds.x, pBounds.y,
+			pBounds.width, pBounds.height);
+	}
+
+	/**
+	 * Erstellt ein Rechteck zur Darstellung der
+	 * @param pShape
+	 */
 	public Rectangle( Shape pShape ) {
+		this(pShape, true);
+	}
+
+	public Rectangle( Shape pShape, boolean transformed ) {
 		java.awt.Shape s = pShape.getShape();
-		s = pShape.getTransform().createTransformedShape(s);
+		if( transformed ) {
+			s = pShape.getTransform().createTransformedShape(s);
+		}
 		Rectangle2D bounds = s.getBounds2D();
 		x = bounds.getX();
 		y = bounds.getY();
@@ -48,10 +64,12 @@ public class Rectangle extends Shape {
 
 	public void setWidth( double width ) {
 		this.width = width;
+		invalidate();
 	}
 
 	public void setHeight( double height ) {
 		this.height = height;
+		invalidate();
 	}
 
 	@Override
@@ -74,6 +92,7 @@ public class Rectangle extends Shape {
 		super.scale(factor);
 		width *= factor;
 		height *= factor;
+		invalidate();
 	}
 
 	@Override
