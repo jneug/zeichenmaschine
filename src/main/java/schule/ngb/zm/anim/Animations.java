@@ -179,14 +179,14 @@ public class Animations {
 		return target;
 	}
 
-	public static final <T, R> Future<T> animate( T target, int runtime, Animator<T, R> animator ) {
+	/*public static final <T, R> Future<T> animate( T target, int runtime, Animator<T, R> animator ) {
 		return animate(
 			target, runtime,
 			animator::easing,
 			animator::interpolator,
 			animator::applicator
 		);
-	}
+	}*/
 
 	public static <T> Future<Animation<T>> animate( Animation<T> animation ) {
 		return TaskRunner.run(new FramerateLimitedTask() {
