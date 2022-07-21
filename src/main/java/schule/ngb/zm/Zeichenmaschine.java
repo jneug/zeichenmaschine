@@ -9,7 +9,6 @@ import schule.ngb.zm.util.ImageLoader;
 import schule.ngb.zm.util.Log;
 import schule.ngb.zm.util.tasks.TaskRunner;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import java.awt.*;
@@ -17,10 +16,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
-import java.util.ArrayList;
 import java.util.concurrent.*;
-import java.util.logging.Level;
 
 /**
  * Hauptklasse der Zeichenmaschine.
@@ -115,47 +111,7 @@ public class Zeichenmaschine extends Constants {
 	/**
 	 * Das Zeichenfenster der Zeichenmaschine
 	 */
-	private JFrame frame;
-
-	/**
-	 * Die Graphics-Umgebung für das aktuelle Fenster.
-	 */
-	private GraphicsEnvironment environment;
-
-	/**
-	 * Das Anzeigefenster, auf dem die ZM gestartet wurde (muss nicht gleich
-	 * dem Aktuellen sein, wenn das Fenster verschoben wurde).
-	 */
-	private GraphicsDevice displayDevice;
-
-	/**
-	 * Speichert, ob die Zeichenmaschine mit {@link #setFullscreen(boolean)}
-	 * in den Vollbildmodus versetzt wurde.
-	 */
-	private boolean fullscreen = false;
-
-	/**
-	 * Höhe und Breite der Zeichenmaschine, bevor sie mit
-	 * {@link #setFullscreen(boolean)} in den Vollbild-Modus versetzt wurde.
-	 * Wird verwendet, um die Fenstergröße wiederherzustellen, sobald der
-	 * Vollbild-Modus verlassen wird.
-	 */
-	private int initialWidth, initialHeight;
-
-	/**
-	 * {@code KeyListener}, um den Vollbild-Modus mit der Escape-Taste zu
-	 * verlassen. Wird von {@link #setFullscreen(boolean)} automatisch
-	 * hinzugefügt und entfernt.
-	 */
-	private KeyListener fullscreenExitListener = new KeyAdapter() {
-		@Override
-		public void keyPressed( KeyEvent e ) {
-			if( e.getKeyCode() == KeyEvent.VK_ESCAPE ) {
-				// canvas.removeKeyListener(this);
-				setFullscreen(false);
-			}
-		}
-	};
+	private Zeichenfenster frame;
 
 	// Aktueller Zustand der Zeichenmaschine.
 
@@ -319,69 +275,19 @@ public class Zeichenmaschine extends Constants {
 	public Zeichenmaschine( int width, int height, String title, boolean run_once ) {
 		LOG.info("Starting " + APP_NAME + " " + APP_VERSION);
 
-		// Setzen des "Look&Feel"
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch( Exception ex ) {
-			LOG.log(Level.SEVERE, "Error setting the look and feel: " + ex.getMessage(), ex);
-		}
-
-		// Wir suchen den Bildschirm, der derzeit den Mauszeiger enthält, um
-		// das Zeichenfenster dort zu zentrieren.
-		java.awt.Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
-		environment = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice[] devices = environment.getScreenDevices();
-		for( GraphicsDevice gd : devices ) {
-			if( gd.getDefaultConfiguration().getBounds().contains(mouseLoc) ) {
-				displayDevice = gd;
-				break;
-			}
-		}
-		// Keinen passenden Bildschirm gefunden. Wir nutzen den Standard.
-		if( displayDevice == null ) {
-			displayDevice = environment.getDefaultScreenDevice();
-		}
+		// Erstellen des Zeichenfensters
+		frame = createFrame(width, height, title);
 
 		// Wir kennen nun den Bildschirm und können die Breite / Höhe abrufen.
 		this.canvasWidth = width;
 		this.canvasHeight = height;
-		java.awt.Rectangle displayBounds = displayDevice.getDefaultConfiguration().getBounds();
+		java.awt.Rectangle displayBounds = frame.getScreenBounds();
 		this.screenWidth = (int) displayBounds.getWidth();
 		this.screenHeight = (int) displayBounds.getHeight();
 
-		// Erstellen des Zeichenfensters
-		frame = new JFrame(displayDevice.getDefaultConfiguration());
-		frame.setTitle(title);
-		frame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-
-		// Das Icon des Fensters ändern
-		try {
-			if( MACOS ) {
-				//Image icon = ImageIO.read(new File("resources/icon_512.png"));
-				URL iconUrl = Zeichenmaschine.class.getResource("icon_512.png");
-				Image icon = ImageIO.read(iconUrl);
-				// Dock Icon in macOS setzen
-				Taskbar taskbar = Taskbar.getTaskbar();
-				taskbar.setIconImage(icon);
-			} else {
-				ArrayList<Image> icons = new ArrayList<>(4);
-				for( int size = 32; size <= 512; size *= size ) {
-					icons.add(ImageIO.read(new File("icon_" + size + ".png")));
-				}
-
-				frame.setIconImages(icons);
-			}
-		} catch( IllegalArgumentException | IOException e ) {
-			LOG.warn(e, "Could not load image icons. Some icons may be missing.");
-		} catch( SecurityException | UnsupportedOperationException macex ) {
-			// Dock Icon in macOS konnte nicht gesetzt werden :(
-			LOG.warn(macex, "Could not set dock icon.");
-		}
-
-
 		// Erstellen der Leinwand
 		canvas = new Zeichenleinwand(width, height);
-		frame.add(canvas);
+		frame.addCanvas(canvas);
 
 		// Die drei Standardebenen merken, für den einfachen Zugriff aus unterklassen.
 		background = getBackgroundLayer();
@@ -394,7 +300,7 @@ public class Zeichenmaschine extends Constants {
 
 		// Settings der Unterklasse aufrufen, falls das Fenster vor dem Öffnen
 		// verändert werden soll.
-		// TODO: When to call settings?
+		// TODO: (ngb) Wann sollte settings() aufgerufen werden?
 		settings();
 
 		// Listener hinzufügen, um auf Maus- und Tastatureingaben zu hören.
@@ -424,11 +330,7 @@ public class Zeichenmaschine extends Constants {
 			}
 		});
 
-		// Fenster zusammenbauen, auf dem Bildschirm zentrieren ...
-		frame.pack();
-		frame.setResizable(false);
-		centerFrame();
-		// ... und anzeigen!
+		// Fesnter anzeigen
 		frame.setVisible(true);
 
 		// Nach dem Anzeigen kann die Pufferstrategie erstellt werden.
@@ -453,24 +355,21 @@ public class Zeichenmaschine extends Constants {
 	 * @param title
 	 */
 	// TODO: Implement in conjunction with Zeichenfenster
-	private final Zeichenfenster createFrame( String title ) {
-		return null;
+	private final Zeichenfenster createFrame( int width, int height, String title ) {
+		// Setzen des Look&Feel
+		// TODO: (ngb) Ist das überhaupt notwendig oder eh schon der Default?
+		Zeichenfenster.setLookAndFeel();
+
+		Zeichenfenster frame = new Zeichenfenster(width, height, title);
+
+		return frame;
 	}
 
 	/**
 	 * Zentriert das Zeichenfenster auf dem aktuellen Bildschirm.
 	 */
 	public final void centerFrame() {
-		// TODO: Center on current display (not main display by default)
-		// TODO: Position at current BlueJ windows if IN_BLUEJ
-		//frame.setLocationRelativeTo(null);
-		//frame.setLocationRelativeTo(displayDevice.getFullScreenWindow());
-
-		java.awt.Rectangle bounds = displayDevice.getDefaultConfiguration().getBounds();
-		frame.setLocation(
-			(int) (bounds.x + (screenWidth - frame.getWidth()) / 2.0),
-			(int) (bounds.y + (screenHeight - frame.getHeight()) / 2.0)
-		);
+		frame.centerFrame();
 	}
 
 	/**
@@ -487,37 +386,25 @@ public class Zeichenmaschine extends Constants {
 	 * 	ansonsten deaktiviert.
 	 */
 	public final void setFullscreen( boolean pEnable ) {
-		// See https://docs.oracle.com/javase/tutorial/extra/fullscreen/index.html
-		if( displayDevice.isFullScreenSupported() ) {
-			if( pEnable && !fullscreen ) {
-				// frame.setUndecorated(true);
-				frame.setResizable(false); // Should be set anyway
-				displayDevice.setFullScreenWindow(frame);
-				// Update width / height
-				initialWidth = canvasWidth;
-				initialHeight = canvasHeight;
-				changeSize(screenWidth, screenHeight);
-				// Register ESC as exit fullscreen
-				canvas.addKeyListener(fullscreenExitListener);
-
-				fullscreen = true;
+		if( pEnable && !frame.isFullscreen() ) {
+			frame.setFullscreen(true);
+			if( frame.isFullscreen() )
 				fullscreenChanged();
-			} else if( !pEnable && fullscreen ) {
-				fullscreen = false;
-
-				canvas.removeKeyListener(fullscreenExitListener);
-				displayDevice.setFullScreenWindow(null);
-				changeSize(initialWidth, initialHeight);
-				frame.pack();
-				// frame.setUndecorated(false);
+		} else if( !pEnable && frame.isFullscreen() ) {
+			frame.setFullscreen(false);
+			if( !frame.isFullscreen() )
 				fullscreenChanged();
-			}
 		}
 	}
 
+	/**
+	 * Prüft, ob das Zeichenfenster im Vollbild läuft.
+	 *
+	 * @return {@code true}, wenn sich das Fesnter im Vollbildmodus befindet,
+	 *    {@code false} sonst.
+	 */
 	public boolean isFullscreen() {
-		Window win = displayDevice.getFullScreenWindow();
-		return fullscreen && win != null;
+		return frame.isFullscreen();
 	}
 
 	/**
@@ -672,28 +559,6 @@ public class Zeichenmaschine extends Constants {
 	}
 
 	/**
-	 * Interne Methode um die Größe der Zeichenfläche zu ändern.
-	 * <p>
-	 * Die Methode berücksichtigt nicht den Zustand des Fensters (z.B.
-	 * Vollbildmodus) und geht davon aus, dass die aufrufende Methode
-	 * sichergestellt hat, dass eine Änderung der Größe der Zeichenfläche
-	 * zulässig und sinnvoll ist.
-	 *
-	 * @param newWidth Neue Breite der Zeichenleinwand.
-	 * @param newHeight Neue Höhe der Zeichenleinwand.
-	 * @see #setSize(int, int)
-	 * @see #setFullscreen(boolean)
-	 */
-	private void changeSize( int newWidth, int newHeight ) {
-		canvasWidth = Math.min(Math.max(newWidth, 100), screenWidth);
-		canvasHeight = Math.min(Math.max(newHeight, 100), screenHeight);
-
-		if( canvas != null ) {
-			canvas.setSize(canvasWidth, canvasHeight);
-		}
-	}
-
-	/**
 	 * Ändert die Größe der {@link Zeichenleinwand}.
 	 *
 	 * @param width Neue Breite der Zeichenleinwand.
@@ -701,16 +566,11 @@ public class Zeichenmaschine extends Constants {
 	 * @see Zeichenleinwand#setSize(int, int)
 	 */
 	public final void setSize( int width, int height ) {
-		if( fullscreen ) {
-			initialWidth = Math.min(Math.max(width, 100), screenWidth);
-			initialHeight = Math.min(Math.max(height, 100), screenHeight);
-			setFullscreen(false);
-		} else {
-			changeSize(width, height);
+		frame.setSize(width, height);
 
-			//frame.setSize(width, height);
-			frame.pack();
-		}
+		java.awt.Rectangle canvasBounds = frame.getCanvasBounds();
+		canvasWidth = (int) canvasBounds.getWidth();
+		canvasHeight = (int) canvasBounds.getHeight();
 	}
 
 	/**
