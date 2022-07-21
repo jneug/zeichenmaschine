@@ -48,7 +48,7 @@ public class DrawableLayer extends Layer {
 		}
 
 		synchronized( drawables ) {
-			List<Drawable> it = Collections.unmodifiableList(drawables);
+			List<Drawable> it = List.copyOf(drawables);
 			for( Drawable d : it ) {
 				if( d.isVisible() ) {
 					d.draw(drawing);
