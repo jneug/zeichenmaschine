@@ -1,12 +1,9 @@
 package schule.ngb.zm.util;
 
-import java.io.IOException;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.function.Supplier;
 import java.util.logging.*;
@@ -34,7 +31,7 @@ import static java.util.logging.Level.*;
  */
 public final class Log {
 
-	private static final String ROOT_LOGGER = "schule.ngb.zm";
+	private static final String ROOT_LOGGER = "schule";
 
 	private static final String DEFAULT_LOG_FORMAT = "[%1$tT] [%4$11s] %5$s %6$s%n";
 
@@ -134,7 +131,14 @@ public final class Log {
 		if( System.getProperty("java.util.logging.SimpleFormatter.format") == null
 			&& LogManager.getLogManager().getProperty("java.util.logging.SimpleFormatter.format") == null ) {
 			System.setProperty("java.util.logging.SimpleFormatter.format", DEFAULT_LOG_FORMAT);
-			rootLogger.addHandler(new StreamHandler(System.err, new LogFormatter()));
+			//rootLogger.addHandler(new StreamHandler(System.err, new LogFormatter()));
+			rootLogger.addHandler(new StreamHandler(System.err, new LogFormatter()) {
+				@Override
+				public synchronized void publish(final LogRecord record) {
+					super.publish(record);
+					flush();
+				}
+			});
 			rootLogger.setUseParentHandlers(false);
 		}
 		if( rootLogger.getUseParentHandlers() ) {
