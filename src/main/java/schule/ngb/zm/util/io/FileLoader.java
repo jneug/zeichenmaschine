@@ -1,4 +1,6 @@
-package schule.ngb.zm.util;
+package schule.ngb.zm.util.io;
+
+import schule.ngb.zm.util.Log;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

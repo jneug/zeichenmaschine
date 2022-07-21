@@ -2,7 +2,7 @@ package schule.ngb.zm.shapes;
 
 import schule.ngb.zm.Color;
 import schule.ngb.zm.Options;
-import schule.ngb.zm.util.FontLoader;
+import schule.ngb.zm.util.io.FontLoader;
 
 import java.awt.Canvas;
 import java.awt.Font;

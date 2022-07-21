@@ -3,7 +3,7 @@ package schule.ngb.zm.shapes;
 
 import schule.ngb.zm.Color;
 import schule.ngb.zm.Options;
-import schule.ngb.zm.util.ImageLoader;
+import schule.ngb.zm.util.io.ImageLoader;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;

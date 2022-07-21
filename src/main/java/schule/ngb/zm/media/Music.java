@@ -3,7 +3,7 @@ package schule.ngb.zm.media;
 import schule.ngb.zm.util.events.EventDispatcher;
 import schule.ngb.zm.util.tasks.TaskRunner;
 import schule.ngb.zm.util.Log;
-import schule.ngb.zm.util.ResourceStreamProvider;
+import schule.ngb.zm.util.io.ResourceStreamProvider;
 import schule.ngb.zm.util.Validator;
 
 import javax.sound.sampled.*;

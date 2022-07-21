@@ -1,12 +1,11 @@
 package schule.ngb.zm.media;
 
 import schule.ngb.zm.util.Log;
-import schule.ngb.zm.util.ResourceStreamProvider;
+import schule.ngb.zm.util.io.ResourceStreamProvider;
 import schule.ngb.zm.util.Validator;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 
 /**

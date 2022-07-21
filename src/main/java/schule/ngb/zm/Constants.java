@@ -1,7 +1,7 @@
 package schule.ngb.zm;
 
 import schule.ngb.zm.anim.Easing;
-import schule.ngb.zm.util.ImageLoader;
+import schule.ngb.zm.util.io.ImageLoader;
 import schule.ngb.zm.util.Noise;
 
 import java.awt.Cursor;

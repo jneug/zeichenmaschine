@@ -2,7 +2,7 @@ package schule.ngb.zm.layers;
 
 import schule.ngb.zm.Layer;
 import schule.ngb.zm.Options;
-import schule.ngb.zm.util.ImageLoader;
+import schule.ngb.zm.util.io.ImageLoader;
 
 import java.awt.*;
 import java.awt.geom.*;

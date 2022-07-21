@@ -4,7 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 
 import schule.ngb.zm.Layer;
-import schule.ngb.zm.util.ImageLoader;
+import schule.ngb.zm.util.io.ImageLoader;
 
 public class ImageLayer extends Layer {
 

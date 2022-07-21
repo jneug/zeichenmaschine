@@ -1,12 +1,11 @@
-package schule.ngb.zm.util;
+package schule.ngb.zm.util.io;
 
 import schule.ngb.zm.Zeichenmaschine;
+import schule.ngb.zm.util.Log;
+import schule.ngb.zm.util.Validator;
 
 import java.io.*;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
-import java.util.stream.StreamSupport;
 
 /**
  * Helferklasse, um {@link InputStream}s für Resourcen zu erhalten.
