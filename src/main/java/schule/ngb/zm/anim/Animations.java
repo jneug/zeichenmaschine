@@ -15,6 +15,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.*;
 
+@SuppressWarnings( "unchecked" )
 public class Animations {
 
 	public static final <T> Future<T> animateProperty( String propName, T target, double to, int runtime, DoubleUnaryOperator easing ) {
@@ -148,7 +149,9 @@ public class Animations {
 	public static final <T> Future<T> animate( T target, int runtime, DoubleUnaryOperator easing, DoubleConsumer stepper ) {
 		return TaskRunner.run(new FramerateLimitedTask() {
 			double t = 0.0;
+
 			final long starttime = System.currentTimeMillis();
+
 			@Override
 			public void update( double delta ) {
 				// One animation step for t in [0,1]

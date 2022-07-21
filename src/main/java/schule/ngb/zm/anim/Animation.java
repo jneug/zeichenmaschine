@@ -121,7 +121,8 @@ public abstract class Animation<T> implements Updatable {
 	 * e = Constants.limit(e, 0, 1);
 	 * </code></pre>
 	 *
-	 * @param e
+	 * @param e Fortschritt der Animation nachdem die Easingfunktion angewandt
+	 * 	wurde.
 	 */
 	public abstract void interpolate( double e );
 
