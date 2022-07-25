@@ -1,5 +1,7 @@
 package schule.ngb.zm;
 
+import schule.ngb.zm.layers.DrawableLayer;
+
 import java.awt.Graphics2D;
 import java.util.Collections;
 import java.util.Iterator;
@@ -13,7 +15,7 @@ public class Spielemaschine extends Zeichenmaschine {
 
 	private LinkedList<Updatable> updatables;
 
-	private GraphicsLayer mainLayer;
+	private GameLayer mainLayer;
 
 	public Spielemaschine( String title ) {
 		this(DEFAULT_WIDTH, DEFAULT_HEIGHT, title);
@@ -26,7 +28,7 @@ public class Spielemaschine extends Zeichenmaschine {
 		drawables = new LinkedList<>();
 		updatables = new LinkedList<>();
 
-		mainLayer = new GraphicsLayer();
+		mainLayer = new GameLayer();
 		canvas.addLayer(mainLayer);
 	}
 
@@ -83,7 +85,7 @@ public class Spielemaschine extends Zeichenmaschine {
 	@Override
 	public final void update( double delta ) {
 		synchronized( updatables ) {
-			List<Updatable> it = Collections.unmodifiableList(updatables);
+			List<Updatable> it = List.copyOf(updatables);
 			for( Updatable u: it ) {
 				if( u.isActive() ) {
 					u.update(delta);
@@ -96,21 +98,25 @@ public class Spielemaschine extends Zeichenmaschine {
 
 	@Override
 	public final void draw() {
-		mainLayer.clear();
-		synchronized( drawables ) {
-			List<Drawable> it = Collections.unmodifiableList(drawables);
-			for( Drawable d: it ) {
-				if( d.isVisible() ) {
-					d.draw(mainLayer.getGraphics());
-				}
-			}
-		}
+
 	}
 
-	static class GraphicsLayer extends Layer {
+	private class GameLayer extends Layer {
 
 		public Graphics2D getGraphics() {
 			return drawing;
+		}
+
+		@Override
+		public void draw( Graphics2D pGraphics ) {
+			clear();
+			List<Drawable> it = List.copyOf(drawables);
+			for( Drawable d: it ) {
+				if( d.isVisible() ) {
+					d.draw(drawing);
+				}
+			}
+			super.draw(pGraphics);
 		}
 
 	}

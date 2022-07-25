@@ -19,8 +19,8 @@ public class AnimationFacade<S> extends Animation<S> {
 	}
 
 	@Override
-	public void interpolate( double e ) {
-		anim.interpolate(e);
+	public void animate( double e ) {
+		anim.animate(e);
 	}
 
 	@Override

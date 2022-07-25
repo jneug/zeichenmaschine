@@ -15,6 +15,8 @@ public class Rectangle extends Shape {
 		this.width = width;
 		this.height = height;
 		this.anchor = Options.Direction.NORTHWEST;
+
+		//this.cacheEnabled = getClass().equals(Rectangle.class);
 	}
 
 	public Rectangle( Rectangle pRechteck ) {
@@ -64,12 +66,10 @@ public class Rectangle extends Shape {
 
 	public void setWidth( double width ) {
 		this.width = width;
-		invalidate();
 	}
 
 	public void setHeight( double height ) {
 		this.height = height;
-		invalidate();
 	}
 
 	@Override
@@ -92,7 +92,6 @@ public class Rectangle extends Shape {
 		super.scale(factor);
 		width *= factor;
 		height *= factor;
-		invalidate();
 	}
 
 	@Override

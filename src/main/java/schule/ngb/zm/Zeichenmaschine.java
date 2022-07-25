@@ -316,17 +316,20 @@ public class Zeichenmaschine extends Constants {
 			public void windowClosing( WindowEvent e ) {
 				if( running ) {
 					running = false;
-					teardown();
-					cleanup();
+					mainThread.interrupt();
+					//teardown();
+					//cleanup();
 				}
 				// Give the app a minimum amount of time to shut down
 				// then kill it.
-				try {
-					Thread.sleep(5);
-				} catch( InterruptedException ex ) {
-				} finally {
-					quit(true);
+				while( state != Options.AppState.TERMINATED ) {
+					Thread.yield();
+					if( Thread.interrupted() ) {
+						break;
+					}
 				}
+				// Quit
+				quit(true);
 			}
 		});
 
@@ -856,7 +859,7 @@ public class Zeichenmaschine extends Constants {
 
 			updateState = Options.AppState.DELAYED;
 			Thread.sleep(ms - sub, (int) (timer % 1000000L));
-		} catch( InterruptedException ex ) {
+		} catch( InterruptedException ignored ) {
 			// Nothing
 		} finally {
 			updateState = oldState;
@@ -1058,10 +1061,12 @@ public class Zeichenmaschine extends Constants {
 	}
 
 	/*
-	 * Mouse handling
+	 * Input handling
 	 */
 	private void enqueueEvent( InputEvent evt ) {
-		eventQueue.add(evt);
+		if( updateState != Options.AppState.DELAYED ) {
+			eventQueue.add(evt);
+		}
 
 		if( isPaused() || isStopped() ) {
 			dispatchEvents();
@@ -1069,7 +1074,7 @@ public class Zeichenmaschine extends Constants {
 	}
 
 	private void dispatchEvents() {
-		synchronized( eventQueue ) {
+		//synchronized( eventQueue ) {
 			while( !eventQueue.isEmpty() ) {
 				InputEvent evt = eventQueue.poll();
 
@@ -1090,7 +1095,7 @@ public class Zeichenmaschine extends Constants {
 						break;
 				}
 			}
-		}
+		//}
 	}
 
 	private void handleKeyEvent( KeyEvent evt ) {
@@ -1329,10 +1334,11 @@ public class Zeichenmaschine extends Constants {
 								// Call to draw()
 								updateState = Options.AppState.DRAWING;
 								Zeichenmaschine.this.draw();
-								updateState = Options.AppState.IDLE;
+								updateState = Options.AppState.DISPATCHING;
 								// Send latest input events after finishing draw
 								// since these may also block
 								dispatchEvents();
+								updateState = Options.AppState.IDLE;
 							}
 						});
 					}
@@ -1341,6 +1347,11 @@ public class Zeichenmaschine extends Constants {
 					while( updateThreadExecutor.isRunning()
 						&& !updateThreadExecutor.isWaiting() ) {
 						Thread.yield();
+
+						if( Thread.interrupted() ) {
+							running = false;
+							break;
+						}
 					}
 
 					// Display the current buffer content

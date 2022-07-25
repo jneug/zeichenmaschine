@@ -27,7 +27,7 @@ public class MorphAnimation extends Animation<Shape> {
 	}
 
 	@Override
-	public void interpolate( double e ) {
+	public void animate( double e ) {
 		object.setX(Constants.interpolate(original.getX(), target.getX(), e));
 		object.setY(Constants.interpolate(original.getY(), target.getY(), e));
 		object.setFillColor(Color.interpolate(original.getFillColor(), target.getFillColor(), e));

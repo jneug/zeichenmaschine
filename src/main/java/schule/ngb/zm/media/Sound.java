@@ -1,8 +1,8 @@
 package schule.ngb.zm.media;
 
 import schule.ngb.zm.util.Log;
-import schule.ngb.zm.util.io.ResourceStreamProvider;
 import schule.ngb.zm.util.Validator;
+import schule.ngb.zm.util.io.ResourceStreamProvider;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
@@ -125,7 +125,7 @@ public class Sound implements Audio {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void stop() {
+	public synchronized void stop() {
 		looping = false;
 		if( audioClip.isRunning() ) {
 			audioClip.stop();
@@ -137,7 +137,7 @@ public class Sound implements Audio {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void play() {
+	public synchronized void play() {
 		if( this.openClip() ) {
 			audioClip.start();
 			playing = true;
@@ -176,7 +176,7 @@ public class Sound implements Audio {
 	 * allerdings wird der aufrufende Thread nicht blockiert und
 	 * {@link #dispose()} automatisch am Ende aufgerufen.
 	 */
-	public void playOnce() {
+	public synchronized void playOnce() {
 		disposeAfterPlay = true;
 		play();
 	}
@@ -200,16 +200,17 @@ public class Sound implements Audio {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void loop() {
+	public synchronized void loop() {
 		loop(Clip.LOOP_CONTINUOUSLY);
 	}
 
 	/**
-	 * Wiederholt den Sound die angegebene Anzahl an Wiederholungen ab und stoppt
-	 * die Wiedergabe dann.
+	 * Wiederholt den Sound die angegebene Anzahl an Wiederholungen ab und
+	 * stoppt die Wiedergabe dann.
+	 *
 	 * @param count Anzahl der Wiederholungen.
 	 */
-	public void loop( int count ) {
+	public synchronized void loop( int count ) {
 		if( count > 0 ) {
 			int loopCount = count;
 			if( loopCount != Clip.LOOP_CONTINUOUSLY ) {
@@ -231,7 +232,7 @@ public class Sound implements Audio {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void dispose() {
+	public synchronized void dispose() {
 		if( audioClip != null ) {
 			if( audioClip.isRunning() ) {
 				audioClip.stop();

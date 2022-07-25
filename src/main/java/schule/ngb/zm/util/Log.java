@@ -77,7 +77,7 @@ public final class Log {
 	 */
 	public static void enableGlobalLevel( Level level ) {
 		int lvl = Validator.requireNotNull(level).intValue();
-		ensureRootLoggerIntialized();
+		ensureRootLoggerInitialized();
 
 		// Decrease level of root level ConsoleHandlers for output
 		Logger rootLogger = Logger.getLogger("");
@@ -116,22 +116,24 @@ public final class Log {
 	}
 
 	public static Log getLogger( Class<?> clazz ) {
-		ensureRootLoggerIntialized();
+		ensureRootLoggerInitialized();
 		return new Log(clazz);
 	}
 
-	private static void ensureRootLoggerIntialized() {
+	private static void ensureRootLoggerInitialized() {
 		if( LOGGING_INIT ) {
 			return;
 		}
 
+		if( System.getProperty("java.util.logging.SimpleFormatter.format") == null ) {
+			System.setProperty("java.util.logging.SimpleFormatter.format", DEFAULT_LOG_FORMAT);
+		}
 		Logger rootLogger = Logger.getLogger(ROOT_LOGGER);
 		rootLogger.setLevel(Level.INFO);
 
 		if( System.getProperty("java.util.logging.SimpleFormatter.format") == null
 			&& LogManager.getLogManager().getProperty("java.util.logging.SimpleFormatter.format") == null ) {
-			System.setProperty("java.util.logging.SimpleFormatter.format", DEFAULT_LOG_FORMAT);
-			//rootLogger.addHandler(new StreamHandler(System.err, new LogFormatter()));
+			// System.setProperty("java.util.logging.SimpleFormatter.format", DEFAULT_LOG_FORMAT);
 			rootLogger.addHandler(new StreamHandler(System.err, new LogFormatter()) {
 				@Override
 				public synchronized void publish(final LogRecord record) {
@@ -139,7 +141,7 @@ public final class Log {
 					flush();
 				}
 			});
-			rootLogger.setUseParentHandlers(false);
+			// rootLogger.setUseParentHandlers(false);
 		}
 		if( rootLogger.getUseParentHandlers() ) {
 			// This logger was not configured somewhere else

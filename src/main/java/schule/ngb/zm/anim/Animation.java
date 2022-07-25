@@ -2,15 +2,16 @@ package schule.ngb.zm.anim;
 
 import schule.ngb.zm.Constants;
 import schule.ngb.zm.Updatable;
+import schule.ngb.zm.util.Validator;
 import schule.ngb.zm.util.events.EventDispatcher;
 
 import java.util.function.DoubleUnaryOperator;
 
-public abstract class Animation<T> implements Updatable {
+public abstract class Animation<T> extends Constants implements Updatable {
 
 	protected int runtime;
 
-	protected int elapsed_time = 0;
+	protected int elapsedTime = 0;
 
 	protected boolean running = false, finished = false;
 
@@ -23,7 +24,7 @@ public abstract class Animation<T> implements Updatable {
 
 	public Animation( DoubleUnaryOperator easing ) {
 		this.runtime = Constants.DEFAULT_ANIM_RUNTIME;
-		this.easing = easing;
+		this.easing = Validator.requireNotNull(easing);
 	}
 
 	public Animation( int runtime ) {
@@ -33,7 +34,7 @@ public abstract class Animation<T> implements Updatable {
 
 	public Animation( int runtime, DoubleUnaryOperator easing ) {
 		this.runtime = runtime;
-		this.easing = easing;
+		this.easing = Validator.requireNotNull(easing);
 	}
 
 	public int getRuntime() {
@@ -56,17 +57,17 @@ public abstract class Animation<T> implements Updatable {
 
 	public final void start() {
 		this.initialize();
-		elapsed_time = 0;
+		elapsedTime = 0;
 		running = true;
 		finished = false;
-		interpolate(easing.applyAsDouble(0.0));
+		animate(easing.applyAsDouble(0.0));
 		initializeEventDispatcher().dispatchEvent("start", this);
 	}
 
 	public final void stop() {
 		running = false;
 		// Make sure the last animation frame was interpolated correctly
-		interpolate(easing.applyAsDouble((double) elapsed_time / (double) runtime));
+		animate(easing.applyAsDouble((double) elapsedTime / (double) runtime));
 		this.finish();
 		finished = true;
 		initializeEventDispatcher().dispatchEvent("stop", this);
@@ -82,11 +83,7 @@ public abstract class Animation<T> implements Updatable {
 
 	public final void await() {
 		while( !finished ) {
-			try {
-				Thread.sleep(1);
-			} catch( InterruptedException ex ) {
-				// Keep waiting
-			}
+			Thread.yield();
 		}
 	}
 
@@ -97,16 +94,16 @@ public abstract class Animation<T> implements Updatable {
 
 	@Override
 	public void update( double delta ) {
-		elapsed_time += (int) (delta * 1000);
-		if( elapsed_time > runtime )
-			elapsed_time = runtime;
+		elapsedTime += (int) (delta * 1000);
+		if( elapsedTime > runtime )
+			elapsedTime = runtime;
 
-		double t = (double) elapsed_time / (double) runtime;
+		double t = (double) elapsedTime / (double) runtime;
 		if( t >= 1.0 ) {
 			running = false;
 			stop();
 		} else {
-			interpolate(easing.applyAsDouble(t));
+			animate(easing.applyAsDouble(t));
 		}
 	}
 
@@ -124,7 +121,7 @@ public abstract class Animation<T> implements Updatable {
 	 * @param e Fortschritt der Animation nachdem die Easingfunktion angewandt
 	 * 	wurde.
 	 */
-	public abstract void interpolate( double e );
+	public abstract void animate( double e );
 
 	EventDispatcher<Animation, AnimationListener> eventDispatcher;
 

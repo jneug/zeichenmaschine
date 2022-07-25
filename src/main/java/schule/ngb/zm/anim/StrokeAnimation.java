@@ -25,7 +25,7 @@ public class StrokeAnimation extends Animation<Shape> {
 	}
 
 	@Override
-	public void interpolate( double e ) {
+	public void animate( double e ) {
 		object.setStrokeColor(Color.interpolate(oFill, tFill, e));
 	}
 

@@ -31,7 +31,7 @@ public class MoveAnimation extends Animation<Shape> {
 	}
 
 	@Override
-	public void interpolate( double e ) {
+	public void animate( double e ) {
 		object.setX(Constants.interpolate(oX, tX, e));
 		object.setY(Constants.interpolate(oY, tY, e));
 	}

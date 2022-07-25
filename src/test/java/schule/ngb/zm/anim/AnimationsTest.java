@@ -61,7 +61,7 @@ class AnimationsTest {
 
 	private void _animateMove( Shape s, int runtime, DoubleUnaryOperator easing ) {
 		s.moveTo(0, 0);
-		Future<Shape> future = Animations.animate(
+		Future<Shape> future = Animations.play(
 			s, runtime,
 			easing,
 			( e ) -> Constants.interpolate(0, zm.getWidth(), e),
@@ -90,25 +90,11 @@ class AnimationsTest {
 		final int midY = (int) (zm.getHeight() * .5);
 		final int radius = (int) (zm.getWidth() * .25);
 
-		Animator<Shape, Double> ani = new Animator<Shape, Double>() {
-			@Override
-			public double easing( double t ) {
-				return easing.applyAsDouble(t);
-			}
-
-			@Override
-			public Double interpolator( double e ) {
-				return Constants.interpolate(0, 360, e);
-			}
-
-			@Override
-			public void applicator( Shape s, Double angle ) {
-				double rad = Math.toRadians(angle);
+		Future<Shape> future = Animations.play(
+			s, runtime, easing, (e) -> {
+				double rad = Math.toRadians(Constants.interpolate(0, 360, e));
 				s.moveTo(midX + radius * Math.cos(rad), midY + radius * Math.sin(rad));
-			}
-		};
-
-		Future<Shape> future = Animations.animate(s, runtime, ani);
+			});
 		assertNotNull(future);
 		try {
 			assertEquals(s, future.get());
@@ -147,7 +133,7 @@ class AnimationsTest {
 	private void _animateRotate( Shape s, int runtime, DoubleUnaryOperator easing ) {
 		s.moveTo(zm.getWidth() * .5, zm.getHeight() * .5);
 		s.rotateTo(0);
-		Future<Shape> future = Animations.animate(
+		Future<Shape> future = Animations.play(
 			s, runtime,
 			easing,
 			( e ) -> s.rotateTo(Constants.interpolate(0, 720, e))
@@ -179,7 +165,7 @@ class AnimationsTest {
 	private void _animateColor( Shape s, Color to, int runtime, DoubleUnaryOperator easing ) {
 		s.moveTo(zm.getWidth() * .5, zm.getHeight() * .5);
 		final Color from = s.getFillColor();
-		Future<Shape> future = Animations.animate(
+		Future<Shape> future = Animations.play(
 			s, runtime,
 			easing,
 			( e ) -> Color.interpolate(from, to, e),
