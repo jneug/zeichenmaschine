@@ -3,7 +3,6 @@ package schule.ngb.zm.anim;
 import schule.ngb.zm.Color;
 import schule.ngb.zm.Constants;
 import schule.ngb.zm.Vector;
-import schule.ngb.zm.util.tasks.FrameSynchronizedTask;
 import schule.ngb.zm.util.tasks.FramerateLimitedTask;
 import schule.ngb.zm.util.tasks.TaskRunner;
 import schule.ngb.zm.util.Log;
@@ -125,28 +124,28 @@ public class Animations {
 	public static final <T> Future<T> animateProperty( T target, final double from, final double to, int runtime, DoubleUnaryOperator easing, DoubleConsumer propSetter ) {
 		Validator.requireNotNull(target);
 		Validator.requireNotNull(propSetter);
-		return animate(target, runtime, easing, ( e ) -> propSetter.accept(Constants.interpolate(from, to, e)));
+		return play(target, runtime, easing, ( e ) -> propSetter.accept(Constants.interpolate(from, to, e)));
 	}
 
 	public static final <T> Future<T> animateProperty( T target, final Color from, final Color to, int runtime, DoubleUnaryOperator easing, Consumer<Color> propSetter ) {
-		return animate(target, runtime, easing, ( e ) -> propSetter.accept(Color.interpolate(from, to, e)));
+		return play(target, runtime, easing, ( e ) -> propSetter.accept(Color.interpolate(from, to, e)));
 	}
 
 
 	public static final <T> Future<T> animateProperty( T target, final Vector from, final Vector to, int runtime, DoubleUnaryOperator easing, Consumer<Vector> propSetter ) {
-		return animate(target, runtime, easing, ( e ) -> propSetter.accept(Vector.interpolate(from, to, e)));
+		return play(target, runtime, easing, ( e ) -> propSetter.accept(Vector.interpolate(from, to, e)));
 	}
 
 	public static final <T, R> Future<T> animateProperty( T target, R from, R to, int runtime, DoubleUnaryOperator easing, DoubleFunction<R> interpolator, Consumer<R> propSetter ) {
-		return animate(target, runtime, easing, interpolator, ( t, r ) -> propSetter.accept(r));
+		return play(target, runtime, easing, interpolator, ( t, r ) -> propSetter.accept(r));
 	}
 
 
-	public static final <T, R> Future<T> animate( T target, int runtime, DoubleUnaryOperator easing, DoubleFunction<R> interpolator, BiConsumer<T, R> applicator ) {
-		return animate(target, runtime, easing, ( e ) -> applicator.accept(target, interpolator.apply(e)));
+	public static final <T, R> Future<T> play( T target, int runtime, DoubleUnaryOperator easing, DoubleFunction<R> interpolator, BiConsumer<T, R> applicator ) {
+		return play(target, runtime, easing, ( e ) -> applicator.accept(target, interpolator.apply(e)));
 	}
 
-	public static final <T> Future<T> animate( T target, int runtime, DoubleUnaryOperator easing, DoubleConsumer stepper ) {
+	public static final <T> Future<T> play( T target, int runtime, DoubleUnaryOperator easing, DoubleConsumer stepper ) {
 		return TaskRunner.run(new FramerateLimitedTask() {
 			double t = 0.0;
 
@@ -167,8 +166,8 @@ public class Animations {
 		}, target);
 	}
 
-	public static final <T> T animateAndWait( T target, int runtime, DoubleUnaryOperator easing, DoubleConsumer stepper ) {
-		Future<T> future = animate(target, runtime, easing, stepper);
+	public static final <T> T playAndWait( T target, int runtime, DoubleUnaryOperator easing, DoubleConsumer stepper ) {
+		Future<T> future = play(target, runtime, easing, stepper);
 		while( !future.isDone() ) {
 			try {
 				return future.get();
@@ -191,7 +190,8 @@ public class Animations {
 		);
 	}*/
 
-	public static <T> Future<Animation<T>> animate( Animation<T> animation ) {
+	public static <T> Future<Animation<T>> play( Animation<T> animation ) {
+		// TODO: (ngb) Don't start when running
 		return TaskRunner.run(new FramerateLimitedTask() {
 			@Override
 			protected void initialize() {
@@ -206,13 +206,13 @@ public class Animations {
 		}, animation);
 	}
 
-	public static <T> Animation<T> animateAndWait( Animation<T> animation ) {
-		Future<Animation<T>> future = animate(animation);
+	public static <T> Animation<T> playAndWait( Animation<T> animation ) {
+		Future<Animation<T>> future = play(animation);
 		animation.await();
 		return animation;
 	}
 
-	public static <T> Future<Animation<T>> animate( Animation<T> animation, DoubleUnaryOperator easing ) {
+	public static <T> Future<Animation<T>> play( Animation<T> animation, DoubleUnaryOperator easing ) {
 		final AnimationFacade<T> facade = new AnimationFacade<>(animation, animation.getRuntime(), easing);
 		return TaskRunner.run(new FramerateLimitedTask() {
 			@Override
