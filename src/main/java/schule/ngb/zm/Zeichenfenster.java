@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 public class Zeichenfenster extends JFrame {
 
@@ -52,7 +51,7 @@ public class Zeichenfenster extends JFrame {
 	 */
 	private GraphicsDevice displayDevice;
 
-	private int width, height;
+	private int canvasWidth, canvasHeight;
 
 	/**
 	 * Höhe und Breite der Zeichenmaschine, bevor sie mit
@@ -114,15 +113,14 @@ public class Zeichenfenster extends JFrame {
 				this.setIconImages(icons);
 			}
 		} catch( IllegalArgumentException | IOException e ) {
-			LOG.warn(e, "Could not load image icons: %s", e.getMessage());
+			LOG.warn("Could not load image icons: %s", e.getMessage());
 		} catch( SecurityException | UnsupportedOperationException macex ) {
 			// Dock Icon in macOS konnte nicht gesetzt werden :(
-			LOG.warn(macex, "Could not set dock icon: %s", macex.getMessage());
+			LOG.warn("Could not set dock icon: %s", macex.getMessage());
 		}
 
-		java.awt.Rectangle bounds = getScreenBounds();
-		this.width = bounds.width;
-		this.height = bounds.height;
+		this.canvasWidth = width;
+		this.canvasHeight = height;
 
 		// Fenster zusammenbauen, auf dem Bildschirm zentrieren ...
 		this.pack();
@@ -134,8 +132,8 @@ public class Zeichenfenster extends JFrame {
 		this.canvas = canvas;
 		this.add(canvas, 0);
 
-		this.width = canvas.getWidth();
-		this.height = canvas.getHeight();
+		this.canvasWidth = canvas.getWidth();
+		this.canvasHeight = canvas.getHeight();
 		this.pack();
 	}
 
@@ -145,7 +143,7 @@ public class Zeichenfenster extends JFrame {
 
 	public java.awt.Rectangle getCanvasBounds() {
 		java.awt.Insets insets = getInsets();
-		return new java.awt.Rectangle(insets.top, insets.left, width, height);
+		return new java.awt.Rectangle(insets.top, insets.left, canvasWidth, canvasHeight);
 	}
 
 	/**
@@ -153,9 +151,10 @@ public class Zeichenfenster extends JFrame {
 	 */
 	public final void centerFrame() {
 		java.awt.Rectangle bounds = getScreenBounds();
+		java.awt.Insets insets = getInsets();
 		this.setLocation(
-			(int) (bounds.x + (bounds.width - this.getWidth()) / 2.0),
-			(int) (bounds.y + (bounds.height - this.getHeight()) / 2.0)
+			(int) (bounds.x + (bounds.width - canvasWidth) / 2.0 - insets.left),
+			(int) (bounds.y + (bounds.height - canvasHeight) / 2.0- insets.top)
 		);
 	}
 
@@ -169,18 +168,18 @@ public class Zeichenfenster extends JFrame {
 			initialHeight = Math.min(newHeight, bounds.height - insets.top - insets.bottom);
 			setFullscreen(false);
 		} else {
-			width = Math.min(newWidth, bounds.width - insets.left - insets.right);
-			height = Math.min(newHeight, bounds.height - insets.top - insets.bottom);
+			canvasWidth = Math.min(newWidth, bounds.width - insets.left - insets.right);
+			canvasHeight = Math.min(newHeight, bounds.height - insets.top - insets.bottom);
 
 			if( canvas != null ) {
-				canvas.setSize(width, height);
+				canvas.setSize(canvasWidth, canvasHeight);
 			}
 
-			// this.pack();
-			super.setSize(
+			/*super.setSize(
 				width + insets.left + insets.right,
 				height + insets.top + insets.bottom
-			);
+			);*/
+			super.pack();
 		}
 	}
 
