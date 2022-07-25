@@ -5,7 +5,7 @@ import schule.ngb.zm.layers.ColorLayer;
 import schule.ngb.zm.layers.DrawingLayer;
 import schule.ngb.zm.layers.ImageLayer;
 import schule.ngb.zm.layers.ShapesLayer;
-import schule.ngb.zm.util.ImageLoader;
+import schule.ngb.zm.util.io.ImageLoader;
 import schule.ngb.zm.util.Log;
 import schule.ngb.zm.util.tasks.TaskRunner;
 

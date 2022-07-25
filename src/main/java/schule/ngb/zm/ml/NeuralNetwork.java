@@ -1,7 +1,7 @@
 package schule.ngb.zm.ml;
 
 import schule.ngb.zm.util.Log;
-import schule.ngb.zm.util.ResourceStreamProvider;
+import schule.ngb.zm.util.io.ResourceStreamProvider;
 
 import java.io.*;
 import java.util.LinkedList;

@@ -1,4 +1,7 @@
-package schule.ngb.zm.util;
+package schule.ngb.zm.util.io;
+
+import schule.ngb.zm.util.Log;
+import schule.ngb.zm.util.Validator;
 
 import javax.imageio.ImageIO;
 import java.awt.Color;
