@@ -42,7 +42,8 @@ public final class Options {
 		STOPPED,
 		TERMINATED,
 		IDLE,
-		DELAYED
+		DELAYED,
+		DISPATCHING
 	}
 
 	/**
