@@ -116,6 +116,14 @@ public class ShapesLayer extends Layer {
 		anim.start();
 	}
 
+
+	public void play( Animation<? extends Shape>... anims ) {
+		for( Animation<? extends Shape> anim: anims ) {
+			this.animations.add(anim);
+			anim.start();
+		}
+	}
+
 	public <S extends Shape> void play( Animation<S> anim, int runtime ) {
 		play(anim, runtime, Easing.DEFAULT_EASING);
 	}
