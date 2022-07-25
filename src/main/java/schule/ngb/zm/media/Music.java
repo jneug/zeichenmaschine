@@ -122,7 +122,7 @@ public class Music implements Audio {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void play() {
+	public synchronized void play() {
 		if( openLine() ) {
 			TaskRunner.run(new Runnable() {
 				@Override
@@ -147,7 +147,7 @@ public class Music implements Audio {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void loop() {
+	public synchronized void loop() {
 		looping = true;
 		play();
 	}
@@ -156,7 +156,7 @@ public class Music implements Audio {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void stop() {
+	public synchronized void stop() {
 		playing = false;
 		looping = false;
 		dispose();
@@ -166,7 +166,7 @@ public class Music implements Audio {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void dispose() {
+	public synchronized void dispose() {
 		if( audioLine != null ) {
 			if( audioLine.isRunning() ) {
 				playing = false;
@@ -175,7 +175,6 @@ public class Music implements Audio {
 			if( audioLine.isOpen() ) {
 				audioLine.drain();
 				audioLine.close();
-
 			}
 		}
 		try {
@@ -189,7 +188,7 @@ public class Music implements Audio {
 		audioStream = null;
 	}
 
-	private void stream() {
+	private synchronized void stream() {
 		audioLine.start();
 		playing = true;
 		if( eventDispatcher != null ) {
