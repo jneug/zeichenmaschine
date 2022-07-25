@@ -26,7 +26,7 @@ public class FillAnimation extends Animation<Shape> {
 	}
 
 	@Override
-	public void interpolate( double e ) {
+	public void animate( double e ) {
 		object.setFillColor(Color.interpolate(oFill, tFill, e));
 	}
 

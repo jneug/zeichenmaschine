@@ -25,7 +25,7 @@ public class RotateAnimation extends Animation<Shape> {
 	}
 
 	@Override
-	public void interpolate( double e ) {
+	public void animate( double e ) {
 		object.rotateTo(Constants.interpolate(oA, tA, e));
 	}
 

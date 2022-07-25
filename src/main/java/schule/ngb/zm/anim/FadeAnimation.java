@@ -36,7 +36,7 @@ public class FadeAnimation extends Animation<Shape> {
 	}
 
 	@Override
-	public void interpolate( double e ) {
+	public void animate( double e ) {
 		object.setFillColor(new Color(fill, (int) Constants.interpolate(fillAlpha, tAlpha, e)));
 		object.setStrokeColor(new Color(stroke, (int) Constants.interpolate(strokeAlpha, tAlpha, e)));
 	}
