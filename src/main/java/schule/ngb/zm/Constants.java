@@ -410,6 +410,7 @@ public class Constants {
 	 * wirken sich auf die aktuelle Zeichenmaschine aus und sollten nur von der
 	 * Zeichenmaschine selbst vorgenommen werden.
 	 */
+	// TODO: (ngb) volatile ?
 
 	/**
 	 * Aktuell dargestellte Bilder pro Sekunde.
