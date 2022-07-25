@@ -67,11 +67,6 @@ public abstract class Shape extends FilledShape {
 	protected Options.Direction anchor = Options.Direction.CENTER;
 
 	/**
-	 * Zwischenspeicher für die AWT-Shape zu dieser Form.
-	 */
-	protected java.awt.Shape awtShape = null;
-
-	/**
 	 * Setzt die x- und y-Koordinate der Form auf 0.
 	 */
 	public Shape() {
@@ -407,13 +402,6 @@ public abstract class Shape extends FilledShape {
 	public abstract java.awt.Shape getShape();
 
 	/**
-	 * Interne Methode, um den Zwischenspeicher der Java-AWT Shape zu löschen.
-	 */
-	protected void invalidate() {
-		awtShape = null;
-	}
-
-	/**
 	 * Gibt die Begrenzungen der Form zurück.
 	 * <p>
 	 * Ein {@code Bounds}-Objekt beschreibt eine "<a
@@ -566,12 +554,8 @@ public abstract class Shape extends FilledShape {
 			return;
 		}
 
-		if( awtShape == null ) {
-			awtShape = getShape();
-		}
-
-		if( awtShape != null ) {
-			java.awt.Shape shape = awtShape;
+		java.awt.Shape shape = getShape();
+		if( shape != null ) {
 			if( transform != null ) {
 				shape = transform.createTransformedShape(shape);
 			}
