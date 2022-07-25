@@ -1,6 +1,7 @@
 package schule.ngb.zm;
 
 import schule.ngb.zm.layers.ColorLayer;
+import schule.ngb.zm.util.Log;
 
 import java.awt.Canvas;
 import java.awt.Graphics;
@@ -282,5 +283,7 @@ public class Zeichenleinwand extends Canvas {
 			}
 		}
 	}
+
+	private static final Log LOG = Log.getLogger(Zeichenleinwand.class);
 
 }
