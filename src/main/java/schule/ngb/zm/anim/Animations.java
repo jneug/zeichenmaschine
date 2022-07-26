@@ -14,7 +14,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.function.*;
 
-@SuppressWarnings( "unchecked" )
+@SuppressWarnings( "unused" )
 public class Animations {
 
 	public static final <T> Future<T> animateProperty( String propName, T target, double to, int runtime, DoubleUnaryOperator easing ) {
@@ -92,27 +92,28 @@ public class Animations {
 		});
 	}
 
-	private static final <T, R> R callGetter( T target, String propName, Class<R> propType ) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+	@SuppressWarnings( "unchecked" )
+	private static <T, R> R callGetter( T target, String propName, Class<R> propType ) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 		String getterName = makeMethodName("get", propName);
 		Method getter = target.getClass().getMethod(getterName);
-		if( getter != null && getter.getReturnType().equals(propType) ) {
+		if( getter.getReturnType().equals(propType) ) {
 			return (R) getter.invoke(target);
 		} else {
 			throw new NoSuchMethodException(String.format("No getter for property <%s> found.", propName));
 		}
 	}
 
-	private static final <T, R> Method findSetter( T target, String propName, Class<R> propType ) throws NoSuchMethodException {
+	private static <T, R> Method findSetter( T target, String propName, Class<R> propType ) throws NoSuchMethodException {
 		String setterName = makeMethodName("set", propName);
 		Method setter = target.getClass().getMethod(setterName, propType);
-		if( setter != null && setter.getReturnType().equals(void.class) && setter.getParameterCount() == 1 ) {
+		if( setter.getReturnType().equals(void.class) && setter.getParameterCount() == 1 ) {
 			return setter;
 		} else {
 			throw new NoSuchMethodException(String.format("No setter for property <%s> found.", propName));
 		}
 	}
 
-	private static final String makeMethodName( String prefix, String propName ) {
+	private static String makeMethodName( String prefix, String propName ) {
 		String firstChar = propName.substring(0, 1).toUpperCase();
 		String tail = "";
 		if( propName.length() > 1 ) {
