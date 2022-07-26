@@ -14,6 +14,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * Ein Zeichenfenster ist das Programmfenster für die Zeichenmaschine.
+ * <p>
+ * Das Zeichenfenster implementiert hilfreiche Funktionen, um ein
+ * Programmfenster mit einer Zeichenleinwand als zentrales Element zu erstellen.
+ * Ein Zeichenfenster kann auch ohne eine Zeichenmaschine verwendet werden, um
+ * eigene Programmabläufe zu implementieren.
+ */
 public class Zeichenfenster extends JFrame {
 
 	public static final void setLookAndFeel() {
@@ -46,24 +54,22 @@ public class Zeichenfenster extends JFrame {
 	}
 
 	/**
-	 * Das Anzeigefenster, auf dem die ZM gestartet wurde (muss nicht gleich
-	 * dem Aktuellen sein, wenn das Fenster verschoben wurde).
+	 * Das Anzeigefenster, auf dem die ZM gestartet wurde (muss nicht gleich dem
+	 * Aktuellen sein, wenn das Fenster verschoben wurde).
 	 */
 	private GraphicsDevice displayDevice;
 
-	private int canvasWidth, canvasHeight;
-
 	/**
-	 * Höhe und Breite der Zeichenmaschine, bevor sie mit
-	 * {@link #setFullscreen(boolean)} in den Vollbild-Modus versetzt wurde.
-	 * Wird verwendet, um die Fenstergröße wiederherzustellen, sobald der
-	 * Vollbild-Modus verlassen wird.
+	 * Bevorzugte Abmessungen der Zeichenleinwand. Für das Zeichenfenster hat
+	 * es Priorität die Leinwand auf dieser Größe zu halten. Gegebenenfalls unter
+	 * Missachtung anderer Größenvorgaben. Allerdings kann das Fenster keine
+	 * Garantie für die Größe der Leinwand übernehmen.
 	 */
-	private int initialWidth, initialHeight;
+	private int canvasPreferredWidth, canvasPreferredHeight;
 
 	/**
-	 * Speichert, ob die Zeichenmaschine mit {@link #setFullscreen(boolean)}
-	 * in den Vollbildmodus versetzt wurde.
+	 * Speichert, ob die Zeichenmaschine mit {@link #setFullscreen(boolean)} in
+	 * den Vollbildmodus versetzt wurde.
 	 */
 	private boolean fullscreen = false;
 
@@ -85,15 +91,32 @@ public class Zeichenfenster extends JFrame {
 	private Zeichenleinwand canvas;
 
 	public Zeichenfenster( int width, int height, String title ) {
-		this(width, height, title, getGraphicsDevice());
+		this(new Zeichenleinwand(width, height), title, getGraphicsDevice());
 	}
 
 	public Zeichenfenster( int width, int height, String title, GraphicsDevice displayDevice ) {
+		this(new Zeichenleinwand(width, height), title, displayDevice);
+	}
+
+	public Zeichenfenster( Zeichenleinwand canvas, String title ) {
+		this(canvas, title, getGraphicsDevice());
+	}
+
+	public Zeichenfenster( Zeichenleinwand canvas, String title, GraphicsDevice displayDevice ) {
 		super(Validator.requireNotNull(displayDevice).getDefaultConfiguration());
 		this.displayDevice = displayDevice;
 
+		Validator.requireNotNull(canvas, "Every Zeichenfenster needs a Zeichenleinwand, but got <null>.");
+
+		this.canvasPreferredWidth = canvas.getWidth();
+		this.canvasPreferredHeight = canvas.getHeight();
+		//this.add(canvas, BorderLayout.CENTER);
+		this.add(canvas);
+		this.canvas = canvas;
+
 		// Konfiguration des Frames
-		this.setTitle(title);
+		this.setTitle(title == null ? "Zeichenfenster " + Constants.APP_VERSION: title);
+		// Kann vom Aufrufenden überschrieben werden
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
 		// Das Icon des Fensters ändern
@@ -118,68 +141,51 @@ public class Zeichenfenster extends JFrame {
 			// Dock Icon in macOS konnte nicht gesetzt werden :(
 			LOG.warn("Could not set dock icon: %s", macex.getMessage());
 		}
-
-		this.canvasWidth = width;
-		this.canvasHeight = height;
-
-		// Fenster zusammenbauen, auf dem Bildschirm zentrieren ...
+		// Fenster zusammenbauen, auf dem Bildschirm positionieren ...
 		this.pack();
 		this.setResizable(false);
-		this.centerFrame();
+		this.setLocationByPlatform(true);
+		// this.centerFrame();
 	}
 
-	public void addCanvas( Zeichenleinwand canvas ) {
-		this.canvas = canvas;
-		this.add(canvas, 0);
-
-		this.canvasWidth = canvas.getWidth();
-		this.canvasHeight = canvas.getHeight();
-		this.pack();
+	public GraphicsDevice getDisplayDevice() {
+		return displayDevice;
 	}
 
-	public java.awt.Rectangle getScreenBounds() {
+	public Rectangle getScreenBounds() {
 		return displayDevice.getDefaultConfiguration().getBounds();
 	}
 
-	public java.awt.Rectangle getCanvasBounds() {
-		java.awt.Insets insets = getInsets();
-		return new java.awt.Rectangle(insets.top, insets.left, canvasWidth, canvasHeight);
+	public Zeichenleinwand getCanvas() {
+		return canvas;
 	}
 
+	public Rectangle getCanvasBounds() {
+		return canvas.getBounds();
+	}
 	/**
 	 * Zentriert das Zeichenfenster auf dem aktuellen Bildschirm.
 	 */
 	public final void centerFrame() {
-		java.awt.Rectangle bounds = getScreenBounds();
-		java.awt.Insets insets = getInsets();
+		java.awt.Rectangle screenBounds = getScreenBounds();
+		java.awt.Rectangle frameBounds = getBounds();
 		this.setLocation(
-			(int) (bounds.x + (bounds.width - canvasWidth) / 2.0 - insets.left),
-			(int) (bounds.y + (bounds.height - canvasHeight) / 2.0- insets.top)
+			(int) (screenBounds.x + (screenBounds.width - frameBounds.width) / 2.0),
+			(int) (screenBounds.y + (screenBounds.height - frameBounds.height) / 2.0)
 		);
 	}
 
-	@Override
-	public void setSize( int newWidth, int newHeight ) {
-		java.awt.Rectangle bounds = getScreenBounds();
-		java.awt.Insets insets = this.getInsets();
-
+	public void setCanvasSize( int newWidth, int newHeight ) {
+		// TODO: (ngb) Put constains on max/min frame/canvas size
 		if( fullscreen ) {
-			initialWidth = Math.min(newWidth, bounds.width - insets.left - insets.right);
-			initialHeight = Math.min(newHeight, bounds.height - insets.top - insets.bottom);
+			canvasPreferredWidth = newWidth;
+			canvasPreferredHeight = newHeight;
 			setFullscreen(false);
 		} else {
-			canvasWidth = Math.min(newWidth, bounds.width - insets.left - insets.right);
-			canvasHeight = Math.min(newHeight, bounds.height - insets.top - insets.bottom);
-
-			if( canvas != null ) {
-				canvas.setSize(canvasWidth, canvasHeight);
-			}
-
-			/*super.setSize(
-				width + insets.left + insets.right,
-				height + insets.top + insets.bottom
-			);*/
-			super.pack();
+			canvas.setSize(newWidth, newHeight);
+			canvasPreferredWidth = canvas.getWidth();
+			canvasPreferredHeight = canvas.getHeight();
+			this.pack();
 		}
 	}
 
@@ -200,16 +206,13 @@ public class Zeichenfenster extends JFrame {
 		// See https://docs.oracle.com/javase/tutorial/extra/fullscreen/index.html
 		if( displayDevice.isFullScreenSupported() ) {
 			if( pEnable && !fullscreen ) {
-				// Store width / height
-				initialWidth = getWidth();
-				initialHeight = getHeight();
-
 				// frame.setUndecorated(true);
 				this.setResizable(false); // Should be set anyway
 				displayDevice.setFullScreenWindow(this);
 
 				java.awt.Rectangle bounds = getScreenBounds();
-				this.setSize(bounds.width, bounds.height);
+				// TODO: (ngb) We need to switch layouts to allow the LayoutManger to maximize the canvas
+				canvas.setSize(bounds.width, bounds.height);
 				// Register ESC to exit fullscreen
 				canvas.addKeyListener(fullscreenExitListener);
 
@@ -219,7 +222,7 @@ public class Zeichenfenster extends JFrame {
 
 				canvas.removeKeyListener(fullscreenExitListener);
 				displayDevice.setFullScreenWindow(null);
-				this.setSize(initialWidth, initialHeight);
+				canvas.setSize(canvasPreferredWidth, canvasPreferredHeight);
 				this.pack();
 				// frame.setUndecorated(false);
 			}

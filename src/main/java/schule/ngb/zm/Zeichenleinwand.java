@@ -1,16 +1,16 @@
 package schule.ngb.zm;
 
 import schule.ngb.zm.layers.ColorLayer;
+import schule.ngb.zm.layers.ShapesLayer;
 import schule.ngb.zm.util.Log;
 
-import java.awt.Canvas;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Eine Leinwand ist die Hauptkomponente einer Zeichenmaschine. Sie besteht aus
@@ -37,8 +37,8 @@ public class Zeichenleinwand extends Canvas {
 	 */
 	public Zeichenleinwand( int width, int height ) {
 		super.setSize(width, height);
-		this.setPreferredSize(this.getSize());
-		this.setMinimumSize(this.getSize());
+		this.setPreferredSize(getSize());
+		this.setMinimumSize(getSize());
 		this.setBackground(Constants.DEFAULT_BACKGROUND.getJavaColor());
 
 		// Liste der Ebenen initialisieren und die Standardebenen einfügen
@@ -60,8 +60,8 @@ public class Zeichenleinwand extends Canvas {
 	@Override
 	public void setSize( int width, int height ) {
 		super.setSize(width, height);
-		this.setPreferredSize(this.getSize());
-		this.setMinimumSize(this.getSize());
+		this.setPreferredSize(getSize());
+		this.setMinimumSize(getSize());
 
 		synchronized( layers ) {
 			for( Layer layer : layers ) {

@@ -275,21 +275,21 @@ public class Zeichenmaschine extends Constants {
 	public Zeichenmaschine( int width, int height, String title, boolean run_once ) {
 		LOG.info("Starting " + APP_NAME + " " + APP_VERSION);
 
-		// Erstellen des Zeichenfensters
-		frame = createFrame(width, height, title);
-
-		// Wir kennen nun den Bildschirm und können die Breite / Höhe abrufen.
-		this.canvasWidth = width;
-		this.canvasHeight = height;
-		java.awt.Rectangle displayBounds = frame.getScreenBounds();
-		this.screenWidth = (int) displayBounds.getWidth();
-		this.screenHeight = (int) displayBounds.getHeight();
-
 		// Erstellen der Leinwand
 		canvas = new Zeichenleinwand(width, height);
-		frame.addCanvas(canvas);
 
-		// Die drei Standardebenen merken, für den einfachen Zugriff aus unterklassen.
+		// Erstellen des Zeichenfensters
+		frame = createFrame(canvas, title);
+
+		// Wir kennen nun den Bildschirm und können die Breite / Höhe abrufen.
+		java.awt.Rectangle canvasBounds = frame.getCanvasBounds();
+		this.canvasWidth = canvasBounds.width;
+		this.canvasHeight = canvasBounds.height;
+		java.awt.Rectangle displayBounds = frame.getScreenBounds();
+		this.screenWidth = displayBounds.width;
+		this.screenHeight = displayBounds.height;
+
+		// Die drei Standardebenen merken, für den einfachen Zugriff aus Unterklassen.
 		background = getBackgroundLayer();
 		drawing = getDrawingLayer();
 		shapes = getShapesLayer();
@@ -333,7 +333,7 @@ public class Zeichenmaschine extends Constants {
 			}
 		});
 
-		// Fesnter anzeigen
+		// Fenster anzeigen
 		frame.setVisible(true);
 
 		// Nach dem Anzeigen kann die Pufferstrategie erstellt werden.
@@ -357,14 +357,22 @@ public class Zeichenmaschine extends Constants {
 	 *
 	 * @param title
 	 */
-	// TODO: Implement in conjunction with Zeichenfenster
-	private final Zeichenfenster createFrame( int width, int height, String title ) {
-		// Setzen des Look&Feel
-		// TODO: (ngb) Ist das überhaupt notwendig oder eh schon der Default?
-		Zeichenfenster.setLookAndFeel();
-
-		Zeichenfenster frame = new Zeichenfenster(width, height, title);
-
+	private final Zeichenfenster createFrame( Zeichenleinwand c, String title ) {
+		while( frame == null ) {
+			try {
+				TaskRunner.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						Zeichenfenster.setLookAndFeel();
+						frame = new Zeichenfenster(canvas, title);
+					}
+				}).get();
+			} catch( InterruptedException e ) {
+			} catch( ExecutionException e ) {
+				LOG.error(e, "Error initializing application frame: %s", e.getMessage());
+				throw new RuntimeException(e);
+			}
+		}
 		return frame;
 	}
 
