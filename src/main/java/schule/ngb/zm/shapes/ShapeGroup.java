@@ -100,7 +100,7 @@ public class ShapeGroup extends Shape {
 	public <ShapeType extends Shape> List<ShapeType> getShapes( Class<ShapeType> typeClass ) {
 		LinkedList<ShapeType> list = new LinkedList<>();
 		for( Shape s : shapes ) {
-			if( typeClass.getClass().isInstance(s) ) {
+			if( typeClass.isInstance(s) ) {
 				list.add((ShapeType) s);
 			}
 		}
