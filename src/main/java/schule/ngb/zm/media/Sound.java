@@ -125,7 +125,7 @@ public class Sound implements Audio {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized void stop() {
+	public void stop() {
 		looping = false;
 		if( audioClip.isRunning() ) {
 			audioClip.stop();
@@ -137,7 +137,7 @@ public class Sound implements Audio {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized void play() {
+	public void play() {
 		if( this.openClip() ) {
 			audioClip.start();
 			playing = true;
@@ -176,7 +176,7 @@ public class Sound implements Audio {
 	 * allerdings wird der aufrufende Thread nicht blockiert und
 	 * {@link #dispose()} automatisch am Ende aufgerufen.
 	 */
-	public synchronized void playOnce() {
+	public void playOnce() {
 		disposeAfterPlay = true;
 		play();
 	}
@@ -200,7 +200,7 @@ public class Sound implements Audio {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public synchronized void loop() {
+	public void loop() {
 		loop(Clip.LOOP_CONTINUOUSLY);
 	}
 
@@ -210,7 +210,7 @@ public class Sound implements Audio {
 	 *
 	 * @param count Anzahl der Wiederholungen.
 	 */
-	public synchronized void loop( int count ) {
+	public void loop( int count ) {
 		if( count > 0 ) {
 			int loopCount = count;
 			if( loopCount != Clip.LOOP_CONTINUOUSLY ) {
@@ -242,7 +242,7 @@ public class Sound implements Audio {
 		}
 	}
 
-	private boolean openClip() {
+	private synchronized boolean openClip() {
 		if( audioClip != null ) {
 			audioClip.setFramePosition(0);
 			return true;
