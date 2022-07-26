@@ -130,6 +130,8 @@ public class Zeichenmaschine extends Constants {
 	 */
 	private boolean running = false;
 
+	private boolean terminateImediately = false;
+
 	/**
 	 * Ob die ZM nach dem nächsten Frame pausiert werden soll.
 	 */
@@ -165,7 +167,7 @@ public class Zeichenmaschine extends Constants {
 	 * Gibt an, ob nach Ende des Hauptthreads das Programm beendet werden soll,
 	 * oder das Zeichenfenster weiter geöffnet bleibt.
 	 */
-	private boolean quitAfterTeardown = false;
+	private boolean quitAfterShutdown = false;
 
 	// Mauszeiger
 	/**
@@ -311,29 +313,20 @@ public class Zeichenmaschine extends Constants {
 		canvas.addKeyListener(inputListener);
 
 		// Programm beenden, wenn Fenster geschlossen wird
+		// TODO: (ngb) Der Listener hat zu viel FUnktionalität -> nach quit() / exit() auslagern
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing( WindowEvent e ) {
-				if( running ) {
-					running = false;
-					mainThread.interrupt();
-					//teardown();
-					//cleanup();
+				if( isTerminated() ) {
+					quit(true);
+				} else {
+					exitNow();
 				}
-				// Give the app a minimum amount of time to shut down
-				// then kill it.
-				while( state != Options.AppState.TERMINATED ) {
-					Thread.yield();
-					if( Thread.interrupted() ) {
-						break;
-					}
-				}
-				// Quit
-				quit(true);
 			}
 		});
 
 		// Fenster anzeigen
+		frame.centerFrame();
 		frame.setVisible(true);
 
 		// Nach dem Anzeigen kann die Pufferstrategie erstellt werden.
@@ -493,7 +486,11 @@ public class Zeichenmaschine extends Constants {
 		return state == Options.AppState.PAUSED;
 	}
 
-	public final boolean isStopped() {
+	public final boolean isTerminated() {
+		return state == Options.AppState.TERMINATED;
+	}
+
+	public final boolean isTerminating() {
 		return state == Options.AppState.STOPPED || state == Options.AppState.TERMINATED;
 	}
 
@@ -502,9 +499,13 @@ public class Zeichenmaschine extends Constants {
 	 * <p>
 	 * Nachdem der aktuelle Frame gezeichnet wurde wechselt die Zeichenmaschine
 	 * in den Zustand {@link Options.AppState#STOPPED} und ruft
-	 * {@link #teardown()} auf. Nachdem {@code teardown()} ausgeführt wurde
+	 * {@link #shutdown()} auf. Nachdem {@code teardown()} ausgeführt wurde
 	 * wechselt der Zustand zu {@link Options.AppState#TERMINATED}. Das
 	 * Zeichenfenster bleibt weiter geöffnet.
+	 * <p>
+	 * Die Zeichenmaschine reagiert in diesem Zustand weiter auf Eingaben,
+	 * allerdings muss die Zeichnung nun manuell mit {@link #redraw()}
+	 * aktualisiert werden.
 	 */
 	public final void stop() {
 		running = false;
@@ -515,7 +516,7 @@ public class Zeichenmaschine extends Constants {
 	 * <p>
 	 * Wird nach dem {@link #stop() Stopp} der Zeichenmaschine aufgerufen und
 	 * verbleibende Threads, Tasks, etc. zu stoppen und aufzuräumen. Die
-	 * Äquivalente Methode für Unterklassen ist {@link #teardown()}, die direkt
+	 * Äquivalente Methode für Unterklassen ist {@link #shutdown()}, die direkt
 	 * vor {@code cleanup()} aufgerufen wird.
 	 */
 	private void cleanup() {
@@ -538,7 +539,18 @@ public class Zeichenmaschine extends Constants {
 	public final void exit() {
 		if( running ) {
 			running = false;
-			this.quitAfterTeardown = true;
+			quitAfterShutdown = true;
+		} else {
+			quit(true);
+		}
+	}
+
+	public final void exitNow() {
+		if( running ) {
+			running = false;
+			terminateImediately = true;
+			quitAfterShutdown = true;
+			mainThread.interrupt();
 		} else {
 			quit(true);
 		}
@@ -546,6 +558,10 @@ public class Zeichenmaschine extends Constants {
 
 	/**
 	 * Beendet das Programm vollständig.
+	 * <p>
+	 * Enspricht dem Aufruf {@code quit(true)}.
+	 *
+	 * @see #quit(boolean)
 	 */
 	public final void quit() {
 		//quit(!IN_BLUEJ);
@@ -555,6 +571,14 @@ public class Zeichenmaschine extends Constants {
 	/**
 	 * Beendet das Programm. Falls {@code exit} gleich {@code true} ist, wird
 	 * die komplette VM beendet.
+	 * <p>
+	 * Die Methode sorgt nicht für ein ordnungsgemäßes herunterfahren und
+	 * freigeben aller Ressourcen, da die Zeichenmaschine gegebenenfalls
+	 * geöffnet bleiben und weitere Aufgaben erfüllen soll. Aufrufende Methoden
+	 * sollten dies berücksichtigen.
+	 * <p>
+	 * Soll das Programm vollständig beendet werden, ist es ratsamer
+	 * {@link #exit()} zu verwenden.
 	 *
 	 * @param exit Ob die VM beendet werden soll.
 	 * @see System#exit(int)
@@ -846,8 +870,8 @@ public class Zeichenmaschine extends Constants {
 		}
 
 		long timer = 0L;
-		/*
-		if( updateState == Options.AppState.DRAWING ) {
+		if( /*updateState == Options.AppState.DRAWING*/
+			isTerminating() ) {
 			// Falls gerade draw() ausgeführt wird, zeigen wir den aktuellen
 			// Stand der Zeichnung auf der Leinwand an. Die Zeit für das
 			// Rendern wird gemessen und von der Wartezeit abgezogen.
@@ -855,7 +879,6 @@ public class Zeichenmaschine extends Constants {
 			canvas.render();
 			timer = System.nanoTime() - timer;
 		}
-		*/
 
 		Options.AppState oldState = updateState;
 		try {
@@ -1034,7 +1057,7 @@ public class Zeichenmaschine extends Constants {
 	 * Spiels oder der Abspann einer Animation angezeigt werden, oder mit
 	 * {@link #saveImage()} die erstellte Zeichnung abgespeichert werden.
 	 */
-	public void teardown() {
+	public void shutdown() {
 		// Intentionally left blank
 	}
 
@@ -1076,33 +1099,33 @@ public class Zeichenmaschine extends Constants {
 			eventQueue.add(evt);
 		}
 
-		if( isPaused() || isStopped() ) {
+		if( isPaused() || isTerminated() ) {
 			dispatchEvents();
 		}
 	}
 
 	private void dispatchEvents() {
 		//synchronized( eventQueue ) {
-			while( !eventQueue.isEmpty() ) {
-				InputEvent evt = eventQueue.poll();
+		while( !eventQueue.isEmpty() ) {
+			InputEvent evt = eventQueue.poll();
 
-				switch( evt.getID() ) {
-					case KeyEvent.KEY_TYPED:
-					case KeyEvent.KEY_PRESSED:
-					case KeyEvent.KEY_RELEASED:
-						handleKeyEvent((KeyEvent) evt);
-						break;
+			switch( evt.getID() ) {
+				case KeyEvent.KEY_TYPED:
+				case KeyEvent.KEY_PRESSED:
+				case KeyEvent.KEY_RELEASED:
+					handleKeyEvent((KeyEvent) evt);
+					break;
 
-					case MouseEvent.MOUSE_CLICKED:
-					case MouseEvent.MOUSE_PRESSED:
-					case MouseEvent.MOUSE_RELEASED:
-					case MouseEvent.MOUSE_MOVED:
-					case MouseEvent.MOUSE_DRAGGED:
-					case MouseEvent.MOUSE_WHEEL:
-						handleMouseEvent((MouseEvent) evt);
-						break;
-				}
+				case MouseEvent.MOUSE_CLICKED:
+				case MouseEvent.MOUSE_PRESSED:
+				case MouseEvent.MOUSE_RELEASED:
+				case MouseEvent.MOUSE_MOVED:
+				case MouseEvent.MOUSE_DRAGGED:
+				case MouseEvent.MOUSE_WHEEL:
+					handleMouseEvent((MouseEvent) evt);
+					break;
 			}
+		}
 		//}
 	}
 
@@ -1289,48 +1312,51 @@ public class Zeichenmaschine extends Constants {
 		public final void run() {
 			// Wait for full initialization before start
 			while( state != Options.AppState.INITIALIZED ) {
-				delay(1);
+				Thread.yield();
 			}
 
 			// ThreadExecutor for the update/draw Thread
 			final UpdateThreadExecutor updateThreadExecutor = new UpdateThreadExecutor();
 
-			// start of thread in ms
+			// Start des Thread in ms
 			final long start = System.currentTimeMillis();
-			// current time in ns
-			long beforeTime = System.nanoTime();
+			// Aktuelle Zeit in ns
+			long beforeTime;
 			long updateBeforeTime = System.nanoTime();
-			// store for deltas
+			// Speicher für Änderung
 			long overslept = 0L;
-			// internal counters for tick and runtime
+			// Interne Zähler für tick und runtime
 			int _tick = 0;
 			long _runtime = 0;
-			// public counters for access by subclasses
+			// Öffentliche Zähler für Unterklassen
 			tick = 0;
 			runtime = 0;
 
-			// call setup of subclass and wait
+			// setup() der Unterklasse aufrufen
 			setup();
 
+			// Alles startklar ...
 			state = Options.AppState.RUNNING;
 			while( running ) {
-				// delta in seconds
+				// Aktuelle Zeit in ns merken
 				beforeTime = System.nanoTime();
 
+				// Mausposition einmal pro Frame merken
 				saveMousePosition(mouseEvent);
 
 				if( state != Options.AppState.PAUSED ) {
-					//handleUpdate(delta);
-					//handleDraw();
-
-					// Update and draw are executed in a new thread,
-					// but we wait for them to finish unless the user
-					// did call any blocking method, that would also block
-					// rendering of new frames.
+					// update() und draw() der Unterklasse werden in einem
+					// eigenen Thread ausgeführt, aber der Zeichenthread
+					// wartet, bis der Thread fertig ist. Außer die Unterklasse
+					// ruft delay() auf und lässt den Thread eine länger Zeit
+					// schlafen. Dann wird der nächst Frame vorzeitig gerendert,
+					// bis der update-Thread wieder bereit ist. Dadurch können
+					// nebenläufige Aufgaben (z.B. Animationen) weiterlaufen.
 					if( !updateThreadExecutor.isRunning() ) {
 						delta = (System.nanoTime() - updateBeforeTime) / 1000000000.0;
 						updateBeforeTime = System.nanoTime();
 
+						// uddate()/draw() ausführen
 						updateThreadExecutor.execute(() -> {
 							if( state == Options.AppState.RUNNING
 								&& updateState == Options.AppState.IDLE ) {
@@ -1358,6 +1384,7 @@ public class Zeichenmaschine extends Constants {
 
 						if( Thread.interrupted() ) {
 							running = false;
+							terminateImediately = true;
 							break;
 						}
 					}
@@ -1368,7 +1395,6 @@ public class Zeichenmaschine extends Constants {
 						// canvas.invalidate();
 						// frame.repaint();
 					}
-
 
 					// dispatchEvents();
 				}
@@ -1412,34 +1438,20 @@ public class Zeichenmaschine extends Constants {
 					pause_pending = false;
 				}
 			}
-			// Shutdown the updateThreads
-			updateThreadExecutor.shutdownNow();
 			state = Options.AppState.STOPPED;
+			// Shutdown the updateThread
+			while( !terminateImediately && updateThreadExecutor.isRunning() ) {
+				Thread.yield();
+			}
+			updateThreadExecutor.shutdownNow();
 
 			// Cleanup
-			teardown();
+			shutdown();
 			cleanup();
 			state = Options.AppState.TERMINATED;
 
-			if( quitAfterTeardown ) {
+			if( quitAfterShutdown ) {
 				quit();
-			}
-		}
-
-		public void handleUpdate( double delta ) {
-			if( state == Options.AppState.RUNNING ) {
-				state = Options.AppState.UPDATING;
-				update(delta);
-				canvas.updateLayers(delta);
-				state = Options.AppState.RUNNING;
-			}
-		}
-
-		public void handleDraw() {
-			if( state == Options.AppState.RUNNING ) {
-				state = Options.AppState.DRAWING;
-				draw();
-				state = Options.AppState.RUNNING;
 			}
 		}
 
