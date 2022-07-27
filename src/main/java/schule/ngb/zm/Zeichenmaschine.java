@@ -82,7 +82,7 @@ public class Zeichenmaschine extends Constants {
 	/**
 	 * Zustand der Zeichenmaschine insgesamt
 	 */
-	private Options.AppState state = Options.AppState.INITIALIZING;
+	private Options.AppState state;
 
 	/**
 	 * Zustand des update/draw Threads
@@ -92,7 +92,7 @@ public class Zeichenmaschine extends Constants {
 	/**
 	 * Ob der Zeichenthread noch laufen soll, oder beendet.
 	 */
-	private boolean running = false;
+	private boolean running;
 
 	private boolean terminateImediately = false;
 
@@ -105,7 +105,7 @@ public class Zeichenmaschine extends Constants {
 	 * Ob die ZM bei nicht überschriebener update() Methode stoppen soll,
 	 * oder trotzdem weiterläuft.
 	 */
-	private boolean run_once = true;
+	private final boolean run_once;
 
 	/**
 	 * Aktuelle Frames pro Sekunde der Zeichenmaschine.
@@ -115,17 +115,17 @@ public class Zeichenmaschine extends Constants {
 	/**
 	 * Hauptthread der Zeichenmaschine.
 	 */
-	private Thread mainThread;
+	private final Thread mainThread;
 
 	/**
 	 * Queue für geplante Aufgaben
 	 */
-	private DelayQueue<DelayedTask> taskQueue = new DelayQueue<>();
+	private final DelayQueue<DelayedTask> taskQueue = new DelayQueue<>();
 
 	/**
 	 * Queue für abgefangene InputEvents
 	 */
-	private BlockingQueue<InputEvent> eventQueue = new LinkedBlockingQueue<>();
+	private final BlockingQueue<InputEvent> eventQueue = new LinkedBlockingQueue<>();
 
 	/**
 	 * Gibt an, ob nach Ende des Hauptthreads das Programm beendet werden soll,
@@ -238,6 +238,7 @@ public class Zeichenmaschine extends Constants {
 	 * @param run_once {@code true} beendet die Zeichenmaschine nach einem
 	 * 	Aufruf von {@code draw()}.
 	 */
+	@SuppressWarnings("static-access")
 	public Zeichenmaschine( int width, int height, String title, boolean run_once ) {
 		LOG.info("Starting " + APP_NAME + " " + APP_VERSION);
 
@@ -321,17 +322,15 @@ public class Zeichenmaschine extends Constants {
 	 *
 	 * @param title
 	 */
-	private final Zeichenfenster createFrame( Zeichenleinwand c, String title ) {
+	private Zeichenfenster createFrame( Zeichenleinwand c, String title ) {
 		while( frame == null ) {
 			try {
-				TaskRunner.invokeLater(new Runnable() {
-					@Override
-					public void run() {
-						Zeichenfenster.setLookAndFeel();
-						frame = new Zeichenfenster(canvas, title);
-					}
+				TaskRunner.invokeLater(() -> {
+					Zeichenfenster.setLookAndFeel();
+					frame = new Zeichenfenster(canvas, title);
 				}).get();
 			} catch( InterruptedException e ) {
+				// Keep waiting
 			} catch( ExecutionException e ) {
 				LOG.error(e, "Error initializing application frame: %s", e.getMessage());
 				throw new RuntimeException(e);
@@ -586,11 +585,11 @@ public class Zeichenmaschine extends Constants {
 	 * @see Zeichenleinwand#setSize(int, int)
 	 */
 	public final void setSize( int width, int height ) {
-		frame.setSize(width, height);
+		frame.setCanvasSize(width, height);
 
 		java.awt.Rectangle canvasBounds = frame.getCanvasBounds();
-		canvasWidth = (int) canvasBounds.getWidth();
-		canvasHeight = (int) canvasBounds.getHeight();
+		canvasWidth = canvasBounds.width;
+		canvasHeight = canvasBounds.height;
 	}
 
 	/**
@@ -1312,7 +1311,7 @@ public class Zeichenmaschine extends Constants {
 			long overslept = 0L;
 			// Interne Zähler für tick und runtime
 			int _tick = 0;
-			long _runtime = 0;
+			long _runtime;
 			// Öffentliche Zähler für Unterklassen
 			tick = 0;
 			runtime = 0;
@@ -1443,7 +1442,7 @@ public class Zeichenmaschine extends Constants {
 	}
 
 	// TODO: Remove
-	class DelayedTask implements Delayed {
+	static class DelayedTask implements Delayed {
 
 		long startTime; // in ms
 
@@ -1541,7 +1540,7 @@ public class Zeichenmaschine extends Constants {
 
 		public UpdateThreadExecutor() {
 			super(1, 1, 0L,
-				TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(),
+				TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(),
 				new ThreadFactory() {
 					private final AtomicInteger threadNumber = new AtomicInteger(1);
 					@Override

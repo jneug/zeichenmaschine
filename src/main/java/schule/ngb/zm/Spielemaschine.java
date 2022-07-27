@@ -108,7 +108,7 @@ public class Spielemaschine extends Zeichenmaschine {
 		}
 
 		@Override
-		public void draw( Graphics2D pGraphics ) {
+		public void draw( Graphics2D graphics ) {
 			clear();
 			List<Drawable> it = List.copyOf(drawables);
 			for( Drawable d: it ) {
@@ -116,7 +116,7 @@ public class Spielemaschine extends Zeichenmaschine {
 					d.draw(drawing);
 				}
 			}
-			super.draw(pGraphics);
+			super.draw(graphics);
 		}
 
 	}
