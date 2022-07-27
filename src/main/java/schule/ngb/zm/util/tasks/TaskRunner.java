@@ -10,11 +10,6 @@ import java.util.concurrent.*;
  */
 public class TaskRunner {
 
-	private static final int POOL_SIZE = 4;
-
-	private static final int SHUTDOWN_TIME = 100;
-
-
 	private static TaskRunner runner;
 
 	public static TaskRunner getTaskRunner() {

@@ -9,9 +9,9 @@ import java.util.function.BiConsumer;
 
 public class EventDispatcher<E, L extends Listener<E>> {
 
-	private CopyOnWriteArraySet<L> listeners;
+	private final CopyOnWriteArraySet<L> listeners;
 
-	private ConcurrentMap<String, BiConsumer<E, L>> eventRegistry;
+	private final ConcurrentMap<String, BiConsumer<E, L>> eventRegistry;
 
 	public EventDispatcher() {
 		listeners = new CopyOnWriteArraySet<>();
@@ -49,9 +49,7 @@ public class EventDispatcher<E, L extends Listener<E>> {
 
 		if( eventRegistered(eventKey) ) {
 			final BiConsumer<E, L> dispatcher = eventRegistry.get(eventKey);
-			listeners.forEach(( listener ) -> {
-				dispatcher.accept(event, listener);
-			});
+			listeners.forEach(( listener ) -> dispatcher.accept(event, listener));
 		}
 	}
 

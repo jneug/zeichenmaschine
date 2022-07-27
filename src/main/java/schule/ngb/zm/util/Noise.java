@@ -10,6 +10,7 @@ import java.util.Random;
  * href="https://adrianb.io/2014/08/09/perlinnoise.html">Beschreibung von
  * FLAFLA2</a> implementiert.
  */
+@SuppressWarnings( "unused" )
 public class Noise {
 
 	private static final int N = 256;
@@ -42,7 +43,7 @@ public class Noise {
 	/**
 	 * Initialisiert diesen Perlin-Noise mit dem angegebenen Zufallsgenerator.
 	 *
-	 * @param rand
+	 * @param rand Ein Zufallsgenerator-Objekt.
 	 */
 	public Noise( Random rand ) {
 		init(rand);

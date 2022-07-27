@@ -77,7 +77,7 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 	}
 
 	/**
-	 * Gibt die Resourcen der Ebene frei.
+	 * Gibt die Ressourcen der Ebene frei.
 	 */
 	public void dispose() {
 		drawing.dispose();
@@ -139,14 +139,14 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 	}
 
 	/**
-	 * Zeichnet den Puffer auf die Grafik-Instanz.
+	 * Zeichnet den Puffer auf den Grafikkontext.
 	 *
-	 * @param pGraphics
+	 * @param graphics Der Grafikkontext, auf den gezeichnet wird.
 	 */
 	@Override
-	public void draw( Graphics2D pGraphics ) {
+	public void draw( Graphics2D graphics ) {
 		if( visible ) {
-			pGraphics.drawImage(buffer, 0, 0, null);
+			graphics.drawImage(buffer, 0, 0, null);
 		}
 	}
 

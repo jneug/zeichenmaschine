@@ -20,8 +20,8 @@ public class FontLoader {
 	 * <p>
 	 * Die Schrift wird unter ihrem Dateinamen in den Schriftenspeicher geladen
 	 * und kann danach in der Zeichenmaschine benutzt werden.
-	 *
-	 * Ein Datei mit dem Namen "fonts/Font-Name.ttf" würde mit dem Namen
+	 * <p>
+	 * Eine Datei mit dem Namen "fonts/Font-Name.ttf" würde mit dem Namen
 	 * "Font-Name" geladen und kann danach zum Beispiel in einem
 	 * {@link schule.ngb.zm.shapes.Text} mit {@code text.setFont("Font-Name");}
 	 * verwendet werden.
@@ -34,7 +34,7 @@ public class FontLoader {
 		// Dateipfad entfernen
 		int lastIndex = source.lastIndexOf(File.separatorChar);
 		if( lastIndex > -1 ) {
-			source.substring(lastIndex + 1);
+			source = source.substring(lastIndex + 1);
 		}
 		// Dateiendung entfernen
 		lastIndex = name.lastIndexOf('.');
@@ -57,7 +57,7 @@ public class FontLoader {
 
 		// Look for System fonts
 		Font font = Font.decode(source);
-		if( font != null && source.toLowerCase().contains(font.getFamily().toLowerCase()) ) {
+		if( source.toLowerCase().contains(font.getFamily().toLowerCase()) ) {
 			fontCache.put(name, font);
 			fontCache.put(source, font);
 			LOG.debug("Loaded system font for <%s>.", source);

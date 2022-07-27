@@ -1,9 +1,9 @@
 package schule.ngb.zm.util;
 
 import java.util.Objects;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+@SuppressWarnings( "UnusedReturnValue" )
 public class Validator {
 
 	public static final <T> T requireNotNull( T obj ) {
@@ -19,7 +19,7 @@ public class Validator {
 	}
 
 	public static final String requireNotEmpty( String str ) {
-		return requireNotEmpty(str, (Supplier<String>)null);
+		return requireNotEmpty(str, (Supplier<String>) null);
 	}
 
 	public static final String requireNotEmpty( String str, CharSequence msg ) {
@@ -33,7 +33,7 @@ public class Validator {
 	}
 
 	public static final int requirePositive( int i ) {
-		return requirePositive(i, (Supplier<String>)null);
+		return requirePositive(i, (Supplier<String>) null);
 	}
 
 	public static final int requirePositive( int i, CharSequence msg ) {
@@ -47,7 +47,7 @@ public class Validator {
 	}
 
 	public static final int requireNotNegative( int i ) {
-		return requireNotNegative(i, (Supplier<String>)null);
+		return requireNotNegative(i, (Supplier<String>) null);
 	}
 
 	public static final int requireNotNegative( int i, CharSequence msg ) {
@@ -61,7 +61,7 @@ public class Validator {
 	}
 
 	public static final int requireInRange( int i, int min, int max ) {
-		return requireInRange(i, min, max, (Supplier<String>)null);
+		return requireInRange(i, min, max, (Supplier<String>) null);
 	}
 
 	public static final int requireInRange( int i, int min, int max, CharSequence msg ) {
@@ -75,7 +75,7 @@ public class Validator {
 	}
 
 	public static final double requirePositive( double i ) {
-		return requirePositive(i, (Supplier<String>)null);
+		return requirePositive(i, (Supplier<String>) null);
 	}
 
 	public static final double requirePositive( double i, CharSequence msg ) {
@@ -89,7 +89,7 @@ public class Validator {
 	}
 
 	public static final double requireNotNegative( double i ) {
-		return requireNotNegative(i, (Supplier<String>)null);
+		return requireNotNegative(i, (Supplier<String>) null);
 	}
 
 	public static final double requireNotNegative( double i, CharSequence msg ) {
@@ -103,7 +103,7 @@ public class Validator {
 	}
 
 	public static final double requireInRange( double i, double min, double max ) {
-		return requireInRange(i, min, max, (Supplier<String>)null);
+		return requireInRange(i, min, max, (Supplier<String>) null);
 	}
 
 	public static final double requireInRange( double i, double min, double max, CharSequence msg ) {
@@ -138,7 +138,7 @@ public class Validator {
 
 
 	public static final <T> T[] requireNotEmpty( T[] arr ) {
-		return requireNotEmpty(arr, (Supplier<String>)null);
+		return requireNotEmpty(arr, (Supplier<String>) null);
 	}
 
 	public static final <T> T[] requireNotEmpty( T[] arr, CharSequence msg ) {
@@ -147,12 +147,12 @@ public class Validator {
 
 	public static final <T> T[] requireNotEmpty( T[] arr, Supplier<String> msg ) {
 		if( arr.length == 0 )
-			throw new IllegalArgumentException(msg == null ? String.format("Parameter array may not be empty") : msg.get());
+			throw new IllegalArgumentException(msg == null ? "Parameter array may not be empty" : msg.get());
 		return arr;
 	}
 
 	public static final <T> T[] requireSize( T[] arr, int size ) {
-		return requireSize(arr, size, (Supplier<String>)null);
+		return requireSize(arr, size, (Supplier<String>) null);
 	}
 
 	public static final <T> T[] requireSize( T[] arr, int size, CharSequence msg ) {
@@ -161,21 +161,21 @@ public class Validator {
 
 	public static final <T> T[] requireSize( T[] arr, int size, Supplier<String> msg ) {
 		if( arr.length != size )
-			throw new IllegalArgumentException(msg == null ? String.format("Parameter array must have <%d> elements (<%d> provided)", size) : msg.get());
+			throw new IllegalArgumentException(msg == null ? String.format("Parameter array must have <%d> elements (<%d> provided)", size, arr.length) : msg.get());
 		return arr;
 	}
 
 	public static final <T> T[] requireValid( T[] arr ) {
-		return requireValid(arr, (Supplier<String>)null);
+		return requireValid(arr, (Supplier<String>) null);
 	}
 
-	public static final<T> T[] requireValid( T[] arr, CharSequence msg ) {
+	public static final <T> T[] requireValid( T[] arr, CharSequence msg ) {
 		return requireValid(arr, msg::toString);
 	}
 
 	public static final <T> T[] requireValid( T[] arr, Supplier<String> msg ) {
 		if( arr == null || arr.length > 0 )
-			throw new IllegalArgumentException(msg == null ? String.format("Parameter array may not be null or empty") : msg.get());
+			throw new IllegalArgumentException(msg == null ? "Parameter array may not be null or empty" : msg.get());
 		return arr;
 	}
 

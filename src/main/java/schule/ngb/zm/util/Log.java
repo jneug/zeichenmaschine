@@ -26,7 +26,8 @@ import static java.util.logging.Level.*;
  * Klasse nur genau ein {@code Log}-Objekt erstellt. Mehrere {@code Log}s nutzen
  * dann aber denselben {@code Logger}.
  * <p>
- * Die API orientiert sich lose an <a href="#">Log4j</a> und vereinfacht die
+ * Die API orientiert sich lose an <a
+ * href="https://logging.apache.org/log4j/2.x/">Log4j</a> und vereinfacht die
  * Nutzung der Java logging API für die häufigsten Anwendungsfälle.
  */
 public final class Log {
@@ -133,23 +134,13 @@ public final class Log {
 
 		if( System.getProperty("java.util.logging.SimpleFormatter.format") == null
 			&& LogManager.getLogManager().getProperty("java.util.logging.SimpleFormatter.format") == null ) {
-			// System.setProperty("java.util.logging.SimpleFormatter.format", DEFAULT_LOG_FORMAT);
 			rootLogger.addHandler(new StreamHandler(System.err, new LogFormatter()) {
 				@Override
-				public synchronized void publish(final LogRecord record) {
+				public synchronized void publish( final LogRecord record ) {
 					super.publish(record);
 					flush();
 				}
 			});
-			// rootLogger.setUseParentHandlers(false);
-		}
-		if( rootLogger.getUseParentHandlers() ) {
-			// This logger was not configured somewhere else
-			// Add a Handler and Formatter
-
-			//StreamHandler rootHandler = new StreamHandler(System.out, new SimpleFormatter());
-			//rootLogger.addHandler(rootHandler);
-			//rootLogger.setUseParentHandlers(false);
 		}
 
 		LOGGING_INIT = true;
@@ -208,26 +199,15 @@ public final class Log {
 		}
 	}
 
-	private String inferCallerName() {
-		StackTraceElement[] trace = new Throwable().getStackTrace();
-		for( int i = 0; i < trace.length; i++ ) {
-			/// if( trace[i].getClassName().equals(sourceClass.getName()) ) {
-			if( !trace[i].getClassName().equals(Log.class.getName()) ) {
-				return trace[i].getMethodName();
-			}
-		}
-		return "unknown";
-	}
-
 	private void doLog( Level level, final Throwable throwable, final Supplier<String> msgSupplier ) {
 		String clazz = sourceClass.getName();
 		String method = "unknown";
 
 		StackTraceElement[] trace = new Throwable().getStackTrace();
-		for( int i = 0; i < trace.length; i++ ) {
-			if( !trace[i].getClassName().equals(Log.class.getName()) ) {
-				clazz = trace[i].getClassName();
-				method = trace[i].getMethodName();
+		for( StackTraceElement stackTraceElement : trace ) {
+			if( !stackTraceElement.getClassName().equals(Log.class.getName()) ) {
+				clazz = stackTraceElement.getClassName();
+				method = stackTraceElement.getMethodName();
 				break;
 			}
 		}
@@ -350,9 +330,9 @@ public final class Log {
 			ZonedDateTime zdt = ZonedDateTime.ofInstant(
 				record.getInstant(), ZoneId.systemDefault());
 			String source;
-			if (record.getSourceClassName() != null) {
+			if( record.getSourceClassName() != null ) {
 				source = record.getSourceClassName();
-				if (record.getSourceMethodName() != null) {
+				if( record.getSourceMethodName() != null ) {
 					source += " " + record.getSourceMethodName();
 				}
 			} else {
@@ -360,7 +340,7 @@ public final class Log {
 			}
 			String message = formatMessage(record);
 			String throwable = "";
-			if (record.getThrown() != null) {
+			if( record.getThrown() != null ) {
 				StringWriter sw = new StringWriter();
 				PrintWriter pw = new PrintWriter(sw);
 				pw.println();
@@ -368,7 +348,7 @@ public final class Log {
 				pw.close();
 				throwable = sw.toString();
 			}
-			return String.format(DEFAULT_LOG_FORMAT,
+			return String.format(DEFAULT_DEBUG_FORMAT,
 				zdt,
 				source,
 				record.getLoggerName(),

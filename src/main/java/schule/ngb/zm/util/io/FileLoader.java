@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 public final class FileLoader {
 
@@ -34,7 +35,7 @@ public final class FileLoader {
 			LOG.error(ex, "Error while loading lines from source <%s>", source);
 		}
 
-		return Collections.EMPTY_LIST;
+		return Collections.emptyList();
 	}
 
 	public static String loadText( String source ) {
@@ -56,12 +57,11 @@ public final class FileLoader {
 	}
 
 	public static String[][] loadCsv( String source, char separator, boolean skipFirst, Charset charset ) {
-		try {
+		try( Stream<String> lines = Files
+			.lines(Paths.get(ResourceStreamProvider.getResourceURL(source).toURI()), charset)
+		) {
 			int n = skipFirst ? 1 : 0;
-			return Files
-				.lines(Paths.get(ResourceStreamProvider.getResourceURL(source).toURI()), charset)
-				.skip(n)
-				.map(
+			return lines.skip(n).map(
 					( line ) -> line.split(Character.toString(separator))
 				).toArray(String[][]::new);
 		} catch( IOException | URISyntaxException ex ) {
@@ -76,24 +76,23 @@ public final class FileLoader {
 	}
 
 	public static double[][] loadValues( String source, char separator, boolean skipFirst, Charset charset ) {
-		try {
+		try( Stream<String> lines = Files
+			.lines(Paths.get(ResourceStreamProvider.getResourceURL(source).toURI()), charset)
+		) {
 			int n = skipFirst ? 1 : 0;
-			return Files
-				.lines(Paths.get(ResourceStreamProvider.getResourceURL(source).toURI()), charset)
-				.skip(n)
-				.map(
-					( line ) -> Arrays
-						.stream(line.split(Character.toString(separator)))
-						.mapToDouble(
-							( value ) -> {
-								try {
-									return Double.parseDouble(value);
-								} catch( NumberFormatException nfe ) {
-									return 0.0;
-								}
+			return lines.skip(n).map(
+				( line ) -> Arrays
+					.stream(line.split(Character.toString(separator)))
+					.mapToDouble(
+						( value ) -> {
+							try {
+								return Double.parseDouble(value);
+							} catch( NumberFormatException nfe ) {
+								return 0.0;
 							}
-						).toArray()
-				).toArray(double[][]::new);
+						}
+					).toArray()
+			).toArray(double[][]::new);
 		} catch( IOException | URISyntaxException ex ) {
 			LOG.error(ex, "Error while loading double values from csv source <%s>", source);
 		}

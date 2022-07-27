@@ -63,7 +63,6 @@ public class ResourceStreamProvider {
 			}
 		} catch( FileNotFoundException fnfex ) {
 			// Somehow an exception occurred, but we still try other sources
-			in = null;
 		}
 		// File does not exist, try other means
 		// load ressource relative to .class-file
@@ -151,6 +150,7 @@ public class ResourceStreamProvider {
 
 	/**
 	 * Ver
+	 *
 	 * @param source
 	 * @return
 	 * @throws IOException

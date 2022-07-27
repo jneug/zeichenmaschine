@@ -22,9 +22,9 @@ public final class ImageLoader {
 
 	public static boolean caching = true;
 
-	private static Map<String, SoftReference<BufferedImage>> imageCache = new ConcurrentHashMap<>();
+	private static final Map<String, SoftReference<BufferedImage>> imageCache = new ConcurrentHashMap<>();
 
-	private static SoftReference<BufferedImage> NOCACHE = new SoftReference<>(null);
+	private static final SoftReference<BufferedImage> NOCACHE = new SoftReference<>(null);
 
 	/**
 	 * Lädt ein Bild von der angegebenen Quelle {@code source}.
@@ -48,12 +48,12 @@ public final class ImageLoader {
 
 	/**
 	 * Lädt ein Bild von der angegebenen Quelle <var>source</var> und gibt das
-	 * Bild zurück oder {@code null}, wenn das Bild nicht geladen werden
-	 * konnte. Ist ein Bild mit der angegebenen Quelle im Cache, wird das
-	 * gespeicherte Bild zurückgegeben. Dies kann mit {@code caching = false}
-	 * verhindert werden.
+	 * Bild zurück oder {@code null}, wenn das Bild nicht geladen werden konnte.
+	 * Ist ein Bild mit der angegebenen Quelle im Cache, wird das gespeicherte
+	 * Bild zurückgegeben. Dies kann mit {@code caching = false} verhindert
+	 * werden.
 	 * <p>
-	 * Wurde das Chaching global deaktiviert, kann mit <code>caching =
+	 * Wurde das Caching global deaktiviert, kann mit <code>caching =
 	 * true</code> das Bild trotzdem aus dem Cache geladen werden, wenn es
 	 * vorhanden ist.
 	 *
@@ -113,9 +113,9 @@ public final class ImageLoader {
 	}
 
 	/**
-	 * Speiechert das angegebene Bild unter dem angegebenen Namen im Cache.
+	 * Speichert das angegebene Bild unter dem angegebenen Namen im Cache.
 	 * <p>
-	 * Exisitert zu {@code name} schon ein Bild im Zwischenspeicher
+	 * Existiert zu {@code name} schon ein Bild im Zwischenspeicher
 	 * ({@code ImageLoader.isCached(name) == true}), dann wird dieses
 	 * überschrieben.
 	 * <p>
@@ -149,9 +149,7 @@ public final class ImageLoader {
 	 * @param name Name des Bildes im Cache.
 	 */
 	public static void invalidateCache( final String name ) {
-		if( imageCache.containsKey(name) ) {
-			imageCache.remove(name);
-		}
+		imageCache.remove(name);
 	}
 
 	/**
@@ -211,7 +209,7 @@ public final class ImageLoader {
 	 * Bild zurückgegeben und nicht komplett neu geladen.
 	 * <p>
 	 * <b>Wichtig:</b> Bildreferenzen, die aus dem Cache geladen werden,
-	 * verweisen alle auf dasselbe Objekt. Änderungen schalgen sich daher in
+	 * verweisen alle auf dasselbe Objekt. Änderungen schlagen sich daher in
 	 * allen anderen Versionen des Bildes nieder (inklusive dem Bild im
 	 * Zwischenspeicher). Für Änderungen sollte daher immer
 	 * {@link #copyImage(BufferedImage) eine Kopie} des Bildes erstellt werden:
@@ -302,7 +300,7 @@ public final class ImageLoader {
 	 * @param file Die Zieldatei.
 	 * @param overwriteIfExists Bei {@code true} wird eine vorhandene Datei
 	 * 	überschrieben, bei {@code false} wird eine {@link IOException} geworfen,
-	 * 	wenn die Datei schon exisitiert.
+	 * 	wenn die Datei schon existiert.
 	 * @throws NullPointerException Falls {@code image} oder {@code file}
 	 *                              {@code null} ist.
 	 * @throws IOException          Falls es einen Fehler beim Speichern gab.
@@ -335,7 +333,7 @@ public final class ImageLoader {
 	 * @param file Die Zieldatei.
 	 * @param overwriteIfExists Bei {@code true} wird eine vorhandene Datei
 	 * 	überschrieben, bei {@code false} wird eine {@link IOException} geworfen,
-	 * 	wenn die Datei schon exisitiert.
+	 * 	wenn die Datei schon existiert.
 	 * @throws NullPointerException Falls {@code image} oder {@code file}
 	 *                              {@code null} ist.
 	 * @throws IOException          Falls es einen Fehler beim Speichern gab.

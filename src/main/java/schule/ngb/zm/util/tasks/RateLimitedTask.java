@@ -17,7 +17,7 @@ public abstract class RateLimitedTask extends Task {
 		// store for deltas
 		long overslept = 0L;
 		// delta in ms
-		double delta = 0;
+		double delta;
 
 		running = true;
 		while( running ) {
@@ -47,10 +47,7 @@ public abstract class RateLimitedTask extends Task {
 			// Did we sleep to long?
 			overslept = (System.nanoTime() - afterTime) - sleep;
 		}
-
-		running = false;
 		done = true;
-
 		finish();
 	}
 

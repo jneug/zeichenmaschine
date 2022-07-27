@@ -14,6 +14,7 @@ import java.awt.image.ColorModel;
  * Eine Farbe hat außerdem einen Transparenzwert zwischen 0 (unsichtbar) und 255
  * (deckend).
  */
+@SuppressWarnings( "unused" )
 public class Color implements Paint {
 
 
@@ -151,7 +152,7 @@ public class Color implements Paint {
 	 * @param alpha Transparentwert zwischen 0 und 255.
 	 */
 	public Color( int red, int green, int blue, int alpha ) {
-		rgba = ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | ((blue & 0xFF) << 0);
+		rgba = ((alpha & 0xFF) << 24) | ((red & 0xFF) << 16) | ((green & 0xFF) << 8) | (blue & 0xFF);
 	}
 
 	/**
@@ -160,7 +161,7 @@ public class Color implements Paint {
 	 * @param color
 	 */
 	public Color( Color color ) {
-		this(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		this(color.getRGBA(), true);
 	}
 
 	/**
@@ -208,8 +209,7 @@ public class Color implements Paint {
 	 * @return
 	 */
 	public static Color getRGBColor( int rgba ) {
-		Color c = new Color(rgba, true);
-		return c;
+		return new Color(rgba, true);
 	}
 
 	public static Color getHSBColor( double h, double s, double b ) {
@@ -259,8 +259,6 @@ public class Color implements Paint {
 		} else if( hexcode.length() == 8 ) {
 			alpha = Integer.valueOf(hexcode.substring(6, 8), 16);
 			hexcode = hexcode.substring(0, 6);
-		} else {
-			hexcode = hexcode;
 		}
 
 		return Color.getRGBColor((alpha << 24) | Integer.valueOf(hexcode, 16));
@@ -307,12 +305,12 @@ public class Color implements Paint {
 		if( c == 0 ) {
 			h_ = 0;
 		} else if( max == r ) {
-			h_ = (float) (g - b) / c;
+			h_ = (g - b) / c;
 			if( h_ < 0 ) h_ += 6.f;
 		} else if( max == g ) {
-			h_ = (float) (b - r) / c + 2.f;
+			h_ = (b - r) / c + 2.f;
 		} else if( max == b ) {
-			h_ = (float) (r - g) / c + 4.f;
+			h_ = (r - g) / c + 4.f;
 		}
 		float h = 60.f * h_;
 
@@ -484,7 +482,6 @@ public class Color implements Paint {
 		}
 	}
 
-	@Override
 	/**
 	 * Prüft, ob ein anderes Objekt zu diesem gleich ist.
 	 *
@@ -494,6 +491,7 @@ public class Color implements Paint {
 	 * @param obj Das zu vergleichende Objekt.
 	 * @return {@code true}, wenn die Objekte gleich sind, sonst {@code false}.
 	 */
+	@Override
 	public boolean equals( Object obj ) {
 		if( obj == null ) {
 			return false;
