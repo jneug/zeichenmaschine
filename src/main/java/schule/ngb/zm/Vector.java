@@ -23,6 +23,7 @@ import java.awt.geom.Point2D;
  * Der Vektor der Zeichenmaschine erweitert die Klasse {@link Point2D} und lässt
  * sich dadurch einfach mit den Klassen des {@link java.awt} Pakets benutzen.
  */
+@SuppressWarnings( "unused" )
 public class Vector extends Point2D.Double {
 
 	/**
@@ -127,7 +128,7 @@ public class Vector extends Point2D.Double {
 	}
 
 	/**
-	 * Erzeugt einen neuen Vektor mit derselben Richtun wie der angegebene
+	 * Erzeugt einen neuen Vektor mit derselben Richtung wie der angegebene
 	 * Vektor und der Länge 1.
 	 *
 	 * @param vector Der original Vektor.
@@ -197,6 +198,7 @@ public class Vector extends Point2D.Double {
 	 * @param y Der neue y-Wert.
 	 * @return Dieser Vektor selbst (method chaining)
 	 */
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector set( double x, double y ) {
 		this.x = x;
 		this.y = y;
@@ -210,6 +212,7 @@ public class Vector extends Point2D.Double {
 	 * @param vector Ein Vektor.
 	 * @return Dieser Vektor selbst (method chaining)
 	 */
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector set( Vector vector ) {
 		x = vector.x;
 		y = vector.y;
@@ -223,6 +226,7 @@ public class Vector extends Point2D.Double {
 	 * @param pPunkt Ein Punkt.
 	 * @return Dieser Vektor selbst (method chaining)
 	 */
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector set( Point2D pPunkt ) {
 		x = pPunkt.getX();
 		x = pPunkt.getY();
@@ -271,6 +275,7 @@ public class Vector extends Point2D.Double {
 
 	/**
 	 * Legt die Länge des Vektors fest.
+	 *
 	 * @param length Die neue Länge des Vektors.
 	 * @return Dieser Vektor selbst (method chaining)
 	 */
@@ -294,9 +299,9 @@ public class Vector extends Point2D.Double {
 	}
 
 	/**
-	 *
 	 * @return Dieser Vektor selbst (method chaining)
 	 */
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector normalize() {
 		double len = length();
 		if( len != 0 && len != 1 ) {
@@ -308,9 +313,11 @@ public class Vector extends Point2D.Double {
 
 	/**
 	 * Addiert den Vektor {@code vector} zu diesem.
+	 *
 	 * @param vector Ein anderer Vektor.
 	 * @return Dieser Vektor selbst (method chaining)
 	 */
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector add( Vector vector ) {
 		x += vector.x;
 		y += vector.y;
@@ -319,10 +326,12 @@ public class Vector extends Point2D.Double {
 
 	/**
 	 * Addiert die angegebenen Werte zur x- und y-Komponente des Vektors.
+	 *
 	 * @param x Summand x-Komponente.
 	 * @param y Summand y-Komponente.
 	 * @return Dieser Vektor selbst (method chaining)
 	 */
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector add( double x, double y ) {
 		this.x += x;
 		this.y += y;
@@ -342,24 +351,28 @@ public class Vector extends Point2D.Double {
 		return vec;
 	}
 
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector sub( Vector vector ) {
 		x -= vector.x;
 		y -= vector.y;
 		return this;
 	}
 
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector sub( double x, double y ) {
 		this.x -= x;
 		this.y -= y;
 		return this;
 	}
 
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector scale( double scalar ) {
 		x *= scalar;
 		y *= scalar;
 		return this;
 	}
 
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector div( double scalar ) {
 		if( scalar == 0.0 ) {
 			throw new IllegalArgumentException("Can't divide by zero.");
@@ -487,6 +500,7 @@ public class Vector extends Point2D.Double {
 	 * @return Dieser Vektor selbst (method chaining)
 	 * @see #setLength(double)
 	 */
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector limit( double max ) {
 		if( lengthSq() > max * max ) {
 			setLength(max);
@@ -503,6 +517,7 @@ public class Vector extends Point2D.Double {
 	 * @return Dieser Vektor selbst (method chaining)
 	 * @see #setLength(double)
 	 */
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector limit( double min, double max ) {
 		if( min > max ) {
 			double t = min;
@@ -556,6 +571,7 @@ public class Vector extends Point2D.Double {
 	 * @return Dieser Vektor selbst (method chaining)
 	 * @see #rotate(double)
 	 */
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector rotateRad( double rad ) {
 		double temp = x;
 		x = x * Math.cos(rad) - y * Math.sin(rad);
@@ -587,6 +603,7 @@ public class Vector extends Point2D.Double {
 	 * @param t Ein Wert zwischen 0 und 1.
 	 * @return Dieser Vektor selbst (method chaining)
 	 */
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector morph( Vector vector, double t ) {
 		double tt = Math.min(Math.max(t, 0.0), 1.0);
 		x = x + (vector.x - x) * tt;
@@ -631,6 +648,7 @@ public class Vector extends Point2D.Double {
 	 * @param t Ein Wert zwischen 0 und 1.
 	 * @return Dieser Vektor selbst (method chaining)
 	 */
+	@SuppressWarnings( "UnusedReturnValue" )
 	public Vector interpolate( Vector vector, double t ) {
 		x = x + (vector.x - x) * t;
 		y = y + (vector.y - y) * t;
