@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Hauptklasse der Zeichenmaschine.
@@ -35,43 +36,6 @@ public class Zeichenmaschine extends Constants {
 
 	static {
 		IN_BLUEJ = System.getProperty("java.class.path").contains("bluej");
-	}
-
-	/**
-	 * Gibt an, ob die Zeichenmaschine unter macOS gestartet wurde.
-	 */
-	public static final boolean MACOS;
-
-	/**
-	 * Gibt an, ob die Zeichenmaschine unter Windows gestartet wurde.
-	 */
-	public static final boolean WINDOWS;
-
-	/**
-	 * Gibt an, ob die Zeichenmaschine unter Linux gestartet wurde.
-	 */
-	public static final boolean LINUX;
-
-	static {
-		final String name = System.getProperty("os.name");
-
-		if( name.contains("Mac") ) {
-			MACOS = true;
-			WINDOWS = false;
-			LINUX = false;
-		} else if( name.contains("Windows") ) {
-			MACOS = false;
-			WINDOWS = true;
-			LINUX = false;
-		} else if( name.equals("Linux") ) {  // true for the ibm vm
-			MACOS = false;
-			WINDOWS = false;
-			LINUX = true;
-		} else {
-			MACOS = false;
-			WINDOWS = false;
-			LINUX = false;
-		}
 	}
 
 	/*
@@ -111,7 +75,7 @@ public class Zeichenmaschine extends Constants {
 	/**
 	 * Das Zeichenfenster der Zeichenmaschine
 	 */
-	private Zeichenfenster frame;
+	protected Zeichenfenster frame;
 
 	// Aktueller Zustand der Zeichenmaschine.
 
@@ -312,8 +276,15 @@ public class Zeichenmaschine extends Constants {
 		canvas.addMouseWheelListener(inputListener);
 		canvas.addKeyListener(inputListener);
 
+		/*KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
+			@Override
+			public boolean dispatchKeyEvent( KeyEvent e ) {
+				enqueueEvent(e);
+				return false;
+			}
+		});*/
+
 		// Programm beenden, wenn Fenster geschlossen wird
-		// TODO: (ngb) Der Listener hat zu viel FUnktionalität -> nach quit() / exit() auslagern
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing( WindowEvent e ) {
@@ -392,10 +363,18 @@ public class Zeichenmaschine extends Constants {
 	public final void setFullscreen( boolean pEnable ) {
 		if( pEnable && !frame.isFullscreen() ) {
 			frame.setFullscreen(true);
+
+			canvasWidth = canvas.getWidth();
+			canvasHeight = canvas.getHeight();
+
 			if( frame.isFullscreen() )
 				fullscreenChanged();
 		} else if( !pEnable && frame.isFullscreen() ) {
 			frame.setFullscreen(false);
+
+			canvasWidth = canvas.getWidth();
+			canvasHeight = canvas.getHeight();
+
 			if( !frame.isFullscreen() )
 				fullscreenChanged();
 		}
@@ -546,6 +525,11 @@ public class Zeichenmaschine extends Constants {
 	}
 
 	public final void exitNow() {
+		// Do nothing, when already quitting
+		if( state == Options.AppState.QUITING ) {
+			return;
+		}
+
 		if( running ) {
 			running = false;
 			terminateImediately = true;
@@ -584,6 +568,7 @@ public class Zeichenmaschine extends Constants {
 	 * @see System#exit(int)
 	 */
 	public final void quit( boolean exit ) {
+		state = Options.AppState.QUITING;
 		frame.setVisible(false);
 		canvas.dispose();
 		frame.dispose();
@@ -1390,7 +1375,7 @@ public class Zeichenmaschine extends Constants {
 					}
 
 					// Display the current buffer content
-					if( canvas != null ) {
+					if( canvas != null && frame.isDisplayable() ) {
 						canvas.render();
 						// canvas.invalidate();
 						// frame.repaint();
@@ -1547,6 +1532,7 @@ public class Zeichenmaschine extends Constants {
 
 	}
 
+	// TODO: (ngb) exception handling when update/draw throws ex
 	class UpdateThreadExecutor extends ThreadPoolExecutor {
 
 		private Thread updateThread;
@@ -1555,7 +1541,18 @@ public class Zeichenmaschine extends Constants {
 
 		public UpdateThreadExecutor() {
 			super(1, 1, 0L,
-				TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+				TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>(),
+				new ThreadFactory() {
+					private final AtomicInteger threadNumber = new AtomicInteger(1);
+					@Override
+					public Thread newThread( Runnable r ) {
+						Thread t = new Thread(mainThread.getThreadGroup(), r,
+							"updateThread-" + threadNumber.getAndIncrement(),
+							0);
+						t.setDaemon(true);
+						return t;
+					}
+				});
 			updateState = Options.AppState.IDLE;
 		}
 

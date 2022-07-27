@@ -11,6 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -60,8 +61,8 @@ public class Zeichenfenster extends JFrame {
 	private GraphicsDevice displayDevice;
 
 	/**
-	 * Bevorzugte Abmessungen der Zeichenleinwand. Für das Zeichenfenster hat
-	 * es Priorität die Leinwand auf dieser Größe zu halten. Gegebenenfalls unter
+	 * Bevorzugte Abmessungen der Zeichenleinwand. Für das Zeichenfenster hat es
+	 * Priorität die Leinwand auf dieser Größe zu halten. Gegebenenfalls unter
 	 * Missachtung anderer Größenvorgaben. Allerdings kann das Fenster keine
 	 * Garantie für die Größe der Leinwand übernehmen.
 	 */
@@ -78,12 +79,13 @@ public class Zeichenfenster extends JFrame {
 	 * verlassen. Wird von {@link #setFullscreen(boolean)} automatisch
 	 * hinzugefügt und entfernt.
 	 */
-	private KeyListener fullscreenExitListener = new KeyAdapter() {
+	private final KeyListener fullscreenExitListener = new KeyAdapter() {
 		@Override
 		public void keyPressed( KeyEvent e ) {
 			if( e.getKeyCode() == KeyEvent.VK_ESCAPE ) {
 				// canvas.removeKeyListener(this);
 				setFullscreen(false);
+				e.consume();
 			}
 		}
 	};
@@ -110,12 +112,11 @@ public class Zeichenfenster extends JFrame {
 
 		this.canvasPreferredWidth = canvas.getWidth();
 		this.canvasPreferredHeight = canvas.getHeight();
-		//this.add(canvas, BorderLayout.CENTER);
-		this.add(canvas);
+		this.add(canvas, BorderLayout.CENTER);
 		this.canvas = canvas;
 
 		// Konfiguration des Frames
-		this.setTitle(title == null ? "Zeichenfenster " + Constants.APP_VERSION: title);
+		this.setTitle(title == null ? "Zeichenfenster " + Constants.APP_VERSION : title);
 		// Kann vom Aufrufenden überschrieben werden
 		this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -144,6 +145,7 @@ public class Zeichenfenster extends JFrame {
 		// Fenster zusammenbauen, auf dem Bildschirm positionieren ...
 		this.pack();
 		this.setResizable(false);
+		this.setFocusable(true);
 		this.setLocationByPlatform(true);
 		// this.centerFrame();
 	}
@@ -153,6 +155,7 @@ public class Zeichenfenster extends JFrame {
 	}
 
 	public Rectangle getScreenBounds() {
+		// return GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 		return displayDevice.getDefaultConfiguration().getBounds();
 	}
 
@@ -163,6 +166,7 @@ public class Zeichenfenster extends JFrame {
 	public Rectangle getCanvasBounds() {
 		return canvas.getBounds();
 	}
+
 	/**
 	 * Zentriert das Zeichenfenster auf dem aktuellen Bildschirm.
 	 */
@@ -176,7 +180,7 @@ public class Zeichenfenster extends JFrame {
 	}
 
 	public void setCanvasSize( int newWidth, int newHeight ) {
-		// TODO: (ngb) Put constains on max/min frame/canvas size
+		// TODO: (ngb) Put constrains on max/min frame/canvas size
 		if( fullscreen ) {
 			canvasPreferredWidth = newWidth;
 			canvasPreferredHeight = newHeight;
@@ -205,27 +209,53 @@ public class Zeichenfenster extends JFrame {
 	public final void setFullscreen( boolean pEnable ) {
 		// See https://docs.oracle.com/javase/tutorial/extra/fullscreen/index.html
 		if( displayDevice.isFullScreenSupported() ) {
+			// Temporarily stop rendering
+			while( canvas.isRendering() ) {
+				try {
+					canvas.suspendRendering();
+				} catch( InterruptedException ex ) {
+					LOG.info(ex, "setFullsceen(true) was interrupted and canceled.");
+					return;
+				}
+			}
+
 			if( pEnable && !fullscreen ) {
-				// frame.setUndecorated(true);
-				this.setResizable(false); // Should be set anyway
+				// Activate fullscreen
+				dispose();
+				setUndecorated(true);
+				setResizable(false);
 				displayDevice.setFullScreenWindow(this);
 
-				java.awt.Rectangle bounds = getScreenBounds();
-				// TODO: (ngb) We need to switch layouts to allow the LayoutManger to maximize the canvas
-				canvas.setSize(bounds.width, bounds.height);
 				// Register ESC to exit fullscreen
-				canvas.addKeyListener(fullscreenExitListener);
+				this.addKeyListener(fullscreenExitListener);
+
+				// Reset canvas size to its new bounds to recreate buffer and drawing surface
+				java.awt.Rectangle canvasBounds = getCanvasBounds();
+				canvas.setSize(canvasBounds.width, canvasBounds.height);
+				//canvas.requestFocus();
+				this.requestFocus();
 
 				fullscreen = true;
 			} else if( !pEnable && fullscreen ) {
-				fullscreen = false;
-
-				canvas.removeKeyListener(fullscreenExitListener);
 				displayDevice.setFullScreenWindow(null);
+				dispose();
+				setUndecorated(false);
+				setResizable(false);
+
+				this.removeKeyListener(fullscreenExitListener);
 				canvas.setSize(canvasPreferredWidth, canvasPreferredHeight);
-				this.pack();
-				// frame.setUndecorated(false);
+
+				setVisible(true);
+				pack();
+
+				//canvas.requestFocus();
+				this.requestFocus();
+
+				fullscreen = false;
 			}
+
+			// Resume rendering
+			canvas.resumeRendering();
 		}
 	}
 

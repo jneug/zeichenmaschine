@@ -1,16 +1,16 @@
 package schule.ngb.zm;
 
 import schule.ngb.zm.layers.ColorLayer;
-import schule.ngb.zm.layers.ShapesLayer;
 import schule.ngb.zm.util.Log;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * Eine Leinwand ist die Hauptkomponente einer Zeichenmaschine. Sie besteht aus
@@ -24,10 +24,14 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class Zeichenleinwand extends Canvas {
 
+	private final Object[] renderLock = new Object[0];
+
 	/**
 	 * Liste der hinzugefügten Ebenen.
 	 */
-	private LinkedList<Layer> layers;
+	private final LinkedList<Layer> layers;
+
+	private boolean rendering = false, suspended = false;
 
 	/**
 	 * Erstellt eine neue Zeichenleinwand mit einer festen Größe.
@@ -46,6 +50,20 @@ public class Zeichenleinwand extends Canvas {
 		synchronized( layers ) {
 			layers.add(new ColorLayer(width, height, Constants.DEFAULT_BACKGROUND));
 		}
+	}
+
+	public boolean isRendering() {
+		return rendering;
+	}
+
+	public void suspendRendering() throws InterruptedException {
+		synchronized( renderLock ) {
+			suspended = true;
+		}
+	}
+
+	public void resumeRendering() {
+		suspended = false;
 	}
 
 	/**
@@ -88,11 +106,11 @@ public class Zeichenleinwand extends Canvas {
 	/**
 	 * Fügt der Zeichenleinwand eine Ebene an einem bestimmten Index hinzu. Wenn
 	 * der Index noch nicht existiert (also größer als die
-	 * {@link #getLayerCount() Anzahl der Ebenen} ist, dann wird die neue Ebene
+	 * {@link #getLayerCount() Anzahl der Ebenen} ist), dann wird die neue Ebene
 	 * als letzte eingefügt. Die aufrufende Methode kann also nicht sicher sein,
 	 * dass die neue Ebene am Ende wirklich am Index {@code i} steht.
 	 *
-	 * @param i Index der Ebene, beginnend mit 0.
+	 * @param i Index der Ebene beginnend mit 0.
 	 * @param layer Die neue Ebene.
 	 */
 	public void addLayer( int i, Layer layer ) {
@@ -249,37 +267,41 @@ public class Zeichenleinwand extends Canvas {
 	 * Zeigt den aktuellen Inhalt der Zeichenleinwand an.
 	 */
 	public void render() {
-		if( getBufferStrategy() == null ) {
-			allocateBuffer();
-		}
+		if( !suspended && isDisplayable() ) {
+			if( getBufferStrategy() == null ) {
+				allocateBuffer();
+			}
 
-		if( isDisplayable() ) {
-			BufferStrategy strategy = this.getBufferStrategy();
-			if( strategy != null ) {
-				do {
+			synchronized( renderLock ) {
+				rendering = true;
+				BufferStrategy strategy = this.getBufferStrategy();
+				if( strategy != null ) {
 					do {
-						Graphics2D g2d = (Graphics2D) strategy.getDrawGraphics();
-						g2d.clearRect(0, 0, getWidth(), getHeight());
+						do {
+							Graphics2D g2d = (Graphics2D) strategy.getDrawGraphics();
+							g2d.clearRect(0, 0, getWidth(), getHeight());
 
-						synchronized( layers ) {
-							List<Layer> it = List.copyOf(layers);
-							for( Layer layer : it ) {
-								layer.draw(g2d);
+							synchronized( layers ) {
+								List<Layer> it = List.copyOf(layers);
+								for( Layer layer : it ) {
+									layer.draw(g2d);
+								}
 							}
+
+							g2d.dispose();
+						} while( strategy.contentsRestored() );
+
+						// Display the buffer
+						if( !strategy.contentsLost() ) {
+							strategy.show();
+
+							Toolkit.getDefaultToolkit().sync();
 						}
 
-						g2d.dispose();
-					} while( strategy.contentsRestored() );
-
-					// Display the buffer
-					if( !strategy.contentsLost() ) {
-						strategy.show();
-
-						Toolkit.getDefaultToolkit().sync();
-					}
-
-					// Repeat the rendering if the drawing buffer was lost
-				} while( strategy.contentsLost() );
+						// Repeat the rendering if the drawing buffer was lost
+					} while( strategy.contentsLost() );
+				}
+				rendering = false;
 			}
 		}
 	}
