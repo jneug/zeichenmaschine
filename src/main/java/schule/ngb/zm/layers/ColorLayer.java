@@ -11,9 +11,13 @@ import java.awt.RadialGradientPaint;
 /**
  * Eine Ebene, die nur aus einer Farbe (oder einem Farbverlauf) besteht.
  * <p>
+ * Ein {@code ColorLayer} ist eine der drei Standardebenen der
+ * {@link schule.ngb.zm.Zeichenmaschine}.
+ * <p>
  * Die Farbe der Ebene kann beliebig gesetzt werden und kann gut als
- * Hintergundfarbe für eine Szene dienen, oder als halbtransparente "Abdeckung",
- * wenn ein {@code ColorLayer} über den anderen Ebenen eingefügt wird.
+ * Hintergrundfarbe für eine Szene dienen, oder als halbtransparente
+ * "Abdeckung", wenn ein {@code ColorLayer} über den anderen Ebenen eingefügt
+ * wird.
  */
 @SuppressWarnings( "unused" )
 public class ColorLayer extends Layer {

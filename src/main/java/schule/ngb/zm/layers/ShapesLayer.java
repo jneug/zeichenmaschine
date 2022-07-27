@@ -10,13 +10,20 @@ import java.awt.Graphics2D;
 import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 
+/**
+ * Ein Layer um {@link Shape} Objekte zu zeichnen.
+ * <p>
+ * Ein {@code ShapesLayer} ist eine der drei Standardebenen der
+ * {@link schule.ngb.zm.Zeichenmaschine}.
+ */
+@SuppressWarnings( "unused" )
 public class ShapesLayer extends Layer {
 
 	protected boolean clearBeforeDraw = true;
 
-	private List<Shape> shapes;
+	private final List<Shape> shapes;
 
-	private List<Animation<? extends Shape>> animations;
+	private final List<Animation<? extends Shape>> animations;
 
 	public ShapesLayer() {
 		super();
@@ -37,7 +44,7 @@ public class ShapesLayer extends Layer {
 	public <ST extends Shape> ST getShape( Class<ST> shapeClass ) {
 		for( Shape s : shapes ) {
 			if( shapeClass.isInstance(s) ) {
-				return (ST) s;
+				return shapeClass.cast(s);
 			}
 		}
 		return null;
@@ -51,7 +58,7 @@ public class ShapesLayer extends Layer {
 		List<ST> result = new LinkedList<>();
 		for( Shape s : shapes ) {
 			if( shapeClass.isInstance(s) ) {
-				result.add((ST) s);
+				result.add(shapeClass.cast(s));
 			}
 		}
 		return result;
@@ -59,17 +66,13 @@ public class ShapesLayer extends Layer {
 
 	public void add( Shape... shapes ) {
 		synchronized( this.shapes ) {
-			for( Shape s : shapes ) {
-				this.shapes.add(s);
-			}
+			Collections.addAll(this.shapes, shapes);
 		}
 	}
 
 	public void add( Collection<Shape> shapes ) {
 		synchronized( this.shapes ) {
-			for( Shape s : shapes ) {
-				this.shapes.add(s);
-			}
+			this.shapes.addAll(shapes);
 		}
 	}
 
@@ -83,9 +86,7 @@ public class ShapesLayer extends Layer {
 
 	public void remove( Collection<Shape> shapes ) {
 		synchronized( this.shapes ) {
-			for( Shape s : shapes ) {
-				this.shapes.remove(s);
-			}
+			this.shapes.removeAll(shapes);
 		}
 	}
 
@@ -116,9 +117,9 @@ public class ShapesLayer extends Layer {
 		anim.start();
 	}
 
-
-	public void play( Animation<? extends Shape>... anims ) {
-		for( Animation<? extends Shape> anim: anims ) {
+	@SafeVarargs
+	public final void play( Animation<? extends Shape>... anims ) {
+		for( Animation<? extends Shape> anim : anims ) {
 			this.animations.add(anim);
 			anim.start();
 		}
@@ -141,13 +142,13 @@ public class ShapesLayer extends Layer {
 			anim.update(delta);
 
 			if( !anim.isActive() ) {
-				animations.remove(anim);
+				it.remove();
 			}
 		}
 	}
 
 	@Override
-	public void draw( Graphics2D pGraphics ) {
+	public void draw( Graphics2D graphics ) {
 		if( clearBeforeDraw ) {
 			clear();
 		}
@@ -161,7 +162,7 @@ public class ShapesLayer extends Layer {
 			}
 		}
 
-		super.draw(pGraphics);
+		super.draw(graphics);
 	}
 
 }

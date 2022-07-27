@@ -4,42 +4,46 @@ import schule.ngb.zm.Color;
 import schule.ngb.zm.Layer;
 import schule.ngb.zm.Options;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.Stroke;
 import java.util.LinkedList;
 
+@SuppressWarnings( "unused" )
 public final class Shape2DLayer extends Layer {
 
-	protected schule.ngb.zm.Color strokeColor = DEFAULT_STROKECOLOR;
+	private schule.ngb.zm.Color strokeColor = DEFAULT_STROKECOLOR;
 
-	protected schule.ngb.zm.Color fillColor = DEFAULT_FILLCOLOR;
+	private schule.ngb.zm.Color fillColor = DEFAULT_FILLCOLOR;
 
-	protected double strokeWeight = DEFAULT_STROKEWEIGHT;
+	private double strokeWeight = DEFAULT_STROKEWEIGHT;
 
-	protected Options.StrokeType strokeType = SOLID;
+	private Options.StrokeType strokeType = SOLID;
 
-	private LinkedList<java.awt.Shape> shapes;
+	private final LinkedList<java.awt.Shape> shapes;
 
 	private boolean instantDraw = false;
 
 	public Shape2DLayer() {
 		super();
-		shapes = new LinkedList<java.awt.Shape>();
+		shapes = new LinkedList<>();
 	}
 
 	public Shape2DLayer( boolean instantDraw ) {
 		super();
-		shapes = new LinkedList<java.awt.Shape>();
+		shapes = new LinkedList<>();
 		this.instantDraw = instantDraw;
 	}
 
 	public Shape2DLayer( int width, int height ) {
 		super(width, height);
-		shapes = new LinkedList<java.awt.Shape>();
+		shapes = new LinkedList<>();
 	}
 
 	public Shape2DLayer( int width, int height, boolean instantDraw ) {
 		super(width, height);
-		shapes = new LinkedList<java.awt.Shape>();
+		shapes = new LinkedList<>();
 		this.instantDraw = instantDraw;
 	}
 
@@ -106,7 +110,7 @@ public final class Shape2DLayer extends Layer {
 		drawing.setStroke(createStroke());
 	}
 
-	protected Stroke createStroke() {
+	private Stroke createStroke() {
 		switch( strokeType ) {
 			case DOTTED:
 				return new BasicStroke(
@@ -153,7 +157,7 @@ public final class Shape2DLayer extends Layer {
 	}
 
 	@Override
-	public void draw( Graphics2D pGraphics ) {
+	public void draw( Graphics2D graphics ) {
 		if( !instantDraw ) {
 			for( Shape shape : shapes ) {
 				drawing.setColor(fillColor.getJavaColor());
@@ -164,7 +168,7 @@ public final class Shape2DLayer extends Layer {
 			}
 		}
 
-		super.draw(pGraphics);
+		super.draw(graphics);
 	}
 
 }

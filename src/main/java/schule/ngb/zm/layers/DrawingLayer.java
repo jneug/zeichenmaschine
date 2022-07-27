@@ -1,5 +1,6 @@
 package schule.ngb.zm.layers;
 
+import schule.ngb.zm.Color;
 import schule.ngb.zm.Layer;
 import schule.ngb.zm.Options;
 import schule.ngb.zm.util.io.ImageLoader;
@@ -8,106 +9,413 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.util.Stack;
 
+/**
+ * Eine Ebene auf der direkt gezeichnet werden kann.
+ * <p>
+ * Ein {@code DrawingLayer} ist eine der drei Standardebenen der
+ * {@link schule.ngb.zm.Zeichenmaschine}.
+ */
 public class DrawingLayer extends Layer {
 
-	protected schule.ngb.zm.Color fillColor = DEFAULT_FILLCOLOR;
+	/**
+	 * Aktuelle Füllfarbe.
+	 */
+	protected Color fillColor = DEFAULT_FILLCOLOR;
 
-	protected schule.ngb.zm.Color strokeColor = DEFAULT_STROKECOLOR;
+	/**
+	 * Der aktuelle Farbverlauf oder {@code null}, wenn aktuell kein
+	 * Farbverlauf gesetzt ist.
+	 */
+	protected Paint fill = null;
 
+	/**
+	 * Aktuelle Konturfarbe.
+	 */
+	protected Color strokeColor = DEFAULT_STROKECOLOR;
+
+	/**
+	 * Aktuelle Dicke der Konturlinie.
+	 */
 	protected double strokeWeight = DEFAULT_STROKEWEIGHT;
 
+	/**
+	 * Art der Konturlinie.
+	 */
 	protected Options.StrokeType strokeType = SOLID;
 
+	/**
+	 * Standardanker für Formen.
+	 */
 	private Options.Direction default_anchor = CENTER;
 
+	/**
+	 * Wiederverwendbarer Speicher für eine Linie.
+	 */
 	protected Line2D.Double line = new Line2D.Double();
+
+	/**
+	 * Wiederverwendbarer Speicher für eine Ellipse.
+	 */
 	protected Ellipse2D.Double ellipse = new Ellipse2D.Double();
+
+	/**
+	 * Wiederverwendbarer Speicher für ein Rechteck.
+	 */
 	protected Rectangle2D.Double rect = new Rectangle2D.Double();
+
+	/**
+	 * Wiederverwendbarer Speicher für einen Kreisbogen.
+	 */
 	protected Arc2D.Double arc = new Arc2D.Double();
 
+	/**
+	 * Wiederverwendbarer Speicher für einen Pfad.
+	 */
 	protected Path2D.Double path = new Path2D.Double();
 
+	/**
+	 * Ob ein individueller Pfad gestartet wurde.
+	 */
 	private boolean pathStarted = false;
 
-	private Stack<AffineTransform> transformStack = new Stack<>();
+	/**
+	 * Stapel für zwischengespeicherte Transformationsmatrizen.
+	 */
+	private final Stack<AffineTransform> transformStack;
+	// private FontMetrics fontMetrics;
 
-	private FontMetrics fontMetrics = null;
-
+	/**
+	 * Erstellt eine Ebene in der Standardgröße.
+	 */
 	public DrawingLayer() {
 		super();
+		transformStack = new Stack<>();
 		transformStack.push(new AffineTransform());
-		fontMetrics = drawing.getFontMetrics();
+		// fontMetrics = drawing.getFontMetrics();
 	}
 
+	/**
+	 * Erstellt eine Ebene mit der angegebenen Größe.
+	 *
+	 * @param width Die Breite der Ebene.
+	 * @param height Die Höhe der Ebene.
+	 */
 	public DrawingLayer( int width, int height ) {
 		super(width, height);
+		transformStack = new Stack<>();
 		transformStack.push(new AffineTransform());
-		fontMetrics = drawing.getFontMetrics();
+		// fontMetrics = drawing.getFontMetrics();
 	}
 
-	public schule.ngb.zm.Color getColor() {
+	/**
+	 * Gibt die aktuelle Füllfarbe zurück.
+	 *
+	 * @return Die aktuelle Füllfarbe.
+	 */
+	public Color getFillColor() {
 		return fillColor;
 	}
 
-	public void setFillColor( int gray ) {
-		setFillColor(gray, gray, gray, 255);
-	}
-
-	public void setFillColor( schule.ngb.zm.Color color ) {
+	/**
+	 * Setzt die Füllfarbe auf die angegebene Farbe.
+	 *
+	 * @param color Die neue Füllfarbe oder {@code null}.
+	 * @see Color
+	 */
+	public void setFillColor( Color color ) {
 		fillColor = color;
 		drawing.setColor(color.getJavaColor());
 	}
 
-	public void noFill() {
-		fillColor = null;
+	/**
+	 * Setzt die Füllfarbe auf die angegebene Farbe und setzt die Transparenz
+	 * auf den angegebenen Wert. 0 is komplett durchsichtig und 255 komplett
+	 * deckend.
+	 *
+	 * @param color Die neue Füllfarbe oder {@code null}.
+	 * @param alpha Ein Transparenzwert zwischen 0 und 255.
+	 * @see Color#Color(Color, int)
+	 */
+	public void setFillColor( Color color, int alpha ) {
+		setFillColor(new Color(color, alpha));
 	}
 
+	/**
+	 * Setzt die Füllfarbe auf einen Grauwert mit der angegebenen Intensität. 0
+	 * entspricht schwarz, 255 entspricht weiß.
+	 *
+	 * @param gray Ein Grauwert zwischen 0 und 255.
+	 * @see Color#Color(int)
+	 */
+	public void setFillColor( int gray ) {
+		setFillColor(gray, gray, gray, 255);
+	}
+
+	/**
+	 * Setzt die Füllfarbe auf einen Grauwert mit der angegebenen Intensität und
+	 * dem angegebenen Transparenzwert. Der Grauwert 0 entspricht schwarz, 255
+	 * entspricht weiß.
+	 *
+	 * @param gray Ein Grauwert zwischen 0 und 255.
+	 * @param alpha Ein Transparenzwert zwischen 0 und 255.
+	 * @see Color#Color(int, int)
+	 */
 	public void setFillColor( int gray, int alpha ) {
 		setFillColor(gray, gray, gray, alpha);
 	}
 
+	/**
+	 * Setzt die Füllfarbe auf die Farbe mit den angegebenen Rot-, Grün- und
+	 * Blauanteilen.
+	 *
+	 * @param red Der Rotanteil der Farbe zwischen 0 und 255.
+	 * @param green Der Grünanteil der Farbe zwischen 0 und 255.
+	 * @param blue Der Blauanteil der Farbe zwischen 0 und 255.
+	 * @see Color#Color(int, int, int)
+	 * @see <a
+	 * 	href="https://de.wikipedia.org/wiki/RGB-Farbraum">https://de.wikipedia.org/wiki/RGB-Farbraum</a>
+	 */
 	public void setFillColor( int red, int green, int blue ) {
 		setFillColor(red, green, blue, 255);
 	}
 
+	/**
+	 * Setzt die Füllfarbe auf die Farbe mit den angegebenen Rot-, Grün- und
+	 * Blauanteilen und dem angegebenen Transparenzwert.
+	 *
+	 * @param red Der Rotanteil der Farbe zwischen 0 und 255.
+	 * @param green Der Grünanteil der Farbe zwischen 0 und 255.
+	 * @param blue Der Blauanteil der Farbe zwischen 0 und 255.
+	 * @param alpha Ein Transparenzwert zwischen 0 und 25
+	 * @see Color#Color(int, int, int, int)
+	 * @see <a
+	 * 	href="https://de.wikipedia.org/wiki/RGB-Farbraum">https://de.wikipedia.org/wiki/RGB-Farbraum</a>
+	 */
 	public void setFillColor( int red, int green, int blue, int alpha ) {
 		setFillColor(new schule.ngb.zm.Color(red, green, blue, alpha));
 	}
 
-	public schule.ngb.zm.Color getStrokeColor() {
+	/**
+	 * Entfernt die Füllung der Form.
+	 */
+	public void noFill() {
+		fillColor = null;
+	}
+
+	/**
+	 * Setzt die Füllfarbe auf den Standardwert zurück.
+	 *
+	 * @see schule.ngb.zm.Constants#DEFAULT_FILLCOLOR
+	 */
+	public void resetFill() {
+		setFillColor(DEFAULT_FILLCOLOR);
+		noGradient();
+	}
+
+	/**
+	 * Setzt die Füllung auf einen linearen Farbverlauf, der am Punkt
+	 * ({@code fromX}, {@code fromY}) mit der Farbe {@code from} startet und am
+	 * Punkt (({@code toX}, {@code toY}) mit der Farbe {@code to} endet.
+	 *
+	 * @param fromX x-Koordinate des Startpunktes.
+	 * @param fromY y-Koordinate des Startpunktes.
+	 * @param from Farbe am Startpunkt.
+	 * @param toX x-Koordinate des Endpunktes.
+	 * @param toY y-Koordinate des Endpunktes.
+	 * @param to Farbe am Endpunkt.
+	 */
+	public void setGradient( double fromX, double fromY, Color from, double toX, double toY, Color to ) {
+		setFillColor(from);
+		fill = new GradientPaint(
+			(float) fromX, (float) fromY, from.getJavaColor(),
+			(float) toX, (float) toY, to.getJavaColor()
+		);
+	}
+
+	/**
+	 * Setzt die Füllung auf einen kreisförmigen (radialen) Farbverlauf, mit dem
+	 * Zentrum im Punkt ({@code centerX}, {@code centerY}) und dem angegebenen
+	 * Radius. Der Verlauf starte im Zentrum mit der Farbe {@code from} und
+	 * endet am Rand des durch den Radius beschriebenen Kreises mit der Farbe
+	 * {@code to}.
+	 *
+	 * @param centerX x-Koordinate des Kreismittelpunktes.
+	 * @param centerY y-Koordinate des Kreismittelpunktes.
+	 * @param radius Radius des Kreises.
+	 * @param from Farbe im Zentrum des Kreises.
+	 * @param to Farbe am Rand des Kreises.
+	 */
+	public void setGradient( double centerX, double centerY, double radius, Color from, Color to ) {
+		setFillColor(from);
+		fill = new RadialGradientPaint(
+			(float) centerX, (float) centerY, (float) radius,
+			new float[]{0f, 1f},
+			new java.awt.Color[]{from.getJavaColor(), to.getJavaColor()});
+	}
+
+	/**
+	 * Entfernt den Farbverlauf von der Form.
+	 */
+	public void noGradient() {
+		fill = null;
+	}
+
+	/**
+	 * Gibt die aktuelle Farbe der Konturlinie zurück.
+	 *
+	 * @return Die Konturfarbe oder {@code null}.
+	 */
+	public Color getStrokeColor() {
 		return strokeColor;
 	}
 
-	public void setStrokeColor( int gray ) {
-		setStrokeColor(gray, gray, gray, 255);
-	}
-
-	public void setStrokeColor( schule.ngb.zm.Color color ) {
+	/**
+	 * Setzt die Farbe der Konturlinie auf die angegebene Farbe.
+	 *
+	 * @param color Die neue Farbe der Konturlinie.
+	 * @see Color
+	 */
+	public void setStrokeColor( Color color ) {
 		strokeColor = color;
 		drawing.setColor(color.getJavaColor());
 	}
 
-	public void noStroke() {
-		strokeColor = null;
+	/**
+	 * Setzt die Farbe der Konturlinie auf die angegebene Farbe und setzt die
+	 * Transparenz auf den angegebenen Wert. 0 is komplett durchsichtig und 255
+	 * komplett deckend.
+	 *
+	 * @param color Die neue Farbe der Konturlinie oder {@code null}.
+	 * @param alpha Ein Transparenzwert zwischen 0 und 255.
+	 * @see Color#Color(Color, int)
+	 */
+	public void setStrokeColor( Color color, int alpha ) {
+		setStrokeColor(new Color(color, alpha));
 	}
 
+	/**
+	 * Setzt die Farbe der Konturlinie auf einen Grauwert mit der angegebenen
+	 * Intensität. 0 entspricht schwarz, 255 entspricht weiß.
+	 *
+	 * @param gray Ein Grauwert zwischen 0 und 255.
+	 * @see Color#Color(int)
+	 */
+	public void setStrokeColor( int gray ) {
+		setStrokeColor(gray, gray, gray, 255);
+	}
+
+	/**
+	 * Setzt die Farbe der Konturlinie auf einen Grauwert mit der angegebenen
+	 * Intensität und dem angegebenen Transparenzwert. Der Grauwert 0 entspricht
+	 * schwarz, 255 entspricht weiß.
+	 *
+	 * @param gray Ein Grauwert zwischen 0 und 255.
+	 * @param alpha Ein Transparenzwert zwischen 0 und 255.
+	 * @see Color#Color(int, int)
+	 */
 	public void setStrokeColor( int gray, int alpha ) {
 		setStrokeColor(gray, gray, gray, alpha);
 	}
 
+	/**
+	 * Setzt die Farbe der Konturlinie auf die Farbe mit den angegebenen Rot-,
+	 * Grün- und Blauanteilen.
+	 *
+	 * @param red Der Rotanteil der Farbe zwischen 0 und 255.
+	 * @param green Der Grünanteil der Farbe zwischen 0 und 255.
+	 * @param blue Der Blauanteil der Farbe zwischen 0 und 255.
+	 * @see Color#Color(int, int, int)
+	 * @see <a
+	 * 	href="https://de.wikipedia.org/wiki/RGB-Farbraum">https://de.wikipedia.org/wiki/RGB-Farbraum</a>
+	 */
 	public void setStrokeColor( int red, int green, int blue ) {
 		setStrokeColor(red, green, blue, 255);
 	}
 
+	/**
+	 * Setzt die Farbe der Konturlinie auf die Farbe mit den angegebenen Rot-,
+	 * Grün- und Blauanteilen und dem angegebenen Transparenzwert.
+	 *
+	 * @param red Der Rotanteil der Farbe zwischen 0 und 255.
+	 * @param green Der Grünanteil der Farbe zwischen 0 und 255.
+	 * @param blue Der Blauanteil der Farbe zwischen 0 und 255.
+	 * @param alpha Ein Transparenzwert zwischen 0 und 25
+	 * @see Color#Color(int, int, int, int)
+	 * @see <a
+	 * 	href="https://de.wikipedia.org/wiki/RGB-Farbraum">https://de.wikipedia.org/wiki/RGB-Farbraum</a>
+	 */
 	public void setStrokeColor( int red, int green, int blue, int alpha ) {
 		setStrokeColor(new schule.ngb.zm.Color(red, green, blue, alpha));
 	}
 
-	public void setStrokeWeight( double pWeight ) {
-		strokeWeight = pWeight;
+	/**
+	 * Entfernt die Kontur der Form.
+	 */
+	public void noStroke() {
+		strokeColor = null;
+	}
+
+	/**
+	 * Setzt die Farbe der Konturlinie auf die Standardwerte zurück.
+	 *
+	 * @see schule.ngb.zm.Constants#DEFAULT_STROKECOLOR
+	 * @see schule.ngb.zm.Constants#DEFAULT_STROKEWEIGHT
+	 * @see schule.ngb.zm.Constants#SOLID
+	 */
+	public void resetStroke() {
+		setStrokeColor(DEFAULT_STROKECOLOR);
+		setStrokeWeight(DEFAULT_STROKEWEIGHT);
+		setStrokeType(SOLID);
+	}
+
+	/**
+	 * Gibt die Dicke der Konturlinie zurück.
+	 *
+	 * @return Die aktuelle Dicke der Linie.
+	 */
+	public double getStrokeWeight() {
+		return strokeWeight;
+	}
+
+	/**
+	 * Setzt die Dicke der Konturlinie. Die Dicke muss größer 0 sein. Wird 0
+	 * übergeben, dann wird keine Kontur mehr angezeigt.
+	 *
+	 * @param weight Die Dicke der Konturlinie.
+	 */
+	public void setStrokeWeight( double weight ) {
+		strokeWeight = weight;
 		drawing.setStroke(createStroke());
 	}
 
+	/**
+	 * Gibt die Art der Konturlinie zurück.
+	 *
+	 * @return Die aktuelle Art der Konturlinie.
+	 * @see Options.StrokeType
+	 */
+	public Options.StrokeType getStrokeType() {
+		return strokeType;
+	}
+
+	/**
+	 * Setzt den Typ der Kontur. Erlaubte Werte sind {@link #DASHED},
+	 * {@link #DOTTED} und {@link #SOLID}.
+	 *
+	 * @param type Eine der möglichen Konturarten.
+	 * @see Options.StrokeType
+	 */
+	public void setStrokeType( Options.StrokeType type ) {
+		this.strokeType = type;
+	}
+
+	/**
+	 * Hilfsmethode, um ein {@link Stroke} Objekt mit den aktuellen
+	 * Kontureigenschaften zu erstellen. Der aktuelle {@code Stroke} wird
+	 * zwischengespeichert.
+	 *
+	 * @return Ein {@code Stroke} mit den passenden Kontureigenschaften.
+	 */
 	protected Stroke createStroke() {
 		switch( strokeType ) {
 			case DOTTED:
@@ -128,30 +436,6 @@ public class DrawingLayer extends Layer {
 					BasicStroke.CAP_ROUND,
 					BasicStroke.JOIN_ROUND);
 		}
-	}
-
-	public Options.StrokeType getStrokeType() {
-		return strokeType;
-	}
-
-	public void setStrokeType( Options.StrokeType type ) {
-		switch( type ) {
-			case DASHED:
-				this.strokeType = DASHED;
-				break;
-			case DOTTED:
-				this.strokeType = DOTTED;
-				break;
-			default:
-				this.strokeType = SOLID;
-				break;
-		}
-	}
-
-	public void resetStroke() {
-		setStrokeColor(DEFAULT_STROKECOLOR);
-		setStrokeWeight(DEFAULT_STROKEWEIGHT);
-		setStrokeType(SOLID);
 	}
 
 	public void setAnchor( Options.Direction anchor ) {
@@ -194,7 +478,7 @@ public class DrawingLayer extends Layer {
 
 	public void pixel( double x, double y ) {
 		// square(x, y, 1);
-		buffer.setRGB((int)x, (int)y, fillColor.getRGBA());
+		buffer.setRGB((int) x, (int) y, fillColor.getRGBA());
 	}
 
 	public void square( double x, double y, double w ) {
@@ -222,11 +506,11 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void circle( double x, double y, double r ) {
-		ellipse(x, y, r+r, r+r, default_anchor);
+		ellipse(x, y, r + r, r + r, default_anchor);
 	}
 
 	public void circle( double x, double y, double r, Options.Direction anchor ) {
-		ellipse(x, y, r+r, r+r, anchor);
+		ellipse(x, y, r + r, r + r, anchor);
 	}
 
 	public void ellipse( double x, double y, double w, double h ) {
@@ -242,7 +526,7 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void arc( double x, double y, double r, double angle1, double angle2 ) {
-		arc(x, y, r+r, r+r, angle1, angle2);
+		arc(x, y, r + r, r + r, angle1, angle2);
 	}
 
 	public void arc( double x, double y, double w, double h, double angle1, double angle2 ) {
@@ -260,7 +544,7 @@ public class DrawingLayer extends Layer {
 			anchorPoint.x, anchorPoint.y,
 			w, h,
 			//Math.toRadians(angle1), Math.toRadians(angle2 - angle1),
-			angle1, angle2-angle1,
+			angle1, angle2 - angle1,
 			Arc2D.OPEN
 		);
 
@@ -270,7 +554,7 @@ public class DrawingLayer extends Layer {
 	public void pie( double x, double y, double r, double angle1, double angle2 ) {
 		while( angle2 < angle1 ) angle2 += 360.0;
 
-		double d = r+r;
+		double d = r + r;
 
 		Point2D.Double anchorPoint = getAnchorPoint(x, y, d, d, CENTER);
 		/*Shape arc = new Arc2D.Double(
@@ -435,7 +719,7 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void setFontSize( int size ) {
-		setFont(drawing.getFont().deriveFont((float)size));
+		setFont(drawing.getFont().deriveFont((float) size));
 	}
 
 	public void setFont( String fontName ) {
@@ -460,7 +744,7 @@ public class DrawingLayer extends Layer {
 
 
 	private Point2D.Double transformToCanvas( double x, double y ) {
-		return transformToCanvas(new Point2D.Double(x,y));
+		return transformToCanvas(new Point2D.Double(x, y));
 	}
 
 	private Point2D.Double transformToCanvas( Point2D.Double pPoint ) {
@@ -470,7 +754,7 @@ public class DrawingLayer extends Layer {
 	}
 
 	private Point2D.Double transformToUser( double x, double y ) {
-		return transformToUser(new Point2D.Double(x,y));
+		return transformToUser(new Point2D.Double(x, y));
 	}
 
 	private Point2D.Double transformToUser( Point2D.Double pPoint ) {

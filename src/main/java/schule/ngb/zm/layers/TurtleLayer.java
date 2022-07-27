@@ -6,12 +6,14 @@ import schule.ngb.zm.Options;
 import schule.ngb.zm.Vector;
 import schule.ngb.zm.shapes.FilledShape;
 
-import java.awt.*;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
+@SuppressWarnings( "unused" )
 public class TurtleLayer extends Layer {
 
 	// Rotating by the clock
@@ -39,7 +41,7 @@ public class TurtleLayer extends Layer {
 
 	public static final int H12 = 360;
 
-	private static Stack<Color> turtleColors;
+	private final static Stack<Color> turtleColors;
 
 	static {
 		turtleColors = new Stack<>();
@@ -51,9 +53,9 @@ public class TurtleLayer extends Layer {
 		turtleColors.add(Color.BLUE);
 	}
 
-	private Turtle mainTurtle = null;
+	private final Turtle mainTurtle;
 
-	private ArrayList<Turtle> turtles = new ArrayList<Turtle>(6);
+	private final List<Turtle> turtles = new ArrayList<>(6);
 
 	public TurtleLayer() {
 		super();
@@ -255,8 +257,8 @@ public class TurtleLayer extends Layer {
 		mainTurtle.resetStroke();
 	}
 
-	public void addPosToPath() {
-		mainTurtle.addPosToPath();
+	public void beginPath() {
+		mainTurtle.beginPath();
 	}
 
 	public void closePath() {
@@ -266,9 +268,12 @@ public class TurtleLayer extends Layer {
 	// End of delegate methods (auto-generated)
 
 
+	/**
+	 * Die Turtle der Zeichenmaschine.
+	 */
 	public class Turtle extends FilledShape {
 
-		private static final int STD_SIZE = 12;
+		private static final int DEFAULT_SIZE = 12;
 
 		boolean penDown = true;
 
@@ -282,7 +287,22 @@ public class TurtleLayer extends Layer {
 
 		boolean pathOpen = false;
 
-		Turtle() {}
+		Turtle() {
+		}
+
+		public void beginPath() {
+			pathOpen = false;
+			addPosToPath();
+		}
+
+		public void closePath() {
+			if( pathOpen ) {
+				addPosToPath();
+				path.closePath();
+				path.trimToSize();
+				pathOpen = false;
+			}
+		}
 
 		private void addPosToPath() {
 			if( !pathOpen ) {
@@ -291,15 +311,6 @@ public class TurtleLayer extends Layer {
 				pathOpen = true;
 			} else {
 				path.lineTo(position.x, position.y);
-			}
-		}
-
-		private void closePath() {
-			if( pathOpen ) {
-				addPosToPath();
-				path.closePath();
-				path.trimToSize();
-				pathOpen = false;
 			}
 		}
 
@@ -322,16 +333,16 @@ public class TurtleLayer extends Layer {
 				-12, -5, 16, 10, 5, 3
 			);*/
 			Path2D path = new Path2D.Double();
-			path.moveTo(STD_SIZE, 0);
-			path.lineTo(-STD_SIZE, -STD_SIZE/2);
-			path.lineTo(-STD_SIZE, STD_SIZE/2);
-			path.lineTo(STD_SIZE, 0);
+			path.moveTo(DEFAULT_SIZE, 0);
+			path.lineTo(-DEFAULT_SIZE, -DEFAULT_SIZE / 2.0);
+			path.lineTo(-DEFAULT_SIZE, DEFAULT_SIZE / 2.0);
+			path.lineTo(DEFAULT_SIZE, 0);
 
 			AffineTransform verzerrung = new AffineTransform();
 			verzerrung.translate(position.x, position.y);
 			verzerrung.rotate(Math.toRadians(direction.angle()));
 
-			Shape shape = verzerrung.createTransformedShape(path);
+			java.awt.Shape shape = verzerrung.createTransformedShape(path);
 
 			if( strokeColor != null ) {
 				graphics.setColor(strokeColor.getJavaColor());
