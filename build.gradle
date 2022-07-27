@@ -12,7 +12,7 @@ plugins {
 }*/
 
 group 'schule.ngb'
-version '0.0.22-SNAPSHOT'
+version '0.0.31-SNAPSHOT'
 //version '{$zmVersion.major}.{$zmVersion.minor}.{$zmVersion.rev}-SNAPSHOT'
 
 compileJava {
