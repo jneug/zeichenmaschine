@@ -8,16 +8,17 @@ import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.function.DoubleUnaryOperator;
 
 /**
- * Basisklasse für die meisten Objekte der Zeichemaschine, die von Nutzern
+ * Basisklasse für die meisten Objekte der Zeichenmaschine, die von Nutzern
  * erweitert werden können.
  * <p>
  * Die Konstanten stellen viele Funktionen zur einfachen Programmierung bereit
  * und enthält auch einige dynamische Werte, die von der Zeichenmaschine laufend
- * aktuell gehalten werden (beispielsweise {@link #runtime}.
+ * aktuell gehalten werden (beispielsweise {@link #runtime}).
  * <p>
  * Für die Implementierung eigener Klassen ist es oft hilfreich von
  * {@code Constants} zu erben, um die Methoden und Konstanten einfach im
@@ -64,13 +65,49 @@ public class Constants {
 	/**
 	 * Patchversion der Zeichenmaschine.
 	 */
-	public static final int APP_VERSION_REV = 22;
+	public static final int APP_VERSION_REV = 31;
 
 	/**
 	 * Version der Zeichenmaschine als Text-String.
 	 */
 	public static final String APP_VERSION = APP_VERSION_MAJ + "." + APP_VERSION_MIN + "." + APP_VERSION_REV;
 
+	/**
+	 * Gibt an, ob die Zeichenmaschine unter macOS gestartet wurde.
+	 */
+	public static final boolean MACOS;
+
+	/**
+	 * Gibt an, ob die Zeichenmaschine unter Windows gestartet wurde.
+	 */
+	public static final boolean WINDOWS;
+
+	/**
+	 * Gibt an, ob die Zeichenmaschine unter Linux gestartet wurde.
+	 */
+	public static final boolean LINUX;
+
+	static {
+		final String name = System.getProperty("os.name");
+
+		if( name.contains("Mac") ) {
+			MACOS = true;
+			WINDOWS = false;
+			LINUX = false;
+		} else if( name.contains("Windows") ) {
+			MACOS = false;
+			WINDOWS = true;
+			LINUX = false;
+		} else if( name.equals("Linux") ) {  // true for the ibm vm
+			MACOS = false;
+			WINDOWS = false;
+			LINUX = true;
+		} else {
+			MACOS = false;
+			WINDOWS = false;
+			LINUX = false;
+		}
+	}
 
 	/**
 	 * Standardbreite eines Zeichenfensters.
@@ -1284,6 +1321,26 @@ public class Constants {
 	 * Wählt ein zufälliges Element aus dem Array aus.
 	 *
 	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
+	 * @return Ein zufälliges Element aus dem Array.
+	 */
+	public static final int choice( int[] values ) {
+		return values[random(0, values.length - 1)];
+	}
+
+	/**
+	 * Wählt ein zufälliges Element aus dem Array aus.
+	 *
+	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
+	 * @return Ein zufälliges Element aus dem Array.
+	 */
+	public static final double choice( double[] values ) {
+		return values[random(0, values.length - 1)];
+	}
+
+	/**
+	 * Wählt ein zufälliges Element aus dem Array aus.
+	 *
+	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
 	 * @param <T> Datentyp des Elements.
 	 * @return Ein zufälliges Element aus dem Array.
 	 */
@@ -1296,15 +1353,92 @@ public class Constants {
 	 *
 	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
 	 * @param n Anzahl der auszuwählenden Elemente.
+	 * @param unique Bei {@code true} werden Elemente im Array nur maximal
+	 * 	einmal ausgewählt (Ziehen ohne Zurücklegen).
+	 * @return Ein zufälliges Element aus dem Array.
+	 * @throws IllegalArgumentException Wenn {@code unique == true} und
+	 *                                  {@code values.length < n}, also nicht
+	 *                                  genug Werte zur Wahl stehen.
+	 */
+	public static final int[] choice( int[] values, int n, boolean unique ) {
+		if( unique && values.length < n )
+			throw new IllegalArgumentException(
+				String.format("Need at least <%d> values to choose <%d> unique values (<%d> given).", n, n, values.length)
+			);
+
+		int[] result = new int[n];
+		int[] valuesCopy = Arrays.copyOf(values, values.length);
+		for( int i = 0; i < n; i++ ) {
+			int j = random(0, valuesCopy.length-1);
+			int l = valuesCopy.length-1;
+
+			result[i] = valuesCopy[j];
+			valuesCopy[j] = valuesCopy[l];
+			valuesCopy[l] = result[i];
+
+			if( unique )
+				valuesCopy = Arrays.copyOf(valuesCopy, l);
+		}
+		return result;
+	}
+
+	/**
+	 * Wählt die angegebene Anzahl Elemente aus dem Array aus.
+	 *
+	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
+	 * @param n Anzahl der auszuwählenden Elemente.
+	 * @return Ein zufälliges Element aus dem Array.
+	 */
+	public static final double[] choice( double[] values, int n, boolean unique ) {
+		if( unique && values.length < n )
+			throw new IllegalArgumentException(
+				String.format("Need at least <%d> values to choose <%d> unique values (<%d> given).", n, n, values.length)
+			);
+
+		double[] result = new double[n];
+		double[] valuesCopy = Arrays.copyOf(values, values.length);
+		for( int i = 0; i < n; i++ ) {
+			int j = random(0, valuesCopy.length-1);
+			int l = valuesCopy.length-1;
+
+			result[i] = valuesCopy[j];
+			valuesCopy[j] = valuesCopy[l];
+			valuesCopy[l] = result[i];
+
+			if( unique )
+				valuesCopy = Arrays.copyOf(valuesCopy, l);
+		}
+		return result;
+	}
+
+	/**
+	 * Wählt die angegebene Anzahl Elemente aus dem Array aus.
+	 *
+	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
+	 * @param n Anzahl der auszuwählenden Elemente.
 	 * @param <T> Datentyp der Elemente.
 	 * @return Ein zufälliges Element aus dem Array.
 	 */
-	public static final <T> T[] choice( T[] values, int n ) {
-		Object[] result = new Object[n];
+	public static final <T> T[] choice( T[] values, int n, boolean unique ) {
+		if( unique && values.length < n )
+			throw new IllegalArgumentException(
+				String.format("Need at least <%d> values to choose <%d> unique values (<%d> given).", n, n, values.length)
+			);
+
+		T[] result = Arrays.copyOf(values, n);
+		T[] valuesCopy = Arrays.copyOf(values, values.length);
 		for( int i = 0; i < n; i++ ) {
-			result[i] = choice(values);
+			int last = valuesCopy.length-1;
+			int j = random(0, last);
+
+			result[i] = valuesCopy[j];
+			valuesCopy[j] = valuesCopy[last];
+			valuesCopy[last] = result[i];
+
+			if( unique )
+				valuesCopy = Arrays.copyOf(valuesCopy, last);
 		}
-		return (T[]) result;
+		return result;
 	}
 
 	/**
@@ -1474,7 +1608,7 @@ public class Constants {
 	}
 
 	public static final double asDouble( char value ) {
-		return (double) value;
+		return value;
 	}
 
 	public static final double asDouble( byte value ) {

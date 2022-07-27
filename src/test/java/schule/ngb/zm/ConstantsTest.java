@@ -2,6 +2,9 @@ package schule.ngb.zm;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class ConstantsTest {
@@ -167,6 +170,32 @@ class ConstantsTest {
 	private void assertInRange( double d ) {
 		assertFalse(Double.isNaN(d), "Noise value can't be NaN.");
 		assertTrue(0.0 <= d && 1.0 >= d, "Noise should be in Range 0 to 1. Was <" + d + ">.");
+	}
+
+	@Test
+	void choice() {
+		int[] values = IntStream.range(0,1000).toArray();
+		int[] choosen = Constants.choice(values, 1, false);
+		assertEquals(1, choosen.length);
+		assertTrue(Arrays.stream(values).anyMatch((i) -> i == choosen[0]));
+
+		int[] choosen4 = Constants.choice(values, 2000, false);
+		assertEquals(2000, choosen4.length);
+
+		int[] choosen2 = Constants.choice(values, 400, false);
+		assertEquals(400, choosen2.length);
+		assertTrue(Arrays.stream(choosen2).allMatch((i) -> Arrays.binarySearch(values, i)>=0 ));
+
+		int[] choosen3 = Constants.choice(values, 999, true);
+		assertEquals(999, choosen3.length);
+		assertTrue(Arrays.stream(choosen3).allMatch((i) -> Arrays.binarySearch(values, i)>=0 ));
+		for( int i = 0; i < choosen3.length; i++ ) {
+			for( int j = i+1; j < choosen3.length; j++ ) {
+				assertNotEquals(choosen3[i], choosen3[j], "Item "+i+" also found at index "+j);
+			}
+		}
+
+		assertThrows(IllegalArgumentException.class, () -> Constants.choice(values, 2000, true));
 	}
 
 }
