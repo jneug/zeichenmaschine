@@ -8,9 +8,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Eine Leinwand ist die Hauptkomponente einer Zeichenmaschine. Sie besteht aus
@@ -29,7 +27,7 @@ public class Zeichenleinwand extends Canvas {
 	/**
 	 * Liste der hinzugefügten Ebenen.
 	 */
-	private final LinkedList<Layer> layers;
+	private final List<Layer> layers;
 
 	private boolean rendering = false, suspended = false;
 
@@ -45,19 +43,39 @@ public class Zeichenleinwand extends Canvas {
 		this.setMinimumSize(getSize());
 		this.setBackground(Constants.DEFAULT_BACKGROUND.getJavaColor());
 
-		// Liste der Ebenen initialisieren und die Standardebenen einfügen
-		layers = new LinkedList<>();
-		synchronized( layers ) {
-			layers.add(new ColorLayer(width, height, Constants.DEFAULT_BACKGROUND));
-		}
+		layers = Collections.synchronizedList(new LinkedList<>());
 	}
 
+	/**
+	 * Ob die Leinwand ihren Inhalt gerade zeichnet.
+	 *
+	 * @return {@code true}, wenn die Inhalte gerade gezeichnet werden.
+	 */
 	public boolean isRendering() {
 		return rendering;
 	}
 
+	/**
+	 * Pausiert das Zeichnen der Leinwand kurzzeitig.
+	 * <p>
+	 * Falls die Leinwand gerade beim Zeichnen ist
+	 * ({@code isRendering() == true}, blockt die Methode den aufrufenden Thread
+	 * so lange, bis das Rendern beendet ist. Danach wird die Ebene nicht mehr
+	 * neu gezeichnet, bis {@link #resumeRendering()} aufgerufen wird.
+	 * <p>
+	 * Das Zeichnen sollte nur dann unterbrochen werden, wenn sich der Kontext
+	 * der Canvas-Komponente in seinem Elterncontainer ändert, um Fehler bei
+	 * einer fehlenden Container-Hierarchie zu vermeiden.
+	 *
+	 * @throws InterruptedException Falls der Thread beim Warten unterbrochen
+	 *                              wird.
+	 */
 	public void suspendRendering() throws InterruptedException {
 		synchronized( renderLock ) {
+			if( isRendering() ) {
+				renderLock.wait();
+			}
+
 			suspended = true;
 		}
 	}
@@ -96,10 +114,8 @@ public class Zeichenleinwand extends Canvas {
 	 */
 	public void addLayer( Layer layer ) {
 		if( layer != null ) {
-			synchronized( layers ) {
-				layer.setSize(getWidth(), getHeight());
-				layers.add(layer);
-			}
+			layer.setSize(getWidth(), getHeight());
+			layers.add(layer);
 		}
 	}
 
@@ -115,13 +131,11 @@ public class Zeichenleinwand extends Canvas {
 	 */
 	public void addLayer( int i, Layer layer ) {
 		if( layer != null ) {
-			synchronized( layers ) {
-				layer.setSize(getWidth(), getHeight());
-				if( i > layers.size() ) {
-					layers.add(layer);
-				} else {
-					layers.add(i, layer);
-				}
+			layer.setSize(getWidth(), getHeight());
+			if( i > layers.size() ) {
+				layers.add(layer);
+			} else {
+				layers.add(i, layer);
 			}
 		}
 	}
@@ -136,19 +150,19 @@ public class Zeichenleinwand extends Canvas {
 	}
 
 	/**
-	 * Gibt die Liste der bisher hinzugefügten Ebenen zurück.
+	 * Gibt eine Kopie der Liste der bisher hinzugefügten Ebenen zurück.
 	 *
 	 * @return Liste der Ebenen.
 	 */
-	public java.util.List<Layer> getLayers() {
-		return layers;
+	public List<Layer> getLayers() {
+		return List.copyOf(layers);
 	}
 
 	/**
-	 * Holt die Ebene am Index <var>i</var> (beginnend bei 0).
+	 * Holt die Ebene am Index {@code i} (beginnend bei 0).
 	 *
 	 * @param i Index der Ebene (beginnend bei 0).
-	 * @return Die Ebene am Index <var>i</var> oder {@code null}.
+	 * @return Die Ebene am Index {@code i} oder {@code null}.
 	 * @throws IndexOutOfBoundsException Falls der Index nicht existiert.
 	 */
 	public Layer getLayer( int i ) {
@@ -163,14 +177,16 @@ public class Zeichenleinwand extends Canvas {
 	 * Sucht die erste Ebene des angegebenen Typs aus der Liste der Ebenen.
 	 * Existiert keine solche Ebene, wird {@code null} zurückgegeben.
 	 *
-	 * @param clazz Typ der Ebene.
-	 * @param <L>
+	 * @param type Klasse der Ebenen, die abgefragt werden.
+	 * @param <L> Typ der Ebenen, die abgefragt werden.
 	 * @return Erste Ebene vom angegeben Typ.
 	 */
-	public <L extends Layer> L getLayer( Class<L> clazz ) {
-		for( Layer layer : layers ) {
-			if( layer.getClass().equals(clazz) ) {
-				return clazz.cast(layer);
+	public <L extends Layer> L getLayer( Class<L> type ) {
+		synchronized( layers ) {
+			for( Layer layer : layers ) {
+				if( layer.getClass().equals(type) ) {
+					return type.cast(layer);
+				}
 			}
 		}
 		return null;
@@ -181,44 +197,41 @@ public class Zeichenleinwand extends Canvas {
 	 * gibt diese als Liste zurück. Die Reihenfolge in der Liste entspricht der
 	 * Reihenfolge der Ebenen in der Leinwand (von unten nach oben).
 	 *
-	 * @param pClazz
-	 * @param <L>
-	 * @return
+	 * @param type Klasse der Ebenen, die abgefragt werden.
+	 * @param <L> Typ der Ebenen, die abgefragt werden.
+	 * @return Eine Liste mit den vorhandenen Ebenen des abgefragten Typs.
 	 */
-	public <L extends Layer> java.util.List<L> getLayers( Class<L> pClazz ) {
+	public <L extends Layer> List<L> getLayers( Class<L> type ) {
 		ArrayList<L> result = new ArrayList<>(layers.size());
-		for( Layer layer : layers ) {
-			if( layer.getClass().equals(pClazz) ) {
-				result.add(pClazz.cast(layer));
+		synchronized( layers ) {
+			for( Layer layer : layers ) {
+				if( layer.getClass().equals(type) ) {
+					result.add(type.cast(layer));
+				}
 			}
 		}
 		return result;
 	}
 
 	public boolean removeLayer( Layer pLayer ) {
-		synchronized( layers ) {
-			return layers.remove(pLayer);
-		}
+		return layers.remove(pLayer);
 	}
 
-	public void removeLayers( Layer... pLayers ) {
+	public void removeLayers( Layer... removeLayers ) {
 		synchronized( layers ) {
-			for( Layer layer : pLayers ) {
+			for( Layer layer : removeLayers ) {
 				layers.remove(layer);
 			}
 		}
 	}
 
 	public void clearLayers() {
-		synchronized( layers ) {
-			layers.clear();
-		}
+		layers.clear();
 	}
 
 	public void updateLayers( double delta ) {
 		synchronized( layers ) {
-			List<Layer> it = List.copyOf(layers);
-			for( Layer layer : it ) {
+			for( Layer layer : List.copyOf(layers) ) {
 				layer.update(delta);
 			}
 		}
@@ -255,8 +268,7 @@ public class Zeichenleinwand extends Canvas {
 	public void draw( Graphics graphics ) {
 		Graphics2D g2d = (Graphics2D) graphics.create();
 		synchronized( layers ) {
-			List<Layer> it = List.copyOf(layers);
-			for( Layer layer : it ) {
+			for( Layer layer : layers ) {
 				layer.draw(g2d);
 			}
 		}
@@ -282,8 +294,7 @@ public class Zeichenleinwand extends Canvas {
 							g2d.clearRect(0, 0, getWidth(), getHeight());
 
 							synchronized( layers ) {
-								List<Layer> it = List.copyOf(layers);
-								for( Layer layer : it ) {
+								for( Layer layer : List.copyOf(layers) ) {
 									layer.draw(g2d);
 								}
 							}
@@ -302,6 +313,7 @@ public class Zeichenleinwand extends Canvas {
 					} while( strategy.contentsLost() );
 				}
 				rendering = false;
+				renderLock.notifyAll();
 			}
 		}
 	}
