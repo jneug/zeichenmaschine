@@ -3,9 +3,13 @@ package schule.ngb.zm.layers;
 import schule.ngb.zm.Color;
 import schule.ngb.zm.Layer;
 import schule.ngb.zm.Options;
+import schule.ngb.zm.shapes.Text;
 import schule.ngb.zm.util.io.ImageLoader;
 
-import java.awt.*;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Image;
+import java.awt.Shape;
 import java.awt.geom.*;
 import java.util.Stack;
 
@@ -15,38 +19,8 @@ import java.util.Stack;
  * Ein {@code DrawingLayer} ist eine der drei Standardebenen der
  * {@link schule.ngb.zm.Zeichenmaschine}.
  */
+@SuppressWarnings( "unused" )
 public class DrawingLayer extends Layer {
-
-	/**
-	 * Aktuelle Füllfarbe.
-	 */
-	protected Color fillColor = DEFAULT_FILLCOLOR;
-
-	/**
-	 * Der aktuelle Farbverlauf oder {@code null}, wenn aktuell kein
-	 * Farbverlauf gesetzt ist.
-	 */
-	protected Paint fill = null;
-
-	/**
-	 * Aktuelle Konturfarbe.
-	 */
-	protected Color strokeColor = DEFAULT_STROKECOLOR;
-
-	/**
-	 * Aktuelle Dicke der Konturlinie.
-	 */
-	protected double strokeWeight = DEFAULT_STROKEWEIGHT;
-
-	/**
-	 * Art der Konturlinie.
-	 */
-	protected Options.StrokeType strokeType = SOLID;
-
-	/**
-	 * Standardanker für Formen.
-	 */
-	private Options.Direction default_anchor = CENTER;
 
 	/**
 	 * Wiederverwendbarer Speicher für eine Linie.
@@ -85,6 +59,14 @@ public class DrawingLayer extends Layer {
 	// private FontMetrics fontMetrics;
 
 	/**
+	 * Eine Shape, an die die Methoden für Farben und Konturlinien delegiert
+	 * werden.
+	 */
+	private schule.ngb.zm.shapes.Text shapeDelegate;
+
+	private final Stack<schule.ngb.zm.shapes.Text> styleStack;
+
+	/**
 	 * Erstellt eine Ebene in der Standardgröße.
 	 */
 	public DrawingLayer() {
@@ -92,6 +74,9 @@ public class DrawingLayer extends Layer {
 		transformStack = new Stack<>();
 		transformStack.push(new AffineTransform());
 		// fontMetrics = drawing.getFontMetrics();
+
+		styleStack = new Stack<>();
+		resetStyle();
 	}
 
 	/**
@@ -105,6 +90,9 @@ public class DrawingLayer extends Layer {
 		transformStack = new Stack<>();
 		transformStack.push(new AffineTransform());
 		// fontMetrics = drawing.getFontMetrics();
+
+		styleStack = new Stack<>();
+		resetStyle();
 	}
 
 	/**
@@ -113,7 +101,7 @@ public class DrawingLayer extends Layer {
 	 * @return Die aktuelle Füllfarbe.
 	 */
 	public Color getFillColor() {
-		return fillColor;
+		return shapeDelegate.getFillColor();
 	}
 
 	/**
@@ -123,8 +111,8 @@ public class DrawingLayer extends Layer {
 	 * @see Color
 	 */
 	public void setFillColor( Color color ) {
-		fillColor = color;
-		drawing.setColor(color.getJavaColor());
+		shapeDelegate.setFillColor(color);
+		drawing.setPaint(color);
 	}
 
 	/**
@@ -199,7 +187,7 @@ public class DrawingLayer extends Layer {
 	 * Entfernt die Füllung der Form.
 	 */
 	public void noFill() {
-		fillColor = null;
+		shapeDelegate.noFill();
 	}
 
 	/**
@@ -208,8 +196,7 @@ public class DrawingLayer extends Layer {
 	 * @see schule.ngb.zm.Constants#DEFAULT_FILLCOLOR
 	 */
 	public void resetFill() {
-		setFillColor(DEFAULT_FILLCOLOR);
-		noGradient();
+		shapeDelegate.resetFill();
 	}
 
 	/**
@@ -225,11 +212,7 @@ public class DrawingLayer extends Layer {
 	 * @param to Farbe am Endpunkt.
 	 */
 	public void setGradient( double fromX, double fromY, Color from, double toX, double toY, Color to ) {
-		setFillColor(from);
-		fill = new GradientPaint(
-			(float) fromX, (float) fromY, from.getJavaColor(),
-			(float) toX, (float) toY, to.getJavaColor()
-		);
+		shapeDelegate.setGradient(fromX, fromY, from, toX, toY, to);
 	}
 
 	/**
@@ -246,18 +229,14 @@ public class DrawingLayer extends Layer {
 	 * @param to Farbe am Rand des Kreises.
 	 */
 	public void setGradient( double centerX, double centerY, double radius, Color from, Color to ) {
-		setFillColor(from);
-		fill = new RadialGradientPaint(
-			(float) centerX, (float) centerY, (float) radius,
-			new float[]{0f, 1f},
-			new java.awt.Color[]{from.getJavaColor(), to.getJavaColor()});
+		shapeDelegate.setGradient(centerX, centerY, radius, from, to);
 	}
 
 	/**
 	 * Entfernt den Farbverlauf von der Form.
 	 */
 	public void noGradient() {
-		fill = null;
+		shapeDelegate.noGradient();
 	}
 
 	/**
@@ -266,7 +245,7 @@ public class DrawingLayer extends Layer {
 	 * @return Die Konturfarbe oder {@code null}.
 	 */
 	public Color getStrokeColor() {
-		return strokeColor;
+		return shapeDelegate.getStrokeColor();
 	}
 
 	/**
@@ -276,8 +255,8 @@ public class DrawingLayer extends Layer {
 	 * @see Color
 	 */
 	public void setStrokeColor( Color color ) {
-		strokeColor = color;
-		drawing.setColor(color.getJavaColor());
+		shapeDelegate.setStrokeColor(color);
+		drawing.setPaint(color);
 	}
 
 	/**
@@ -352,7 +331,7 @@ public class DrawingLayer extends Layer {
 	 * Entfernt die Kontur der Form.
 	 */
 	public void noStroke() {
-		strokeColor = null;
+		shapeDelegate.noStroke();
 	}
 
 	/**
@@ -363,9 +342,7 @@ public class DrawingLayer extends Layer {
 	 * @see schule.ngb.zm.Constants#SOLID
 	 */
 	public void resetStroke() {
-		setStrokeColor(DEFAULT_STROKECOLOR);
-		setStrokeWeight(DEFAULT_STROKEWEIGHT);
-		setStrokeType(SOLID);
+		shapeDelegate.resetStroke();
 	}
 
 	/**
@@ -374,7 +351,7 @@ public class DrawingLayer extends Layer {
 	 * @return Die aktuelle Dicke der Linie.
 	 */
 	public double getStrokeWeight() {
-		return strokeWeight;
+		return shapeDelegate.getStrokeWeight();
 	}
 
 	/**
@@ -384,8 +361,8 @@ public class DrawingLayer extends Layer {
 	 * @param weight Die Dicke der Konturlinie.
 	 */
 	public void setStrokeWeight( double weight ) {
-		strokeWeight = weight;
-		drawing.setStroke(createStroke());
+		shapeDelegate.setStrokeWeight(weight);
+		drawing.setStroke(shapeDelegate.getStroke());
 	}
 
 	/**
@@ -395,7 +372,7 @@ public class DrawingLayer extends Layer {
 	 * @see Options.StrokeType
 	 */
 	public Options.StrokeType getStrokeType() {
-		return strokeType;
+		return shapeDelegate.getStrokeType();
 	}
 
 	/**
@@ -406,40 +383,11 @@ public class DrawingLayer extends Layer {
 	 * @see Options.StrokeType
 	 */
 	public void setStrokeType( Options.StrokeType type ) {
-		this.strokeType = type;
-	}
-
-	/**
-	 * Hilfsmethode, um ein {@link Stroke} Objekt mit den aktuellen
-	 * Kontureigenschaften zu erstellen. Der aktuelle {@code Stroke} wird
-	 * zwischengespeichert.
-	 *
-	 * @return Ein {@code Stroke} mit den passenden Kontureigenschaften.
-	 */
-	protected Stroke createStroke() {
-		switch( strokeType ) {
-			case DOTTED:
-				return new BasicStroke(
-					(float) strokeWeight,
-					BasicStroke.CAP_ROUND,
-					BasicStroke.JOIN_ROUND,
-					10.0f, new float[]{1.0f, 5.0f}, 0.0f);
-			case DASHED:
-				return new BasicStroke(
-					(float) strokeWeight,
-					BasicStroke.CAP_ROUND,
-					BasicStroke.JOIN_ROUND,
-					10.0f, new float[]{5.0f}, 0.0f);
-			default:
-				return new BasicStroke(
-					(float) strokeWeight,
-					BasicStroke.CAP_ROUND,
-					BasicStroke.JOIN_ROUND);
-		}
+		shapeDelegate.setStrokeType(type);
 	}
 
 	public void setAnchor( Options.Direction anchor ) {
-		default_anchor = anchor;
+		shapeDelegate.setAnchor(anchor);
 	}
 
 	public void clear( int gray ) {
@@ -471,18 +419,16 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void line( double x1, double y1, double x2, double y2 ) {
-		//Shape line = new Line2D.Double(x1, y1, x2, y2);
 		line.setLine(x1, y1, x2, y2);
 		drawShape(line);
 	}
 
 	public void pixel( double x, double y ) {
-		// square(x, y, 1);
-		buffer.setRGB((int) x, (int) y, fillColor.getRGBA());
+		buffer.setRGB((int) x, (int) y, shapeDelegate.getFontColor().getRGBA());
 	}
 
 	public void square( double x, double y, double w ) {
-		rect(x, y, w, w);
+		rect(x, y, w, w, shapeDelegate.getAnchor());
 	}
 
 	public void square( double x, double y, double w, Options.Direction anchor ) {
@@ -490,23 +436,22 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void rect( double x, double y, double w, double h ) {
-		rect(x, y, w, h, default_anchor);
+		rect(x, y, w, h, shapeDelegate.getAnchor());
 	}
 
 	public void rect( double x, double y, double w, double h, Options.Direction anchor ) {
-		Point2D.Double anchorPoint = getAnchorPoint(x, y, w, h, anchor);
-		// Shape rect = new Rectangle2D.Double(anchorPoint.getX(), anchorPoint.getY(), w, h);
+		Point2D.Double anchorPoint = this.getOriginPoint(x, y, w, h, anchor);
 		rect.setRect(anchorPoint.getX(), anchorPoint.getY(), w, h);
 		fillShape(rect);
 		drawShape(rect);
 	}
 
 	public void point( double x, double y ) {
-		circle(x - 1, y - 1, 2);
+		ellipse(x - 1, y - 1, 2, 2, shapeDelegate.getAnchor());
 	}
 
 	public void circle( double x, double y, double r ) {
-		ellipse(x, y, r + r, r + r, default_anchor);
+		ellipse(x, y, r + r, r + r, shapeDelegate.getAnchor());
 	}
 
 	public void circle( double x, double y, double r, Options.Direction anchor ) {
@@ -514,12 +459,11 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void ellipse( double x, double y, double w, double h ) {
-		ellipse(x, y, w, h, default_anchor);
+		ellipse(x, y, w, h, shapeDelegate.getAnchor());
 	}
 
 	public void ellipse( double x, double y, double w, double h, Options.Direction anchor ) {
-		Point2D.Double anchorPoint = getAnchorPoint(x, y, w, h, anchor);
-		// Shape ellipse = new Ellipse2D.Double(anchorPoint.x, anchorPoint.y, w, h);
+		Point2D.Double anchorPoint = getOriginPoint(x, y, w, h, anchor);
 		ellipse.setFrame(anchorPoint.x, anchorPoint.y, w, h);
 		fillShape(ellipse);
 		drawShape(ellipse);
@@ -532,14 +476,7 @@ public class DrawingLayer extends Layer {
 	public void arc( double x, double y, double w, double h, double angle1, double angle2 ) {
 		while( angle2 < angle1 ) angle2 += 360.0;
 
-		Point2D.Double anchorPoint = getAnchorPoint(x, y, w, h, CENTER);
-		/*Shape arc = new Arc2D.Double(
-			anchorPoint.x,
-			anchorPoint.y,
-			d, d,
-			angle1, angle2 - angle1,
-			Arc2D.OPEN
-		);*/
+		Point2D.Double anchorPoint = getOriginPoint(x, y, w, h, CENTER);
 		arc.setArc(
 			anchorPoint.x, anchorPoint.y,
 			w, h,
@@ -556,14 +493,7 @@ public class DrawingLayer extends Layer {
 
 		double d = r + r;
 
-		Point2D.Double anchorPoint = getAnchorPoint(x, y, d, d, CENTER);
-		/*Shape arc = new Arc2D.Double(
-			anchorPoint.x,
-			anchorPoint.y,
-			d, d,
-			angle1, angle2 - angle1,
-			Arc2D.PIE
-		);*/
+		Point2D.Double anchorPoint = getOriginPoint(x, y, d, d, CENTER);
 		arc.setArc(
 			anchorPoint.x, anchorPoint.y,
 			d, d,
@@ -597,12 +527,12 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void rhombus( double x, double y, double width, double height ) {
-		rhombus(x, y, width, height, default_anchor);
+		rhombus(x, y, width, height, shapeDelegate.getAnchor());
 	}
 
 	public void rhombus( double x, double y, double width, double height, Options.Direction anchor ) {
 		double whalf = width / 2.0, hhalf = height / 2.0;
-		Point2D.Double anchorPoint = getAnchorPoint(x, y, width, height, anchor);
+		Point2D.Double anchorPoint = getOriginPoint(x, y, width, height, anchor);
 		polygon(anchorPoint.x + whalf, anchorPoint.y, anchorPoint.x + width, anchorPoint.y + hhalf, anchorPoint.x + whalf, anchorPoint.y + height, anchorPoint.x, anchorPoint.y + hhalf);
 	}
 
@@ -648,8 +578,22 @@ public class DrawingLayer extends Layer {
 		drawShape(path);
 	}
 
-	// TODO: General shape drawing
-	/*
+	protected void fillShape( Shape shape ) {
+		if( shapeDelegate.getPaint() != null ) {
+			drawing.setPaint(shapeDelegate.getPaint());
+			drawing.fill(shape);
+		}
+	}
+
+	protected void drawShape( Shape shape ) {
+		if( shapeDelegate.getStrokeColor() != null && shapeDelegate.getStrokeColor().getAlpha() > 0
+			&& shapeDelegate.getStrokeWeight() > 0.0 ) {
+			drawing.setColor(shapeDelegate.getStrokeColor().getJavaColor());
+			drawing.setStroke(shapeDelegate.getStroke());
+			drawing.draw(shape);
+		}
+	}
+
 	public void beginShape() {
 		path.reset();
 		pathStarted = false;
@@ -672,10 +616,9 @@ public class DrawingLayer extends Layer {
 		fillShape(path);
 		drawShape(path);
 	}
-	*/
 
 	public void image( String imageSource, double x, double y ) {
-		image(ImageLoader.loadImage(imageSource), x, y, 1.0, default_anchor);
+		image(ImageLoader.loadImage(imageSource), x, y, 1.0, shapeDelegate.getAnchor());
 	}
 
 	public void image( String imageSource, double x, double y, Options.Direction anchor ) {
@@ -683,7 +626,7 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void image( String imageSource, double x, double y, double scale ) {
-		image(ImageLoader.loadImage(imageSource), x, y, scale, default_anchor);
+		image(ImageLoader.loadImage(imageSource), x, y, scale, shapeDelegate.getAnchor());
 	}
 
 	public void image( String imageSource, double x, double y, double scale, Options.Direction anchor ) {
@@ -691,120 +634,108 @@ public class DrawingLayer extends Layer {
 	}
 
 	public void image( Image image, double x, double y ) {
-		image(image, x, y, 1.0, default_anchor);
+		image(image, x, y, 1.0, shapeDelegate.getAnchor());
 	}
 
 	public void image( Image image, double x, double y, double scale ) {
-		image(image, x, y, scale, default_anchor);
+		image(image, x, y, scale, shapeDelegate.getAnchor());
 	}
 
 	public void image( Image image, double x, double y, double scale, Options.Direction anchor ) {
 		if( image != null ) {
 			double neww = image.getWidth(null) * scale;
 			double newh = image.getHeight(null) * scale;
-			Point2D.Double anchorPoint = getAnchorPoint(x, y, neww, newh, anchor);
+			Point2D.Double anchorPoint = getOriginPoint(x, y, neww, newh, anchor);
 			drawing.drawImage(image, (int) anchorPoint.x, (int) anchorPoint.y, (int) neww, (int) newh, null);
 		}
 	}
 
+	public Font getFont() {
+		return shapeDelegate.getFont();
+	}
+
+	public void setFont( Font newFont ) {
+		shapeDelegate.setFont(newFont);
+		// fontMetrics = drawing.getFontMetrics();
+	}
+
+	public void setFont( String fontName ) {
+		shapeDelegate.setFont(fontName);
+	}
+
+	public void setFont( String fontName, int size ) {
+		shapeDelegate.setFont(fontName, size);
+	}
+
+	public void setFont( String fontName, int size, int style ) {
+		shapeDelegate.setFont(fontName, size, style);
+	}
+
+	public double getFontSize() {
+		return shapeDelegate.getFontSize();
+	}
+
+	public void setFontSize( double size ) {
+		shapeDelegate.setFontSize(size);
+	}
+
 	public void text( String text, double x, double y ) {
-		text(text, x, y, default_anchor);
+		text(text, x, y, shapeDelegate.getAnchor());
 	}
 
 	public void text( String text, double x, double y, Options.Direction anchor ) {
+		drawing.setFont(shapeDelegate.getFont());
 		FontMetrics fm = drawing.getFontMetrics();
-		Point2D.Double anchorPoint = getAnchorPoint(x, y + fm.getAscent(), fm.stringWidth(text), fm.getHeight(), anchor);
+		Point2D.Double anchorPoint = getOriginPoint(x, y + fm.getAscent(), fm.stringWidth(text), fm.getHeight(), anchor);
 
 		drawing.drawString(text, (float) anchorPoint.x, (float) anchorPoint.y);
 	}
 
-	public void setFontSize( int size ) {
-		setFont(drawing.getFont().deriveFont((float) size));
+	/**
+	 * Berechnet den Ursprung einer zu zeichnenden Form, wenn der angegebene
+	 * Ankerpunkt zugrunde gelegt wird.
+	 * <p>
+	 * Der Ursprung einer Form liegt immer oben links. Eine Form an den
+	 * Koordinaten {@code (300, 300)} und den Abmessungen {@code (100, 50)}
+	 * würde für den Anker {@link Options.Direction#NORTHWEST} also den Ursprung
+	 * {@code (300, 300)} haben. Für den Anker {@link Options.Direction#CENTER}
+	 * wäre der Ursprung zu den Koordinaten um die hälfte der Abmessungen nach
+	 * links und oben verschoben bei {@code (250, 275)}. Beim Zeichnen liegen
+	 * die Koordinaten {@code (300, 300)} dann in der Mitte der Form.
+	 *
+	 * @param x x-Koordinate des umgebenden Rechtecks.
+	 * @param y y-Koordinate des umgebenden Rechtecks.
+	 * @param w Breite des umgebenden Rechtecks.
+	 * @param h Höhe des umgebenden Rechtecks.
+	 * @param anchor Zu verendender Anker.
+	 * @return Der Ursprung des umgebenden Rechtecks.
+	 */
+	protected Point2D.Double getOriginPoint( double x, double y, double w, double h, Options.Direction anchor ) {
+		Point2D.Double ap = schule.ngb.zm.shapes.Shape.getAnchorPoint(w, h, anchor);
+		ap.x = x - ap.x;
+		ap.y = y - ap.y;
+		return ap;
 	}
 
-	public void setFont( String fontName ) {
-		Font font = new Font(fontName, drawing.getFont().getStyle(), drawing.getFont().getSize());
-		setFont(font);
+	public void pushStyle() {
+		styleStack.push(shapeDelegate);
+		shapeDelegate = new Text(shapeDelegate);
 	}
 
-	public void setFont( String fontName, int size ) {
-		Font font = new Font(fontName, drawing.getFont().getStyle(), size);
-		setFont(font);
-	}
-
-	public void setFont( String fontName, int size, int style ) {
-		Font font = new Font(fontName, style, size);
-		setFont(font);
-	}
-
-	public void setFont( Font font ) {
-		drawing.setFont(font);
-		fontMetrics = drawing.getFontMetrics();
-	}
-
-
-	private Point2D.Double transformToCanvas( double x, double y ) {
-		return transformToCanvas(new Point2D.Double(x, y));
-	}
-
-	private Point2D.Double transformToCanvas( Point2D.Double pPoint ) {
-		AffineTransform matrix = getMatrix();
-		matrix.transform(pPoint, pPoint);
-		return pPoint;
-	}
-
-	private Point2D.Double transformToUser( double x, double y ) {
-		return transformToUser(new Point2D.Double(x, y));
-	}
-
-	private Point2D.Double transformToUser( Point2D.Double pPoint ) {
-		AffineTransform matrix = getMatrix();
-
-		try {
-			matrix.inverseTransform(pPoint, pPoint);
-		} catch( NoninvertibleTransformException e ) {
-			e.printStackTrace();
-		}
-
-		return pPoint;
-	}
-
-	private Point2D.Double getAnchorPoint( double x, double y, double w, double h, Options.Direction anchor ) {
-		double whalf = w * .5, hhalf = h * .5;
-
-		// anchor == CENTER
-		Point2D.Double anchorPoint = new Point2D.Double(x - whalf, y - hhalf);
-
-		if( NORTH.in(anchor) ) {
-			anchorPoint.y += hhalf;
-		}
-		if( SOUTH.in(anchor) ) {
-			anchorPoint.y -= hhalf;
-		}
-		if( WEST.in(anchor) ) {
-			anchorPoint.x += whalf;
-		}
-		if( EAST.in(anchor) ) {
-			anchorPoint.x -= whalf;
-		}
-
-		return anchorPoint;
-	}
-
-	private void fillShape( Shape pShape ) {
-		if( fillColor != null && fillColor.getAlpha() > 0.0 ) {
-			drawing.setColor(fillColor.getJavaColor());
-			drawing.fill(pShape);
+	public void popStyle() {
+		if( styleStack.isEmpty() ) {
+			resetStyle();
+		} else {
+			shapeDelegate = styleStack.pop();
 		}
 	}
 
-	private void drawShape( Shape pShape ) {
-		if( strokeColor != null && strokeColor.getAlpha() > 0.0
-			&& strokeWeight > 0.0 ) {
-			drawing.setColor(strokeColor.getJavaColor());
-			drawing.setStroke(createStroke());
-			drawing.draw(pShape);
+	public void resetStyle() {
+		Text newDelegate = new Text(0, 0, "");
+		if( shapeDelegate != null ) {
+			newDelegate.setAnchor(shapeDelegate.getAnchor());
 		}
+		shapeDelegate = newDelegate;
 	}
 
 	public void translate( double dx, double dy ) {

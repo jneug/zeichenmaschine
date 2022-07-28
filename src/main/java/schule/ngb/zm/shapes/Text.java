@@ -24,6 +24,7 @@ public class Text extends Shape {
 	public Text( double x, double y, String text ) {
 		this(x, y, text, new Font(Font.SANS_SERIF, Font.PLAIN, DEFAULT_FONTSIZE));
 	}
+
 	public Text( double x, double y, String text, String fontname ) {
 		super(x, y);
 		Font userfont = FontLoader.loadFont(fontname);
@@ -60,29 +61,58 @@ public class Text extends Shape {
 		return height;
 	}
 
-	public void setFont( String fontname ) {
-		Font newFont = FontLoader.loadFont(fontname);
+	public Font getFont() {
+		return font;
+	}
+
+	public void setFont( Font newFont ) {
+		//font = newFont.deriveFont(font.getStyle(), font.getSize2D());
+		font = new Font(newFont.getFontName(), newFont.getStyle(), newFont.getSize());
+		//font = newFont;
+		calculateBounds();
+	}
+
+	public void setFont( String fontName ) {
+		Font newFont = FontLoader.loadFont(fontName);
 		if( newFont != null ) {
 			setFont(newFont);
 		}
 	}
 
-	public void setFont( Font newFont ) {
-		font = newFont.deriveFont(font.getSize2D());
+	public void setFont( String fontName, double fontSize ) {
+		Font newFont = FontLoader.loadFont(fontName);
+		if( newFont != null ) {
+			setFont(newFont);
+		}
+		font = newFont.deriveFont((float) fontSize);
 		calculateBounds();
 	}
 
-	public Font getFont() {
-		return font;
+	public void setFont( String fontName, double fontSize, int style ) {
+		Font newFont = FontLoader.loadFont(fontName);
+		if( newFont != null ) {
+			setFont(newFont);
+		}
+		font = newFont.deriveFont(style, (float) fontSize);
+		calculateBounds();
 	}
 
-	public void setFontsize( double size ) {
+	public double getFontSize() {
+		return font.getSize2D();
+	}
+
+	public void setFontSize( double size ) {
 		font = font.deriveFont((float) size);
 		calculateBounds();
 	}
 
-	public double getFontsize() {
-		return font.getSize2D();
+	public int getFontStyle() {
+		return font.getStyle();
+	}
+
+	public void setFontStyle( int fontStyle ) {
+		font = font.deriveFont(fontStyle);
+		calculateBounds();
 	}
 
 	public String getText() {
@@ -163,7 +193,7 @@ public class Text extends Shape {
 	@Override
 	public void scale( double factor ) {
 		super.scale(factor);
-		setFontsize(font.getSize2D() * factor);
+		setFontSize(font.getSize2D() * factor);
 	}
 
 	@Override
@@ -191,7 +221,7 @@ public class Text extends Shape {
 		if( strokeColor != null && strokeColor.getAlpha() > 0
 			&& strokeWeight > 0.0 ) {
 			graphics.setColor(strokeColor.getJavaColor());
-			graphics.setStroke(createStroke());
+			graphics.setStroke(getStroke());
 			graphics.drawRect(0, 0, width, height);
 		}
 

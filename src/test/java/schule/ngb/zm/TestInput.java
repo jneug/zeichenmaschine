@@ -2,8 +2,6 @@ package schule.ngb.zm;
 
 import schule.ngb.zm.shapes.*;
 
-import java.awt.geom.Point2D;
-
 public class TestInput extends Zeichenmaschine {
 
 	public static void main( String[] args ) {
@@ -23,7 +21,7 @@ public class TestInput extends Zeichenmaschine {
 		shapes.getShape(1).setFillColor(PINK);
 
 		text = new Text(10, 42, "");
-		text.setFontsize(32);
+		text.setFontSize(32);
 		text.setAnchor(NORTHWEST);
 		shapes.add(text);
 	}
