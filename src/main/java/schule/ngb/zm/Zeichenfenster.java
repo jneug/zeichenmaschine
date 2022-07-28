@@ -227,13 +227,13 @@ public class Zeichenfenster extends JFrame {
 				displayDevice.setFullScreenWindow(this);
 
 				// Register ESC to exit fullscreen
-				this.addKeyListener(fullscreenExitListener);
+				canvas.addKeyListener(fullscreenExitListener);
 
 				// Reset canvas size to its new bounds to recreate buffer and drawing surface
 				java.awt.Rectangle canvasBounds = getCanvasBounds();
 				canvas.setSize(canvasBounds.width, canvasBounds.height);
 				//canvas.requestFocus();
-				this.requestFocus();
+				canvas.requestFocus();
 
 				fullscreen = true;
 			} else if( !pEnable && fullscreen ) {
@@ -242,14 +242,14 @@ public class Zeichenfenster extends JFrame {
 				setUndecorated(false);
 				setResizable(false);
 
-				this.removeKeyListener(fullscreenExitListener);
+				canvas.removeKeyListener(fullscreenExitListener);
 				canvas.setSize(canvasPreferredWidth, canvasPreferredHeight);
 
 				setVisible(true);
 				pack();
 
 				//canvas.requestFocus();
-				this.requestFocus();
+				canvas.requestFocus();
 
 				fullscreen = false;
 			}
