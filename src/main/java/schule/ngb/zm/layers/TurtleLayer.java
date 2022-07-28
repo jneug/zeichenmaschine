@@ -351,7 +351,7 @@ public class TurtleLayer extends Layer {
 			}
 			graphics.fill(shape);
 			graphics.setColor(Color.BLACK.getJavaColor());
-			graphics.setStroke(createStroke());
+			graphics.setStroke(getStroke());
 			graphics.draw(shape);
 		}
 
@@ -367,7 +367,7 @@ public class TurtleLayer extends Layer {
 
 			if( penDown && strokeColor != null ) {
 				drawing.setColor(strokeColor.getJavaColor());
-				drawing.setStroke(createStroke());
+				drawing.setStroke(getStroke());
 				drawing.drawLine((int) positionStart.x, (int) positionStart.y, (int) position.x, (int) position.y);
 			}
 		}
@@ -420,7 +420,7 @@ public class TurtleLayer extends Layer {
 
 			if( penDown && strokeColor != null ) {
 				drawing.setColor(strokeColor.getJavaColor());
-				drawing.setStroke(createStroke());
+				drawing.setStroke(getStroke());
 				drawing.drawLine((int) x, (int) y, (int) position.x, (int) position.y);
 			}
 		}

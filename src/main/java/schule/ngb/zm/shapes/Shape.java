@@ -14,7 +14,7 @@ import java.awt.geom.Point2D;
  * <p>
  * Neben den abstrakten Methoden implementieren Unterklassen mindestens zwei
  * Konstruktoren. Einen Konstruktor, der die Form mit vom Nutzer gegebenen
- * Parametern initialisiert und einen, der die Werten einer anderen Form
+ * Parametern initialisiert und einen, der die Werte einer anderen Form
  * desselben Typs übernimmt. In der Klasse {@link Circle} sind die Konstruktoren
  * beispielsweise so implementiert:
  *
@@ -191,6 +191,7 @@ public abstract class Shape extends FilledShape {
 
 	/**
 	 * Dreht die Form um den angegebenen Winkel um ihren Ankerpunkt.
+	 *
 	 * @param angle Drehwinkel in Grad.
 	 */
 	public void rotate( double angle ) {
@@ -227,6 +228,7 @@ public abstract class Shape extends FilledShape {
 	public double getScale() {
 		return scale;
 	}
+
 	public void scale( double factor ) {
 		scale = factor;
 	}
@@ -268,28 +270,25 @@ public abstract class Shape extends FilledShape {
 	}
 
 	/**
-	 * Bestimmt die relativen Koordinaten des angegebenen Ankerpunkt basierend
+	 * Bestimmt die relativen Koordinaten des angegebenen Ankerpunkts basierend
 	 * auf der angegebenen Breite und Höhe des umschließenden Rechtecks.
 	 * <p>
-	 * Die Koordinaten des Ankerpunkt werden relativ zur oberen linken Ecke des
-	 * Rechtecks mit der Breite {@code width} und der Höhe {@code height}
+	 * Die Koordinaten des Ankerpunktes werden relativ zur oberen linken Ecke
+	 * des Rechtecks mit der Breite {@code width} und der Höhe {@code height}
 	 * bestimmt.
 	 *
-	 * @param width Breite des umschließdenden Rechtecks.
-	 * @param height Höhe des umschließdenden Rechtecks.
+	 * @param width Breite des umschließenden Rechtecks.
+	 * @param height Höhe des umschließenden Rechtecks.
 	 * @param anchor Gesuchter Ankerpunkt.
 	 * @return Ein {@link Point2D} mit den relativen Koordinaten.
 	 */
-	protected static Point2D.Double getAnchorPoint( double width, double height, Options.Direction anchor ) {
+	public static Point2D.Double getAnchorPoint( double width, double height, Options.Direction anchor ) {
 		double wHalf = width * .5, hHalf = height * .5;
 
-		// anchor == CENTER
-		Point2D.Double anchorPoint = new Point2D.Double(
+		return new Point2D.Double(
 			wHalf + wHalf * anchor.x,
 			hHalf + hHalf * anchor.y
 		);
-
-		return anchorPoint;
 	}
 
 	/**
@@ -303,12 +302,10 @@ public abstract class Shape extends FilledShape {
 		double wHalf = getWidth() * .5, hHalf = getHeight() * .5;
 
 		// anchor == CENTER
-		Point2D.Double anchorPoint = new Point2D.Double(
+		return new Point2D.Double(
 			wHalf * (anchor.x - this.anchor.x),
 			hHalf * (anchor.y - this.anchor.y)
 		);
-
-		return anchorPoint;
 	}
 
 	/**
@@ -384,19 +381,10 @@ public abstract class Shape extends FilledShape {
 	 * zurück. Intern werden die AWT Shapes benutzt, um sie auf den
 	 * {@link Graphics2D Grafikkontext} zu zeichnen.
 	 * <p>
-	 * Da die AWT-Shape bei jedem Zeichnen (also mindestens einmal pro Frame)
-	 * benötigt wird, wird das aktuelle Shape-Objekt in {@link #awtShape}
-	 * zwischengespeichert. Bei Änderungen der Objekteigenschaften muss daher
-	 * intern {@link #invalidate()} aufgerufen werden, damit beim nächsten
-	 * Aufruf von {@link #draw(Graphics2D)} die Shape mit einem Aufurf von
-	 * {@code getShape()} neu erzeugt wird. Unterklassen können aber auch die
-	 * zwischengespeicherte Shape direkt modifizieren, um eine Neugenerierung zu
-	 * vermeiden.
-	 * <p>
-	 * Wenn diese Form nicht durch eine AWT-Shape dargstellt wird, kann die
+	 * Wenn diese Form nicht durch eine AWT-Shape dargestellt wird, kann die
 	 * Methode {@code null} zurückgeben.
 	 *
-	 * @return Eine Java-AWT {@code Shape} die diess Form repräsentiert oder
+	 * @return Eine Java-AWT {@code Shape} die diese Form repräsentiert oder
 	 *    {@code null}.
 	 */
 	public abstract java.awt.Shape getShape();

@@ -7,6 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ import java.util.List;
  * {@link #arrangeInGrid(int, Options.Direction, double, int)} und
  * {@link #align(Options.Direction)} verwendet werden, die jeweils die Position
  * der Formen in der Gruppe ändern und nicht die Position der Gruppe selbst (so
- * wie z.B. {@link #alignTo(Shape, Options.Direction)}.
+ * wie z.B. {@link #alignTo(Shape, Options.Direction)}).
  */
 public class ShapeGroup extends Shape {
 
@@ -43,7 +44,7 @@ public class ShapeGroup extends Shape {
 
 	public static final int ARRANGE_COLS = 1;
 
-	private List<Shape> shapes;
+	private final List<Shape> shapes;
 
 	private double groupWidth = -1.0;
 
@@ -51,7 +52,7 @@ public class ShapeGroup extends Shape {
 
 	public ShapeGroup() {
 		super();
-		shapes = new ArrayList<>(10);
+		shapes = Collections.synchronizedList(new ArrayList<>(10));
 	}
 
 	public ShapeGroup( double x, double y ) {
@@ -62,9 +63,7 @@ public class ShapeGroup extends Shape {
 	public ShapeGroup( double x, double y, Shape... shapes ) {
 		super(x, y);
 		this.shapes = new ArrayList<>(shapes.length);
-		for( Shape pShape : shapes ) {
-			this.shapes.add(pShape);
-		}
+		Collections.addAll(this.shapes, shapes);
 	}
 
 	public Shape copy() {
@@ -99,9 +98,11 @@ public class ShapeGroup extends Shape {
 
 	public <ShapeType extends Shape> List<ShapeType> getShapes( Class<ShapeType> typeClass ) {
 		LinkedList<ShapeType> list = new LinkedList<>();
-		for( Shape s : shapes ) {
-			if( typeClass.isInstance(s) ) {
-				list.add((ShapeType) s);
+		synchronized( shapes ) {
+			for( Shape shape : shapes ) {
+				if( typeClass.isInstance(shape) ) {
+					list.add(typeClass.cast(shape));
+				}
 			}
 		}
 		return list;
@@ -170,19 +171,15 @@ public class ShapeGroup extends Shape {
 		int rows, cols;
 		if( mode == ARRANGE_ROWS ) {
 			rows = n;
-			cols = (int) ceil(shapes.size() / n);
+			cols = (int) ceil(shapes.size() / (double)n);
 		} else {
 			cols = n;
-			rows = (int) ceil(shapes.size() / n);
+			rows = (int) ceil(shapes.size() / (double)n);
 		}
 
 		// Calculate grid cell size
-		double maxHeight = shapes.stream().mapToDouble(
-			( s ) -> s.getHeight()
-		).reduce(0.0, Double::max);
-		double maxWidth = shapes.stream().mapToDouble(
-			( s ) -> s.getWidth()
-		).reduce(0.0, Double::max);
+		double maxHeight = shapes.stream().mapToDouble(Shape::getHeight).reduce(0.0, Double::max);
+		double maxWidth = shapes.stream().mapToDouble(Shape::getWidth).reduce(0.0, Double::max);
 		double halfHeight = maxHeight * .5;
 		double halfWidth = maxWidth * .5;
 

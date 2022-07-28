@@ -197,7 +197,7 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 *
 	 * @return Ein {@code Stroke} mit den passenden Kontureigenschaften.
 	 */
-	protected Stroke createStroke() {
+	public Stroke getStroke() {
 		// TODO: Used global cached Stroke Objects?
 		if( stroke == null ) {
 			switch( strokeType ) {
@@ -241,7 +241,7 @@ public abstract class StrokedShape extends Constants implements Drawable {
 		if( strokeColor != null && strokeColor.getAlpha() > 0
 			&& strokeWeight > 0.0 ) {
 			graphics.setColor(strokeColor.getJavaColor());
-			graphics.setStroke(createStroke());
+			graphics.setStroke(getStroke());
 			graphics.draw(shape);
 		}
 	}

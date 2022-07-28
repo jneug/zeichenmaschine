@@ -179,6 +179,17 @@ public abstract class FilledShape extends StrokedShape {
 		fill = null;
 	}
 
+
+	public Paint getPaint() {
+		if( fill != null ) {
+			return fill;
+		} else if( fillColor != null && fillColor.getAlpha() > 0 ) {
+			return fillColor;
+		} else {
+			return null;
+		}
+	}
+
 	/**
 	 * Hilfsmethode für Unterklassen, um die angegebene Form mit der aktuellen
 	 * Füllung auf den Grafik-Kontext zu zeichnen. Die Methode verändert

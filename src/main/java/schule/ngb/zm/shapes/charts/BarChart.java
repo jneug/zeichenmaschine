@@ -288,7 +288,7 @@ public class BarChart extends Rectangle {
 			barY += barHeight + gap;
 		}
 		graphics.setColor(getStrokeColor().getJavaColor());
-		graphics.setStroke(createStroke());
+		graphics.setStroke(getStroke());
 		if( inverted ) {
 			graphics.drawLine((int) width, 0, (int) width, (int) height);
 		} else {
@@ -360,7 +360,7 @@ public class BarChart extends Rectangle {
 		}
 
 		graphics.setColor(getStrokeColor().getJavaColor());
-		graphics.setStroke(createStroke());
+		graphics.setStroke(getStroke());
 		if( inverted ) {
 			graphics.drawLine(0, 0, (int) width, 0);
 		} else {

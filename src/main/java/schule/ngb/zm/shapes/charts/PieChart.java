@@ -326,7 +326,7 @@ public class PieChart extends Circle {
 		}
 
 		graphics.setColor(getStrokeColor().getJavaColor());
-		graphics.setStroke(createStroke());
+		graphics.setStroke(getStroke());
 		graphics.drawOval(0, 0, (int) (radius * 2), (int) (radius * 2));
 
 		graphics.setTransform(originalTransform);

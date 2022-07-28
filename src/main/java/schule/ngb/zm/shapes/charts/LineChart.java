@@ -91,7 +91,7 @@ public class LineChart extends Rectangle {
 		for( ChartValue lcv : val ) {
 			if( drawLines && lastLcv != null ) {
 				graphics.setColor(getStrokeColor().getJavaColor());
-				graphics.setStroke(createStroke());
+				graphics.setStroke(getStroke());
 				graphics.drawLine((int)(lastLcv.getX()*xUnit), (int)(height - lastLcv.getValue()*yUnit), (int)(lcv.getX()*xUnit), (int)(height - lcv.getValue()*yUnit));
 				drawDot(graphics, lastLcv, xUnit, yUnit);
 			}

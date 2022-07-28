@@ -52,7 +52,7 @@ public class ChartAxes extends Rectangle {
 		}
 
 		graphics.setColor(strokeColor.getJavaColor());
-		graphics.setStroke(createStroke());
+		graphics.setStroke(getStroke());
 		graphics.drawLine(0, (int)(height), (int)((xMax-xMin) * xUnit), (int)(height));
 		graphics.drawLine(0, (int)(height), 0, (int)(height - (yMax-yMin) * yUnit));
 		if( showArrows ) {
