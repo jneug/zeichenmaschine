@@ -1,9 +1,6 @@
-package schule.ngb.zm.shapes;
+package schule.ngb.zm;
 
-import schule.ngb.zm.Color;
-import schule.ngb.zm.Constants;
-import schule.ngb.zm.Drawable;
-import schule.ngb.zm.Options;
+import schule.ngb.zm.shapes.Shape;
 
 import java.awt.BasicStroke;
 import java.awt.Stroke;

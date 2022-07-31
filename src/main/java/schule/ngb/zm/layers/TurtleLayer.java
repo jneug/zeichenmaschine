@@ -1,10 +1,8 @@
 package schule.ngb.zm.layers;
 
 import schule.ngb.zm.*;
-import schule.ngb.zm.shapes.Fillable;
-import schule.ngb.zm.shapes.Rectangle;
-import schule.ngb.zm.shapes.Shape;
-import schule.ngb.zm.shapes.Strokeable;
+import schule.ngb.zm.Fillable;
+import schule.ngb.zm.Strokeable;
 
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;

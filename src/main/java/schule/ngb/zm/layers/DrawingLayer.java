@@ -3,8 +3,8 @@ package schule.ngb.zm.layers;
 import schule.ngb.zm.Color;
 import schule.ngb.zm.Layer;
 import schule.ngb.zm.Options;
-import schule.ngb.zm.shapes.Fillable;
-import schule.ngb.zm.shapes.Strokeable;
+import schule.ngb.zm.Fillable;
+import schule.ngb.zm.Strokeable;
 import schule.ngb.zm.shapes.Text;
 import schule.ngb.zm.util.io.ImageLoader;
 

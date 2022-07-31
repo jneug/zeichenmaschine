@@ -1,14 +1,8 @@
 package schule.ngb.zm.shapes;
 
-import schule.ngb.zm.BasicDrawable;
-import schule.ngb.zm.Color;
-import schule.ngb.zm.Constants;
-import schule.ngb.zm.Options;
+import schule.ngb.zm.*;
 
-import java.awt.GradientPaint;
 import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
