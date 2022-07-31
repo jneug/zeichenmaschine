@@ -1,9 +1,14 @@
 package schule.ngb.zm.shapes;
 
+import schule.ngb.zm.BasicDrawable;
+import schule.ngb.zm.Color;
+import schule.ngb.zm.Constants;
 import schule.ngb.zm.Options;
 
-import java.awt.Color;
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 
@@ -34,7 +39,7 @@ import java.awt.geom.Point2D;
  * eine {@link #equals(Object)} Methode.
  */
 @SuppressWarnings( "unused" )
-public abstract class Shape extends FilledShape {
+public abstract class Shape extends BasicDrawable {
 
 	/**
 	 * x-Koordinate der Form.
@@ -57,11 +62,6 @@ public abstract class Shape extends FilledShape {
 	protected double scale = 1.0;
 
 	/**
-	 * Ob die Form angezeigt werden soll.
-	 */
-	protected boolean visible = true;
-
-	/**
 	 * Ankerpunkt der Form.
 	 */
 	protected Options.Direction anchor = Options.Direction.CENTER;
@@ -82,38 +82,6 @@ public abstract class Shape extends FilledShape {
 	public Shape( double x, double y ) {
 		this.x = x;
 		this.y = y;
-	}
-
-	/**
-	 * Ob die Form angezeigt wird oder nicht.
-	 *
-	 * @return {@code true}, wenn die From angezeigt werden soll, {@code false}
-	 * 	sonst.
-	 */
-	public boolean isVisible() {
-		return visible;
-	}
-
-	/**
-	 * Versteckt die Form.
-	 */
-	public void hide() {
-		visible = false;
-	}
-
-	/**
-	 * Zeigt die Form an.
-	 */
-	public void show() {
-		visible = true;
-	}
-
-	/**
-	 * Versteckt die Form, wenn sie derzeit angezeigt wird und zeigt sie
-	 * andernfalls an.
-	 */
-	public void toggle() {
-		visible = !visible;
 	}
 
 	/**
@@ -181,6 +149,25 @@ public abstract class Shape extends FilledShape {
 	public abstract double getHeight();
 
 	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setGradient( schule.ngb.zm.Color from, schule.ngb.zm.Color to, Options.Direction dir ) {
+		Point2D apDir = getAbsAnchorPoint(dir);
+		Point2D apInv = getAbsAnchorPoint(dir.inverse());
+		setGradient(apInv.getX(), apInv.getY(), from, apDir.getX(), apDir.getY(), to);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void setGradient( schule.ngb.zm.Color from, schule.ngb.zm.Color to ) {
+		Point2D ap = getAbsAnchorPoint(CENTER);
+		setGradient(ap.getX(), ap.getY(), Math.min(ap.getX(), ap.getY()), from, to);
+	}
+
+	/**
 	 * Gibt die Rotation in Grad zurück.
 	 *
 	 * @return Rotation in Grad.
@@ -235,17 +222,6 @@ public abstract class Shape extends FilledShape {
 
 	public void scaleBy( double factor ) {
 		scale(scale * factor);
-	}
-
-	public void setGradient( schule.ngb.zm.Color from, schule.ngb.zm.Color to, Options.Direction dir ) {
-		Point2D apDir = getAbsAnchorPoint(dir);
-		Point2D apInv = getAbsAnchorPoint(dir.inverse());
-		setGradient(apInv.getX(), apInv.getY(), from, apDir.getX(), apDir.getY(), to);
-	}
-
-	public void setGradient( schule.ngb.zm.Color from, schule.ngb.zm.Color to ) {
-		Point2D ap = getAbsAnchorPoint(CENTER);
-		setGradient(ap.getX(), ap.getY(), Math.min(ap.getX(), ap.getY()), from, to);
 	}
 
 	public Options.Direction getAnchor() {
@@ -548,7 +524,7 @@ public abstract class Shape extends FilledShape {
 				shape = transform.createTransformedShape(shape);
 			}
 
-			Color currentColor = graphics.getColor();
+			java.awt.Color currentColor = graphics.getColor();
 			fillShape(shape, graphics);
 			strokeShape(shape, graphics);
 			graphics.setColor(currentColor);
@@ -561,8 +537,8 @@ public abstract class Shape extends FilledShape {
 	 * verglichen. Unterklassen überschreiben die Methode, um weitere
 	 * Eigenschaften zu berücksichtigen.
 	 * <p>
-	 * Die Eigenschaften von {@link FilledShape} und {@link StrokedShape} werden
-	 * nicht verglichen.
+	 * Die Eigenschaften, die durch {@link Fillable} und {@link Strokeable}
+	 * impliziert werden, werden nicht verglichen.
 	 *
 	 * @param o Ein anderes Objekt.
 	 * @return
@@ -576,6 +552,45 @@ public abstract class Shape extends FilledShape {
 			Double.compare(pShape.y, y) == 0 &&
 			Double.compare(pShape.rotation, rotation) == 0 &&
 			Double.compare(pShape.scale, scale) == 0;
+	}
+
+	/**
+	 * Hilfsmethode für Unterklassen, um die angegebene Form mit den aktuellen
+	 * Kontureigenschaften auf den Grafik-Kontext zu zeichnen. Die Methode
+	 * verändert gegebenenfalls die aktuelle Farbe des Grafikobjekts und setzt
+	 * sie nicht auf den Ursprungswert zurück, wie von {@link #draw(Graphics2D)}
+	 * gefordert. Dies sollte die aufrufende Unterklasse übernehmen.
+	 *
+	 * @param shape Die zu zeichnende Java-AWT Form
+	 * @param graphics Das Grafikobjekt.
+	 */
+	protected void strokeShape( java.awt.Shape shape, Graphics2D graphics ) {
+		if( strokeColor != null && strokeColor.getAlpha() > 0
+			&& strokeWeight > 0.0 ) {
+			graphics.setColor(strokeColor.getJavaColor());
+			graphics.setStroke(getStroke());
+			graphics.draw(shape);
+		}
+	}
+
+	/**
+	 * Hilfsmethode für Unterklassen, um die angegebene Form mit der aktuellen
+	 * Füllung auf den Grafik-Kontext zu zeichnen. Die Methode verändert
+	 * gegebenenfalls die aktuelle Farbe des Grafikobjekts und setzt sie nicht
+	 * auf den Ursprungswert zurück, wie von {@link #draw(Graphics2D)}
+	 * gefordert. Dies sollte die aufrufende Unterklasse übernehmen.
+	 *
+	 * @param shape Die zu zeichnende Java-AWT Form
+	 * @param graphics Das Grafikobjekt.
+	 */
+	protected void fillShape( java.awt.Shape shape, Graphics2D graphics ) {
+		if( fill != null ) {
+			graphics.setPaint(fill);
+			graphics.fill(shape);
+		} else if( fillColor != null && fillColor.getAlpha() > 0 ) {
+			graphics.setColor(fillColor.getJavaColor());
+			graphics.fill(shape);
+		}
 	}
 
 }

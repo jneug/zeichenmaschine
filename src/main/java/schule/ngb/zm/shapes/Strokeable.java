@@ -6,46 +6,66 @@ import schule.ngb.zm.Drawable;
 import schule.ngb.zm.Options;
 
 import java.awt.BasicStroke;
-import java.awt.Graphics2D;
 import java.awt.Stroke;
 
-
 /**
- * Basisklasse für Formen, die eine Konturlinie besitzen.
+ * {@link Drawable} Klassen, die mit einer Konturlinie versehen werden können.
+ * <p>
+ * Das {@code Strokeable} Interface dient hauptsächlich zur Vereinheitlichung
+ * der API für Konturlinien. Durch Implementation wird sichergestellt, dass alle
+ * Objekte, die eine Konturlinie haben können, dieselben Methoden zur Verfügung
+ * stellen. Wenn eine {@link Shape} eine
+ * {@link Strokeable#setStrokeColor(Color, int)} Methode hat, dann sollte auch
+ * eine {@link schule.ngb.zm.layers.TurtleLayer.Turtle} dieselbe Methode
+ * anbieten. Im Einzelfall kann es sinnvoll sein, weitere Methoden für
+ * Konturlinien zur erfügung zu stellen. Allerdings sollte davon nach
+ * Möglichkeit zugunsten einer einheitlichen API abgesehen werden.
+ * <p>
+ * Das Äquivalent für Füllungen stellt {@link Fillable} dar.
  */
-public abstract class StrokedShape extends Constants implements Drawable {
+public interface Strokeable extends Drawable {
 
 	/**
-	 * Aktuelle Farbe der Konturlinie oder {@code null}, wenn die Form ohne
-	 * kontur dargestellt werden soll.
+	 * Setzt den {@code Stroke} für die Konturlinie direkt.
+	 *
+	 * @param stroke Ein {@code Stroke}-Objekt.
 	 */
-	protected Color strokeColor = DEFAULT_STROKECOLOR;
+	void setStroke( Stroke stroke );
 
 	/**
-	 * Die Dicke der Konturlinie. Wird nicht kleiner als 0.
+	 * Gibt ein {@code Stroke}-Objekt mit den aktuell gesetzten Eigenschaften
+	 * zurück.
+	 *
+	 * @return Ein {@code Stroke} mit den passenden Kontureigenschaften.
 	 */
-	protected double strokeWeight = DEFAULT_STROKEWEIGHT;
+	Stroke getStroke();
 
 	/**
-	 * Die Art der Konturlinie.
+	 * Gibt an, ob die aktuell gesetzten Eigenschaften eine sichtbare
+	 * Konturlinie erzeugen.
+	 * <p>
+	 * Die Konturlinie gilt als sichtbar, wenn sie eine nicht transparente Farbe
+	 * und eine Dicke größer 0 besitzt.
+	 * <p>
+	 * Das bedeutet, falls die Methode {@code false} zurückgibt, dann kann
+	 * {@link #getStroke()} trotzdem ein gültiges {@link Stroke}-Objekt
+	 * zurückgeben, beispielsweise wenn keine Farbe gesetzt wurde.
+	 *
+	 * @return {@code true}, wenn die Konturlinie sichtbar ist, {@code false}
+	 * 	sonst.
 	 */
-	protected Options.StrokeType strokeType = SOLID;
-
-	/**
-	 * Cache für den aktuellen {@code Stroke} der Kontur. Wird nach Änderung
-	 * einer der Kontureigenschaften auf {@code null} gesetzt und beim nächsten
-	 * Zeichnen neu erstellt.
-	 */
-	protected Stroke stroke = null;
+	default boolean hasStroke() {
+		Color strokeColor = getStrokeColor();
+		double strokeWeight = getStrokeWeight();
+		return strokeColor != null && strokeColor.getAlpha() > 0 && strokeWeight > 0;
+	}
 
 	/**
 	 * Gibt die aktuelle Farbe der Konturlinie zurück.
 	 *
 	 * @return Die Konturfarbe oder {@code null}.
 	 */
-	public Color getStrokeColor() {
-		return strokeColor;
-	}
+	Color getStrokeColor();
 
 	/**
 	 * Setzt die Farbe der Konturlinie auf die angegebene Farbe.
@@ -53,9 +73,7 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 * @param color Die neue Farbe der Konturlinie.
 	 * @see Color
 	 */
-	public void setStrokeColor( Color color ) {
-		this.strokeColor = color;
-	}
+	void setStrokeColor( Color color );
 
 	/**
 	 * Setzt die Farbe der Konturlinie auf die angegebene Farbe und setzt die
@@ -66,7 +84,7 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 * @param alpha Ein Transparenzwert zwischen 0 und 255.
 	 * @see Color#Color(Color, int)
 	 */
-	public void setStrokeColor( Color color, int alpha ) {
+	default void setStrokeColor( Color color, int alpha ) {
 		setStrokeColor(new Color(color, alpha));
 	}
 
@@ -77,7 +95,7 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 * @param gray Ein Grauwert zwischen 0 und 255.
 	 * @see Color#Color(int)
 	 */
-	public void setStrokeColor( int gray ) {
+	default void setStrokeColor( int gray ) {
 		setStrokeColor(gray, gray, gray, 255);
 	}
 
@@ -90,7 +108,7 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 * @param alpha Ein Transparenzwert zwischen 0 und 255.
 	 * @see Color#Color(int, int)
 	 */
-	public void setStrokeColor( int gray, int alpha ) {
+	default void setStrokeColor( int gray, int alpha ) {
 		setStrokeColor(gray, gray, gray, alpha);
 	}
 
@@ -105,7 +123,7 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 * @see <a
 	 * 	href="https://de.wikipedia.org/wiki/RGB-Farbraum">https://de.wikipedia.org/wiki/RGB-Farbraum</a>
 	 */
-	public void setStrokeColor( int red, int green, int blue ) {
+	default void setStrokeColor( int red, int green, int blue ) {
 		setStrokeColor(red, green, blue, 255);
 	}
 
@@ -121,14 +139,14 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 * @see <a
 	 * 	href="https://de.wikipedia.org/wiki/RGB-Farbraum">https://de.wikipedia.org/wiki/RGB-Farbraum</a>
 	 */
-	public void setStrokeColor( int red, int green, int blue, int alpha ) {
+	default void setStrokeColor( int red, int green, int blue, int alpha ) {
 		setStrokeColor(new Color(red, green, blue, alpha));
 	}
 
 	/**
 	 * Entfernt die Kontur der Form.
 	 */
-	public void noStroke() {
+	default void noStroke() {
 		setStrokeColor(null);
 	}
 
@@ -139,10 +157,10 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 * @see schule.ngb.zm.Constants#DEFAULT_STROKEWEIGHT
 	 * @see schule.ngb.zm.Constants#SOLID
 	 */
-	public void resetStroke() {
-		setStrokeColor(DEFAULT_STROKECOLOR);
-		setStrokeWeight(DEFAULT_STROKEWEIGHT);
-		setStrokeType(SOLID);
+	default void resetStroke() {
+		setStrokeColor(Constants.DEFAULT_STROKECOLOR);
+		setStrokeWeight(Constants.DEFAULT_STROKEWEIGHT);
+		setStrokeType(Constants.SOLID);
 	}
 
 	/**
@@ -150,9 +168,7 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 *
 	 * @return Die aktuelle Dicke der Linie.
 	 */
-	public double getStrokeWeight() {
-		return strokeWeight;
-	}
+	double getStrokeWeight();
 
 	/**
 	 * Setzt die Dicke der Konturlinie. Die Dicke muss größer 0 sein. Wird 0
@@ -160,9 +176,8 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 *
 	 * @param weight Die Dicke der Konturlinie.
 	 */
-	public void setStrokeWeight( double weight ) {
-		this.strokeWeight = max(0.0, weight);
-		this.stroke = null;
+	default void setStrokeWeight( double weight ) {
+		setStroke(createStroke(getStrokeType(), weight));
 	}
 
 	/**
@@ -171,24 +186,18 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 * @return Die aktuelle Art der Konturlinie.
 	 * @see Options.StrokeType
 	 */
-	public Options.StrokeType getStrokeType() {
-		return strokeType;
-	}
+	Options.StrokeType getStrokeType();
 
 	/**
-	 * Setzt den Typ der Kontur. Erlaubte Werte sind {@link #DASHED},
-	 * {@link #DOTTED} und {@link #SOLID}.
+	 * Setzt den Typ der Kontur. Erlaubte Werte sind {@link Constants#DASHED},
+	 * {@link Constants#DOTTED} und {@link Constants#SOLID}.
 	 *
 	 * @param type Eine der möglichen Konturarten.
 	 * @see Options.StrokeType
 	 */
-	public void setStrokeType( Options.StrokeType type ) {
-		this.strokeType = type;
-		this.stroke = null;
+	default void setStrokeType( Options.StrokeType type ) {
+		setStroke(createStroke(type, getStrokeWeight()));
 	}
-
-	@Override
-	public abstract void draw( Graphics2D graphics );
 
 	/**
 	 * Hilfsmethode, um ein {@link Stroke} Objekt mit den aktuellen
@@ -197,52 +206,26 @@ public abstract class StrokedShape extends Constants implements Drawable {
 	 *
 	 * @return Ein {@code Stroke} mit den passenden Kontureigenschaften.
 	 */
-	public Stroke getStroke() {
-		// TODO: Used global cached Stroke Objects?
-		if( stroke == null ) {
-			switch( strokeType ) {
-				case DOTTED:
-					stroke = new BasicStroke(
-						(float) strokeWeight,
-						BasicStroke.CAP_ROUND,
-						BasicStroke.JOIN_ROUND,
-						10.0f, new float[]{1.0f, 5.0f}, 0.0f);
-					break;
-				case DASHED:
-					stroke = new BasicStroke(
-						(float) strokeWeight,
-						BasicStroke.CAP_ROUND,
-						BasicStroke.JOIN_ROUND,
-						10.0f, new float[]{5.0f}, 0.0f);
-					break;
-				case SOLID:
-				default:
-					stroke = new BasicStroke(
-						(float) strokeWeight,
-						BasicStroke.CAP_ROUND,
-						BasicStroke.JOIN_ROUND);
-					break;
-			}
-		}
-		return stroke;
-	}
-
-	/**
-	 * Hilfsmethode für Unterklassen, um die angegebene Form mit den aktuellen
-	 * Kontureigenschaften auf den Grafik-Kontext zu zeichnen. Die Methode
-	 * verändert gegebenenfalls die aktuelle Farbe des Grafikobjekts und setzt
-	 * sie nicht auf den Ursprungswert zurück, wie von {@link #draw(Graphics2D)}
-	 * gefordert. Dies sollte die aufrufende Unterklasse übernehmen.
-	 *
-	 * @param shape Die zu zeichnende Java-AWT Form
-	 * @param graphics Das Grafikobjekt.
-	 */
-	protected void strokeShape( java.awt.Shape shape, Graphics2D graphics ) {
-		if( strokeColor != null && strokeColor.getAlpha() > 0
-			&& strokeWeight > 0.0 ) {
-			graphics.setColor(strokeColor.getJavaColor());
-			graphics.setStroke(getStroke());
-			graphics.draw(shape);
+	static Stroke createStroke( Options.StrokeType strokeType, double strokeWeight ) {
+		switch( strokeType ) {
+			case DOTTED:
+				return new BasicStroke(
+					(float) strokeWeight,
+					BasicStroke.CAP_ROUND,
+					BasicStroke.JOIN_ROUND,
+					10.0f, new float[]{1.0f, 5.0f}, 0.0f);
+			case DASHED:
+				return new BasicStroke(
+					(float) strokeWeight,
+					BasicStroke.CAP_ROUND,
+					BasicStroke.JOIN_ROUND,
+					10.0f, new float[]{5.0f}, 0.0f);
+			case SOLID:
+			default:
+				return new BasicStroke(
+					(float) strokeWeight,
+					BasicStroke.CAP_ROUND,
+					BasicStroke.JOIN_ROUND);
 		}
 	}
 

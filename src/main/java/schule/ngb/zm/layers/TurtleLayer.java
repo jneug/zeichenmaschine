@@ -1,12 +1,15 @@
 package schule.ngb.zm.layers;
 
-import schule.ngb.zm.Color;
-import schule.ngb.zm.Layer;
-import schule.ngb.zm.Options;
-import schule.ngb.zm.Vector;
-import schule.ngb.zm.shapes.FilledShape;
+import schule.ngb.zm.*;
+import schule.ngb.zm.shapes.Fillable;
+import schule.ngb.zm.shapes.Rectangle;
+import schule.ngb.zm.shapes.Shape;
+import schule.ngb.zm.shapes.Strokeable;
 
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
@@ -14,7 +17,7 @@ import java.util.List;
 import java.util.Stack;
 
 @SuppressWarnings( "unused" )
-public class TurtleLayer extends Layer {
+public class TurtleLayer extends Layer implements Strokeable, Fillable {
 
 	// Rotating by the clock
 	public static final int H1 = 30;
@@ -119,7 +122,20 @@ public class TurtleLayer extends Layer {
 		}
 	}
 
-	// Begin of delegate methods (auto-generated)
+	// begin of delegate methods (auto-generated)
+
+	@Override
+	public boolean isVisible() {
+		return mainTurtle.isVisible();
+	}
+
+	public void beginPath() {
+		mainTurtle.beginPath();
+	}
+
+	public void closePath() {
+		mainTurtle.closePath();
+	}
 
 	public void fill() {
 		mainTurtle.fill();
@@ -177,101 +193,194 @@ public class TurtleLayer extends Layer {
 		mainTurtle.moveTo(x, y);
 	}
 
-	public Color getFillColor() {
-		return mainTurtle.getFillColor();
+	@Override
+	public void setFill( Paint fill ) {
+		mainTurtle.setFill(fill);
 	}
 
+	@Override
+	public Paint getFill() {
+		return mainTurtle.getFill();
+	}
+
+	@Override
 	public void setFillColor( Color color ) {
 		mainTurtle.setFillColor(color);
 	}
 
-	public void setFillColor( int gray ) {
-		mainTurtle.setFillColor(gray);
+	@Override
+	public Color getFillColor() {
+		return mainTurtle.getFillColor();
 	}
 
-	public void noFill() {
-		mainTurtle.noFill();
-	}
-
-	public void setFillColor( int gray, int alpha ) {
-		mainTurtle.setFillColor(gray, alpha);
-	}
-
-	public void setFillColor( int red, int green, int blue ) {
-		mainTurtle.setFillColor(red, green, blue);
-	}
-
-	public void setFillColor( int red, int green, int blue, int alpha ) {
-		mainTurtle.setFillColor(red, green, blue, alpha);
-	}
-
-	public void resetFill() {
-		mainTurtle.resetFill();
-	}
-
-	public Color getStrokeColor() {
-		return mainTurtle.getStrokeColor();
-	}
-
+	@Override
 	public void setStrokeColor( Color color ) {
 		mainTurtle.setStrokeColor(color);
 	}
 
-	public void setStrokeColor( int gray ) {
-		mainTurtle.setStrokeColor(gray);
-	}
-
-	public void noStroke() {
-		mainTurtle.noStroke();
-	}
-
-	public void setStrokeColor( int gray, int alpha ) {
-		mainTurtle.setStrokeColor(gray, alpha);
-	}
-
-	public void setStrokeColor( int red, int green, int blue ) {
-		mainTurtle.setStrokeColor(red, green, blue);
-	}
-
-	public void setStrokeColor( int red, int green, int blue, int alpha ) {
-		mainTurtle.setStrokeColor(red, green, blue, alpha);
-	}
-
-	public double getStrokeWeight() {
-		return mainTurtle.getStrokeWeight();
-	}
-
+	@Override
 	public void setStrokeWeight( double weight ) {
 		mainTurtle.setStrokeWeight(weight);
 	}
 
+	@Override
 	public Options.StrokeType getStrokeType() {
 		return mainTurtle.getStrokeType();
 	}
 
+	@Override
 	public void setStrokeType( Options.StrokeType type ) {
 		mainTurtle.setStrokeType(type);
 	}
 
+	@Override
+	public void setGradient( Color from, Color to, Options.Direction dir ) {
+		mainTurtle.setGradient(from, to, dir);
+	}
+
+	@Override
+	public void setGradient( Color from, Color to ) {
+		mainTurtle.setGradient(from, to);
+	}
+
+	@Override
+	public boolean hasFill() {
+		return mainTurtle.hasFill();
+	}
+
+	@Override
+	public boolean hasFillColor() {
+		return mainTurtle.hasFillColor();
+	}
+
+	@Override
+	public boolean hasGradient() {
+		return mainTurtle.hasGradient();
+	}
+
+	@Override
+	public void setFillColor( Color color, int alpha ) {
+		mainTurtle.setFillColor(color, alpha);
+	}
+
+	@Override
+	public void setFillColor( int gray ) {
+		mainTurtle.setFillColor(gray);
+	}
+
+	@Override
+	public void setFillColor( int gray, int alpha ) {
+		mainTurtle.setFillColor(gray, alpha);
+	}
+
+	@Override
+	public void setFillColor( int red, int green, int blue ) {
+		mainTurtle.setFillColor(red, green, blue);
+	}
+
+	@Override
+	public void setFillColor( int red, int green, int blue, int alpha ) {
+		mainTurtle.setFillColor(red, green, blue, alpha);
+	}
+
+	@Override
+	public void noFill() {
+		mainTurtle.noFill();
+	}
+
+	@Override
+	public void resetFill() {
+		mainTurtle.resetFill();
+	}
+
+	@Override
+	public GradientPaint getGradient() {
+		return mainTurtle.getGradient();
+	}
+
+	@Override
+	public void setGradient( double fromX, double fromY, Color from, double toX, double toY, Color to ) {
+		mainTurtle.setGradient(fromX, fromY, from, toX, toY, to);
+	}
+
+	@Override
+	public void setGradient( double centerX, double centerY, double radius, Color from, Color to ) {
+		mainTurtle.setGradient(centerX, centerY, radius, from, to);
+	}
+
+	@Override
+	public void noGradient() {
+		mainTurtle.noGradient();
+	}
+
+	@Override
+	public void setStroke( Stroke stroke ) {
+		mainTurtle.setStroke(stroke);
+	}
+
+	@Override
+	public Stroke getStroke() {
+		return mainTurtle.getStroke();
+	}
+
+	@Override
+	public boolean hasStroke() {
+		return mainTurtle.hasStroke();
+	}
+
+	@Override
+	public Color getStrokeColor() {
+		return mainTurtle.getStrokeColor();
+	}
+
+	@Override
+	public void setStrokeColor( Color color, int alpha ) {
+		mainTurtle.setStrokeColor(color, alpha);
+	}
+
+	@Override
+	public void setStrokeColor( int gray ) {
+		mainTurtle.setStrokeColor(gray);
+	}
+
+	@Override
+	public void setStrokeColor( int gray, int alpha ) {
+		mainTurtle.setStrokeColor(gray, alpha);
+	}
+
+	@Override
+	public void setStrokeColor( int red, int green, int blue ) {
+		mainTurtle.setStrokeColor(red, green, blue);
+	}
+
+	@Override
+	public void setStrokeColor( int red, int green, int blue, int alpha ) {
+		mainTurtle.setStrokeColor(red, green, blue, alpha);
+	}
+
+	@Override
+	public void noStroke() {
+		mainTurtle.noStroke();
+	}
+
+	@Override
 	public void resetStroke() {
 		mainTurtle.resetStroke();
 	}
 
-	public void beginPath() {
-		mainTurtle.beginPath();
+	@Override
+	public double getStrokeWeight() {
+		return mainTurtle.getStrokeWeight();
 	}
 
-	public void closePath() {
-		mainTurtle.closePath();
-	}
 
-	// End of delegate methods (auto-generated)
+	// end of delegate methods (auto-generated)
 
 
 	/**
 	 * Die Turtle der Zeichenmaschine.
 	 */
-	public class Turtle extends FilledShape {
+	public class Turtle extends BasicDrawable {
 
 		private static final int DEFAULT_SIZE = 12;
 
@@ -287,7 +396,16 @@ public class TurtleLayer extends Layer {
 
 		boolean pathOpen = false;
 
+		/**
+		 * Path-Objekt für die Darstellung der Turtle.
+		 */
+		Path2D.Double turtlePath;
+
 		Turtle() {
+		}
+
+		public boolean isVisible() {
+			return visible;
 		}
 
 		public void beginPath() {
@@ -317,34 +435,29 @@ public class TurtleLayer extends Layer {
 		public void fill() {
 			closePath();
 
-			if( fillColor != null && fillColor.getAlpha() > 0 ) {
-				drawing.setColor(fillColor.getJavaColor());
+			if( hasFill() ) {
+				drawing.setPaint(getFill());
 				drawing.fill(path);
 			}
 		}
 
-		public boolean isVisible() {
-			return visible;
-		}
-
 		@Override
 		public void draw( Graphics2D graphics ) {
-			/*Shape shape = new RoundRectangle2D.Double(
-				-12, -5, 16, 10, 5, 3
-			);*/
-			Path2D path = new Path2D.Double();
-			path.moveTo(DEFAULT_SIZE, 0);
-			path.lineTo(-DEFAULT_SIZE, -DEFAULT_SIZE / 2.0);
-			path.lineTo(-DEFAULT_SIZE, DEFAULT_SIZE / 2.0);
-			path.lineTo(DEFAULT_SIZE, 0);
+			if( turtlePath == null ) {
+				turtlePath = new Path2D.Double();
+				path.moveTo(DEFAULT_SIZE, 0);
+				path.lineTo(-DEFAULT_SIZE, -DEFAULT_SIZE / 2.0);
+				path.lineTo(-DEFAULT_SIZE, DEFAULT_SIZE / 2.0);
+				path.lineTo(DEFAULT_SIZE, 0);
+			}
 
 			AffineTransform verzerrung = new AffineTransform();
 			verzerrung.translate(position.x, position.y);
 			verzerrung.rotate(Math.toRadians(direction.angle()));
 
-			java.awt.Shape shape = verzerrung.createTransformedShape(path);
+			java.awt.Shape shape = verzerrung.createTransformedShape(turtlePath);
 
-			if( strokeColor != null ) {
+			if( hasStroke() ) {
 				graphics.setColor(strokeColor.getJavaColor());
 			} else {
 				graphics.setColor(DEFAULT_STROKECOLOR.getJavaColor());
@@ -365,7 +478,7 @@ public class TurtleLayer extends Layer {
 			Vector positionStart = position.copy();
 			position.add(Vector.setLength(direction, dist));
 
-			if( penDown && strokeColor != null ) {
+			if( penDown && hasStroke() ) {
 				drawing.setColor(strokeColor.getJavaColor());
 				drawing.setStroke(getStroke());
 				drawing.drawLine((int) positionStart.x, (int) positionStart.y, (int) position.x, (int) position.y);
@@ -418,7 +531,7 @@ public class TurtleLayer extends Layer {
 			position.x = x;
 			position.y = y;
 
-			if( penDown && strokeColor != null ) {
+			if( penDown && hasStroke() ) {
 				drawing.setColor(strokeColor.getJavaColor());
 				drawing.setStroke(getStroke());
 				drawing.drawLine((int) x, (int) y, (int) position.x, (int) position.y);

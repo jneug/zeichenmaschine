@@ -3,13 +3,12 @@ package schule.ngb.zm.layers;
 import schule.ngb.zm.Color;
 import schule.ngb.zm.Layer;
 import schule.ngb.zm.Options;
+import schule.ngb.zm.shapes.Fillable;
+import schule.ngb.zm.shapes.Strokeable;
 import schule.ngb.zm.shapes.Text;
 import schule.ngb.zm.util.io.ImageLoader;
 
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Image;
-import java.awt.Shape;
+import java.awt.*;
 import java.awt.geom.*;
 import java.util.Stack;
 
@@ -20,7 +19,7 @@ import java.util.Stack;
  * {@link schule.ngb.zm.Zeichenmaschine}.
  */
 @SuppressWarnings( "unused" )
-public class DrawingLayer extends Layer {
+public class DrawingLayer extends Layer implements Strokeable, Fillable {
 
 	/**
 	 * Wiederverwendbarer Speicher für eine Linie.
@@ -199,6 +198,16 @@ public class DrawingLayer extends Layer {
 		shapeDelegate.resetFill();
 	}
 
+	@Override
+	public void setFill( Paint fill ) {
+		shapeDelegate.setFill(fill);
+	}
+
+	@Override
+	public Paint getFill() {
+		return shapeDelegate.getFill();
+	}
+
 	/**
 	 * Setzt die Füllung auf einen linearen Farbverlauf, der am Punkt
 	 * ({@code fromX}, {@code fromY}) mit der Farbe {@code from} startet und am
@@ -232,11 +241,28 @@ public class DrawingLayer extends Layer {
 		shapeDelegate.setGradient(centerX, centerY, radius, from, to);
 	}
 
+	@Override
+	public void setGradient( Color from, Color to, Options.Direction dir ) {
+		Point2D.Double anchorPoint = schule.ngb.zm.shapes.Shape.getAnchorPoint(getWidth(), getHeight(), dir);
+		Point2D.Double inversePoint = schule.ngb.zm.shapes.Shape.getAnchorPoint(getWidth(), getHeight(), dir.inverse());
+		shapeDelegate.setGradient(inversePoint.x, inversePoint.y, from, anchorPoint.x, anchorPoint.y, to);
+	}
+
+	@Override
+	public void setGradient( Color from, Color to ) {
+		shapeDelegate.setGradient(getWidth()/2.0, getHeight()/2.0, min(getWidth(), getHeight())/2.0, from, to);
+	}
+
 	/**
 	 * Entfernt den Farbverlauf von der Form.
 	 */
 	public void noGradient() {
 		shapeDelegate.noGradient();
+	}
+
+	@Override
+	public void setStroke( Stroke stroke ) {
+		shapeDelegate.setStroke(stroke);
 	}
 
 	/**
@@ -384,6 +410,11 @@ public class DrawingLayer extends Layer {
 	 */
 	public void setStrokeType( Options.StrokeType type ) {
 		shapeDelegate.setStrokeType(type);
+	}
+
+	@Override
+	public Stroke getStroke() {
+		return shapeDelegate.getStroke();
 	}
 
 	public void setAnchor( Options.Direction anchor ) {
@@ -579,8 +610,8 @@ public class DrawingLayer extends Layer {
 	}
 
 	protected void fillShape( Shape shape ) {
-		if( shapeDelegate.getPaint() != null ) {
-			drawing.setPaint(shapeDelegate.getPaint());
+		if( shapeDelegate.getFill() != null ) {
+			drawing.setPaint(shapeDelegate.getFill());
 			drawing.fill(shape);
 		}
 	}
@@ -732,6 +763,8 @@ public class DrawingLayer extends Layer {
 
 	public void resetStyle() {
 		Text newDelegate = new Text(0, 0, "");
+		newDelegate.setFillColor(DEFAULT_FILLCOLOR);
+		newDelegate.setStrokeColor(DEFAULT_STROKECOLOR);
 		if( shapeDelegate != null ) {
 			newDelegate.setAnchor(shapeDelegate.getAnchor());
 		}
