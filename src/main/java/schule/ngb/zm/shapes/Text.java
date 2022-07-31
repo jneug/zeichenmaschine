@@ -181,13 +181,13 @@ public class Text extends Shape {
 
 	@Override
 	public void copyFrom( Shape shape ) {
-		super.copyFrom(shape);
 		if( shape instanceof Text ) {
 			Text pText = (Text) shape;
 			this.text = pText.getText();
 			this.font = pText.getFont();
-			calculateBounds();
 		}
+		super.copyFrom(shape);
+		calculateBounds();
 	}
 
 	@Override

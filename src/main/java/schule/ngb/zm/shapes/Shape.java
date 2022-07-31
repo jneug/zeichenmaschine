@@ -325,8 +325,8 @@ public abstract class Shape extends BasicDrawable {
 			setStrokeWeight(shape.getStrokeWeight());
 			setStrokeType(shape.getStrokeType());
 			visible = shape.isVisible();
-			rotation = shape.rotation;
-			scale(shape.scale);
+			rotation = shape.getRotation();
+			scale(shape.getScale());
 			setAnchor(shape.getAnchor());
 		}
 	}
