@@ -242,6 +242,11 @@ public class Zeichenmaschine extends Constants {
 	public Zeichenmaschine( int width, int height, String title, boolean run_once ) {
 		LOG.info("Starting " + APP_NAME + " " + APP_VERSION);
 
+		// Register Cmd+Q on macOS
+		if( Constants.MACOS ) {
+			System.setProperty("apple.eawt.quitStrategy", "CLOSE_ALL_WINDOWS");
+		}
+
 		// Erstellen der Leinwand
 		canvas = new Zeichenleinwand(width, height);
 
@@ -533,9 +538,7 @@ public class Zeichenmaschine extends Constants {
 			running = false;
 			terminateImediately = true;
 			quitAfterShutdown = true;
-			if( state != Options.AppState.QUITING ) {
-				mainThread.interrupt();
-			}
+			mainThread.interrupt();
 		} else {
 			quit(true);
 		}
@@ -570,13 +573,15 @@ public class Zeichenmaschine extends Constants {
 	 */
 	public final void quit( boolean exit ) {
 		state = Options.AppState.QUITING;
-		frame.setVisible(false);
-		canvas.dispose();
-		frame.dispose();
+		TaskRunner.invokeLater(() -> {
+			frame.setVisible(false);
+			canvas.dispose();
+			frame.dispose();
 
-		if( exit ) {
-			System.exit(0);
-		}
+			if( exit ) {
+				System.exit(0);
+			}
+		});
 	}
 
 	/**
