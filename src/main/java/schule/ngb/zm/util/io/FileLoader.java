@@ -29,6 +29,13 @@ public final class FileLoader {
 		return loadLines(source, UTF8);
 	}
 
+	/**
+	 * Lädt die angegebene Datei Zeilenweise in ein Array.
+	 *
+	 * @param source
+	 * @param charset
+	 * @return
+	 */
 	public static List<String> loadLines( String source, Charset charset ) {
 		try( BufferedReader reader = ResourceStreamProvider.getReader(source, charset) ) {
 			List<String> result = new ArrayList<>();
@@ -65,6 +72,20 @@ public final class FileLoader {
 		}
 	}
 
+	/**
+	 * Lädt die Daten aus einer CSV Datei in ein zweidimensionales
+	 * String-Array.
+	 * <p>
+	 * Der Aufruf entspricht dem Aufruf von
+	 * <pre><code>
+	 * FileLoader.loadCsv(source, ',', skipFirst, UTF8);
+	 * </code></pre>
+	 *
+	 * @param source Die Quelle der CSV-Daten.
+	 * @param skipFirst Ob die erste Zeile übersprungen werden soll.
+	 * @return Ein Array mit den Daten als {@code String}s.
+	 * @see #loadCsv(String, char, boolean, Charset)
+	 */
 	public static String[][] loadCsv( String source, boolean skipFirst ) {
 		return loadCsv(source, ',', skipFirst, UTF8);
 	}
