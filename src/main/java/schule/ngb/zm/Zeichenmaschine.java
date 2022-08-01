@@ -533,7 +533,9 @@ public class Zeichenmaschine extends Constants {
 			running = false;
 			terminateImediately = true;
 			quitAfterShutdown = true;
-			mainThread.interrupt();
+			if( state != Options.AppState.QUITING ) {
+				mainThread.interrupt();
+			}
 		} else {
 			quit(true);
 		}
