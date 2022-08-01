@@ -122,7 +122,7 @@ public final class Faker {
 
 
 	/**
-	 * Erzeugt ein Platzhalterbild in der angegebenen Größe.
+	 * Erzeugt ein Platzhalter-Bild in der angegebenen Größe.
 	 * <p>
 	 * Das Bild ist ein aus dem Internet geladenes, zufälliges Motiv, dass unter
 	 * einer freien Lizenz (Creative Commons) steht.
@@ -136,7 +136,11 @@ public final class Faker {
 	}
 
 	/**
-	 * Erzeugt ein Platzhalterbild in der angegebenen Größe.
+	 * Erzeugt ein Platzhalter-Bild in der angegebenen Größe.
+	 * <p>
+	 * Wenn {@code fromWeb} auf {@code true} gesetzt ist, wird ein zufälliges
+	 * Motiv, das unter einer freien Lizenz (Creative Commons) steht, geladen.
+	 * Bei {@code false} wird das Bild lokal generiert.
 	 *
 	 * @param width Breite des Bildes.
 	 * @param height Höhe des Bildes.
