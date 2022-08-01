@@ -6,6 +6,14 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Changed
+- `FilledShape` und `StrokedShape` durch `Fillable` und `Strokeable` Interfaces ersetzt.
+	- `Shape` erweitert nun `BasisDrawable` als abstrakte Grundlage.
+- `io` Klassen nutzen nun mehr der `java.nio` Funktionen.
+- Package-Struktur angepasst.
+
+## Version 0.0.23
+
 ### Added
 - System für EventListener.
   - `AudioListener` und `AnimationListener` als erste Anwendungsfälle.
