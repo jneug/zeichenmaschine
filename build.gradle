@@ -7,13 +7,14 @@ plugins {
 	zmVersion {
 		major = 0;
 		minor = 0;
-		rev = 21;
+		rev = 32;
 	}
-}*/
+}
+version '{$zmVersion.major}.{$zmVersion.minor}.{$zmVersion.rev}-SNAPSHOT'
+*/
 
 group 'schule.ngb'
-version '0.0.31-SNAPSHOT'
-//version '{$zmVersion.major}.{$zmVersion.minor}.{$zmVersion.rev}-SNAPSHOT'
+version '0.0.32-SNAPSHOT'
 
 compileJava {
     options.release = 11
