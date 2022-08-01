@@ -1,9 +1,6 @@
 package schule.ngb.zm;
 
-import java.awt.GradientPaint;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Stroke;
+import java.awt.*;
 
 /**
  * Basisimplementierung der {@link Strokeable} und {@link Fillable} APIs.
@@ -51,7 +48,7 @@ public abstract class BasicDrawable extends Constants implements Strokeable, Fil
 	 * Der aktuelle Farbverlauf des Objektes oder {@code null}, wenn es keinen
 	 * Farbverlauf besitzt.
 	 */
-	protected GradientPaint fill = null;
+	protected MultipleGradientPaint fill = null;
 
 
 	// Implementierung Drawable Interface
@@ -98,11 +95,14 @@ public abstract class BasicDrawable extends Constants implements Strokeable, Fil
 	 */
 	@Override
 	public void setFill( Paint fill ) {
-		if( fill instanceof Color ) {
-			this.setFillColor((Color) fill);
-		} else if( fill instanceof GradientPaint ) {
+		if( fill == null ) {
+			this.fill = null;
+		} else if( fill instanceof Color ) {
+			this.fillColor = ((Color) fill);
+			this.fill = null;
+		} else if( fill instanceof MultipleGradientPaint ) {
 			this.fillColor = null;
-			this.fill = (GradientPaint) fill;
+			this.fill = (MultipleGradientPaint) fill;
 		}
 	}
 
@@ -157,7 +157,7 @@ public abstract class BasicDrawable extends Constants implements Strokeable, Fil
 	 * {@inheritDoc}
 	 */
 	@Override
-	public GradientPaint getGradient() {
+	public MultipleGradientPaint getGradient() {
 		return fill;
 	}
 

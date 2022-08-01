@@ -2,9 +2,7 @@ package schule.ngb.zm;
 
 import schule.ngb.zm.shapes.Shape;
 
-import java.awt.GradientPaint;
-import java.awt.Paint;
-import java.awt.RadialGradientPaint;
+import java.awt.*;
 
 /**
  * {@link Drawable} Klassen, die mit einer Füllung versehen werden können.
@@ -78,7 +76,7 @@ public interface Fillable extends Drawable {
 	 */
 	default boolean hasGradient() {
 		Paint fill = getFill();
-		return fill instanceof GradientPaint;
+		return fill instanceof MultipleGradientPaint;
 	}
 
 	/**
@@ -195,9 +193,9 @@ public interface Fillable extends Drawable {
 	 *
 	 * @return Der aktuelle Farbverlauf oder {@code null}.
 	 */
-	default GradientPaint getGradient() {
+	default MultipleGradientPaint getGradient() {
 		if( hasGradient() ) {
-			return (GradientPaint) getFill();
+			return (MultipleGradientPaint) getFill();
 		} else {
 			return null;
 		}
@@ -216,9 +214,11 @@ public interface Fillable extends Drawable {
 	 * @param to Farbe am Endpunkt.
 	 */
 	default void setGradient( double fromX, double fromY, Color from, double toX, double toY, Color to ) {
-		setFill(new GradientPaint(
-			(float) fromX, (float) fromY, from.getJavaColor(),
-			(float) toX, (float) toY, to.getJavaColor()
+		setFill(new LinearGradientPaint(
+			(float) fromX, (float) fromY,
+			(float) toX, (float) toY,
+			new float[]{0f, 1f},
+			new java.awt.Color[]{from.getJavaColor(), to.getJavaColor()}
 		));
 	}
 

@@ -617,8 +617,7 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	}
 
 	protected void drawShape( Shape shape ) {
-		if( shapeDelegate.getStrokeColor() != null && shapeDelegate.getStrokeColor().getAlpha() > 0
-			&& shapeDelegate.getStrokeWeight() > 0.0 ) {
+		if( shapeDelegate.hasStroke() ) {
 			drawing.setColor(shapeDelegate.getStrokeColor().getJavaColor());
 			drawing.setStroke(shapeDelegate.getStroke());
 			drawing.draw(shape);
@@ -781,6 +780,10 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 
 	public void rotate( double pAngle ) {
 		drawing.rotate(Math.toRadians(pAngle));
+	}
+
+	public void rotate( double pAngle, double centerX, double centerY ) {
+		drawing.rotate(Math.toRadians(pAngle), centerX, centerY);
 	}
 
 	public void shear( double dx, double dy ) {

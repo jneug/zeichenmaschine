@@ -1,13 +1,11 @@
 package schule.ngb.zm.layers;
 
 import schule.ngb.zm.*;
+import schule.ngb.zm.Color;
 import schule.ngb.zm.Fillable;
 import schule.ngb.zm.Strokeable;
 
-import java.awt.GradientPaint;
-import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.Stroke;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
@@ -292,7 +290,7 @@ public class TurtleLayer extends Layer implements Strokeable, Fillable {
 	}
 
 	@Override
-	public GradientPaint getGradient() {
+	public MultipleGradientPaint getGradient() {
 		return mainTurtle.getGradient();
 	}
 
