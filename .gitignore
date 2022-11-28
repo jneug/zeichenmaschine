@@ -48,3 +48,11 @@ gradle-app.setting
 
 # Cache of project
 .gradletasknamecache
+
+# Python mkdocs
+.venv
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
