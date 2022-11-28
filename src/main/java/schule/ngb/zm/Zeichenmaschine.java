@@ -427,9 +427,18 @@ public class Zeichenmaschine extends Constants {
 	 * im Zeichenfenster an.
 	 */
 	public final void redraw() {
-		if( state == Options.AppState.PAUSED ) {
+		if( state == Options.AppState.PAUSED
+			|| state == Options.AppState.TERMINATED ) {
 			draw();
 		}
+		render();
+	}
+
+	/**
+	 * Zeigt den aktuellen Inhalt der {@link Zeichenleinwand}
+	 * im Zeichenfenster an, ohne vorher {@link #draw()} aufzurufen.
+	 */
+	public final void render() {
 		canvas.render();
 		// canvas.invalidate();
 		// frame.repaint();
