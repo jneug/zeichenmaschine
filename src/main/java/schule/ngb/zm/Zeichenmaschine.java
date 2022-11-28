@@ -1100,6 +1100,9 @@ public class Zeichenmaschine extends Constants {
 		}
 
 		if( isPaused() || isTerminated() ) {
+			if( MouseEvent.class.isInstance(evt) ) {
+				saveMousePosition((MouseEvent)evt);
+			}
 			dispatchEvents();
 		}
 	}
