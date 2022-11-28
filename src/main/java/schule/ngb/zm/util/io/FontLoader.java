@@ -1,12 +1,14 @@
 package schule.ngb.zm.util.io;
 
 import schule.ngb.zm.util.Log;
+import schule.ngb.zm.util.Validator;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,8 +20,13 @@ public class FontLoader {
 	/**
 	 * Lädt eine Schrift aus einer Datei.
 	 * <p>
-	 * Die Schrift wird unter ihrem Dateinamen in den Schriftenspeicher geladen
-	 * und kann danach in der Zeichenmaschine benutzt werden.
+	 * Die Methode kann eine Liste von Schriften bekommen und probiert diese
+	 * nacheinander zu laden. Die erste Schrift, die Fehlerfrei geladen werden
+	 * kann, wird zurückgegeben. Kann keine der Schriften geladen werden, ist das
+	 * Ergebnis {@code null}.
+	 * <p>
+	 * Die gefundene Schrift wird unter ihrem Dateinamen in den Schriftenspeicher
+	 * geladen und kann danach in der Zeichenmaschine benutzt werden.
 	 * <p>
 	 * Eine Datei mit dem Namen "fonts/Font-Name.ttf" würde mit dem Namen
 	 * "Font-Name" geladen und kann danach zum Beispiel in einem
@@ -27,7 +34,8 @@ public class FontLoader {
 	 * verwendet werden.
 	 *
 	 * @param source
-	 * @return
+	 * @return Die erste geladene Schrift oder {@code null}.
+	 * @see #loadFont(String, String)
 	 */
 	public static Font loadFont( String source ) {
 		String name = source;
@@ -45,10 +53,8 @@ public class FontLoader {
 	}
 
 	public static Font loadFont( String name, String source ) {
-		Objects.requireNonNull(source, "Font source may not be null");
-		if( source.length() == 0 ) {
-			throw new IllegalArgumentException("Font source may not be empty.");
-		}
+		Validator.requireNotNull(source,"Font source may not be null");
+		Validator.requireNotEmpty(source, "Font source may not be empty.");
 
 		if( fontCache.containsKey(name) ) {
 			LOG.trace("Retrieved font <%s> from font cache.", name);
@@ -83,6 +89,38 @@ public class FontLoader {
 		}
 
 		return font;
+	}
+
+	/**
+	 * Lädt eine Schrift aus einer Datei.
+	 * <p>
+	 * Die Methode kann eine Liste von Schriften bekommen und probiert diese
+	 * nacheinander zu laden. Die erste Schrift, die Fehlerfrei geladen werden
+	 * kann, wird zurückgegeben. Kann keine der Schriften geladen werden, ist das
+	 * Ergebnis {@code null}.
+	 * <p>
+	 * Die gefundene Schrift wird unter ihrem Dateinamen in den Schriftenspeicher
+	 * geladen und kann danach in der Zeichenmaschine benutzt werden.
+	 * <p>
+	 * Eine Datei mit dem Namen "fonts/Font-Name.ttf" würde mit dem Namen
+	 * "Font-Name" geladen und kann danach zum Beispiel in einem
+	 * {@link schule.ngb.zm.shapes.Text} mit {@code text.setFont("Font-Name");}
+	 * verwendet werden.
+	 *
+	 * @param name
+	 * @param sources
+	 * @return Die erste geladene Schrift oder {@code null}.
+	 * @see #loadFont(String, String)
+	 */
+	public static Font loadFonts( String name, String... sources ) {
+		for( String fontSource: sources ) {
+			// TODO: Ignore exceptions in this case and throw own at end?
+			Font font = loadFont(name, fontSource);
+			if( font != null ) {
+				return font;
+			}
+		}
+		return null;
 	}
 
 	private FontLoader() {
