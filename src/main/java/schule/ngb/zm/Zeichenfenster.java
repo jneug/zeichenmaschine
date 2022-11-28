@@ -130,7 +130,7 @@ public class Zeichenfenster extends JFrame {
 				taskbar.setIconImage(icon);
 			} else {
 				ArrayList<Image> icons = new ArrayList<>(4);
-				for( int size = 32; size <= 512; size *= size ) {
+				for( int size: new int[]{32, 64, 128, 512} ) {
 					icons.add(ImageIO.read(new File("icon_" + size + ".png")));
 				}
 
