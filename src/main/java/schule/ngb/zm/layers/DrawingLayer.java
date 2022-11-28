@@ -250,7 +250,7 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 
 	@Override
 	public void setGradient( Color from, Color to ) {
-		shapeDelegate.setGradient(getWidth()/2.0, getHeight()/2.0, min(getWidth(), getHeight())/2.0, from, to);
+		shapeDelegate.setGradient(getWidth() / 2.0, getHeight() / 2.0, min(getWidth(), getHeight()) / 2.0, from, to);
 	}
 
 	/**
@@ -466,13 +466,66 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		rect(x, y, w, w, anchor);
 	}
 
+	/**
+	 * Zeichnet ein Rechteck in die Zeichenebene.
+	 *
+	 * @param x x-Koordinate des Rechtecks.
+	 * @param y y-Koordinate des Rechtecks.
+	 * @param w Breite des Rechtecks.
+	 * @param h Höhe des Rechtecks.
+	 */
 	public void rect( double x, double y, double w, double h ) {
 		rect(x, y, w, h, shapeDelegate.getAnchor());
 	}
 
+	/**
+	 * Zeichnet ein Rechteck mit in die Zeichenebene.
+	 *
+	 * @param x x-Koordinate des Rechtecks.
+	 * @param y y-Koordinate des Rechtecks.
+	 * @param w Breite des Rechtecks.
+	 * @param h Höhe des Rechtecks.
+	 * @param anchor Ankerpunkt de Rechtecks.
+	 */
 	public void rect( double x, double y, double w, double h, Options.Direction anchor ) {
 		Point2D.Double anchorPoint = this.getOriginPoint(x, y, w, h, anchor);
 		rect.setRect(anchorPoint.getX(), anchorPoint.getY(), w, h);
+		fillShape(rect);
+		drawShape(rect);
+	}
+
+	/**
+	 * Zeichnet ein Rechteck mit abgerundeten Ecken in die Zeichenebene.
+	 * <p>
+	 * Jede Ecke wird als Viertelkreis eines Kreises mit dem Radius
+	 * {@code radius} gezeichnet.
+	 *
+	 * @param x x-Koordinate des Rechtecks.
+	 * @param y y-Koordinate des Rechtecks.
+	 * @param w Breite des Rechtecks.
+	 * @param h Höhe des Rechtecks.
+	 * @param radius Radius der Eckenkreise.
+	 */
+	public void roundedRect( double x, double y, double w, double h, double radius ) {
+		roundedRect(x, y, w, h, radius, shapeDelegate.getAnchor());
+	}
+
+	/**
+	 * Zeichnet ein Rechteck mit abgerundeten Ecken in die Zeichenebene.
+	 * <p>
+	 * Jede Ecke wird als Viertelkreis eines Kreises mit dem Radius
+	 * {@code radius} gezeichnet.
+	 *
+	 * @param x x-Koordinate des Rechtecks.
+	 * @param y y-Koordinate des Rechtecks.
+	 * @param w Breite des Rechtecks.
+	 * @param h Höhe des Rechtecks.
+	 * @param radius Radius der Eckenkreise.
+	 * @param anchor Ankerpunkt de Rechtecks.
+	 */
+	public void roundedRect( double x, double y, double w, double h, double radius, Options.Direction anchor ) {
+		Point2D.Double anchorPoint = this.getOriginPoint(x, y, w, h, anchor);
+		Shape rect = new RoundRectangle2D.Double(anchorPoint.getX(), anchorPoint.getY(), w, h, radius, radius);
 		fillShape(rect);
 		drawShape(rect);
 	}
