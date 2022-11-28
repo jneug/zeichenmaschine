@@ -5,10 +5,12 @@ import schule.ngb.zm.util.io.ImageLoader;
 import schule.ngb.zm.util.Noise;
 
 import java.awt.Cursor;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 import java.util.function.DoubleUnaryOperator;
 
@@ -65,7 +67,7 @@ public class Constants {
 	/**
 	 * Patchversion der Zeichenmaschine.
 	 */
-	public static final int APP_VERSION_REV = 31;
+	public static final int APP_VERSION_REV = 32;
 
 	/**
 	 * Version der Zeichenmaschine als Text-String.
@@ -441,6 +443,21 @@ public class Constants {
 	 * Konstante für das Doppelte der Kreiszahl Pi (entspricht 360 Grad).
 	 */
 	public static final double TWO_PI = Math.PI * 2.0;
+
+	/**
+	 * Konstante für fette Schrift.
+	 */
+	public static final int BOLD = Font.BOLD;
+
+	/**
+	 * Konstante für kursive Schrift.
+	 */
+	public static final int ITALIC = Font.ITALIC;
+
+	/**
+	 * Konstante für normale Schrift.
+	 */
+	public static final int PLAIN = Font.PLAIN;
 
 	/*
 	 * Globale Variablen, die von allen Klassen genutzt werden dürfen. Änderungen
@@ -1369,8 +1386,8 @@ public class Constants {
 		int[] result = new int[n];
 		int[] valuesCopy = Arrays.copyOf(values, values.length);
 		for( int i = 0; i < n; i++ ) {
-			int j = random(0, valuesCopy.length-1);
-			int l = valuesCopy.length-1;
+			int j = random(0, valuesCopy.length - 1);
+			int l = valuesCopy.length - 1;
 
 			result[i] = valuesCopy[j];
 			valuesCopy[j] = valuesCopy[l];
@@ -1387,7 +1404,12 @@ public class Constants {
 	 *
 	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
 	 * @param n Anzahl der auszuwählenden Elemente.
+	 * @param unique Bei {@code true} werden Elemente im Array nur maximal
+	 * 	einmal ausgewählt (Ziehen ohne Zurücklegen).
 	 * @return Ein zufälliges Element aus dem Array.
+	 * @throws IllegalArgumentException Wenn {@code unique == true} und
+	 *                                  {@code values.length < n}, also nicht
+	 *                                  genug Werte zur Wahl stehen.
 	 */
 	public static final double[] choice( double[] values, int n, boolean unique ) {
 		if( unique && values.length < n )
@@ -1398,8 +1420,8 @@ public class Constants {
 		double[] result = new double[n];
 		double[] valuesCopy = Arrays.copyOf(values, values.length);
 		for( int i = 0; i < n; i++ ) {
-			int j = random(0, valuesCopy.length-1);
-			int l = valuesCopy.length-1;
+			int j = random(0, valuesCopy.length - 1);
+			int l = valuesCopy.length - 1;
 
 			result[i] = valuesCopy[j];
 			valuesCopy[j] = valuesCopy[l];
@@ -1416,8 +1438,13 @@ public class Constants {
 	 *
 	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
 	 * @param n Anzahl der auszuwählenden Elemente.
+	 * @param unique Bei {@code true} werden Elemente im Array nur maximal
+	 * 	einmal ausgewählt (Ziehen ohne Zurücklegen).
 	 * @param <T> Datentyp der Elemente.
 	 * @return Ein zufälliges Element aus dem Array.
+	 * @throws IllegalArgumentException Wenn {@code unique == true} und
+	 *                                  {@code values.length < n}, also nicht
+	 *                                  genug Werte zur Wahl stehen.
 	 */
 	public static final <T> T[] choice( T[] values, int n, boolean unique ) {
 		if( unique && values.length < n )
@@ -1428,7 +1455,7 @@ public class Constants {
 		T[] result = Arrays.copyOf(values, n);
 		T[] valuesCopy = Arrays.copyOf(values, values.length);
 		for( int i = 0; i < n; i++ ) {
-			int last = valuesCopy.length-1;
+			int last = valuesCopy.length - 1;
 			int j = random(0, last);
 
 			result[i] = valuesCopy[j];
@@ -1439,6 +1466,53 @@ public class Constants {
 				valuesCopy = Arrays.copyOf(valuesCopy, last);
 		}
 		return result;
+	}
+
+	/**
+	 * Bringt die Zahlen im Array in eine zufällige Reihenfolge.
+	 *
+	 * @param values Ein Array mit Zahlen, die gemischt werden sollen.
+	 * @return Das Array in zufälliger Reihenfolge.
+	 */
+	public static final int[] shuffle( int[] values ) {
+		for( int i = 0; i < values.length - 1; i++ ) {
+			int j = random(i, values.length - 1);
+			int tmp = values[i];
+			values[i] = values[j];
+			values[j] = tmp;
+		}
+
+		return values;
+	}
+
+	/**
+	 * Bringt die Zahlen im Array in eine zufällige Reihenfolge.
+	 *
+	 * @param values Ein Array mit Zahlen, die gemischt werden sollen.
+	 * @return Das Array in zufälliger Reihenfolge.
+	 */
+	public static final double[] shuffle( double[] values ) {
+		for( int i = 0; i < values.length - 1; i++ ) {
+			int j = random(i, values.length - 1);
+			double tmp = values[i];
+			values[i] = values[j];
+			values[j] = tmp;
+		}
+
+		return values;
+	}
+
+	/**
+	 * Bringt die Werte im Array in eine zufällige Reihenfolge.
+	 *
+	 * @param values Ein Array mit Werte, die gemischt werden sollen.
+	 * @param <T> Datentyp der Elemente.
+	 * @return Das Array in zufälliger Reihenfolge.
+	 */
+	public static final <T> T[] shuffle( T[] values ) {
+		java.util.List<T> valueList = Arrays.asList(values);
+		Collections.shuffle(valueList, random);
+		return valueList.toArray(values);
 	}
 
 	/**
