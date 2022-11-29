@@ -1,0 +1,76 @@
+site_name: Zeichenmaschine.xyz
+site_description: Eine kleine Java-Bibliothek für grafische Programmierung im Informatikunterricht.
+site_author: J. Neugebauer
+repo_url: https://github.com/jneug/zeichenmaschine
+repo_name: jneug/zeichenmaschine
+
+site_dir: build/docs/site
+
+theme:
+    name: material
+    custom_dir: docs/home_override/
+    language: de
+    logo: assets/icon_64.png
+    favicon: assets/icon_32.png
+    features:
+        - content.code.annotate
+        - navigation.top
+        - navigation.tracking
+        - search.suggest
+    font: false
+    palette:
+        - media: "(prefers-color-scheme: light)"
+          scheme: default
+          primary: blue
+          accent: deep orange
+          toggle:
+              icon: material/weather-sunny
+              name: Dunkles Design aktivieren
+        - media: "(prefers-color-scheme: dark)"
+          scheme: slate
+          primary: blue
+          accent: deep orange
+          toggle:
+              icon: material/weather-night
+              name: Helles Design aktivieren
+extra_css:
+    - assets/zmstyles.css
+
+nav:
+    - Einführung: index.md
+    - Schnellstart: quickstart.md
+    - Installation: install.md
+
+markdown_extensions:
+    - admonition
+    - attr_list
+    - def_list
+    - footnotes
+    - md_in_html
+    - toc:
+          permalink: true
+    - pymdownx.magiclink
+    - pymdownx.betterem:
+          smart_enable: all
+    - pymdownx.caret
+    - pymdownx.smartsymbols
+    - pymdownx.emoji:
+          emoji_index: !!python/name:materialx.emoji.twemoji
+          emoji_generator: !!python/name:materialx.emoji.to_svg
+    - pymdownx.highlight:
+          anchor_linenums: true
+    - pymdownx.inlinehilite
+    - pymdownx.snippets
+    - pymdownx.details
+    - pymdownx.superfences
+
+plugins:
+    - search:
+          lang: de
+          separator: '[\s\-\.]'
+    - macros:
+        module_name: docs/macros
+
+extra:
+    javadoc_url: https://zeichenmaschine.xyz/docs/
+    javadoc_default_package: schule.ngb.zm
