@@ -147,6 +147,36 @@ class ColorTest {
 
 	@Test
 	void parseHexcode() {
+		Color c;
+
+		c = Color.parseHexcode("#f05025");
+		assertEquals(Color.RED, c);
+
+		c = Color.parseHexcode("#F8EF22");
+		assertEquals(Color.YELLOW, c);
+
+		c = Color.parseHexcode("#FF40ff");
+		assertEquals(new Color(255, 64, 255), c);
+
+		// TODO: Test hexcodes of length 3, 6 and 9
+		// TODO: Test malformed hexcodes
+	}
+
+	@Test
+	void parseString() {
+		Color c;
+
+		c = Color.parseString("red");
+		assertEquals(new Color(255, 0, 0), c);
+
+		c = Color.parseString("zombie green");
+		assertEquals(Color.parseHexcode("#54c571"), c);
+
+		c = Color.parseString("algae green");
+		assertEquals(new Color(100, 233, 134), c);
+
+		c = Color.parseString("light slate gray");
+		assertEquals(Color.parseHexcode("#6d7b8d"), c);
 	}
 
 	@Test
@@ -171,10 +201,6 @@ class ColorTest {
 
 	@Test
 	void HSLtoRGB() {
-	}
-
-	@Test
-	void testHSLtoRGB() {
 	}
 
 	@Test

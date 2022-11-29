@@ -4,6 +4,10 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.ColorModel;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 /**
  * Repräsentiert eine Farbe in der Zeichenmaschine.
@@ -221,19 +225,37 @@ public class Color implements Paint {
 		return Color.getRGBColor(rgb);
 	}
 
-	public static Color parseString( String pColor ) {
-		pColor = pColor.toLowerCase().strip();
-		if( pColor.contains("red") || pColor.contains("rot") ) {
-			return Color.RED.copy();
-		} else if( pColor.contains("blue") || pColor.contains("blau") ) {
-			return Color.BLUE.copy();
-		} else if( pColor.contains("green") || pColor.contains("grün") || pColor.contains("gruen") ) {
-			return Color.GREEN.copy();
-		} else if( pColor.contains("yellow") || pColor.contains("gelb") ) {
-			return Color.YELLOW.copy();
-		} else {
-			return new Color();
+	/**
+	 * Erstellt aus einem Farbnamen ein Farbobjekt.
+	 * <p>
+	 * Die gültigen Farbnamen können unter <a
+	 * href="https://htmlcolors.com/color-names">https://htmlcolors.com/color-names</a>
+	 * nachgeschlagen werden.
+	 *
+	 * @param color Der Name einer Farbe.
+	 * @return Ein Farbobjekt.
+	 */
+	public static Color parseString( String color ) {
+		color = color.toLowerCase().strip();
+
+		// Parse colornames file and return first match
+		try(
+			InputStream in = Color.class.getResourceAsStream("colornames.csv");
+			BufferedReader reader = new BufferedReader(new InputStreamReader(in))
+		) {
+			String line;
+			while( (line = reader.readLine()) != null ) {
+				String[] parts = line.split(",");
+				if( parts.length == 2 ) {
+					if( parts[0].equals(color) ) {
+						return Color.parseHexcode(parts[1]);
+					}
+				}
+			}
+		} catch( IOException ex ) {
+			// LOG?
 		}
+		return new Color();
 	}
 
 	/**
