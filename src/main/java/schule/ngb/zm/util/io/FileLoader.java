@@ -30,7 +30,7 @@ public final class FileLoader {
 	}
 
 	/**
-	 * Lädt die angegebene Datei Zeilenweise in ein Array.
+	 * Lädt die angegebene Datei Zeilenweise in eine Liste.
 	 *
 	 * @param source
 	 * @param charset
@@ -161,7 +161,7 @@ public final class FileLoader {
 		).toArray(double[][]::new);
 	}
 
-	public FileLoader() {
+	private FileLoader() {
 	}
 
 	private static final Log LOG = Log.getLogger(FileLoader.class);

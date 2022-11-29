@@ -15,7 +15,7 @@ import java.awt.Stroke;
  * {@link Strokeable#setStrokeColor(Color, int)} Methode hat, dann sollte auch
  * eine {@link schule.ngb.zm.layers.TurtleLayer.Turtle} dieselbe Methode
  * anbieten. Im Einzelfall kann es sinnvoll sein, weitere Methoden für
- * Konturlinien zur erfügung zu stellen. Allerdings sollte davon nach
+ * Konturlinien zur verfügung zu stellen. Allerdings sollte davon nach
  * Möglichkeit zugunsten einer einheitlichen API abgesehen werden.
  * <p>
  * Das Äquivalent für Füllungen stellt {@link Fillable} dar.

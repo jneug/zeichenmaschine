@@ -9,9 +9,7 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -25,6 +23,12 @@ import java.util.ArrayList;
  */
 public class Zeichenfenster extends JFrame {
 
+	/**
+	 * Setzt das Look and Feel auf den Standard des Systems.
+	 * <p>
+	 * Sollte einmalig vor erstellen des erstyen Programmfensters aufgerufen
+	 * werden.
+	 */
 	public static final void setLookAndFeel() {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -33,6 +37,17 @@ public class Zeichenfenster extends JFrame {
 		}
 	}
 
+	/**
+	 * Ermittelt ein {@link GraphicsDevice Anzeigegerät}, auf dem ein neues
+	 * Zeichenfenster angezeigt werden soll. In der Regel ist dies der
+	 * Bildschirm, auf dem sich derzeit der Mauszeiger befindet. Kann kein
+	 * solcher Bildschirm ermittelt werden, wird das
+	 * {@link GraphicsEnvironment#getDefaultScreenDevice() Standardgerät}
+	 * zurückgegeben.
+	 *
+	 * @return Das Anzeigegerät, auf dem ein neues Fenster angezeigt werden
+	 * 	sollte.
+	 */
 	public static final GraphicsDevice getGraphicsDevice() {
 		// Wir suchen den Bildschirm, der derzeit den Mauszeiger enthält, um
 		// das Zeichenfenster dort zu zentrieren.
@@ -55,10 +70,10 @@ public class Zeichenfenster extends JFrame {
 	}
 
 	/**
-	 * Das Anzeigefenster, auf dem die ZM gestartet wurde (muss nicht gleich dem
-	 * Aktuellen sein, wenn das Fenster verschoben wurde).
+	 * Das Anzeigegerät, auf dem die Zeichenmaschine gestartet wurde (muss nicht
+	 * gleich dem Aktuellen sein, wenn das Fenster verschoben wurde).
 	 */
-	private GraphicsDevice displayDevice;
+	private final GraphicsDevice displayDevice;
 
 	/**
 	 * Bevorzugte Abmessungen der Zeichenleinwand. Für das Zeichenfenster hat es
@@ -90,20 +105,56 @@ public class Zeichenfenster extends JFrame {
 		}
 	};
 
-	private Zeichenleinwand canvas;
+	// Die Zeichenleinwand dieses Fensters.
+	private final Zeichenleinwand canvas;
 
+	/**
+	 * Erstellt ein neues Zeichenfenster mit dem angegebenen Titel und einer
+	 * {@link Zeichenleinwand} in der angegebenen Größe.
+	 *
+	 * @param width Die Breite der Zeichenleinwand.
+	 * @param height Die Höhe der Zeichenleinwand.
+	 * @param title Der Titel des Fensters.
+	 */
+	@SuppressWarnings( "unused" )
 	public Zeichenfenster( int width, int height, String title ) {
 		this(new Zeichenleinwand(width, height), title, getGraphicsDevice());
 	}
 
+	/**
+	 * Erstellt ein neues Zeichenfenster mit dem angegebenen Titel und einer
+	 * {@link Zeichenleinwand} in der angegebenen Größe auf dem angegebenen
+	 * Anzeigegerät.
+	 *
+	 * @param width Die Breite der Zeichenleinwand.
+	 * @param height Die Höhe der Zeichenleinwand.
+	 * @param title Der Titel des Fensters.
+	 * @param displayDevice Das Anzeigegerät für das Fenster.
+	 */
+	@SuppressWarnings( "unused" )
 	public Zeichenfenster( int width, int height, String title, GraphicsDevice displayDevice ) {
 		this(new Zeichenleinwand(width, height), title, displayDevice);
 	}
 
+	/**
+	 * Erstellt ein neues Zeichenfenster mit dem angegebenen Titel und der
+	 * angegebene {@link Zeichenleinwand}.
+	 *
+	 * @param canvas Die Zeichenleinwand.
+	 * @param title Der Titel des Fensters.
+	 */
 	public Zeichenfenster( Zeichenleinwand canvas, String title ) {
 		this(canvas, title, getGraphicsDevice());
 	}
 
+	/**
+	 * Erstellt ein neues Zeichenfenster mit dem angegebenen Titel und der
+	 * angegebene {@link Zeichenleinwand} auf dem angegebenen Anzeigegerät.
+	 *
+	 * @param canvas Die Zeichenleinwand.
+	 * @param title Der Titel des Fensters.
+	 * @param displayDevice Das Anzeigegerät für das Fenster.
+	 */
 	public Zeichenfenster( Zeichenleinwand canvas, String title, GraphicsDevice displayDevice ) {
 		super(Validator.requireNotNull(displayDevice).getDefaultConfiguration());
 		this.displayDevice = displayDevice;
@@ -124,14 +175,19 @@ public class Zeichenfenster extends JFrame {
 		try {
 			if( Zeichenmaschine.MACOS ) {
 				URL iconUrl = Zeichenmaschine.class.getResource("icon_512.png");
-				Image icon = ImageIO.read(iconUrl);
-				// Dock Icon in macOS setzen
-				Taskbar taskbar = Taskbar.getTaskbar();
-				taskbar.setIconImage(icon);
+				if( iconUrl != null ) {
+					Image icon = ImageIO.read(iconUrl);
+					// Dock Icon in macOS setzen
+					Taskbar taskbar = Taskbar.getTaskbar();
+					taskbar.setIconImage(icon);
+				}
 			} else {
 				ArrayList<Image> icons = new ArrayList<>(4);
-				for( int size: new int[]{32, 64, 128, 512} ) {
-					icons.add(ImageIO.read(new File("icon_" + size + ".png")));
+				for( int size : new int[]{32, 64, 128, 512} ) {
+					URL icnUrl = Zeichenmaschine.class.getResource("icon_" + size + ".png");
+					if( icnUrl != null ) {
+						icons.add(ImageIO.read(icnUrl));
+					}
 				}
 
 				this.setIconImages(icons);
@@ -150,19 +206,45 @@ public class Zeichenfenster extends JFrame {
 		// this.centerFrame();
 	}
 
+	/**
+	 * Liefert das Anzeigegerät, auf dem dieses Fenster erstellt wurde.
+	 * <p>
+	 * Das Anzeigegerät muss nicht unbedingt gleich dem sein, auf dem sich das
+	 * Fenster derzeit befindet, wenn das Fenster verschoben wurde.
+	 *
+	 * @return Das Anzeigegerät.
+	 */
+	@SuppressWarnings( "unused" )
 	public GraphicsDevice getDisplayDevice() {
 		return displayDevice;
 	}
 
+	/**
+	 * Liefert die Abmessungen des Anzeigegeräts, auf dem das Fenster gestartet
+	 * wurde.
+	 *
+	 * @return Die Abmessungen des Anzeigegeräts.
+	 */
 	public Rectangle getScreenBounds() {
 		// return GraphicsEnvironment.getLocalGraphicsEnvironment().getMaximumWindowBounds();
 		return displayDevice.getDefaultConfiguration().getBounds();
 	}
 
+	/**
+	 * Liefert die Zeichenleinwand dieses Fensters.
+	 *
+	 * @return Die Zeichenleinwand.
+	 */
+	@SuppressWarnings( "unused" )
 	public Zeichenleinwand getCanvas() {
 		return canvas;
 	}
 
+	/**
+	 * Liefert die Abmessungen der Zeichenleinwand zurück.
+	 *
+	 * @return Die Abmessungen der Zeichenleinwand.
+	 */
 	public Rectangle getCanvasBounds() {
 		return canvas.getBounds();
 	}
@@ -179,6 +261,12 @@ public class Zeichenfenster extends JFrame {
 		);
 	}
 
+	/**
+	 * Setzt die Größe der Zeichenleinwand auf die angegebenen Werte.
+	 *
+	 * @param newWidth Neue Breite der Zeichenleinwand.
+	 * @param newHeight Neue Höhe der Zeichenleinwand.
+	 */
 	public void setCanvasSize( int newWidth, int newHeight ) {
 		// TODO: (ngb) Put constrains on max/min frame/canvas size
 		if( fullscreen ) {
@@ -259,6 +347,12 @@ public class Zeichenfenster extends JFrame {
 		}
 	}
 
+	/**
+	 * Prüft, ob sich dieses Zeichenfenster im Vollbild befindet.
+	 *
+	 * @return {@code true}, wenn das Fenster im Vollbild ist, {@code false}
+	 * 	sonst.
+	 */
 	public boolean isFullscreen() {
 		Window win = displayDevice.getFullScreenWindow();
 		return fullscreen && win.equals(this);

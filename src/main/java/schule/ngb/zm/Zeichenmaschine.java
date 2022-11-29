@@ -679,9 +679,9 @@ public class Zeichenmaschine extends Constants {
 	 * Gibt die erste (unterste) {@link Layer Ebene} der angegebenen Klasse
 	 * zurück.
 	 *
-	 * <pre>
-	 *     DrawingLayer draw = getLayer(DrawingLayer.class);
-	 * </pre>
+	 * <pre><code>
+	 * DrawingLayer draw = getLayer(DrawingLayer.class);
+	 * </code></pre>
 	 *
 	 * @param layerClass
 	 * @param <LT>
@@ -947,9 +947,9 @@ public class Zeichenmaschine extends Constants {
 	 * <p>
 	 * Die Konstanten der Klasse {@link Cursor} definieren 13 Standardzeiger,
 	 * die durch angabe der Nummer geladen werden können.
-	 * <pre>
-	 *     setCursor(Cursor.HAND_CURSOR);
-	 * </pre>
+	 * <pre><code>
+	 * setCursor(Cursor.HAND_CURSOR);
+	 * </code></pre>
 	 *
 	 * @param pPredefinedCursor Eine der Cursor-Konstanten.
 	 * @see Cursor
@@ -1022,9 +1022,9 @@ public class Zeichenmaschine extends Constants {
 	 * {@code delta} wird in Sekunden angegeben. Um eine Form zum Beispiel um
 	 * {@code 50} Pixel pro Sekunde in {@code x}-Richtung zu bewegen, kann so
 	 * vorgegangen werden:
-	 * <pre>
+	 * <pre><code>
 	 * shape.move(50*delta, 0.0);
-	 * </pre>
+	 * </code></pre>
 	 *
 	 * @param delta
 	 */

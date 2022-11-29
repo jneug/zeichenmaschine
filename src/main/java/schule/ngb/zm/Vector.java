@@ -422,8 +422,8 @@ public class Vector extends Point2D.Double {
 	 * dem quadrierten Abstand durchführen, wenn auch die gewünschte Entfernung
 	 * quadriert wird.
 	 *
-	 * @param vector
-	 * @return
+	 * @param vector Ein anderer Vektor.
+	 * @return Das Quadrat der Entfernung zum anderen Vektor.
 	 */
 	public double distanceSq( Vector vector ) {
 		return super.distanceSq(vector);

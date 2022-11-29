@@ -1054,7 +1054,7 @@ public class Constants {
 	}
 
 	/**
-	 * Ermittelt den Arkuskosinus der angegebenen Zahl.
+	 * Ermittelt den Arcuskosinus der angegebenen Zahl.
 	 *
 	 * @param x Eine Zahl.
 	 * @return {@code acos(x)}.
@@ -1064,7 +1064,7 @@ public class Constants {
 	}
 
 	/**
-	 * Ermittelt den Arkusktangens der angegebenen Zahl.
+	 * Ermittelt den Arcusktangens der angegebenen Zahl.
 	 *
 	 * @param x Eine Zahl.
 	 * @return {@code atan(x)}.
@@ -1681,38 +1681,93 @@ public class Constants {
 		}
 	}
 
+	/**
+	 * Konvertiert einen char-Wert in einen double-Wert.
+	 *
+	 * @param value Der char-Wert.
+	 * @return Ein double-Wert.
+	 */
 	public static final double asDouble( char value ) {
 		return value;
 	}
 
+	/**
+	 * Konvertiert einen byte-Wert in einen double-Wert.
+	 *
+	 * @param value Der byte-Wert.
+	 * @return Ein double-Wert.
+	 */
 	public static final double asDouble( byte value ) {
 		return value;
 	}
 
+	/**
+	 * Konvertiert einen short-Wert in einen double-Wert.
+	 *
+	 * @param value Der short-Wert.
+	 * @return Ein double-Wert.
+	 */
 	public static final double asDouble( short value ) {
 		return value;
 	}
 
+	/**
+	 * Konvertiert einen long-Wert in einen double-Wert.
+	 *
+	 * @param value Der long-Wert.
+	 * @return Ein double-Wert.
+	 */
 	public static final double asDouble( long value ) {
 		return (double) value;
 	}
 
+	/**
+	 * Konvertiert einen double-Wert in einen double-Wert.
+	 *
+	 * @param value Der double-Wert.
+	 * @return Ein double-Wert.
+	 */
 	public static final double asDouble( double value ) {
 		return value;
 	}
 
+	/**
+	 * Konvertiert einen float-Wert in einen double-Wert.
+	 *
+	 * @param value Der float-Wert.
+	 * @return Ein double-Wert.
+	 */
 	public static final double asDouble( float value ) {
 		return value;
 	}
 
+	/**
+	 * Konvertiert einen int-Wert in einen double-Wert.
+	 *
+	 * @param value Der int-Wert.
+	 * @return Ein double-Wert.
+	 */
 	public static final double asDouble( int value ) {
 		return value;
 	}
 
+	/**
+	 * Konvertiert einen boolean-Wert in einen double-Wert.
+	 *
+	 * @param value Der boolean-Wert.
+	 * @return Ein double-Wert.
+	 */
 	public static final double asDouble( boolean value ) {
 		return value ? 1.0 : 0.0;
 	}
 
+	/**
+	 * Konvertiert einen String in einen double-Wert.
+	 *
+	 * @param value Der String.
+	 * @return Ein double-Wert.
+	 * @see Double#parseDouble(String)
+	 */
 	public static final double asDouble( String value ) {
 		try {
 			return Double.parseDouble(value);
@@ -1721,38 +1776,93 @@ public class Constants {
 		}
 	}
 
+	/**
+	 * Konvertiert einen char-Wert in einen boolean-Wert.
+	 *
+	 * @param value Der char-Wert.
+	 * @return Ein boolean-Wert.
+	 */
 	public static final boolean asBool( char value ) {
 		return value != 0;
 	}
 
+	/**
+	 * Konvertiert einen byte-Wert in einen boolean-Wert.
+	 *
+	 * @param value Der byte-Wert.
+	 * @return Ein boolean-Wert.
+	 */
 	public static final boolean asBool( byte value ) {
 		return value != 0;
 	}
 
+	/**
+	 * Konvertiert einen short-Wert in einen boolean-Wert.
+	 *
+	 * @param value Der short-Wert.
+	 * @return Ein boolean-Wert.
+	 */
 	public static final boolean asBool( short value ) {
 		return value != 0;
 	}
 
+	/**
+	 * Konvertiert einen int-Wert in einen boolean-Wert.
+	 *
+	 * @param value Der int-Wert.
+	 * @return Ein boolean-Wert.
+	 */
 	public static final boolean asBool( int value ) {
 		return value != 0;
 	}
 
+	/**
+	 * Konvertiert einen long-Wert in einen boolean-Wert.
+	 *
+	 * @param value Der long-Wert.
+	 * @return Ein boolean-Wert.
+	 */
 	public static final boolean asBool( long value ) {
 		return value != 0L;
 	}
 
+	/**
+	 * Konvertiert einen double-Wert in einen boolean-Wert.
+	 *
+	 * @param value Der double-Wert.
+	 * @return Ein boolean-Wert.
+	 */
 	public static final boolean asBool( double value ) {
 		return value != 0.0;
 	}
 
+	/**
+	 * Konvertiert einen float-Wert in einen boolean-Wert.
+	 *
+	 * @param value Der float-Wert.
+	 * @return Ein boolean-Wert.
+	 */
 	public static final boolean asBool( float value ) {
 		return value != 0.0f;
 	}
 
+	/**
+	 * Konvertiert einen boolean-Wert in einen boolean-Wert.
+	 *
+	 * @param value Der boolean-Wert.
+	 * @return Ein boolean-Wert.
+	 */
 	public static final boolean asBool( boolean value ) {
 		return value;
 	}
 
+	/**
+	 * Konvertiert einen String in einen boolean-Wert.
+	 *
+	 * @param value Der String.
+	 * @return Ein boolean-Wert.
+	 * @see Boolean#parseBoolean(String)
+	 */
 	public static final boolean asBool( String value ) {
 		return Boolean.parseBoolean(value);
 	}
@@ -1813,7 +1923,7 @@ public class Constants {
 		return Integer.valueOf(binary, 16);
 	}
 
-	// Konstants für Key events (Copied from KeyEvent)
+	// Konstanten für Key events (Copied from KeyEvent)
 
 	/**
 	 * Constant for the ENTER virtual key.

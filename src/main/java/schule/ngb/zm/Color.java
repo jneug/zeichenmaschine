@@ -112,7 +112,7 @@ public class Color implements Paint {
 	}
 
 	/**
-	 * Erstellt eine graue Farbe entsprechend des Grauwertes <var>gray</var>.
+	 * Erstellt eine graue Farbe entsprechend dem Grauwert {@code gray}.
 	 *
 	 * @param gray Ein Grauwert zwischen 0 und 255.
 	 */
@@ -121,8 +121,8 @@ public class Color implements Paint {
 	}
 
 	/**
-	 * Erstellt eine graue Farbe entsprechend des Grauwertes <var>gray</var> und
-	 * des Transparentwertes <var>alpha</var>.
+	 * Erstellt eine graue Farbe entsprechend dem Grauwert {@code gray} und dem
+	 * Transparenzwert {@code alpha}.
 	 *
 	 * @param gray Ein Grauwert zwischen 0 und 255.
 	 */
@@ -131,9 +131,9 @@ public class Color implements Paint {
 	}
 
 	/**
-	 * Erstellt eine Farbe. Die Parameter <var>red</var>, <var>green</var> und
-	 * <var>blue</var> geben die Rot-, Grün- und Blauanteile der Farbe. Die
-	 * Werte liegen zwischen 0 und 255.
+	 * Erstellt eine Farbe. Die Parameter {@code red}, {@code green} und
+	 * {@code blue} geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
+	 * liegen zwischen 0 und 255.
 	 *
 	 * @param red Rotwert zwischen 0 und 255.
 	 * @param green Grünwert zwischen 0 und 255.
@@ -144,11 +144,11 @@ public class Color implements Paint {
 	}
 
 	/**
-	 * Erstellt eine Farbe. Die Parameter <var>red</var>, <var>green</var> und
-	 * <var>blue</var> geben die Rot-, Grün- und Blauanteile der Farbe. Die
-	 * Werte liegen zwischen 0 und 255.
-	 * <var>alpha</var> gibt den den Transparentwert an (auch zwischen
-	 * 0 und 255), wobei 0 komplett durchsichtig ist und 255 komplett deckend.
+	 * Erstellt eine Farbe. Die Parameter {@code red}, {@code green} und
+	 * {@code blue} geben die Rot-, Grün- und Blauanteile der Farbe. Die Werte
+	 * liegen zwischen 0 und 255. {@code alpha} gibt den den Transparentwert an
+	 * (auch zwischen 0 und 255), wobei 0 komplett durchsichtig ist und 255
+	 * komplett deckend.
 	 *
 	 * @param red Rotwert zwischen 0 und 255.
 	 * @param green Grünwert zwischen 0 und 255.
@@ -160,20 +160,20 @@ public class Color implements Paint {
 	}
 
 	/**
-	 * Erstellt eine Farbe als Kopie von <var>color</var>.
+	 * Erstellt eine Farbe als Kopie von {@code color}.
 	 *
-	 * @param color
+	 * @param color Eine Farbe.
 	 */
 	public Color( Color color ) {
 		this(color.getRGBA(), true);
 	}
 
 	/**
-	 * Erstellt eine Farbe als Kopie von <var>color</var> und ersetzt den
-	 * Transparentwert durch <var>alpha</var>.
+	 * Erstellt eine Farbe als Kopie von {@code color} und ersetzt den
+	 * Transparentwert durch {@code alpha}.
 	 *
-	 * @param color
-	 * @param alpha
+	 * @param color Eine Farbe.
+	 * @param alpha Der neue Transparenzwert.
 	 */
 	public Color( Color color, int alpha ) {
 		this(color.getRed(), color.getGreen(), color.getBlue(), alpha);
@@ -208,18 +208,51 @@ public class Color implements Paint {
 
 	/**
 	 * Erzeugt eine Farbe aus einem kodierten RGBA Integer-Wert.
+	 * <p>
+	 * Der 32-bit Integer enthält (von rechts) in Bit 1 bis 8 den Rotwert, in
+	 * Bit 9 bis 16 Grünwert, in Bit 17 bis 24 den Blauwert und in Bit 25 bis 32
+	 * den Transparenzwert der Farbe.
 	 *
-	 * @param rgba
-	 * @return
+	 * @param rgba Eine RGBA-Farbe.
+	 * @return Ein Farbobjekt.
 	 */
 	public static Color getRGBColor( int rgba ) {
 		return new Color(rgba, true);
 	}
 
+	/**
+	 * Erzeugt eine Farbe aus Werten im
+	 * <a href="https://de.wikipedia.org/wiki/HSV-Farbraum">HSB-Farbraum</a>.
+	 * <p>
+	 * {code h} beschreibt den Farbwert (engl. <em>hue</em>), {@code s} die
+	 * Sättigung (engl. <em>saturation</em>) und {@code b} die absolute
+	 * Helligkeit (engl. <em>brightness</em>) der Farbe. Alle Werte werden
+	 * zwischen 0.0 und 1.0 angegeben.
+	 *
+	 * @param h Der Farbwert.
+	 * @param s Die Sättigung.
+	 * @param b Die absolute Helligkeit.
+	 * @return Ein Farbobjekt.
+	 * @see java.awt.Color#getHSBColor(float, float, float)
+	 */
 	public static Color getHSBColor( double h, double s, double b ) {
 		return new Color(java.awt.Color.getHSBColor((float) h, (float) s, (float) b));
 	}
 
+	/**
+	 * Erzeugt eine Farbe aus Werten im
+	 * <a href="https://de.wikipedia.org/wiki/HSV-Farbraum">HSL-Farbraum</a>.
+	 * <p>
+	 * {code h} beschreibt den Farbwert (engl. <em>hue</em>), {@code s} die
+	 * Sättigung (engl. <em>saturation</em>) und {@code l} die relative
+	 * Helligkeit (engl. <em>lightness</em>) der Farbe. Alle Werte werden
+	 * zwischen 0.0 und 1.0 angegeben.
+	 *
+	 * @param h Der Farbwert.
+	 * @param s Die Sättigung.
+	 * @param l Die relative Helligkeit.
+	 * @return Ein Farbobjekt.
+	 */
 	public static Color getHSLColor( double h, double s, double l ) {
 		int rgb = Color.HSLtoRGB(new float[]{(float) h, (float) s, (float) l});
 		return Color.getRGBColor(rgb);
@@ -259,12 +292,16 @@ public class Color implements Paint {
 	}
 
 	/**
-	 * Erzeugt eine Farbe aus einem hexadezimalen Code. Der Hexcode kann sechs-
-	 * oder achtstellig sein (wenn ein Transparentwert vorhanden ist). Dem Code
-	 * kann ein {@code #} Zeichen vorangestellt sein.
+	 * Erzeugt eine Farbe aus einem hexadezimalen Code. Der Hexcode kann drei-,
+	 * sechs- oder achtstellig sein (wenn ein Transparentwert vorhanden ist).
+	 * Dem Code kann ein {@code #} Zeichen vorangestellt sein, muss es aber
+	 * nicht.
+	 * <p>
+	 * Bei einem dreistelligen Code wird jedes zeichen doppelt interpretiert.
+	 * Das beduetet {@code #ABC} ist gleichbedeutend mit {@code #AABBCC}.
 	 *
-	 * @param hexcode
-	 * @return
+	 * @param hexcode Eine Farbe als Hexcode.
+	 * @return Ein Farbobjekt.
 	 */
 	public static Color parseHexcode( String hexcode ) {
 		if( hexcode.startsWith("#") ) {
@@ -301,7 +338,7 @@ public class Color implements Paint {
 		if( color1 == null && color2 == null ) {
 			throw new IllegalArgumentException("Color.interpolate() needs at least one color to be not null.");
 		}
-		if( t < 0.0 || color2 == null ) {
+		if( (color1 != null && t < 0.0) || color2 == null ) {
 			return color1.copy();
 		}
 		if( t > 1.0 || color1 == null ) {
@@ -351,6 +388,14 @@ public class Color implements Paint {
 		return hsl;
 	}
 
+	/**
+	 * Konvertiert die Komponenten einer Farbe aus dem HSL-Farbraum in den
+	 * RGB-Farbraum.
+	 *
+	 * @param hsl Die HSL-Komponenten als float-Array.
+	 * @return Der RGBA-Farbwert.
+	 * @see #HSLtoRGB(float[], int)
+	 */
 	public static int HSLtoRGB( float[] hsl ) {
 		return HSLtoRGB(hsl, 255);
 	}
@@ -359,9 +404,9 @@ public class Color implements Paint {
 	 * Konvertiert eine Farbe mit Komponenten im HSL-Farbraum in den
 	 * RGB-Farbraum.
 	 * <p>
-	 * Die Farbkomponenten werden als Float-Array übergeben. Im Index 0 steht
-	 * der h-Wert im Bereich 0 bis 360, Index 1 und 2 enthalten den s- und
-	 * l-Wert im Bereich von 0 bis 1.
+	 * Die Farbkomponenten werden als float-Array übergeben. Im Index 0 steht
+	 * der H-Wert im Bereich 0 bis 360, Index 1 und 2 enthalten den S- und
+	 * L-Wert im Bereich von 0 bis 1.
 	 *
 	 * @param hsl Die Farbkomponenten im HSL-Farbraum.
 	 * @param alpha Ein Transparenzwert im Bereich 0 bis 255.
@@ -506,10 +551,11 @@ public class Color implements Paint {
 
 	/**
 	 * Prüft, ob ein anderes Objekt zu diesem gleich ist.
+	 * <p>
+	 * Die Methode gibt genau dann {@code true} zurück, wenn das andere Objekt
+	 * nicht {@code null} ist, vom Typ {@code Color} ist und es dieselben Rot-,
+	 * Grün-, Blau- und Transparenzwerte hat.
 	 *
-	 * Die Methode gibt genau dann {@code true} zurück, wenn das andere
-	 * Objekt nicht {@code null} ist, vom Typ {@code Color} ist und es
-	 * dieselben Rot-, Grün-, Blau- und Transparenzwerte hat.
 	 * @param obj Das zu vergleichende Objekt.
 	 * @return {@code true}, wenn die Objekte gleich sind, sonst {@code false}.
 	 */

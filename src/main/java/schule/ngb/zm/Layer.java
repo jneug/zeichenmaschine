@@ -12,10 +12,10 @@ import java.awt.image.BufferedImage;
  * Die {@code Zeichenleinwand} besteht aus einer Reihe von Ebenen, die
  * übereinandergelegt und von "unten" nach "oben" gezeichnet werden. Die Inhalte
  * der oberen Ebenen können also Inhalte der darunterliegenden verdecken.
- *
- * Ebenen sind ein zentraler Bestandteil bei der Implementierung einer {@link Zeichenmaschine}.
- * Es werden
- * Sie erben von {@code Constants}, damit sie beim
+ * <p>
+ * Ebenen sind ein zentraler Bestandteil bei der Implementierung einer
+ * {@link Zeichenmaschine}. Sie erben von {@code Constants}, da neue Ebenentypen
+ * von Nutzern implementiert werden können.
  */
 public abstract class Layer extends Constants implements Drawable, Updatable {
 
@@ -43,24 +43,39 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 	protected boolean active = true;
 
 
+	/**
+	 * Erstellt eine neue Ebene mit den Standardmaßen.
+	 */
 	public Layer() {
 		this(DEFAULT_WIDTH, DEFAULT_HEIGHT);
 	}
 
+	/**
+	 * Erstellt eine neue Ebene mit den angegebenen Maßen.
+	 *
+	 * @param width Die Breite der Ebene.
+	 * @param height Die Höhe der Ebene.
+	 */
 	public Layer( int width, int height ) {
 		createCanvas(width, height);
 	}
 
+	/**
+	 * @return Die Breite der Ebene.
+	 */
 	public int getWidth() {
 		return buffer.getWidth();
 	}
 
+	/**
+	 * @return Die Höhe der Ebene.
+	 */
 	public int getHeight() {
 		return buffer.getHeight();
 	}
 
 	/**
-	 * Ändert die Größe der Ebene auf die angegebene Größe.
+	 * Ändert die Größe der Ebene auf die angegebenen Maße.
 	 *
 	 * @param width Die neue Breite.
 	 * @param height Die neue Höhe.
@@ -88,7 +103,7 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 	/**
 	 * Erstellt einen neuen Puffer für die Ebene und konfiguriert diesen.
 	 *
-	 * @param width Width des neuen Puffers.
+	 * @param width Breite des neuen Puffers.
 	 * @param height Höhe des neuen Puffers.
 	 */
 	private void createCanvas( int width, int height ) {
@@ -115,7 +130,7 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 	 * Erstellt einen neuen Puffer für die Ebene mit der angegebenen Größe und
 	 * kopiert den Inhalt des alten Puffers in den Neuen.
 	 *
-	 * @param width Width des neuen Puffers.
+	 * @param width Breite des neuen Puffers.
 	 * @param height Höhe des neuen Puffers.
 	 */
 	private void recreateCanvas( int width, int height ) {
@@ -155,14 +170,26 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 		return visible;
 	}
 
+	/**
+	 * Versteckt die Ebene.
+	 */
 	public void hide() {
 		visible = false;
 	}
 
-	public void view() {
+	/**
+	 * Zeigt die Ebene an, falls sie versteckt war.
+	 */
+	@SuppressWarnings("unused")
+	public void show() {
 		visible = true;
 	}
 
+	/**
+	 * Versteckt oder zeigt die Ebene, je nachdem, welchen Zustand sie derzeit
+	 * hat.
+	 */
+	@SuppressWarnings("unused")
 	public void toggle() {
 		visible = !visible;
 	}

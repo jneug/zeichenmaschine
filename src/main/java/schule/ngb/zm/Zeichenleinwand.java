@@ -1,6 +1,5 @@
 package schule.ngb.zm;
 
-import schule.ngb.zm.layers.ColorLayer;
 import schule.ngb.zm.util.Log;
 
 import java.awt.Canvas;
@@ -8,7 +7,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.image.BufferStrategy;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Eine Leinwand ist die Hauptkomponente einer Zeichenmaschine. Sie besteht aus
@@ -22,13 +24,13 @@ import java.util.*;
  */
 public class Zeichenleinwand extends Canvas {
 
+	// Lokales Lock für Rendervorgänge.
 	private final Object[] renderLock = new Object[0];
 
-	/**
-	 * Liste der hinzugefügten Ebenen.
-	 */
+	// Liste der hinzugefügten Ebenen.
 	private final List<Layer> layers;
 
+	// Status der Zeichenleinwand.
 	private boolean rendering = false, suspended = false;
 
 	/**
@@ -80,6 +82,10 @@ public class Zeichenleinwand extends Canvas {
 		}
 	}
 
+	/**
+	 * Setzt das Zeichnen der Leinwand fort, falls es zuvor mit
+	 * {@link #suspendRendering()} ausgesetzt wurde.
+	 */
 	public void resumeRendering() {
 		suspended = false;
 	}
@@ -201,6 +207,7 @@ public class Zeichenleinwand extends Canvas {
 	 * @param <L> Typ der Ebenen, die abgefragt werden.
 	 * @return Eine Liste mit den vorhandenen Ebenen des abgefragten Typs.
 	 */
+	@SuppressWarnings( "unused" )
 	public <L extends Layer> List<L> getLayers( Class<L> type ) {
 		ArrayList<L> result = new ArrayList<>(layers.size());
 		synchronized( layers ) {
@@ -213,10 +220,24 @@ public class Zeichenleinwand extends Canvas {
 		return result;
 	}
 
+	/**
+	 * Entfernt die angegebene Ebene von dieser Zeichenleinwand.
+	 *
+	 * @param pLayer Die Ebene, die entfernt werden soll.
+	 * @return {@code true}, wenn die Liste vorhanden war und entfernt wurde,
+	 *    {@code false} sonst.
+	 */
+	@SuppressWarnings( "unused" )
 	public boolean removeLayer( Layer pLayer ) {
 		return layers.remove(pLayer);
 	}
 
+	/**
+	 * Entfernt alle angegebenen Ebenen von dieser Zeichenleinwand.
+	 *
+	 * @param removeLayers Die Ebenen, die entfernt werden sollen.
+	 */
+	@SuppressWarnings( "unused" )
 	public void removeLayers( Layer... removeLayers ) {
 		synchronized( layers ) {
 			for( Layer layer : removeLayers ) {
@@ -225,10 +246,21 @@ public class Zeichenleinwand extends Canvas {
 		}
 	}
 
+	/**
+	 * Entfernt alle vorhandenen Ebenen von dieser Zeichenleinwand.
+	 */
+	@SuppressWarnings( "unused" )
 	public void clearLayers() {
 		layers.clear();
 	}
 
+	/**
+	 * Aktualisiert alle {@link Layer Ebenen}, die dieser Zeichenleinwand
+	 * hinzugefügt wurden.
+	 *
+	 * @param delta Die Zeit seit dem letzten Aufruf in Sekunden.
+	 * @see Layer#update(double)
+	 */
 	public void updateLayers( double delta ) {
 		synchronized( layers ) {
 			for( Layer layer : List.copyOf(layers) ) {
@@ -261,9 +293,9 @@ public class Zeichenleinwand extends Canvas {
 	}
 
 	/**
-	 * Zeichnet den Inhalt aller {@link Layer Ebenen} in den Grafik-Kontext.
+	 * Zeichnet den Inhalt aller {@link Layer Ebenen} in den Grafikkontext.
 	 *
-	 * @param graphics
+	 * @param graphics Der Grafikkontext.
 	 */
 	public void draw( Graphics graphics ) {
 		Graphics2D g2d = (Graphics2D) graphics.create();

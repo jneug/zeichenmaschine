@@ -28,7 +28,7 @@ public interface Updatable {
 	 * @return {@code true}, wenn das Objekt aktiv ist, {@code false}
 	 * 	andernfalls.
 	 */
-	public boolean isActive();
+	boolean isActive();
 
 	/**
 	 * Änderung des Zustandes des Objekts abhängig vom Zeitintervall
@@ -39,6 +39,6 @@ public interface Updatable {
 	 *
 	 * @param delta Zeitintervall seit dem letzten Aufruf (in Sekunden).
 	 */
-	public void update( double delta );
+	void update( double delta );
 
 }
