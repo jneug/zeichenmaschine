@@ -66,7 +66,7 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	private final Stack<schule.ngb.zm.shapes.Text> styleStack;
 
 	/**
-	 * Erstellt eine Ebene in der Standardgröße.
+	 * Erstellt eine Zeichenebene in der Standardgröße.
 	 */
 	public DrawingLayer() {
 		super();
@@ -79,7 +79,7 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	}
 
 	/**
-	 * Erstellt eine Ebene mit der angegebenen Größe.
+	 * Erstellt eine Zeichenebene mit der angegebenen Größe.
 	 *
 	 * @param width Die Breite der Ebene.
 	 * @param height Die Höhe der Ebene.

@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.function.DoubleUnaryOperator;
 
 /**
- * Ein Layer um {@link Shape} Objekte zu zeichnen.
+ * Eine Ebene um {@link Shape} Objekte zu zeichnen.
  * <p>
  * Ein {@code ShapesLayer} ist eine der drei Standardebenen der
  * {@link schule.ngb.zm.Zeichenmaschine}.
@@ -19,6 +19,9 @@ import java.util.function.DoubleUnaryOperator;
 @SuppressWarnings( "unused" )
 public class ShapesLayer extends Layer {
 
+	/**
+	 *
+	 */
 	protected boolean clearBeforeDraw = true;
 
 	private final List<Shape> shapes;

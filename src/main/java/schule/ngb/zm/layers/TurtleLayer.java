@@ -12,6 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
+/**
+ * Eine Ebene, auf der eine Turtle gesteuert werden kann, die Grafiken plottet.
+ * <p>
+ * Die Turtle verhält sich ähnlich zu ihren Entsprechungen in Logo oder
+ * TigerJython.
+ */
 @SuppressWarnings( "unused" )
 public class TurtleLayer extends Layer implements Strokeable, Fillable {
 
