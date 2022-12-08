@@ -18,6 +18,7 @@ import java.net.URL;
  * nicht komplett in den Speicher geladen, sondern direkt aus der Audioquelle
  * gestreamt und wiedergegeben.
  */
+@SuppressWarnings("unused")
 public class Music implements Audio {
 
 	// size of the byte buffer used to read/write the audio stream
@@ -276,11 +277,13 @@ public class Music implements Audio {
 		}
 	}
 
-	public void addListener( AudioListener listener ) {
+	@Override
+	public void addAudioListener( AudioListener listener ) {
 		initializeEventDispatcher().addListener(listener);
 	}
 
-	public void removeListener( AudioListener listener ) {
+	@Override
+	public void removeAudioListener( AudioListener listener ) {
 		initializeEventDispatcher().removeListener(listener);
 	}
 
@@ -292,8 +295,8 @@ public class Music implements Audio {
 	private EventDispatcher<Audio, AudioListener> initializeEventDispatcher() {
 		if( eventDispatcher == null ) {
 			eventDispatcher = new EventDispatcher<>();
-			eventDispatcher.registerEventType("start", (a,l) -> l.start(a));
-			eventDispatcher.registerEventType("stop", (a,l) -> l.stop(a));
+			eventDispatcher.registerEventType("start", (a,l) -> l.playbackStarted(a));
+			eventDispatcher.registerEventType("stop", (a,l) -> l.playbackStopped(a));
 		}
 		return eventDispatcher;
 	}

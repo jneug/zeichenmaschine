@@ -1,9 +1,11 @@
 package schule.ngb.zm.media;
 
 import schule.ngb.zm.Constants;
+import schule.ngb.zm.util.events.EventDispatcher;
 import schule.ngb.zm.util.tasks.TaskRunner;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -18,24 +20,14 @@ import java.util.List;
  * Darüber hinaus kann ein Mixer Effekte wie einen
  * {@link #fade(double, int) fadeIn} auf die Medien anwenden.
  */
-public class Mixer implements Audio {
+@SuppressWarnings( "unused" )
+public class Mixer implements Audio, AudioListener {
 
 	private List<AudioWrapper> audios;
 
 	private float volume = 0.8f;
 
-	class AudioWrapper {
-
-		Audio audio;
-
-		float volumeFactor;
-
-		public AudioWrapper( Audio audio, float volumeFactor ) {
-			this.audio = audio;
-			this.volumeFactor = volumeFactor;
-		}
-
-	}
+	EventDispatcher<Audio, AudioListener> eventDispatcher;
 
 	public Mixer() {
 		this.audios = new ArrayList<>(4);
@@ -45,16 +37,61 @@ public class Mixer implements Audio {
 		return "";
 	}
 
-	public void add( Audio pAudio ) {
-		add(pAudio, 1f);
+	private AudioWrapper findWrapper( Audio pAudio ) {
+		for( AudioWrapper aw: audios ) {
+			if( aw.audio == pAudio ) {
+				return aw;
+			}
+		}
+		return null;
 	}
 
+	public boolean contains( Audio pAudio ) {
+		return findWrapper(pAudio) != null;
+	}
+
+	public void add( Audio pAudio ) {
+		add(pAudio, 1);
+	}
+
+	/**
+	 * Fügt ein Audio-Objekt dem Mixer mit dem angegebenen Lautstärke-Faktor
+	 * hinzu.
+	 * <p>
+	 * Der Lautstärke-Faktor setzt die Lautstärke des Audio-Objektes relativ zur
+	 * Lautstärke des Mixers. Bei einem Faktor von 1.0 wird die Lautstärke des
+	 * Mixers übernommen. Bei einem Wert von 0.5 wird das Objekt halb so laut
+	 * abgespielt. Auf diese Weise lässt sich die Lautstärke aller Audio-Objekte
+	 * des Mixers gleichzeitig anpassen, während ihre relative Lautstärke
+	 * zueinander gleich bleibt.
+	 *
+	 * @param pAudio Ein Audio-Objekt.
+	 * @param pVolumeFactor Der Lautstärke-Faktor.
+	 */
 	public void add( Audio pAudio, double pVolumeFactor ) {
-		audios.add(new AudioWrapper(pAudio, (float) pVolumeFactor));
+		if( !contains(pAudio) ) {
+			audios.add(new AudioWrapper(pAudio, (float) pVolumeFactor));
+		} else {
+			findWrapper(pAudio).volumeFactor = (float) pVolumeFactor;
+		}
 		pAudio.setVolume(pVolumeFactor * volume);
 	}
 
+	/**
+	 * Entfernt die das angegebene Audio-Objekt aus dem Mixer. Ist das Objekt
+	 * nicht Teil des Mixers, passiert nichts.
+	 *
+	 * @param pAudio Ein Audio-Objekt.
+	 */
 	public void remove( Audio pAudio ) {
+		Iterator<AudioWrapper> it = audios.listIterator();
+		while( it.hasNext() ) {
+			AudioWrapper aw = it.next();
+			if( aw.audio == pAudio ) {
+				it.remove();
+				break;
+			}
+		}
 	}
 
 	public void removeAll() {
@@ -176,6 +213,59 @@ public class Mixer implements Audio {
 				setVolume(to);
 			}
 		});
+	}
+
+	@Override
+	public void playbackStarted( Audio source ) {
+		if( eventDispatcher != null ) {
+			eventDispatcher.dispatchEvent("start", Mixer.this);
+		}
+	}
+
+	@Override
+	public void playbackStopped( Audio source ) {
+		if( !isPlaying() ) {
+			if( eventDispatcher != null ) {
+				eventDispatcher.dispatchEvent("stop", Mixer.this);
+			}
+		}
+	}
+
+	@Override
+	public void addAudioListener( AudioListener listener ) {
+		initializeEventDispatcher().addListener(listener);
+	}
+
+	@Override
+	public void removeAudioListener( AudioListener listener ) {
+		initializeEventDispatcher().removeListener(listener);
+	}
+
+	/**
+	 * Interne Methode, um den Listener-Mechanismus zu initialisieren. Wird erst
+	 * aufgerufen, soblad sich auch ein Listener registrieren möchte.
+	 * @return
+	 */
+	private EventDispatcher<Audio, AudioListener> initializeEventDispatcher() {
+		if( eventDispatcher == null ) {
+			eventDispatcher = new EventDispatcher<>();
+			eventDispatcher.registerEventType("start", (a,l) -> l.playbackStarted(a));
+			eventDispatcher.registerEventType("stop", (a,l) -> l.playbackStopped(a));
+		}
+		return eventDispatcher;
+	}
+
+	class AudioWrapper {
+
+		Audio audio;
+
+		float volumeFactor;
+
+		public AudioWrapper( Audio audio, float volumeFactor ) {
+			this.audio = audio;
+			this.volumeFactor = volumeFactor;
+		}
+
 	}
 
 }

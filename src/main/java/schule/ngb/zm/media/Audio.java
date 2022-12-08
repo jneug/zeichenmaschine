@@ -80,4 +80,19 @@ public interface Audio {
 	 */
 	void dispose();
 
+	/**
+	 * Fügt dem Medium das angegbene Objekt als {@code AudioListener} hinzu, der
+	 * bei Start und Stopp der Wiedergabe informiert werden soll.
+	 *
+	 * @param listener Das zu informierende Objekt.
+	 */
+	void addAudioListener( AudioListener listener );
+
+	/**
+	 * Entfernt den angegebenen {@code AudioListener} vom Medium.
+	 *
+	 * @param listener Das Listener-Objekt.
+	 */
+	void removeAudioListener( AudioListener listener );
+
 }

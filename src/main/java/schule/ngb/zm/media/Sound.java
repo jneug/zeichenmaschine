@@ -2,6 +2,7 @@ package schule.ngb.zm.media;
 
 import schule.ngb.zm.util.Log;
 import schule.ngb.zm.util.Validator;
+import schule.ngb.zm.util.events.EventDispatcher;
 import schule.ngb.zm.util.io.ResourceStreamProvider;
 
 import javax.sound.sampled.*;
@@ -53,6 +54,8 @@ public class Sound implements Audio {
 	 * Die Lautstärke des Clips.
 	 */
 	private float volume = 0.8f;
+
+	EventDispatcher<Audio, AudioListener> eventDispatcher;
 
 	/**
 	 * Erstellt einen Sound aus der angegebene Quelle.
@@ -235,7 +238,7 @@ public class Sound implements Audio {
 	public synchronized void dispose() {
 		if( audioClip != null ) {
 			if( audioClip.isRunning() ) {
-				audioClip.stop();
+				stop();
 			}
 			audioClip.close();
 			audioClip = null;
@@ -259,8 +262,16 @@ public class Sound implements Audio {
 				audioClip.addLineListener(new LineListener() {
 					@Override
 					public void update( LineEvent event ) {
-						if( event.getType() == LineEvent.Type.STOP ) {
+						if( event.getType() == LineEvent.Type.START ) {
+							if( eventDispatcher != null ) {
+								eventDispatcher.dispatchEvent("start", Sound.this);
+							}
+						} else if( event.getType() == LineEvent.Type.STOP ) {
 							playbackStopped();
+
+							if( eventDispatcher != null ) {
+								eventDispatcher.dispatchEvent("stop", Sound.this);
+							}
 						}
 					}
 				});
@@ -302,10 +313,35 @@ public class Sound implements Audio {
 	 */
 	private void playbackStopped() {
 		playing = false;
+
 		if( disposeAfterPlay ) {
 			this.dispose();
 			disposeAfterPlay = false;
 		}
+	}
+
+	@Override
+	public void addAudioListener( AudioListener listener ) {
+		initializeEventDispatcher().addListener(listener);
+	}
+
+	@Override
+	public void removeAudioListener( AudioListener listener ) {
+		initializeEventDispatcher().removeListener(listener);
+	}
+
+	/**
+	 * Interne Methode, um den Listener-Mechanismus zu initialisieren. Wird erst
+	 * aufgerufen, soblad sich auch ein Listener registrieren möchte.
+	 * @return
+	 */
+	private EventDispatcher<Audio, AudioListener> initializeEventDispatcher() {
+		if( eventDispatcher == null ) {
+			eventDispatcher = new EventDispatcher<>();
+			eventDispatcher.registerEventType("start", (a,l) -> l.playbackStarted(a));
+			eventDispatcher.registerEventType("stop", (a,l) -> l.playbackStopped(a));
+		}
+		return eventDispatcher;
 	}
 
 	private static final Log LOG = Log.getLogger(Sound.class);
