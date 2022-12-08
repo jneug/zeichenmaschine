@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Eine Hilfsklasse um Dinge zu zählen.
+ * Eine Helferklasse, um Dinge zu zählen.
  * <p>
  * Im einfachsten Fall kann der Zähler als geteilte Zählvariable genutzt werden,
  * die mit {@link #inc()} und {@link #dec()} aus verschiedenen Objekten oder
@@ -13,11 +13,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>
  * Der Zähler kann aber auch Objekte zählen, indem die Instanzen an
  * {@link #count(Object)} übergeben werden. Am Ende kann mit {@link #getCount()}
- * die Anzahl der Objkete abgerufen werden.
+ * die Anzahl der Objekte abgerufen werden.
  * <p>
- * Handelt es sich bei den Objekten um Zahlen, dann merkt sich ein Zähler auch
- * das Maximum, das Minimum, die Summe und den Durchschnitt der gezählten
- * Werte.
+ * Handelt es sich bei den Objekten um Zahlen, dann merkt sich ein
+ * {@code Counter} auch das Maximum, das Minimum, die Summe und den Durchschnitt
+ * der gezählten Werte.
  * <p>
  * Ein Zähler kann auch komplette Arrays oder Listen von Zahlen zählen und die
  * obigen Statistiken auswerten.
@@ -96,31 +96,42 @@ public final class Counter {
 	}
 
 	/**
-	 * Gibt die aktuelle Anzahl zurück.
 	 * @return Die aktuelle Anzahl.
 	 */
 	public int getCount() {
 		return count.get();
 	}
 
+	/**
+	 * @return Das Maxium der bisher gezählten Werte.
+	 */
 	public double getMax() {
 		synchronized( count ) {
 			return max;
 		}
 	}
 
+	/**
+	 * @return Das Minimum der bisher gezählten Werte.
+	 */
 	public double getMin() {
 		synchronized( count ) {
 			return min;
 		}
 	}
 
+	/**
+	 * @return Die Summe der bisher gezählten Werte.
+	 */
 	public double getSum() {
 		synchronized( count ) {
 			return sum;
 		}
 	}
 
+	/**
+	 * @return Der Mittelwert der bisher gezählten Werte.
+	 */
 	public double getAvg() {
 		if( Double.isNaN(sum) ) {
 			return Double.NaN;
@@ -129,13 +140,27 @@ public final class Counter {
 		}
 	}
 
-
+	/**
+	 * Setzt den Zähler auf den angegebenen Wert.
+	 * <p>
+	 * Die anderen Statistiken werden nicht verändert.
+	 *
+	 * @param count Der neue Wert des Zählers.
+	 * @return Dieser Zähler selbst (method chaining).
+	 */
 	@SuppressWarnings( "UnusedReturnValue" )
 	public Counter setCount( int count ) {
 		this.count.set(count);
 		return this;
 	}
 
+	/**
+	 * Setzt den Zähler auf Null.
+	 * <p>
+	 * Die Statistiken werden auf {@link Double#NaN} gesetzt.
+	 *
+	 * @return Dieser Zähler selbst (method chaining).
+	 */
 	@SuppressWarnings( "UnusedReturnValue" )
 	public Counter reset() {
 		count.set(0);
@@ -147,18 +172,40 @@ public final class Counter {
 		return this;
 	}
 
+	/**
+	 * Erhöht den Zähler um Eins.
+	 * <p>
+	 * Die anderen Statistiken werden nicht verändert.
+	 *
+	 * @return Dieser Zähler selbst (method chaining).
+	 */
 	@SuppressWarnings( "UnusedReturnValue" )
 	public Counter inc() {
 		this.count.incrementAndGet();
 		return this;
 	}
 
+	/**
+	 * Verringert den Zähler um Eins.
+	 * <p>
+	 * Die anderen Statistiken werden nicht verändert.
+	 *
+	 * @return Dieser Zähler selbst (method chaining).
+	 */
 	@SuppressWarnings( "UnusedReturnValue" )
 	public Counter dec() {
 		this.count.decrementAndGet();
 		return this;
 	}
 
+	/**
+	 * Zählt den angegebenen Wert.
+	 * <p>
+	 * Erhöht den Zähler um Eins und aktualisiert die Statistiken.
+	 *
+	 * @param value Der neue Wert.
+	 * @return Dieser Zähler selbst (method chaining).
+	 */
 	@SuppressWarnings( "UnusedReturnValue" )
 	public Counter count( double value ) {
 		inc();
@@ -173,11 +220,27 @@ public final class Counter {
 		return this;
 	}
 
+	/**
+	 * Zählt die angegebene Zahl.
+	 * <p>
+	 * Erhöht den Zähler um Eins und aktualisiert die Statistiken.
+	 *
+	 * @param num Die neue Zahl.
+	 * @return Dieser Zähler selbst (method chaining).
+	 */
 	@SuppressWarnings( "UnusedReturnValue" )
 	public Counter count( Number num ) {
 		return count(num.doubleValue());
 	}
 
+	/**
+	 * Zählt das angegebenen Objekt.
+	 * <p>
+	 * Erhöht den Zähler um Eins.
+	 *
+	 * @param obj Ein beliebiges Objekt.
+	 * @return Dieser Zähler selbst (method chaining).
+	 */
 	@SuppressWarnings( "UnusedReturnValue" )
 	public Counter count( Object obj ) {
 		if( obj instanceof Number ) {
@@ -188,6 +251,13 @@ public final class Counter {
 		}
 	}
 
+	/**
+	 * Zöhlt alle Werte im angegebenen Array.
+	 *
+	 * @param values Das Array der neuen Werte.
+	 * @return Dieser Zähler selbst (method chaining).
+	 * @see #count(double)
+	 */
 	@SuppressWarnings( "UnusedReturnValue" )
 	public synchronized Counter countAll( double[] values ) {
 		for( double value : values ) {
@@ -196,6 +266,13 @@ public final class Counter {
 		return this;
 	}
 
+	/**
+	 * Zöhlt alle Werte im angegebenen Array.
+	 *
+	 * @param values Das Array der neuen Werte.
+	 * @return Dieser Zähler selbst (method chaining).
+	 * @see #count(double)
+	 */
 	@SuppressWarnings( "UnusedReturnValue" )
 	public synchronized Counter countAll( int[] values ) {
 		for( double value : values ) {
@@ -204,6 +281,13 @@ public final class Counter {
 		return this;
 	}
 
+	/**
+	 * Zöhlt alle Zahlen im angegebenen Array.
+	 *
+	 * @param values Das Array der neuen Zahlen.
+	 * @return Dieser Zähler selbst (method chaining).
+	 * @see #count(Number)
+	 */
 	@SuppressWarnings( "UnusedReturnValue" )
 	public synchronized Counter countAll( Number[] values ) {
 		for( Number value : values ) {
@@ -212,6 +296,13 @@ public final class Counter {
 		return this;
 	}
 
+	/**
+	 * Zöhlt alle Zahlen in der angegebenen Sammlung.
+	 *
+	 * @param values Die Sammlung der neuen Zahlen.
+	 * @return Dieser Zähler selbst (method chaining).
+	 * @see #count(Number)
+	 */
 	@SuppressWarnings( "UnusedReturnValue" )
 	public synchronized Counter countAll( Collection<Number> values ) {
 		for( Number value : values ) {

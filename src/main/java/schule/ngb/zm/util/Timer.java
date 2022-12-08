@@ -3,13 +3,13 @@ package schule.ngb.zm.util;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Eine Hilfsklasse zur Zeitmessung im Nanosekundenbereich.
+ * Helferklasse zur Zeitmessung im Nanosekundenbereich.
  * <p>
- * Die Klasse kann zum Beispiel genutzt werden, um die Laufzeit eines
- * Quelltextes zu messen. Wie eine echte Stoppuhr läuft der {@code Timer}
- * weiter, wenn nach einem {@link #stop()} wieder {@link #start()} aufgerufen
- * wird. Soll die Zeitmessung wieder bei null beginnen, muss vorher
- * {@link #reset()} genutzt werden.
+ * Mit einem {@code Timer} kann zum Beispiel die Laufzeit eines Algorithmus
+ * gemessen werden. Wie eine echte Stoppuhr läuft der {@code Timer} weiter, wenn
+ * nach einem {@link #stop()} wieder {@link #start()} aufgerufen wird. Soll die
+ * Zeitmessung wieder bei null beginnen, muss vorher {@link #reset()} genutzt
+ * werden.
  * <p>
  * Die gemessene Zeit kann in {@link #getMillis() Millisekunden} oder
  * {@link #getSeconds() Sekunden} abgerufen werden. Wird eine noch größere
@@ -100,7 +100,7 @@ public final class Timer {
 	}
 
 	/**
-	 * Stoppt den {@code Timer}, wenn er derzeit läuft. Die gemessene Zeit wird
+	 * Stoppt den {@code Timer}, wenn er derzeit läuft. Die gemessene Dauer wird
 	 * zur Summe aller gemessenen Zeiten hinzuaddiert.
 	 *
 	 * @return Dieser {@code Timer} selbst (method chaining).
@@ -116,8 +116,8 @@ public final class Timer {
 
 	/**
 	 * Setzt den {@code Timer} auf den Startzustand und löscht alle bisher
-	 * gemessenen Zeiten. Falls die Zeitmessung gerade läuft, wird sie nicht
-	 * gestoppt, sondern läuft vom Zeitpunkt des Aufrufs weiter.
+	 * gemessenen Zeiten. Falls die Zeitmessung gerade läuft, stoppt sie nicht,
+	 * sondern startet vom Zeitpunkt des Aufrufs neu.
 	 *
 	 * @return Dieser {@code Timer} selbst (method chaining).
 	 */

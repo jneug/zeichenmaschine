@@ -3,7 +3,7 @@ package schule.ngb.zm.util;
 import java.util.Random;
 
 /**
- * Zufallsgenerator für Perlin-Noise.
+ * Generator für Perlin-Noise.
  * <p>
  * Die Implementierung basiert auf dem von Ken Perlin entwickelten Algorithmus
  * und wurde anhand der <a
@@ -18,7 +18,7 @@ public class Noise {
 	private static final int M = N - 1;
 
 	/**
-	 * Interne Permutationstabelle für diesen Generator
+	 * Interne Permutationstabelle für diesen Generator.
 	 */
 	private int[] p;
 

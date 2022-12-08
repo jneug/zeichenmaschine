@@ -4,37 +4,63 @@ import schule.ngb.zm.util.Log;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.function.Function;
 
+/**
+ * Helferklasse, um Textdateien in verschiedenen Formaten einzulesen.
+ */
+@SuppressWarnings( "unused" )
 public final class FileLoader {
 
+	/**
+	 * Charset: ASCII
+	 */
 	public static final Charset ASCII = StandardCharsets.US_ASCII;
 
+	/**
+	 * Charset: UTF-8
+	 */
 	public static final Charset UTF8 = StandardCharsets.UTF_8;
 
+	/**
+	 * Charset: UTF-16
+	 */
 	public static final Charset UTF16 = StandardCharsets.UTF_16;
 
+	/**
+	 * Charset: ISO-8859-1
+	 */
 	public static final Charset ISO_8859_1 = StandardCharsets.ISO_8859_1;
 
+	/**
+	 * Lädt die angegebene Textdatei zeilenweise in eine Liste.
+	 * <p>
+	 * Als {@link Charset} wird {@link #UTF8} verwendet.
+	 *
+	 * @param source Die Quelle der Textdatei.
+	 * @return Eine Liste mit den Zeilen der Textdatei.
+	 * @see #loadLines(String, Charset)
+	 */
 	public static List<String> loadLines( String source ) {
 		return loadLines(source, UTF8);
 	}
 
 	/**
-	 * Lädt die angegebene Datei Zeilenweise in eine Liste.
+	 * Lädt die angegebene Textdatei mit dem angegebenen Charset zeilenweise in
+	 * eine Liste.
+	 * <p>
+	 * Am Ende jeder Zeile wird das Symbol für einen Zeilenumbruch ({@code \n})
+	 * entfernt.
 	 *
-	 * @param source
-	 * @param charset
-	 * @return
+	 * @param source Die Quelle der Textdatei.
+	 * @param charset Das zu verwendene {@code Charset}.
+	 * @return Eine Liste mit den Zeilen der Textdatei.
 	 */
 	public static List<String> loadLines( String source, Charset charset ) {
 		try( BufferedReader reader = ResourceStreamProvider.getReader(source, charset) ) {
@@ -52,10 +78,28 @@ public final class FileLoader {
 		}
 	}
 
+	/**
+	 * Lädt den Inhalt der angegebenen Textdatei vollständig in einen String.
+	 * <p>
+	 * Als {@link Charset} wird {@link #UTF8} verwendet.
+	 *
+	 * @param source Eine Quelle für die Textdatei (Absoluter Dateipfad,
+	 * 	Dateipfad im Classpath oder Netzwerkressource)
+	 * @return Der Inhalt der Textdatei.
+	 */
 	public static String loadText( String source ) {
 		return loadText(source, UTF8);
 	}
 
+	/**
+	 * Lädt den Inhalt der angegebenen Textdatei mit dem angegebenen
+	 * {@code Charset} vollständig in einen String.
+	 *
+	 * @param source Eine Quelle für die Textdatei (Absoluter Dateipfad,
+	 * 	Dateipfad im Classpath oder Netzwerkressource)
+	 * @param charset Der {@code Charset} der Textdatei.
+	 * @return Der Inhalt der Textdatei.
+	 */
 	public static String loadText( String source, Charset charset ) {
 		try( BufferedReader reader = ResourceStreamProvider.getReader(source, charset) ) {
 			StringBuilder result = new StringBuilder();
@@ -73,15 +117,16 @@ public final class FileLoader {
 	}
 
 	/**
-	 * Lädt die Daten aus einer CSV Datei in ein zweidimensionales
+	 * Lädt die Daten aus einer CSV-Datei in ein zweidimensionales
 	 * String-Array.
 	 * <p>
-	 * Der Aufruf entspricht dem Aufruf von
+	 * Der Aufruf entspricht
 	 * <pre><code>
 	 * FileLoader.loadCsv(source, ',', skipFirst, UTF8);
 	 * </code></pre>
 	 *
-	 * @param source Die Quelle der CSV-Daten.
+	 * @param source Eine Quelle für die CSV-Datei (Absoluter Dateipfad,
+	 * 	 * 	Dateipfad im Classpath oder Netzwerkressource)
 	 * @param skipFirst Ob die erste Zeile übersprungen werden soll.
 	 * @return Ein Array mit den Daten als {@code String}s.
 	 * @see #loadCsv(String, char, boolean, Charset)
@@ -91,12 +136,12 @@ public final class FileLoader {
 	}
 
 	/**
-	 * Lädt die Daten aus einer CSV Datei in ein zweidimensionales
+	 * Lädt die Daten aus einer CSV-Datei in ein zweidimensionales
 	 * String-Array.
 	 * <p>
 	 * Die Methode ist nicht in der Lage, komplexe CSV-Dateien zu verarbeiten.
-	 * Insbesondere können Inhalte, die das Trennzeichen {@code separator}
-	 * enthalten, nicht korrekt erkannt werden. Das Trennzeichen wird unabhängig
+	 * Insbesondere werden Inhalte, die das Trennzeichen {@code separator}
+	 * enthalten, nicht korrekt erkannt. Das Trennzeichen wird unabhängig
 	 * vom Kontext immer als Zelltrenner erkannt. (Im Normalfall kann das
 	 * Trennzeichen durch die Verwendung doppelter Anführungszeichen in der Art
 	 * {@code Inhalt,"Inhalt, der Komma enthält",Inhalt} maskiert werden.)

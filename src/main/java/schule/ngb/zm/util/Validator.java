@@ -3,6 +3,9 @@ package schule.ngb.zm.util;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+/**
+ * Statische Methoden, um Methodenparameter auf Gültigkeit zu prüfen.
+ */
 @SuppressWarnings( "UnusedReturnValue" )
 public class Validator {
 
