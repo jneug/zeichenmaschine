@@ -1,6 +1,7 @@
 package schule.ngb.zm;
 
 import schule.ngb.zm.anim.Easing;
+import schule.ngb.zm.util.Validator;
 import schule.ngb.zm.util.io.ImageLoader;
 import schule.ngb.zm.util.Noise;
 
@@ -789,6 +790,30 @@ public class Constants {
 	 * Berechnet das Minimum aller angegebenen Werte.
 	 *
 	 * <pre><code>
+	 * int minimum = min(1, 5, 3); // 1
+	 * </code></pre>
+	 *
+	 * @param numbers Die Werte, aus denen das Minimum ermittelt werden soll.
+	 * @return Das Minimum der Werte.
+	 * @throws IllegalArgumentException Wenn die Eingabe {@code null} oder leer
+	 *                                  ist.
+	 */
+	public static final int min( int... numbers ) {
+		if( numbers == null || numbers.length == 0 ) {
+			throw new IllegalArgumentException("Array may not be <null> or empty.");
+		}
+
+		int min = numbers[0];
+		for( int i = 1; i < numbers.length; i++ ) {
+			min = Math.min(min, numbers[i]);
+		}
+		return min;
+	}
+
+	/**
+	 * Berechnet das Minimum aller angegebenen Werte.
+	 *
+	 * <pre><code>
 	 * double minimum = min(1.0, 5.1, 3.2); // 1.0
 	 * </code></pre>
 	 *
@@ -807,6 +832,30 @@ public class Constants {
 			min = Math.min(min, numbers[i]);
 		}
 		return min;
+	}
+
+	/**
+	 * Berechnet das Maximum aller angegebenen Werte.
+	 *
+	 * <pre><code>
+	 * double maximum = max(1, 5, 3); // 5
+	 * </code></pre>
+	 *
+	 * @param numbers Die Werte, aus denen das Maximum ermittelt werden soll.
+	 * @return Das Maximum der Werte.
+	 * @throws IllegalArgumentException Wenn die Eingabe {@code null} oder leer
+	 *                                  ist.
+	 */
+	public static final int max( int... numbers ) {
+		if( numbers == null || numbers.length == 0 ) {
+			throw new IllegalArgumentException("Array may not be <null> or empty.");
+		}
+
+		int max = numbers[0];
+		for( int i = 1; i < numbers.length; i++ ) {
+			max = Math.max(max, numbers[i]);
+		}
+		return max;
 	}
 
 	/**
@@ -1204,6 +1253,12 @@ public class Constants {
 		return interpolate(toMin, toMax, (value - fromMin) / (fromMax - fromMin));
 	}
 
+	public static final double distance( double fromX, double fromY, double toX, double toY ) {
+		double diffX = toX - fromX;
+		double diffY = toY - fromY;
+		return sqrt(diffX*diffX + diffY*diffY);
+	}
+
 	/**
 	 * Geteilte {@code Random}-Instanz für einheitliche Zufallszahlen.
 	 */
@@ -1340,9 +1395,9 @@ public class Constants {
 	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
 	 * @return Ein zufälliges Element aus dem Array.
 	 */
-	public static final int choice( int[] values ) {
+	/*public static final int choice( int... values ) {
 		return values[random(0, values.length - 1)];
-	}
+	}*/
 
 	/**
 	 * Wählt ein zufälliges Element aus dem Array aus.
@@ -1350,9 +1405,9 @@ public class Constants {
 	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
 	 * @return Ein zufälliges Element aus dem Array.
 	 */
-	public static final double choice( double[] values ) {
+	/*public static final double choice( double... values ) {
 		return values[random(0, values.length - 1)];
-	}
+	}*/
 
 	/**
 	 * Wählt ein zufälliges Element aus dem Array aus.
@@ -1361,7 +1416,7 @@ public class Constants {
 	 * @param <T> Datentyp des Elements.
 	 * @return Ein zufälliges Element aus dem Array.
 	 */
-	public static final <T> T choice( T[] values ) {
+	public static final <T> T choice( T... values ) {
 		return values[random(0, values.length - 1)];
 	}
 

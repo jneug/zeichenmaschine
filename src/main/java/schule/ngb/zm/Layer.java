@@ -165,6 +165,9 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isVisible() {
 		return visible;
@@ -180,7 +183,7 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 	/**
 	 * Zeigt die Ebene an, falls sie versteckt war.
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings( "unused" )
 	public void show() {
 		visible = true;
 	}
@@ -189,18 +192,42 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 	 * Versteckt oder zeigt die Ebene, je nachdem, welchen Zustand sie derzeit
 	 * hat.
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings( "unused" )
 	public void toggle() {
 		visible = !visible;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void update( double delta ) {
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean isActive() {
 		return active;
+	}
+
+	/**
+	 * Prüft, ob die angegebenen Koordinaten innerhalb der Ebene liegen, oder
+	 * nicht.
+	 * <p>
+	 * Eine Koordinate liegt in der Ebene, wenn die {@code x}- und
+	 * {@code y}-Koordinaten größer oder gleich Null und kleiner als die Breite
+	 * bzw. Höhe der Ebene sind.
+	 *
+	 * @param x Die x-Koordinate.
+	 * @param y Die y-Koordinate.
+	 * @return {@code true}, wenn die Koordinaten innerhalb der Ebene liegen,
+	 *    {@code false}, wenn sie außerhalb liegen.
+	 */
+	@SuppressWarnings( "unused" )
+	public boolean isInBounds( int x, int y ) {
+		return (x >= 0 && y >= 0 && x < getWidth() && y < getHeight());
 	}
 
 }

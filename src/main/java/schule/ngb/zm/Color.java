@@ -52,38 +52,67 @@ public class Color implements Paint {
 	 * Die Farbe Zeichenmaschinen-Rot.
 	 */
 	public static final Color RED = new Color(240, 80, 37);
+
+	/**
+	 * Die Farbe Rot.
+	 */
+	public static final Color PURE_RED = new Color(255, 0, 0);
+
 	/**
 	 * Die Farbe Zeichenmaschinen-Grün.
 	 */
 	public static final Color GREEN = new Color(98, 199, 119);
+
+	/**
+	 * Die Farbe Grün.
+	 */
+	public static final Color PURE_GREEN = new Color(0, 255, 0);
+
 	/**
 	 * Die Farbe Zeichenmaschinen-Blau.
 	 */
-	public static final Color BLUE = new Color(49, 197, 244);
+	public static final Color BLUE = new Color(43, 128, 243); // 49, 197, 244
+
+	/**
+	 * Die Farbe Blau.
+	 */
+	public static final Color PURE_BLUE = new Color(0, 0, 255);
+
 	/**
 	 * Die Farbe Zeichenmaschinen-Gelb.
 	 */
 	public static final Color YELLOW = new Color(248, 239, 34);
+
+	/**
+	 * Die Farbe Gelb.
+	 */
+	public static final Color PURE_YELLOW = new Color(255, 255, 0);
+
 	/**
 	 * Die Farbe Zeichenmaschinen-Orange.
 	 */
 	public static final Color ORANGE = new Color(248, 158, 80);
+
 	/**
 	 * Die Farbe Zeichenmaschinen-Türkis.
 	 */
 	public static final Color CYAN = new Color(java.awt.Color.CYAN);
+
 	/**
 	 * Die Farbe Zeichenmaschinen-Magenta.
 	 */
 	public static final Color MAGENTA = new Color(java.awt.Color.MAGENTA);
+
 	/**
 	 * Die Farbe Zeichenmaschinen-Rosa.
 	 */
 	public static final Color PINK = new Color(240, 99, 164);
+
 	/**
 	 * Die Farbe Zeichenmaschinen-Lila.
 	 */
 	public static final Color PURPLE = new Color(101, 0, 191);
+
 	/**
 	 * Die Farbe Zeichenmaschinen-Braun.
 	 */
@@ -93,6 +122,7 @@ public class Color implements Paint {
 	 * Die Farbe Helmholtz-Grün.
 	 */
 	public static final Color HGGREEN = new Color(0, 165, 81);
+
 	/**
 	 * Die Farbe Helmholtz-Rot.
 	 */
@@ -272,10 +302,7 @@ public class Color implements Paint {
 		color = color.toLowerCase().strip();
 
 		// Parse colornames file and return first match
-		try(
-			InputStream in = Color.class.getResourceAsStream("colornames.csv");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(in))
-		) {
+		try( InputStream in = Color.class.getResourceAsStream("colornames.csv"); BufferedReader reader = new BufferedReader(new InputStreamReader(in)) ) {
 			String line;
 			while( (line = reader.readLine()) != null ) {
 				String[] parts = line.split(",");

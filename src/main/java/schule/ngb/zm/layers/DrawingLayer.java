@@ -254,12 +254,18 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	}
 
 	/**
-	 * Entfernt den Farbverlauf von der Form.
+	 * Entfernt einen Farbverlauf von der Füllung.
 	 */
 	public void noGradient() {
 		shapeDelegate.noGradient();
 	}
 
+	/**
+	 * Setzt den Linienstil für Konturlinien direkt auf das angegebene
+	 * {@code Stroke}-Objekt.
+	 *
+	 * @param stroke Ein {@code Stroke}-Objekt.
+	 */
 	@Override
 	public void setStroke( Stroke stroke ) {
 		shapeDelegate.setStroke(stroke);
@@ -412,62 +418,159 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		shapeDelegate.setStrokeType(type);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Stroke getStroke() {
 		return shapeDelegate.getStroke();
 	}
 
+	/**
+	 * Setzt den Standard-ANker für die Zeichenebene auf die angegebene
+	 * Richtung.
+	 * <p>
+	 * Zu Beginn ist der Standardanker immer auf
+	 * {@link Options.Direction#CENTER CENTER} gesetzt. Alle Formen werden von
+	 * der Mitte aus gezeichnet. Wir der Anker mit {@code setAnchor(NORTHWEST)}
+	 * beispielsweise auf {@link Options.Direction#NORTHWEST NORTHWEST} gesetzt,
+	 * werden alle Formen von der linken oberen Ecke aus gezeichnet.
+	 *
+	 * @param anchor Der neue Anker.
+	 */
 	public void setAnchor( Options.Direction anchor ) {
 		shapeDelegate.setAnchor(anchor);
 	}
 
+	/**
+	 * Übermalt die komplette Ebene mit einem Grauwert mit der angegebenen
+	 * Intensität. 0 entspricht schwarz, 255 entspricht weiß.
+	 *
+	 * @param gray Ein Grauwert zwischen 0 und 255.
+	 * @see Color#Color(int)
+	 */
 	public void clear( int gray ) {
 		clear(gray, gray, gray, 255);
 	}
 
+	/**
+	 * Übermalt die komplette Ebene mit einem Grauwert mit der angegebenen
+	 * Intensität und dem angegebenen Transparenzwert. Der Grauwert 0 entspricht
+	 * schwarz, 255 entspricht weiß.
+	 *
+	 * @param gray Ein Grauwert zwischen 0 und 255.
+	 * @param alpha Ein Transparenzwert zwischen 0 und 255.
+	 * @see Color#Color(int, int)
+	 */
 	public void clear( int gray, int alpha ) {
 		clear(gray, gray, gray, alpha);
 	}
 
+	/**
+	 * Übermalt die komplette Ebene mit der Farbe mit den angegebenen Rot-,
+	 * Grün- und Blauanteilen.
+	 *
+	 * @param red Der Rotanteil der Farbe zwischen 0 und 255.
+	 * @param green Der Grünanteil der Farbe zwischen 0 und 255.
+	 * @param blue Der Blauanteil der Farbe zwischen 0 und 255.
+	 * @see Color#Color(int, int, int)
+	 * @see <a
+	 * 	href="https://de.wikipedia.org/wiki/RGB-Farbraum">https://de.wikipedia.org/wiki/RGB-Farbraum</a>
+	 */
 	public void clear( int red, int green, int blue ) {
 		clear(red, green, blue, 255);
 	}
 
+	/**
+	 * Übermalt die komplette Ebene mit der Farbe mit den angegebenen Rot-,
+	 * Grün- und Blauanteilen und dem angegebenen Transparenzwert.
+	 *
+	 * @param red Der Rotanteil der Farbe zwischen 0 und 255.
+	 * @param green Der Grünanteil der Farbe zwischen 0 und 255.
+	 * @param blue Der Blauanteil der Farbe zwischen 0 und 255.
+	 * @param alpha Ein Transparenzwert zwischen 0 und 25
+	 * @see Color#Color(int, int, int, int)
+	 * @see <a
+	 * 	href="https://de.wikipedia.org/wiki/RGB-Farbraum">https://de.wikipedia.org/wiki/RGB-Farbraum</a>
+	 */
 	public void clear( int red, int green, int blue, int alpha ) {
 		clear(new schule.ngb.zm.Color(red, green, blue, alpha));
 	}
 
-	public void clear( schule.ngb.zm.Color pColor ) {
+	/**
+	 * Übermalt die komplette Ebene mit der angegebenen Farbe.
+	 *
+	 * @param color Die neue Füllfarbe oder {@code null}.
+	 * @see Color
+	 */
+	public void clear( schule.ngb.zm.Color color ) {
         /*graphics.setBackground(pColor);
         graphics.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());*/
 		java.awt.Color currentColor = drawing.getColor();
 		pushMatrix();
 		resetMatrix();
-		drawing.setColor(pColor.getJavaColor());
+		drawing.setColor(color.getJavaColor());
 		drawing.fillRect(0, 0, buffer.getWidth(), buffer.getHeight());
 		drawing.setColor(currentColor);
 		popMatrix();
 	}
 
+	/**
+	 * Zeichnet eine gerade Line zwischen den angegebenen Koordinaten.
+	 *
+	 * @param x1 Die x-Koordinate des Startpunktes.
+	 * @param y1 Die y-Koordinate des Startpunktes.
+	 * @param x2 Die x-Koordinate des Endpunktes.
+	 * @param y2 Die y-Koordinate des Endpunktes.
+	 */
 	public void line( double x1, double y1, double x2, double y2 ) {
 		line.setLine(x1, y1, x2, y2);
 		drawShape(line);
 	}
 
+	/**
+	 * Färbt den Pixel an der angegebenen Koordinate ein.
+	 *
+	 * @param x Die x-Koordinate.
+	 * @param y Die y-Koordinate.
+	 */
 	public void pixel( double x, double y ) {
 		buffer.setRGB((int) x, (int) y, shapeDelegate.getFontColor().getRGBA());
 	}
 
+	/**
+	 * Zeichnet ein Quadrat an den angegebenen Koordinaten mit der angegebenen
+	 * Kantenlänge in die Zeichenebene.
+	 * <p>
+	 * Als Ankerpunkt wird der Standardanker verwendet.
+	 *
+	 * @param x Die x-Koordinate des Ankerpunktes.
+	 * @param y Die y-Koordinate des Ankerpunktes.
+	 * @param w Die Kantenlänge des Quadrats.
+	 * @see #square(double, double, double, Options.Direction)
+	 */
 	public void square( double x, double y, double w ) {
 		rect(x, y, w, w, shapeDelegate.getAnchor());
 	}
 
+	/**
+	 * Zeichnet ein Quadrat an den angegebenen Koordinaten mit der angegebenen
+	 * Kantenlänge und dem angegebenen Ankerpunkt in die Zeichenebene.
+	 *
+	 * @param x Die x-Koordinate des Ankerpunktes.
+	 * @param y Die y-Koordinate des Ankerpunktes.
+	 * @param w Die Kantenlänge des Quadrats.
+	 * @see #square(double, double, double, Options.Direction)
+	 */
 	public void square( double x, double y, double w, Options.Direction anchor ) {
 		rect(x, y, w, w, anchor);
 	}
 
 	/**
-	 * Zeichnet ein Rechteck in die Zeichenebene.
+	 * Zeichnet ein Rechteck an den angegebenen Koordinaten mit der angegebenen
+	 * Breite und Höhe in die Zeichenebene.
+	 * <p>
+	 * Als Ankerpunkt wird der Standardanker verwendet.
 	 *
 	 * @param x x-Koordinate des Rechtecks.
 	 * @param y y-Koordinate des Rechtecks.
@@ -479,7 +582,8 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	}
 
 	/**
-	 * Zeichnet ein Rechteck mit in die Zeichenebene.
+	 * Zeichnet ein Rechteck an den angegebenen Koordinaten mit der angegebenen
+	 * Breite und Höhe und dem angegebenen Ankerpunkt in die Zeichenebene.
 	 *
 	 * @param x x-Koordinate des Rechtecks.
 	 * @param y y-Koordinate des Rechtecks.
@@ -495,7 +599,8 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	}
 
 	/**
-	 * Zeichnet ein Rechteck mit abgerundeten Ecken in die Zeichenebene.
+	 * Zeichnet ein Rechteck mit abgerundeten Ecken an den angegebenen
+	 * Koordinaten mit der angegebenen Breite und Höhe in die Zeichenebene.
 	 * <p>
 	 * Jede Ecke wird als Viertelkreis eines Kreises mit dem Radius
 	 * {@code radius} gezeichnet.
@@ -511,7 +616,9 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	}
 
 	/**
-	 * Zeichnet ein Rechteck mit abgerundeten Ecken in die Zeichenebene.
+	 * Zeichnet ein Rechteck mit abgerundeten Ecken an den angegebenen
+	 * Koordinaten mit der angegebenen Breite und Höhe und dem angegebenen
+	 * Ankerpunkt in die Zeichenebene.
 	 * <p>
 	 * Jede Ecke wird als Viertelkreis eines Kreises mit dem Radius
 	 * {@code radius} gezeichnet.
@@ -530,22 +637,64 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		drawShape(rect);
 	}
 
+	/**
+	 * Zeichnet einen Punkt in die Zeichenebene.
+	 * <p>
+	 * Im Gegensatz zu einem {@link #pixel(double, double) Pixel}, besitzt ein
+	 * Punkt einen Radius und nimmt mehr als ein Pixel auf der Ebene ein.
+	 *
+	 * @param x x-Koordinate des Punktes.
+	 * @param y y-Koordinate des Punktes.
+	 */
 	public void point( double x, double y ) {
 		ellipse(x - 1, y - 1, 2, 2, shapeDelegate.getAnchor());
 	}
 
+	/**
+	 * Zeichnet einen Kreis an den angegebenen Koordinaten mit dem angegebenen
+	 * Radius.
+	 *
+	 * @param x
+	 * @param y
+	 * @param r
+	 */
 	public void circle( double x, double y, double r ) {
 		ellipse(x, y, r + r, r + r, shapeDelegate.getAnchor());
 	}
 
+	/**
+	 * Zeichnet einen Kreis an den angegebenen Koordinaten mit dem angegebenen
+	 * Radius und dem angegebenen Ankerpunkt.
+	 *
+	 * @param x
+	 * @param y
+	 * @param r
+	 */
 	public void circle( double x, double y, double r, Options.Direction anchor ) {
 		ellipse(x, y, r + r, r + r, anchor);
 	}
 
+	/**
+	 * Zeichnet eine Ellipse in die Zeichenebene.
+	 *
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 */
 	public void ellipse( double x, double y, double w, double h ) {
 		ellipse(x, y, w, h, shapeDelegate.getAnchor());
 	}
 
+	/**
+	 * Zeichnet eine Ellipse in die Zeichenebene.
+	 *
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 * @param anchor
+	 */
 	public void ellipse( double x, double y, double w, double h, Options.Direction anchor ) {
 		Point2D.Double anchorPoint = getOriginPoint(x, y, w, h, anchor);
 		ellipse.setFrame(anchorPoint.x, anchorPoint.y, w, h);
@@ -553,10 +702,35 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		drawShape(ellipse);
 	}
 
+	/**
+	 * Zeichnet einen Kreisbogen in die Zeichenebene.
+	 * <p>
+	 * Der Kreisbogen liegt auf einem Kreis mit dem angegebenen Radius, beginnt
+	 * beim angegebenen Winkel und läuft bis zum zweiten Winkel.
+	 *
+	 * @param x
+	 * @param y
+	 * @param r
+	 * @param angle1
+	 * @param angle2
+	 */
 	public void arc( double x, double y, double r, double angle1, double angle2 ) {
 		arc(x, y, r + r, r + r, angle1, angle2);
 	}
 
+	/**
+	 * Zeichnet einen Ellipsenbogen in die Zeichenebene.
+	 * <p>
+	 * Der Ellipsenbogen liegt auf einer Ellipse mit der angegebenen Breite und
+	 * Höhe, beginnt beim angegebenen Winkel und läuft bis zum zweiten Winkel.
+	 *
+	 * @param x
+	 * @param y
+	 * @param w
+	 * @param h
+	 * @param angle1
+	 * @param angle2
+	 */
 	public void arc( double x, double y, double w, double h, double angle1, double angle2 ) {
 		while( angle2 < angle1 ) angle2 += 360.0;
 
@@ -572,6 +746,15 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		drawShape(arc);
 	}
 
+	/**
+	 * Zeichnet einen Kreisausschnitt in die Zeichenebene.
+	 *
+	 * @param x
+	 * @param y
+	 * @param r
+	 * @param angle1
+	 * @param angle2
+	 */
 	public void pie( double x, double y, double r, double angle1, double angle2 ) {
 		while( angle2 < angle1 ) angle2 += 360.0;
 
@@ -589,16 +772,50 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		drawShape(arc);
 	}
 
+	/**
+	 * Zeichnet eine quadratische Bézierkurve mit den angegebenen Start- und
+	 * Endkoordinaten, sowie dem angegebenen Kontrollpunkt.
+	 *
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @param x3
+	 * @param y3
+	 */
 	public void curve( double x1, double y1, double x2, double y2, double x3, double y3 ) {
 		QuadCurve2D curve = new QuadCurve2D.Double(x1, y1, x2, y2, x3, y3);
 		drawShape(curve);
 	}
 
+	/**
+	 * Zeichnet eine kubische Bézierkurve mit den angegebenen Start- und
+	 * Endkoordinaten, sowie den angegebenen Kontrollpunkten.
+	 *
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @param x3
+	 * @param y3
+	 * @param x4
+	 * @param y4
+	 */
 	public void curve( double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4 ) {
 		CubicCurve2D curve = new CubicCurve2D.Double(x1, y1, x2, y2, x3, y3, x4, y4);
 		drawShape(curve);
 	}
 
+	/**
+	 * Zeichnet ein Dreieck mit den angegebenen Eckpunkten in die Zeichenebene.
+	 *
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @param x3
+	 * @param y3
+	 */
 	public void triangle( double x1, double y1, double x2, double y2, double x3, double y3 ) {
 		Path2D path = new Path2D.Double();
 		path.moveTo(x1, y1);
@@ -610,6 +827,14 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		drawShape(path);
 	}
 
+	/**
+	 * Zeichnet einen Rhombus in die Zeichenebene.
+	 *
+	 * @param x
+	 * @param y
+	 * @param width
+	 * @param height
+	 */
 	public void rhombus( double x, double y, double width, double height ) {
 		rhombus(x, y, width, height, shapeDelegate.getAnchor());
 	}
@@ -677,11 +902,24 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		}
 	}
 
+	/**
+	 * Startet eine neue Freihand-Form.
+	 */
 	public void beginShape() {
 		path.reset();
 		pathStarted = false;
 	}
 
+	/**
+	 * Fügt einer zuvor {@link #beginShape() begonnenen} Freihand-Form eine
+	 * Linie zu den angegebenen Koordinaten hinzu.
+	 * <p>
+	 * Wurde seit dem Start der Form noch keine Linie hinzugefügt, wird zunächst
+	 * nur die angegebene Koordinate als Startpunkt der Freihand-Form gesetzt.
+	 *
+	 * @param x Die x-Koordinate.
+	 * @param y Die y-Koordinate.
+	 */
 	public void lineTo( double x, double y ) {
 		if( !pathStarted ) {
 			path.moveTo(x, y);
@@ -691,6 +929,10 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		}
 	}
 
+	/**
+	 * Beendet eine zuvor {@link #beginShape() begonnene} Freihand-Form und
+	 * zeichent sie auf die Zeichenebene.
+	 */
 	public void endShape() {
 		path.closePath();
 		path.trimToSize();
@@ -700,30 +942,88 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		drawShape(path);
 	}
 
+	/**
+	 * Zeichnet das Bild von der angegebenen Quelle an der angegebenen Position
+	 * auf dei Zeichenebene.
+	 * <p>
+	 * Die Bildquelle wird mithilfe von {@link ImageLoader#loadImage(String)}
+	 * geladen. Schlägt dies fehl, wird nichts gezeichnet.
+	 *
+	 * @param imageSource Die Bildquelle.
+	 * @param x x-Koordinate des Ankerpunktes.
+	 * @param y y-Koordinate des Ankerpunktes.
+	 */
 	public void image( String imageSource, double x, double y ) {
 		image(ImageLoader.loadImage(imageSource), x, y, 1.0, shapeDelegate.getAnchor());
 	}
 
+	/**
+	 * Zeichnet das Bild von der angegebenen Quelle an der angegebenen Position
+	 * auf dei Zeichenebene.
+	 * <p>
+	 * Die Bildquelle wird mithilfe von {@link ImageLoader#loadImage(String)}
+	 * geladen. Schlägt dies fehl, wird nichts gezeichnet.
+	 *
+	 * @param imageSource Die Bildquelle.
+	 * @param x x-Koordinate des Ankerpunktes.
+	 * @param y y-Koordinate des Ankerpunktes.
+	 * @param anchor
+	 */
 	public void image( String imageSource, double x, double y, Options.Direction anchor ) {
 		image(ImageLoader.loadImage(imageSource), x, y, 1.0, anchor);
 	}
 
+	/**
+	 * @param imageSource
+	 * @param x
+	 * @param y
+	 * @param scale
+	 */
 	public void image( String imageSource, double x, double y, double scale ) {
 		image(ImageLoader.loadImage(imageSource), x, y, scale, shapeDelegate.getAnchor());
 	}
 
+	/**
+	 * @param imageSource
+	 * @param x
+	 * @param y
+	 * @param scale
+	 * @param anchor
+	 */
 	public void image( String imageSource, double x, double y, double scale, Options.Direction anchor ) {
 		image(ImageLoader.loadImage(imageSource), x, y, scale, anchor);
 	}
 
+	/**
+	 * @param image
+	 * @param x
+	 * @param y
+	 */
 	public void image( Image image, double x, double y ) {
 		image(image, x, y, 1.0, shapeDelegate.getAnchor());
 	}
 
+	/**
+	 * @param image
+	 * @param x
+	 * @param y
+	 * @param scale
+	 */
 	public void image( Image image, double x, double y, double scale ) {
 		image(image, x, y, scale, shapeDelegate.getAnchor());
 	}
 
+	/**
+	 * Zeichnet das angegebene Bild an den angegebenen Koordinaten auf die
+	 * Zeichenebene. Das Bild wird skaliert und der angegebene Ankerpunkt
+	 * verwendet.
+	 *
+	 * @param image Das vorher geladene Bild.
+	 * @param x x-Koordinate des Ankerpunktes.
+	 * @param y y-Koordinate des Ankerpunktes.
+	 * @param scale Der Skalierungsfaktor des Bildes.
+	 * @param anchor Der Ankerpunkt.
+	 */
 	public void image( Image image, double x, double y, double scale, Options.Direction anchor ) {
 		if( image != null ) {
 			double neww = image.getWidth(null) * scale;
@@ -733,39 +1033,111 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		}
 	}
 
+	/**
+	 * @return Git aktuelle verwendete Schriftart.
+	 */
 	public Font getFont() {
 		return shapeDelegate.getFont();
 	}
 
+	/**
+	 * Setzt die verwendete Schriftart für Texte direkt auf das angegebene
+	 * {@code Font}-Objekt.
+	 *
+	 * @param newFont Ein {@code Font}-Objekt.
+	 */
 	public void setFont( Font newFont ) {
 		shapeDelegate.setFont(newFont);
 		// fontMetrics = drawing.getFontMetrics();
 	}
 
+	/**
+	 * Setzt die verwendete Schriftart für Texte auf eine Schriftart mit dem
+	 * angegebenen Namen.
+	 * <p>
+	 * Kann keine Schriftart mit einem passenden Namen geladen werden, wird die
+	 * Schriftart nicht geändert.
+	 *
+	 * @param fontName Der Name der Schriftart.
+	 * @see schule.ngb.zm.util.io.FontLoader#loadFont(String)
+	 */
 	public void setFont( String fontName ) {
 		shapeDelegate.setFont(fontName);
 	}
 
+	/**
+	 * Setzt die verwendete Schriftart für Texte auf eine Schriftart mit dem
+	 * angegebenen Namen und der angegebenen Schriftgröße.
+	 * <p>
+	 * Kann keine Schriftart mit einem passenden Namen geladen werden, wird die
+	 * Schriftart nicht geändert.
+	 *
+	 * @param fontName Der Name der Schriftart.
+	 * @param size Die Schriftgröße.
+	 * @see schule.ngb.zm.util.io.FontLoader#loadFont(String)
+	 */
 	public void setFont( String fontName, int size ) {
 		shapeDelegate.setFont(fontName, size);
 	}
 
+	/**
+	 * Setzt die verwendete Schriftart für Texte auf eine Schriftart mit dem
+	 * angegebenen Namen, der angegebenen Schriftgröße und dem angegebenen
+	 * Schriftstil.
+	 * <p>
+	 * Der Schriftstil kann über die Stil-Konstanten
+	 * {@link schule.ngb.zm.Constants#PLAIN PLAIN},
+	 * {@link schule.ngb.zm.Constants#BOLD BOLD} und
+	 * {@link schule.ngb.zm.Constants#ITALIC ITALIC} gesetzt werden.
+	 * <p>
+	 * Kann keine Schriftart mit einem passenden Namen geladen werden, wird die
+	 * Schriftart nicht geändert.
+	 *
+	 * @param fontName Der Name der Schriftart.
+	 * @param size Die Schriftgröße.
+	 * @param style Der Schriftstil.
+	 * @see schule.ngb.zm.util.io.FontLoader#loadFont(String)
+	 */
 	public void setFont( String fontName, int size, int style ) {
 		shapeDelegate.setFont(fontName, size, style);
 	}
 
+	/**
+	 * @return Die aktuelle Schriftgröße für Texte.
+	 */
 	public double getFontSize() {
 		return shapeDelegate.getFontSize();
 	}
 
+	/**
+	 * Setzt die Schriftgörße für Texte auf den angegebenen Wert.
+	 *
+	 * @param size Die neue Schriftgröße.
+	 */
 	public void setFontSize( double size ) {
 		shapeDelegate.setFontSize(size);
 	}
 
+	/**
+	 * Schreibt einen Text an der angegebenen Position auf die Zeichenebene.
+	 *
+	 * @param text Der zu schreibende Text.
+	 * @param x Die x-Koordinate des Ankerpunktes.
+	 * @param y Die y-Koordinate des Ankerpunktes.
+	 */
 	public void text( String text, double x, double y ) {
 		text(text, x, y, shapeDelegate.getAnchor());
 	}
 
+	/**
+	 * Schreibt einen Text an der angegebenen Position auf die Zeichenebene und
+	 * nutzt den angegebenen Ankerpunkt.
+	 *
+	 * @param text Der zu schreibende Text.
+	 * @param x Die x-Koordinate des Ankerpunktes.
+	 * @param y Die y-Koordinate des Ankerpunktes.
+	 * @param anchor Position des Ankerpunktes.
+	 */
 	public void text( String text, double x, double y, Options.Direction anchor ) {
 		drawing.setFont(shapeDelegate.getFont());
 		FontMetrics fm = drawing.getFontMetrics();
@@ -782,7 +1154,7 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * Koordinaten {@code (300, 300)} und den Abmessungen {@code (100, 50)}
 	 * würde für den Anker {@link Options.Direction#NORTHWEST} also den Ursprung
 	 * {@code (300, 300)} haben. Für den Anker {@link Options.Direction#CENTER}
-	 * wäre der Ursprung zu den Koordinaten um die hälfte der Abmessungen nach
+	 * wäre der Ursprung zu den Koordinaten um die Hälfte der Abmessungen nach
 	 * links und oben verschoben bei {@code (250, 275)}. Beim Zeichnen liegen
 	 * die Koordinaten {@code (300, 300)} dann in der Mitte der Form.
 	 *
@@ -800,11 +1172,20 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		return ap;
 	}
 
+	/**
+	 * Speichert die aktuellen Einstellungen für Farben, Konturlinie und
+	 * Schriftarten ab, sodass sie zu einem späteren Zeitpunkt mit
+	 * {@link #popStyle()} wiederhergestellt werden können.
+	 */
 	public void pushStyle() {
 		styleStack.push(shapeDelegate);
 		shapeDelegate = new Text(shapeDelegate);
 	}
 
+	/**
+	 * Stellt die zuletzt mit {@link #pushStyle()} gespeicherten Einstellungen
+	 * für Farben, Konturlinien und Texte wieder her.
+	 */
 	public void popStyle() {
 		if( styleStack.isEmpty() ) {
 			resetStyle();
@@ -813,6 +1194,10 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		}
 	}
 
+	/**
+	 * Setzt alle Einstellungen für Farben, Konturlinien und Texte auf die
+	 * Standardwerte.
+	 */
 	public void resetStyle() {
 		Text newDelegate = new Text(0, 0, "");
 		newDelegate.setFillColor(DEFAULT_FILLCOLOR);
@@ -823,34 +1208,92 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		shapeDelegate = newDelegate;
 	}
 
+	/**
+	 * Verschiebt den Ursprung der Zeichenebene um die angegebenen Werte entlang
+	 * der x- und y-Achse.
+	 *
+	 * @param dx Verschiebung entlang der x-Achse.
+	 * @param dy Verschiebung entlang der y-Achse.
+	 */
 	public void translate( double dx, double dy ) {
 		drawing.translate(dx, dy);
 	}
 
+	/**
+	 * Skaliert die Zeichenebene um den angegebenen Faktor.
+	 * <p>
+	 * Ein Abstand von zehn Einheiten wird bei einem Faktor von 2.0 zu einem
+	 * Abstand von 20 Einheiten. Bei einem Faktor von 0.5 zu fünf Einheiten.
+	 * <p>
+	 * Der Skalierungsfaktor wird entlang der x- und y-Achse gleich angewandt.
+	 *
+	 * @param factor Der Skalierungsfaktor.
+	 */
 	public void scale( double factor ) {
 		drawing.scale(factor, factor);
 	}
 
+	/**
+	 * Rotiert die Zeichenebene um den angegebenen Winkel um den Ursprung.
+	 *
+	 * @param pAngle Rotationswinkel in Grad.
+	 */
 	public void rotate( double pAngle ) {
 		drawing.rotate(Math.toRadians(pAngle));
 	}
 
+	/**
+	 * Rotiert die Zeichenebene um den angegebenen Winkel um das angegebene
+	 * Drehzentrum.
+	 *
+	 * @param pAngle Rotationswinkel in Grad.
+	 * @param centerX x-Koordinate des Rotationszentrums.
+	 * @param centerY y-Koordinate des Rotationszentrums.
+	 */
 	public void rotate( double pAngle, double centerX, double centerY ) {
 		drawing.rotate(Math.toRadians(pAngle), centerX, centerY);
 	}
 
+	/**
+	 * Wendet eine Scherung auf die Zeichenebene an.
+	 * <p>
+	 * Bei einer Scherung werden die x-Koordinaten parallel zur x-Achse abhängig
+	 * von ihrer y-Koordinate verschoben. Ebenso die y-Koordinaten parallel zur
+	 * y-Achse abhängig von ihrer x-Koordinate.
+	 *
+	 * @param dx Scherungsfaktor entlang der x-Achse.
+	 * @param dy Scherungsfaktor entlang der y-Achse.
+	 */
 	public void shear( double dx, double dy ) {
 		drawing.shear(dx, dy);
 	}
 
+	/**
+	 * @return Die aktuelle <a
+	 * 	href="https://de.wikibrief.org/wiki/Transformation_matrix">Transformationsmatrix</a>
+	 * 	der Zeichenebene.
+	 */
 	public AffineTransform getMatrix() {
 		return drawing.getTransform();
 	}
 
+	/**
+	 * Speichert eine Kopie der aktuellen Transformationen der Zeichenebene ab.
+	 * <p>
+	 * Die zuletzt gespeicherten Transformationen können mit
+	 * {@link #popMatrix()} wiederhergestellt werden.
+	 */
 	public void pushMatrix() {
 		transformStack.push(drawing.getTransform());
 	}
 
+	/**
+	 * Ersetzt die aktuellen Transformationen der Zeichenebene durch die zuletzt
+	 * mit {@link #pushMatrix()} gespeicherten.
+	 * <p>
+	 * Wurden keine Transformationen gespeichert, werden alle wird der
+	 * Ursprungszustand wiederhergestellt.
+	 */
 	public void popMatrix() {
 		if( transformStack.isEmpty() ) {
 			resetMatrix();
@@ -859,6 +1302,9 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		}
 	}
 
+	/**
+	 * Setzt alle Transformationen der Zeichenebene zurück.
+	 */
 	public void resetMatrix() {
 		drawing.setTransform(new AffineTransform());
 	}
