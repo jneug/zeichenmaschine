@@ -40,6 +40,10 @@ nav:
     - Einführung: index.md
     - Schnellstart: quickstart.md
     - Installation: install.md
+    - Tutorials:
+          - Aquarium: tutorials/aquarium/aquarium1.md
+    - Beispiele:
+          - Mondrian: beispiele/mondrian.md
 
 markdown_extensions:
     - admonition
@@ -62,8 +66,11 @@ markdown_extensions:
     - pymdownx.inlinehilite
     - pymdownx.snippets
     - pymdownx.details
-    - pymdownx.superfences
-
+    - pymdownx.superfences:
+          custom_fences:
+              - name: mermaid
+                class: mermaid
+                format: !!python/name:pymdownx.superfences.fence_code_format
 plugins:
     - search:
           lang: de
