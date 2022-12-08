@@ -25,8 +25,26 @@ class ConstantsTest {
 		assertEquals(5.0, Constants.max(new double[]{ 5.0, 5.0, 5.0, 5.0, 5.0 }), 0.000001);
 		assertEquals(5.0, Constants.max(new double[]{ 5.0 }), 0.000001);
 
-		assertThrows(IllegalArgumentException.class, () -> Constants.max(null));
+		double[] doubleArr = null;
+		assertThrows(IllegalArgumentException.class, () -> Constants.max(doubleArr));
 		assertThrows(IllegalArgumentException.class, () -> Constants.max(new double[]{}));
+	}
+
+	@Test
+	void maxInt() {
+		assertEquals(5, Constants.max(5, 0));
+		assertEquals(5, Constants.max(5, 4));
+		assertEquals(5, Constants.max(5, 5));
+		assertEquals(100, Constants.max(100, -100));
+		assertEquals(0, Constants.max(0, 0));
+
+		assertEquals(5, Constants.max(new double[]{ 0, 1, 2, 3, 4, 5 }));
+		assertEquals(5, Constants.max(new double[]{ 5, 5, 5, 5, 5 }));
+		assertEquals(5, Constants.max(new double[]{ 5 }));
+
+		int[] intArr = null;
+		assertThrows(IllegalArgumentException.class, () -> Constants.max(intArr));
+		assertThrows(IllegalArgumentException.class, () -> Constants.max(new int[]{}));
 	}
 
 	@Test
