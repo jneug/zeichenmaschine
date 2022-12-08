@@ -1447,14 +1447,19 @@ public class Zeichenmaschine extends Constants {
 				Thread.yield();
 			}
 			updateThreadExecutor.shutdownNow();
+			try {
+				updateThreadExecutor.awaitTermination(500, TimeUnit.MILLISECONDS);
+			} catch( InterruptedException ex ) {
 
-			// Cleanup
-			shutdown();
-			cleanup();
-			state = Options.AppState.TERMINATED;
+			} finally {
+				// Cleanup
+				shutdown();
+				cleanup();
+				state = Options.AppState.TERMINATED;
 
-			if( quitAfterShutdown ) {
-				quit();
+				if( quitAfterShutdown ) {
+					quit();
+				}
 			}
 		}
 
