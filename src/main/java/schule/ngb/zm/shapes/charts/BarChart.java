@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 
+@SuppressWarnings("unused")
 public class BarChart extends Rectangle {
 
 	public static String DEFAULT_LABEL = "%.2f";
@@ -105,10 +106,10 @@ public class BarChart extends Rectangle {
 	}
 
 	public void addValue( double pValue, Color pColor ) {
-		addValue(pValue, pColor, String.format(DEFAULT_LABEL, pValue));
+		addValue(pValue, String.format(DEFAULT_LABEL, pValue), pColor);
 	}
 
-	public void addValue( double pValue, Color pColor, String pLabel ) {
+	public void addValue( double pValue, String pLabel, Color pColor ) {
 		addValue(new BasicChartValue(pValue, pLabel, pColor));
 	}
 
