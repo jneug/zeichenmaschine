@@ -37,46 +37,90 @@ public class ImageLayer extends Layer {
 	protected boolean redraw = true;
 
 	/**
-	 * Erstellt eine Bildebene aus der angegebenen Bildquelle.
+	 * Erstellt eine Bildebene in der Standardgröße aus der angegebenen
+	 * Bildquelle.
 	 *
 	 * @param source Eine Bildquelle.
+	 * @see ImageLoader#loadImage(String)
 	 */
 	public ImageLayer( String source ) {
 		image = ImageLoader.loadImage(source);
 	}
 
+	/**
+	 * Erstellt eine Bildebene in der Standardgröße aus dem angegebenen Bild.
+	 *
+	 * @param image Ein Bild-Objekt.
+	 */
 	public ImageLayer( Image image ) {
 		this.image = image;
 	}
 
+	/**
+	 * Erstellt eine Bildebene in der angegebenen Größe aus dem angegebenen
+	 * Bild.
+	 *
+	 * @param width Breite der Bildebene.
+	 * @param height Höhe der Bildebene.
+	 * @param image Ein Bild-Objekt.
+	 */
 	public ImageLayer( int width, int height, Image image ) {
 		super(width, height);
 		this.image = image;
 	}
 
+	/**
+	 * Setzt das Bild der Ebene auf das angegebene Bild-Objekt.
+	 *
+	 * @param image Ein Bild-Objekt.
+	 */
 	public void setImage( Image image ) {
 		this.image = image;
 		redraw = true;
 	}
 
+	/**
+	 * @return Die x-Koordinate des Bildes in der Ebene.
+	 */
 	public double getX() {
 		return x;
 	}
 
+	/**
+	 * Setzt die {@code x}-Koordinate des BIldes in der Ebene auf den
+	 * angegebenen Wert.
+	 *
+	 * @param pX Die x-Koordinate des Bildes.
+	 */
 	public void setX( double pX ) {
 		this.x = pX;
 		redraw = true;
 	}
 
+	/**
+	 * @return Die y-Koordinate des Bildes in der Ebene.
+	 */
 	public double getY() {
 		return y;
 	}
 
+	/**
+	 * Setzt die {@code y}-Koordinate des BIldes in der Ebene auf den
+	 * angegebenen Wert.
+	 *
+	 * @param pY Die y-Koordinate des Bildes.
+	 */
 	public void setY( double pY ) {
 		this.y = pY;
 		redraw = true;
 	}
 
+	/**
+	 * Löscht die Ebene und zeichnet das Bild neu.
+	 * <p>
+	 * In der Regel muss die Ebene nicht gelöscht werden, da sie automatisch neu
+	 * gezeichnet wird, sobald sich das zugrundeliegende Bild ändert.
+	 */
 	@Override
 	public void clear() {
 		super.clear();
