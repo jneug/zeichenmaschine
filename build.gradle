@@ -6,6 +6,11 @@ plugins {
 group 'schule.ngb'
 version '0.0.32-SNAPSHOT'
 
+java {
+	withSourcesJar()
+	withJavadocJar()
+}
+
 compileJava {
     options.release = 11
 }
