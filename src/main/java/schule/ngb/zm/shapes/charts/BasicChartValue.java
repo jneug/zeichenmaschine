@@ -136,57 +136,36 @@ public class BasicChartValue implements ChartValue {
 		this.color = color;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public double getX() {
 		return xValue;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public double getValue() {
 		return value;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setValue( double pValue ) {
 		this.value = pValue;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getLabel() {
 		return label;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setLabel( String pLabel ) {
 		this.label = pLabel;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Color getColor() {
 		return color;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setColor( Color pColor ) {
 		this.color = pColor;

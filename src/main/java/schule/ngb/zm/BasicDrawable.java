@@ -1,6 +1,9 @@
 package schule.ngb.zm;
 
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.MultipleGradientPaint;
+import java.awt.Paint;
+import java.awt.Stroke;
 
 /**
  * Basisimplementierung der {@link Strokeable} und {@link Fillable} APIs.
@@ -90,9 +93,6 @@ public abstract class BasicDrawable extends Constants implements Strokeable, Fil
 
 	// Implementierung Fillable Interface
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setFill( Paint fill ) {
 		if( fill == null ) {
@@ -106,9 +106,6 @@ public abstract class BasicDrawable extends Constants implements Strokeable, Fil
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Paint getFill() {
 		if( fill != null ) {
@@ -120,42 +117,27 @@ public abstract class BasicDrawable extends Constants implements Strokeable, Fil
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean hasFillColor() {
 		return fillColor != null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean hasGradient() {
 		return fill != null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Color getFillColor() {
 		return fillColor;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setFillColor( Color color ) {
 		fillColor = color;
 		fill = null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MultipleGradientPaint getGradient() {
 		return fill;
@@ -164,17 +146,11 @@ public abstract class BasicDrawable extends Constants implements Strokeable, Fil
 
 	// Implementierung Strokeable Interface
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setStroke( Stroke stroke ) {
 		this.stroke = stroke;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Stroke getStroke() {
 		if( stroke == null ) {
@@ -183,50 +159,32 @@ public abstract class BasicDrawable extends Constants implements Strokeable, Fil
 		return stroke;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Color getStrokeColor() {
 		return strokeColor;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setStrokeColor( Color color ) {
 		strokeColor = color;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public double getStrokeWeight() {
 		return strokeWeight;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setStrokeWeight( double weight ) {
 		strokeWeight = weight;
 		this.stroke = null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Options.StrokeType getStrokeType() {
 		return strokeType;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setStrokeType( Options.StrokeType type ) {
 		strokeType = type;

@@ -87,9 +87,6 @@ public class DrawableLayer extends Layer {
 		this.clearBeforeDraw = pClearBeforeDraw;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void draw( Graphics2D graphics ) {
 		if( clearBeforeDraw ) {

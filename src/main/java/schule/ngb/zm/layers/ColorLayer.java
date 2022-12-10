@@ -57,9 +57,6 @@ public class ColorLayer extends Layer {
 		clear();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setSize( int width, int height ) {
 		super.setSize(width, height);

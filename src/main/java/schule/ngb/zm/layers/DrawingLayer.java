@@ -1,10 +1,7 @@
 package schule.ngb.zm.layers;
 
 import schule.ngb.zm.Color;
-import schule.ngb.zm.Layer;
-import schule.ngb.zm.Options;
-import schule.ngb.zm.Fillable;
-import schule.ngb.zm.Strokeable;
+import schule.ngb.zm.*;
 import schule.ngb.zm.shapes.Text;
 import schule.ngb.zm.util.io.ImageLoader;
 
@@ -418,9 +415,6 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		shapeDelegate.setStrokeType(type);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Stroke getStroke() {
 		return shapeDelegate.getStroke();
@@ -976,7 +970,7 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	}
 
 	/**
-	 * Zeichnet das Bild von der angegbenen Quelle an den angegebenen
+	 * Zeichnet das Bild von der angegebenen Quelle an den angegebenen
 	 * Koordinaten auf die Zeichenebene. Das Bild wird um den angegebenen Faktor
 	 * skaliert.
 	 * <p>
@@ -994,7 +988,7 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	}
 
 	/**
-	 * Zeichnet das Bild von der angegbenen Quelle an den angegebenen
+	 * Zeichnet das Bild von der angegebenen Quelle an den angegebenen
 	 * Koordinaten auf die Zeichenebene. Das Bild wird um den angegebenen Faktor
 	 * skaliert und der angegebene Ankerpunkt verwendet.
 	 * <p>

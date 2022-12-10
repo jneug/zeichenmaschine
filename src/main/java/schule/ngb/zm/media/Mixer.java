@@ -98,50 +98,32 @@ public class Mixer implements Audio, AudioListener {
 		audios.clear();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isPlaying() {
 		return audios.stream().anyMatch(aw -> aw.audio.isPlaying());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isLooping() {
 		return audios.stream().anyMatch(aw -> aw.audio.isLooping());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public void setVolume( double pVolume ) {
-		volume = (float) pVolume;
-		audios.stream().forEach(aw -> aw.audio.setVolume(aw.volumeFactor * pVolume));
+	public void setVolume( double volume ) {
+		this.volume = volume < 0 ? 0f : (float) volume;
+		audios.stream().forEach(aw -> aw.audio.setVolume(aw.volumeFactor * volume));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public double getVolume() {
 		return volume;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void play() {
 		audios.stream().forEach(aw -> aw.audio.play());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void playAndWait() {
 		audios.stream().forEach(aw -> aw.audio.play());
@@ -154,25 +136,16 @@ public class Mixer implements Audio, AudioListener {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void loop() {
 		audios.stream().forEach(aw -> aw.audio.loop());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void stop() {
 		audios.stream().forEach(aw -> aw.audio.stop());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void dispose() {
 		if( isPlaying() ) {
@@ -243,7 +216,8 @@ public class Mixer implements Audio, AudioListener {
 
 	/**
 	 * Interne Methode, um den Listener-Mechanismus zu initialisieren. Wird erst
-	 * aufgerufen, soblad sich auch ein Listener registrieren möchte.
+	 * aufgerufen, sobald sich auch ein Listener registrieren möchte.
+	 *
 	 * @return
 	 */
 	private EventDispatcher<Audio, AudioListener> initializeEventDispatcher() {

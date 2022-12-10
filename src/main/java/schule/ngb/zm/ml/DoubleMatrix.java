@@ -93,32 +93,20 @@ public final class DoubleMatrix implements MLMatrix {
 			rows * columns);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int columns() {
 		return columns;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public int rows() {
 		return rows;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	int idx( int r, int c ) {
 		return c * rows + r;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public double get( int row, int col ) {
 		try {
@@ -128,9 +116,6 @@ public final class DoubleMatrix implements MLMatrix {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix set( int row, int col, double value ) {
 		try {
@@ -141,52 +126,34 @@ public final class DoubleMatrix implements MLMatrix {
 		return this;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix initializeRandom() {
 		return initializeRandom(-1.0, 1.0);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix initializeRandom( double lower, double upper ) {
 		applyInPlace(( d ) -> ((upper - lower) * Constants.random()) + lower);
 		return this;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix initializeOne() {
 		applyInPlace(( d ) -> 1.0);
 		return this;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix initializeZero() {
 		applyInPlace(( d ) -> 0.0);
 		return this;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix duplicate() {
 		return new DoubleMatrix(this);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix multiplyTransposed( MLMatrix B ) {
 		/*return new DoubleMatrix(IntStream.range(0, rows).parallel().mapToObj(
@@ -208,9 +175,6 @@ public final class DoubleMatrix implements MLMatrix {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix multiplyAddBias( final MLMatrix B, final MLMatrix C ) {
 		/*return new DoubleMatrix(IntStream.range(0, rows).parallel().mapToObj(
@@ -233,9 +197,6 @@ public final class DoubleMatrix implements MLMatrix {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix transposedMultiplyAndScale( final MLMatrix B, final double scalar ) {
 		/*return new DoubleMatrix(IntStream.range(0, columns).parallel().mapToObj(
@@ -258,9 +219,6 @@ public final class DoubleMatrix implements MLMatrix {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix add( MLMatrix B ) {
 		/*return new DoubleMatrix(IntStream.range(0, rows).parallel().mapToObj(
@@ -277,9 +235,6 @@ public final class DoubleMatrix implements MLMatrix {
 		return sum;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix addInPlace( MLMatrix B ) {
 		for( int j = 0; j < columns; j++ ) {
@@ -290,9 +245,6 @@ public final class DoubleMatrix implements MLMatrix {
 		return this;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix sub( MLMatrix B ) {
 		/*return new DoubleMatrix(IntStream.range(0, rows).parallel().mapToObj(
@@ -309,9 +261,6 @@ public final class DoubleMatrix implements MLMatrix {
 		return diff;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix colSums() {
 		/*DoubleMatrix colSums = new DoubleMatrix(1, columns);
@@ -331,9 +280,6 @@ public final class DoubleMatrix implements MLMatrix {
 		return colSums;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix scaleInPlace( final double scalar ) {
 		for( int i = 0; i < coefficients.length; i++ ) {
@@ -342,9 +288,6 @@ public final class DoubleMatrix implements MLMatrix {
 		return this;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix scaleInPlace( final MLMatrix S ) {
 		for( int j = 0; j < columns; j++ ) {
@@ -355,9 +298,6 @@ public final class DoubleMatrix implements MLMatrix {
 		return this;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix apply( DoubleUnaryOperator op ) {
 		DoubleMatrix result = new DoubleMatrix(rows, columns);
@@ -367,9 +307,6 @@ public final class DoubleMatrix implements MLMatrix {
 		return result;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public MLMatrix applyInPlace( DoubleUnaryOperator op ) {
 		for( int i = 0; i < coefficients.length; i++ ) {

@@ -1,6 +1,9 @@
 package schule.ngb.zm.shapes;
 
-import schule.ngb.zm.*;
+import schule.ngb.zm.BasicDrawable;
+import schule.ngb.zm.Fillable;
+import schule.ngb.zm.Options;
+import schule.ngb.zm.Strokeable;
 
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
@@ -142,9 +145,6 @@ public abstract class Shape extends BasicDrawable {
 	 */
 	public abstract double getHeight();
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setGradient( schule.ngb.zm.Color from, schule.ngb.zm.Color to, Options.Direction dir ) {
 		Point2D apDir = getAbsAnchorPoint(dir);
@@ -152,9 +152,6 @@ public abstract class Shape extends BasicDrawable {
 		setGradient(apInv.getX(), apInv.getY(), from, apDir.getX(), apDir.getY(), to);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setGradient( schule.ngb.zm.Color from, schule.ngb.zm.Color to ) {
 		Point2D ap = getAbsAnchorPoint(CENTER);
