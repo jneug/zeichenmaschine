@@ -1,9 +1,8 @@
 package schule.ngb.zm;
 
 import schule.ngb.zm.anim.Easing;
-import schule.ngb.zm.util.Validator;
-import schule.ngb.zm.util.io.ImageLoader;
 import schule.ngb.zm.util.Noise;
+import schule.ngb.zm.util.io.ImageLoader;
 
 import java.awt.Cursor;
 import java.awt.Font;
@@ -1395,9 +1394,9 @@ public class Constants {
 	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
 	 * @return Ein zufälliges Element aus dem Array.
 	 */
-	/*public static final int choice( int... values ) {
+	public static final int choice( int... values ) {
 		return values[random(0, values.length - 1)];
-	}*/
+	}
 
 	/**
 	 * Wählt ein zufälliges Element aus dem Array aus.
@@ -1405,9 +1404,9 @@ public class Constants {
 	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
 	 * @return Ein zufälliges Element aus dem Array.
 	 */
-	/*public static final double choice( double... values ) {
+	public static final double choice( double... values ) {
 		return values[random(0, values.length - 1)];
-	}*/
+	}
 
 	/**
 	 * Wählt ein zufälliges Element aus dem Array aus.
