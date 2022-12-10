@@ -44,4 +44,5 @@ tasks.register('jarMP3SPI', Jar) {
 	from {
 		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
 	}
+	with jar
 }
