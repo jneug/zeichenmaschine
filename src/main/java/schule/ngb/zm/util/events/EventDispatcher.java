@@ -57,6 +57,9 @@ import java.util.function.BiConsumer;
  *     dispatcher.dispatchEvent("stop", new MyEvent());
  * }
  * </code></pre>
+ * <p>
+ * Siehe {@link schule.ngb.zm.media.AudioListener} und
+ * {@link schule.ngb.zm.media.Music} für ein Beispiel der Verwendung.
  *
  * @param <E> Typ der Event-Objekte.
  * @param <L> Typ der verwendeten Listener-Schnittstelle.
@@ -89,7 +92,7 @@ public class EventDispatcher<E, L extends Listener<E>> {
 		listeners.remove(listener);
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings( "unused" )
 	public boolean hasListeners() {
 		return !listeners.isEmpty();
 	}
