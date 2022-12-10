@@ -6,6 +6,14 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## Version 0.0.34
+
+### Added
+- `Faker`-Klasse zur Erzeugung von Fake-Daten hinzugefügt.
+- Dokumentation unter [zeichenmaschine.xyz](https://zeichenmaschine.xyz) mit 
+  [MkDocs](https://www.mkdocs.org) und [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/).
+- Neue `image` methoden im `DrawingLayer`.
+
 ### Changed
 - `FilledShape` und `StrokedShape` durch `Fillable` und `Strokeable` Interfaces ersetzt.
 	- `Shape` erweitert nun `BasisDrawable` als abstrakte Grundlage.
