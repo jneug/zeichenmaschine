@@ -88,7 +88,11 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 		} else {
 			createCanvas(width, height);
 		}
+	}
 
+	// TODO: prevent access to graphics context?
+	public Graphics2D getGraphics() {
+		return this.drawing;
 	}
 
 	/**
@@ -165,9 +169,6 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isVisible() {
 		return visible;
@@ -197,16 +198,10 @@ public abstract class Layer extends Constants implements Drawable, Updatable {
 		visible = !visible;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void update( double delta ) {
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isActive() {
 		return active;
