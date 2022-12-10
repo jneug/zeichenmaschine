@@ -21,7 +21,7 @@ import java.net.URL;
  * Für längere Musikstücke (beispielsweise Hintergrundmusik) bietet sich eher
  * die Klasse {@link Music} an.
  *
- * <h4>MP3-Dateien verwenden</h4>
+ * <h2>MP3-Dateien verwenden</h2>
  * Java kann nativ nur Waveform ({@code .wav}) Dateien wiedergeben. Um auch
  * MP3-Dateien zu nutzen, müssen die Bibliotheken <a href="#">jlayer</a>, <a
  * href="#">tritonus-share</a> und <a href="#">mp3spi</a> eingebunden werden.
