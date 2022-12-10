@@ -36,6 +36,13 @@ import static schule.ngb.zm.Constants.random;
 @SuppressWarnings( "unused" )
 public final class Faker {
 
+	/**
+	 * URL, von der extern generierte Fake-Bilder geladen werden können.
+	 * <p>
+	 * Die URL wird als Format-String definiert mit zwei {@code %d}
+	 * Platzhaltern, die durch die Breite und Höhe des gewünschten Bildes
+	 * ersetzt werden.
+	 */
 	public static final String FAKE_IMG_URL = "https://loremflickr.com/%d/%d";
 
 	public static void main( String[] args ) {
