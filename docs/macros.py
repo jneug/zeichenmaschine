@@ -50,7 +50,6 @@ def define_env(env):
             # _target = re.sub(r"([^(][^,]*?\.)*?([^)]+)", lambda m: m.group(2), target)
             _target = target
 
-            print(f'{_target.strip()=}')
             if m := re.match(r'^(.+?)\((.*)\)$', _target):
                 if strip_params and m.group(2):
                     params = m.group(2).split(',')

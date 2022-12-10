@@ -30,7 +30,7 @@ und für Schülerinnen und Schüler im Unterricht nutzbar machen.
 
 ## Dokumentation
 * [Schnellstart](quickstart.md)
-* [Installation](install.md)
+* [Installation](installation.md)
 * {{ javadoc_link() }}
 
 ## Über die Zeichenmaschine

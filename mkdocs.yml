@@ -37,13 +37,13 @@ extra_css:
     - assets/zmstyles.css
 
 nav:
-    - Einführung: index.md
-    - Schnellstart: quickstart.md
-    - Installation: install.md
-    - Tutorials:
-          - Aquarium: tutorials/aquarium/aquarium1.md
-    - Beispiele:
-          - Mondrian: beispiele/mondrian.md
+    -   Einführung: einfuehrung.md
+    -   Schnellstart: schnellstart.md
+    -   Installation: installation.md
+    -   Tutorials:
+            -   Aquarium: tutorials/aquarium/aquarium1.md
+    -   Beispiele:
+            -   Mondrian: beispiele/mondrian.md
 
 markdown_extensions:
     - admonition

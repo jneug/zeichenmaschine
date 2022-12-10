@@ -5,7 +5,7 @@ die [JAR-Datei der aktuellen Version](https://github.com/jneug/zeichenmaschine/r
 herunterzuladen und
 dem [Classpath](https://www.delftstack.com/de/howto/java/java-classpath-/)
 hinzuzufügen. Eine Beschreibung für verschiedene Entwicklungsumgebungen findet
-sich im Abschnitt [Installation](install.md).
+sich im Abschnitt [Installation](installation.md).
 
 ## Die Basisklasse
 
