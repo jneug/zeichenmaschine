@@ -1320,7 +1320,8 @@ public class Constants {
 	}
 
 	/**
-	 * Erzeugt eine ganze Pseudozufallszahl zwischen {@code 0} und {@code max}.
+	 * Erzeugt eine ganze Pseudozufallszahl zwischen {@code 0} und {@code max}
+	 * (einschließlich der Grenzen).
 	 *
 	 * @param max Obere Grenze.
 	 * @return Eine Zufallszahl.
@@ -1331,7 +1332,7 @@ public class Constants {
 
 	/**
 	 * Erzeugt eine ganze Pseudozufallsganzzahl zwischen {@code min} und
-	 * {@code max}.
+	 * {@code max} (einschließlich der Grenzen).
 	 *
 	 * @param min Untere Grenze.
 	 * @param max Obere Grenze.
