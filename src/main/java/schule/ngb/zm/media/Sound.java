@@ -10,80 +10,87 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
- * Wiedergabe kurzer Soundclips, die mehrmals wiederverwendet werden.
+ * Ein kurzer Soundclip, der mehrmals wiederverwendet werden kann.
  * <p>
- * In Spielen und anderen Projekten gibt es oftmals eine Reihe kurzer Sounds,
- * die zusammen mit bestimmten Aktionen wiedergegeben werden (zum Beispiel, wenn
- * die Spielfigur springt, wenn zwei Objekte kollidieren, usw.). Sounds werden
- * komplett in den Speicher geladen und können dadurch immer wieder, als
- * Schleife oder auch nur Abschnittsweise abgespielt werden.
+ * In Spielen und anderen Projekten gibt es oftmals eine Reihe kurzer
+ * Soundclips, die zusammen mit bestimmten Aktionen wiedergegeben werden (zum
+ * Beispiel, wenn die Spielfigur springt, wenn zwei Objekte kollidieren, usw.).
+ * Sounds werden vollständig in den Speicher geladen und können immer wieder,
+ * als Schleife oder auch nur Abschnittsweise, abgespielt werden.
  * <p>
- * Für längre Musikstücke (beispielsweise Hintergrundmusik) bietet sich eher die
- * KLasse {@link Music} an.
+ * Für längere Musikstücke (beispielsweise Hintergrundmusik) bietet sich eher
+ * die Klasse {@link Music} an.
+ *
+ * <h4>MP3-Dateien verwenden</h4>
+ * Java kann nativ nur Waveform ({@code .wav}) Dateien wiedergeben. Um auch
+ * MP3-Dateien zu nutzen, müssen die Bibliotheken <a href="#">jlayer</a>, <a
+ * href="#">tritonus-share</a> und <a href="#">mp3spi</a> eingebunden werden.
+ * Details zur Verwendung können in der <a
+ * href="https://zeichenmaschine.xyz/installation/#unterstutzung-fur-mp3">Dokumentation
+ * der Zeichenmaschine</a> nachgelesen werden.
  */
 @SuppressWarnings( "unused" )
 public class Sound implements Audio {
 
 	/**
-	 * Ob der Sound gerade abgespielt wird.
+	 * Ob der Sound aktuell abgespielt wird.
 	 */
 	private boolean playing = false;
 
 	/**
-	 * Ob der Sound gerade in einer Schleife abgespielt wird.
+	 * Ob der Sound aktuell in einer Schleife abgespielt wird.
 	 */
 	private boolean looping = false;
 
 	/**
-	 * Die Quelle des Musikstücks.
+	 * Die Quelle der Audiodaten.
 	 */
 	private String audioSource;
 
 	/**
-	 * Der Clip, falls er schon geladen wurde, sonst {@code null}.
+	 * Der Clip, falls er schon geladen wurde. Ansonsten {@code null}.
 	 */
 	private Clip audioClip;
 
 	/**
-	 * Ob die Resourcen des Clips im Speicher nach dem nächsten Abspielen
+	 * Ob die Ressourcen des Clips im Speicher nach dem nächsten Abspielen
 	 * freigegeben werden sollen.
 	 */
 	private boolean disposeAfterPlay = false;
 
 	/**
-	 * Die Lautstärke des Clips.
+	 * Die aktuelle Lautstärke des Clips.
 	 */
 	private float volume = 0.8f;
 
+	/**
+	 * Dispatcher für Audio-Events (start und stop).
+	 */
 	EventDispatcher<Audio, AudioListener> eventDispatcher;
 
 	/**
 	 * Erstellt einen Sound aus der angegebene Quelle.
 	 *
-	 * @param source Ein Dateipfad oder eine Webadresse.
+	 * @param source Quelle der Audiodaten.
 	 * @throws NullPointerException Falls die Quelle {@code null} ist.
+	 * @see ResourceStreamProvider#getResourceURL(String)
 	 */
 	public Sound( String source ) {
 		Validator.requireNotNull(source);
 		this.audioSource = source;
 	}
 
+	@Override
 	public String getSource() {
 		return audioSource;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isPlaying() {
 		// return audioClip != null && audioClip.isRunning();
 		return playing;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isLooping() {
 		if( !playing ) {
@@ -92,28 +99,21 @@ public class Sound implements Audio {
 		return looping;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setVolume( double volume ) {
-		this.volume = (float) volume;
+		this.volume = volume < 0 ? 0f : (float) volume;
 		if( audioClip != null ) {
 			applyVolume();
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public double getVolume() {
 		return volume;
 	}
 
 	/**
-	 * Interne Methode, um die gesetzte Lautstärke vor dem Abspielen
-	 * anzuwenden.
+	 * Wendet die Lautstärke vor dem Abspielen auf den Clip an.
 	 */
 	private void applyVolume() {
 		FloatControl gainControl =
@@ -124,9 +124,6 @@ public class Sound implements Audio {
 		gainControl.setValue(vol);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void stop() {
 		looping = false;
@@ -136,9 +133,6 @@ public class Sound implements Audio {
 		playing = false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void play() {
 		if( this.openClip() ) {
@@ -147,9 +141,6 @@ public class Sound implements Audio {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void playAndWait() {
 		this.play();
@@ -168,7 +159,7 @@ public class Sound implements Audio {
 	}
 
 	/**
-	 * Spielt den Sound genau einmal ab und gibt danach alle Resourcen des Clips
+	 * Spielt den Sound einmal ab und gibt danach alle Ressourcen des Clips
 	 * frei.
 	 * <p>
 	 * Der Aufruf ist effektiv gleich zu
@@ -185,7 +176,7 @@ public class Sound implements Audio {
 	}
 
 	/**
-	 * Spielt den Sound genau einmal ab und gibt danach alle Resourcen des Clips
+	 * Spielt den Sound einmal ab und gibt danach alle Ressourcen des Clips
 	 * frei.
 	 * <p>
 	 * Der Aufruf entspricht
@@ -199,17 +190,18 @@ public class Sound implements Audio {
 		playAndWait();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void loop() {
 		loop(Clip.LOOP_CONTINUOUSLY);
 	}
 
 	/**
-	 * Wiederholt den Sound die angegebene Anzahl an Wiederholungen ab und
-	 * stoppt die Wiedergabe dann.
+	 * Wiederholt den Sound die angegebene Anzahl an Wiederholungen und stoppt
+	 * die Wiedergabe dann.
+	 * <p>
+	 * Wird {@code count} auf {@link Clip#LOOP_CONTINUOUSLY} gesetzt (-1), wird
+	 * der Clip unendlich oft wiederholt. Der Aufruf entspricht dann
+	 * {@link #loop()}.
 	 *
 	 * @param count Anzahl der Wiederholungen.
 	 */
@@ -231,9 +223,6 @@ public class Sound implements Audio {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public synchronized void dispose() {
 		if( audioClip != null ) {
@@ -245,6 +234,13 @@ public class Sound implements Audio {
 		}
 	}
 
+	/**
+	 * Lädt falls nötig den {@link Clip} für die
+	 * {@link #audioSource Audioquelle} und startet die Wiedergabe.
+	 *
+	 * @return {@code true}, wenn der Clip geöffnet werden konnte, {@code false}
+	 * 	sonst.
+	 */
 	private synchronized boolean openClip() {
 		if( audioClip != null ) {
 			audioClip.setFramePosition(0);
@@ -307,9 +303,12 @@ public class Sound implements Audio {
 	}*/
 
 	/**
-	 * Interne Methode, die aufgerufen wird, wenn die Wiedergabe gestoppt wird.
-	 * Entweder durch einen Aufruf von {@link #stop()} oder, weil die Wiedergabe
-	 * nach {@link #playOnce()} beendet wurde.
+	 * Wird aufgerufen, wenn die Wiedergabe beendet wurde. Entweder durch einen
+	 * Aufruf von {@link #stop()} oder, weil die Wiedergabe nach
+	 * {@link #playOnce()} beendet wurde.
+	 * <p>
+	 * Falls {@link #disposeAfterPlay} gesetzt ist, wird nach dem Ende der
+	 * Wiedergabe {@link #dispose()} aufgerufen.
 	 */
 	private void playbackStopped() {
 		playing = false;
@@ -332,14 +331,15 @@ public class Sound implements Audio {
 
 	/**
 	 * Interne Methode, um den Listener-Mechanismus zu initialisieren. Wird erst
-	 * aufgerufen, soblad sich auch ein Listener registrieren möchte.
-	 * @return
+	 * aufgerufen, sobald sich der erste Listener anmelden möchte.
+	 *
+	 * @return Der {@code EventDispatcher} für dieses Objekt.
 	 */
 	private EventDispatcher<Audio, AudioListener> initializeEventDispatcher() {
 		if( eventDispatcher == null ) {
 			eventDispatcher = new EventDispatcher<>();
-			eventDispatcher.registerEventType("start", (a,l) -> l.playbackStarted(a));
-			eventDispatcher.registerEventType("stop", (a,l) -> l.playbackStopped(a));
+			eventDispatcher.registerEventType("start", ( a, l ) -> l.playbackStarted(a));
+			eventDispatcher.registerEventType("stop", ( a, l ) -> l.playbackStopped(a));
 		}
 		return eventDispatcher;
 	}

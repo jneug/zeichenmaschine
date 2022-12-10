@@ -14,20 +14,20 @@ import schule.ngb.zm.util.events.Listener;
 public interface AudioListener extends Listener<Audio> {
 
 	/**
-	 * Wird aufgerufen, sobald die Wiedergabe eines Audio-Objektes startet, dem
+	 * Wird aufgerufen, sobald die Wiedergabe eines Audio-Mediums startet, dem
 	 * dieses Objekt mittels {@link Audio#addAudioListener(AudioListener)}
 	 * hinzugefügt wurde.
 	 *
-	 * @param source Das Audio-Objekt, dessen Wiedergabe gestartet wurde.
+	 * @param source Das Audio-Medium, dessen Wiedergabe gestartet wurde.
 	 */
 	void playbackStarted( Audio source );
 
 	/**
-	 * Wird aufgerufen, sobald die Wiedergabe eines Audio-Objektes stoppt, dem
+	 * Wird aufgerufen, sobald die Wiedergabe eines Audio-Mediums stoppt, dem
 	 * dieses Objekt mittels {@link Audio#addAudioListener(AudioListener)}
 	 * hinzugefügt wurde.
 	 *
-	 * @param source Das Audio-Objekt, dessen Wiedergabe gestoppt wurde.
+	 * @param source Das Audio-Medium, dessen Wiedergabe gestoppt wurde.
 	 */
 	void playbackStopped( Audio source );
 

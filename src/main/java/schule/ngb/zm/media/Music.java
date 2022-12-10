@@ -1,84 +1,103 @@
 package schule.ngb.zm.media;
 
-import schule.ngb.zm.util.events.EventDispatcher;
-import schule.ngb.zm.util.tasks.TaskRunner;
 import schule.ngb.zm.util.Log;
-import schule.ngb.zm.util.io.ResourceStreamProvider;
 import schule.ngb.zm.util.Validator;
+import schule.ngb.zm.util.events.EventDispatcher;
+import schule.ngb.zm.util.io.ResourceStreamProvider;
+import schule.ngb.zm.util.tasks.TaskRunner;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.net.URL;
 
 /**
- * Ein Musikstück, dass im Projekt abgespielt werden soll.
+ * Eine Musik, die abgespielt werden kann.
  * <p>
- * Im gegensatz zu einem {@link Sound} sind Musikstücke längere Audiodateien,
- * die zum Beispiel als Hintergrundmusik ablaufen sollen. Die Musik wird daher
- * nicht komplett in den Speicher geladen, sondern direkt aus der Audioquelle
- * gestreamt und wiedergegeben.
+ * Im Gegensatz zu einem {@link Sound} wird {@code Music} für längere
+ * Audiodateien benutzt, die zum Beispiel als Hintergrundmusik gespielt werden.
+ * Die Audiodaten werden daher nicht vollständig in den Speicher geladen,
+ * sondern direkt aus der Quelle gestreamt und direkt wiedergegeben.
+ * <p>
+ * Daher ist es nicht möglich, die länge der Musik im Vorfeld abzufragen oder zu
+ * einer bestimmten Stelle im Stream zu springen.
+ *
+ * <h4>MP3-Dateien verwenden</h4>
+ * Java kann nativ nur Waveform ({@code .wav}) Dateien wiedergeben. Um auch
+ * MP3-Dateien zu nutzen, müssen die Bibliotheken <a href="#">jlayer</a>, <a
+ * href="#">tritonus-share</a> und <a href="#">mp3spi</a> eingebunden werden.
+ * Details zur Verwendung können in der <a
+ * href="https://zeichenmaschine.xyz/installation/#unterstutzung-fur-mp3">Dokumentation
+ * der Zeichenmaschine</a> nachgelesen werden.
  */
-@SuppressWarnings("unused")
+// TODO: Wann sollten Listener beim Loopen informiert werden? Nach jedem Loop oder erst ganz am Ende?
+@SuppressWarnings( "unused" )
 public class Music implements Audio {
 
-	// size of the byte buffer used to read/write the audio stream
+	/**
+	 * Größe des verwendeten Input-Puffers für die Audiodaten.
+	 */
 	private static final int BUFFER_SIZE = 4096;
 
 
 	/**
-	 * Ob der Sound gerade abgespielt wird.
+	 * Ob der Sound aktuell abgespielt wird.
 	 */
 	private boolean playing = false;
 
 	/**
-	 * Ob der Sound gerade in einer Schleife abgespielt wird.
+	 * Ob der Sound aktuell in einer Schleife abgespielt wird.
 	 */
 	private boolean looping = false;
 
 	/**
-	 * Die Quelle des Musikstücks.
+	 * Die Quelle der Audiodaten.
 	 */
 	private String audioSource;
 
 	/**
-	 * Der AudioStream, um die AUdiosdaten zulsen, falls dieser schon geöffnet
-	 * wurde. Sonst {@code null}.
+	 * Der {@link AudioInputStream}, um die Audiosdaten zu lesen. {@code null},
+	 * falls noch kein Stream geöffnet wurde.
 	 */
 	private AudioInputStream audioStream;
 
 	/**
-	 * Die Line für die Ausgabe, falls diese schon geöffnet wurde. Sonst
-	 * {@code null}.
+	 * Die {@link SourceDataLine} für die Ausgabe. {@code null}, falls die
+	 * Audiodatei noch nicht geöffnet wurde.
 	 */
 	private SourceDataLine audioLine;
 
 	/**
-	 * Die Lautstärke der Musik.
+	 * Die aktuelle Lautstärke des Mediums.
 	 */
 	private float volume = 0.8f;
 
+	/**
+	 * Dispatcher für Audio-Events (start und stop).
+	 */
 	EventDispatcher<Audio, AudioListener> eventDispatcher;
 
-	public Music( String source ) {
-		Validator.requireNotNull(source);
-		this.audioSource = source;
+	/**
+	 * Erstellt eine Musik aus der angegebenen Audioquelle.
+	 *
+	 * @param audioSource Quelle der Audiodaten.
+	 * @throws NullPointerException Falls die Quelle {@code null} ist.
+	 * @see ResourceStreamProvider#getResourceURL(String)
+	 */
+	public Music( String audioSource ) {
+		Validator.requireNotNull(audioSource);
+		this.audioSource = audioSource;
 	}
 
+	@Override
 	public String getSource() {
 		return audioSource;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isPlaying() {
 		return playing;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isLooping() {
 		if( !playing ) {
@@ -87,28 +106,21 @@ public class Music implements Audio {
 		return looping;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void setVolume( double volume ) {
-		this.volume = (float) volume;
+		this.volume = volume < 0 ? 0f : (float) volume;
 		if( audioLine != null ) {
 			applyVolume();
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public double getVolume() {
 		return volume;
 	}
 
 	/**
-	 * Interne Methode, um die gesetzte Lautstärke vor dem Abspielen
-	 * anzuwenden.
+	 * Wendet die Lautstärke vor dem Abspielen auf den Audiostream an.
 	 */
 	private void applyVolume() {
 		FloatControl gainControl =
@@ -119,24 +131,13 @@ public class Music implements Audio {
 		gainControl.setValue(vol);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void play() {
 		if( openLine() ) {
-			TaskRunner.run(new Runnable() {
-				@Override
-				public void run() {
-					stream();
-				}
-			});
+			TaskRunner.run(this::stream);
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void playAndWait() {
 		if( openLine() ) {
@@ -144,18 +145,12 @@ public class Music implements Audio {
 		}
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void loop() {
 		looping = true;
 		play();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void stop() {
 		playing = false;
@@ -163,9 +158,6 @@ public class Music implements Audio {
 		dispose();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public synchronized void dispose() {
 		if( audioLine != null ) {
@@ -189,7 +181,17 @@ public class Music implements Audio {
 		audioStream = null;
 	}
 
+	/**
+	 * Startet den Stream der Audiodaten und damit die Wiedergabe.
+	 * <p>
+	 * Die {@link #audioLine} muss vorher mit {@link #openLine()} geöffnet
+	 * werden, ansonsten passiert nichts.
+	 */
 	private synchronized void stream() {
+		if( audioLine == null ) {
+			return;
+		}
+
 		audioLine.start();
 		playing = true;
 		if( eventDispatcher != null ) {
@@ -226,6 +228,14 @@ public class Music implements Audio {
 		}
 	}
 
+	/**
+	 * Öffnet eine {@link SourceDataLine} für die
+	 * {@link #audioSource Audioquelle} und bereitet die Wiedergabe vor. Es wird
+	 * noch nichts abgespielt.
+	 *
+	 * @return {@code true}, wenn die Line geöffnet werden konnte, {@code false}
+	 * 	sonst.
+	 */
 	private boolean openLine() {
 		if( audioLine != null ) {
 			return true;
@@ -262,6 +272,15 @@ public class Music implements Audio {
 		return false;
 	}
 
+	/**
+	 * Wird aufgerufen, wenn die Wiedergabe beendet wurde. Entweder durch einen
+	 * Aufruf von {@link #stop()} oder weil keine Audiodaten mehr vorhanden
+	 * sind.
+	 * <p>
+	 * Nach dem Ende des Streams wird {@link #dispose()} aufgerufen und, falls
+	 * das Musikstück in einer Schleife abgespielt wird, der Stream direkt
+	 * wieder gestartet.
+	 */
 	private void streamingStopped() {
 		dispose();
 
@@ -289,14 +308,15 @@ public class Music implements Audio {
 
 	/**
 	 * Interne Methode, um den Listener-Mechanismus zu initialisieren. Wird erst
-	 * aufgerufen, soblad sich auch ein Listener registrieren möchte.
-	 * @return
+	 * aufgerufen, sobald sich der erste Listener anmelden möchte.
+	 *
+	 * @return Der {@code EventDispatcher} für dieses Objekt.
 	 */
 	private EventDispatcher<Audio, AudioListener> initializeEventDispatcher() {
 		if( eventDispatcher == null ) {
 			eventDispatcher = new EventDispatcher<>();
-			eventDispatcher.registerEventType("start", (a,l) -> l.playbackStarted(a));
-			eventDispatcher.registerEventType("stop", (a,l) -> l.playbackStopped(a));
+			eventDispatcher.registerEventType("start", ( a, l ) -> l.playbackStarted(a));
+			eventDispatcher.registerEventType("stop", ( a, l ) -> l.playbackStopped(a));
 		}
 		return eventDispatcher;
 	}
