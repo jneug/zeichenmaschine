@@ -11,14 +11,14 @@ class ValidatorTest {
 		StringBuilder sb = new StringBuilder("Message");
 
 		Object o1 = new Object();
-		assertEquals(o1, Validator.requireNotNull(o1));
-		assertEquals(o1, Validator.requireNotNull(o1, "Message"));
-		assertEquals(o1, Validator.requireNotNull(o1, sb));
+		assertEquals(o1, Validator.requireNotNull(o1, "content"));
+		assertEquals(o1, Validator.requireNotNull(o1, "content", "Message"));
+		assertEquals(o1, Validator.requireNotNull(o1, "content", sb));
 		assertEquals(o1, Validator.requireNotNull(o1, ()->"Message"));
 
 		String o2 = null;
-		assertThrowsExactly(NullPointerException.class, () -> Validator.requireNotNull(o2));
-		assertThrowsExactly(NullPointerException.class, () -> Validator.requireNotNull(o2, "Message"));
+		assertThrowsExactly(NullPointerException.class, () -> Validator.requireNotNull(o2, "content"));
+		assertThrowsExactly(NullPointerException.class, () -> Validator.requireNotNull(o2, "content", "Message"));
 		assertThrowsExactly(NullPointerException.class, () -> Validator.requireNotNull(o2, ()->"Message"));
 	}
 
@@ -27,14 +27,14 @@ class ValidatorTest {
 		StringBuilder sb = new StringBuilder("Message");
 
 		String s1 = "Content";
-		assertEquals(s1, Validator.requireNotEmpty(s1));
-		assertEquals(s1, Validator.requireNotEmpty(s1, "Message"));
-		assertEquals(s1, Validator.requireNotEmpty(s1, sb));
+		assertEquals(s1, Validator.requireNotEmpty(s1, "content"));
+		assertEquals(s1, Validator.requireNotEmpty(s1, "content", "Message"));
+		assertEquals(s1, Validator.requireNotEmpty(s1, "content", sb));
 		assertEquals(s1, Validator.requireNotEmpty(s1, ()->"Message"));
 
 		String s2 = "";
-		assertThrowsExactly(IllegalArgumentException.class, () -> Validator.requireNotEmpty(s2));
-		assertThrowsExactly(IllegalArgumentException.class, () -> Validator.requireNotEmpty(s2, "Message"));
+		assertThrowsExactly(IllegalArgumentException.class, () -> Validator.requireNotEmpty(s2, "content"));
+		assertThrowsExactly(IllegalArgumentException.class, () -> Validator.requireNotEmpty(s2, "content", "Message"));
 		assertThrowsExactly(IllegalArgumentException.class, () -> Validator.requireNotEmpty(s2, ()->"Message"));
 
 	}
