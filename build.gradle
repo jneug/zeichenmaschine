@@ -51,9 +51,9 @@ test {
 }
 
 tasks.register('jarMP3SPI', Jar) {
-	archiveClassifier = 'all'
+	archiveClassifier = 'mp3spi'
 	duplicatesStrategy = 'exclude'
-	archivesBaseName = 'zeichenmaschine-mp3spi'
+	// archivesBaseName = 'zeichenmaschine-mp3spi'
 	from {
 		configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
 	}
