@@ -33,6 +33,19 @@ dependencies {
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
+javadoc {
+	options {
+		encoding = "UTF-8"
+		overview = "src/main/java/overview.html"
+		// title = "Die Zeichenmaschine"
+
+		// options.links 'https://docs.oracle.com/javase/8/docs/api/'
+		// options.links 'https://docs.oracle.com/javaee/7/api'
+		options.links 'https://docs.oracle.com/en/java/javase/11/docs/api'
+	}
+	options.addStringOption("charset", "UTF-8")
+}
+
 test {
     useJUnitPlatform()
 }
