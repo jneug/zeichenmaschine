@@ -1,6 +1,7 @@
 package schule.ngb.zm.util.io;
 
 import schule.ngb.zm.util.Log;
+import schule.ngb.zm.util.SoftCache;
 import schule.ngb.zm.util.Validator;
 
 import javax.imageio.ImageIO;
@@ -29,9 +30,7 @@ public final class ImageLoader {
 
 	public static boolean caching = true;
 
-	private static final Map<String, SoftReference<BufferedImage>> imageCache = new ConcurrentHashMap<>();
-
-	private static final SoftReference<BufferedImage> NOCACHE = new SoftReference<>(null);
+	private static final SoftCache<String, BufferedImage> imageCache = new SoftCache<>();
 
 	/**
 	 * Lädt ein Bild von der angegebenen Quelle {@code source}.
@@ -145,8 +144,7 @@ public final class ImageLoader {
 	 *    {@code false}.
 	 */
 	public static boolean isCached( String name ) {
-		SoftReference<BufferedImage> imgRef = imageCache.get(name);
-		return imgRef != null && imgRef != NOCACHE && imgRef.get() != null;
+		return imageCache.containsKey(name);
 	}
 
 	/**
@@ -166,7 +164,7 @@ public final class ImageLoader {
 	 * @param img Das zu speichernde Bild.
 	 */
 	private static void putCache( final String name, final BufferedImage img ) {
-		imageCache.put(name, new SoftReference<>(img));
+		imageCache.put(name, img);
 	}
 
 	/**
@@ -180,7 +178,7 @@ public final class ImageLoader {
 	 * @return
 	 */
 	private static BufferedImage getCache( final String name ) {
-		return imageCache.get(name).get();
+		return imageCache.get(name);
 	}
 
 	/**
@@ -193,7 +191,7 @@ public final class ImageLoader {
 	 * @param name Die Quelle des Bildes.
 	 */
 	public static void preventCache( final String name ) {
-		imageCache.put(name, NOCACHE);
+		imageCache.nocache(name);
 	}
 
 	/**

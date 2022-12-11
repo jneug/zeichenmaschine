@@ -33,7 +33,8 @@ public class SoftCache<K, V> implements Map<K, V> {
 
 	@Override
 	public boolean containsValue( Object value ) {
-		return false;
+		return cache.values().stream()
+			.anyMatch(( ref ) -> ref.get() != null && ref.get() == value);
 	}
 
 	private boolean containsRef( Object key ) {
