@@ -10,6 +10,11 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.util.LinkedList;
 
+/**
+ * Eine Ebene, die {@link java.awt.Shape} Objekte zeichnet.
+ *
+ * Die Ebene ist für Tests der Kompatibilität mit Java-AWT gedacht.
+ */
 @SuppressWarnings( "unused" )
 public final class Shape2DLayer extends Layer {
 
