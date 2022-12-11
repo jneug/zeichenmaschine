@@ -6,6 +6,18 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## Added 
+- Dokumentation `EventDispatcher`.
+
+## Changed
+- Die Methoden in `Validator` erwarten nun als zweiten Parameter den Namen des Parameters, der geprüft wird.
+
+## Fixed
+- `Constants.choice(int...)` und `Constants.choice(double...)` wiederhergestellt.
+
+## Removed
+- `layers.Shape2DLayer` ist nur noch im Test-Paket verfügbar.
+
 ## Version 0.0.34
 
 ### Added
