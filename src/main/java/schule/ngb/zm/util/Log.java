@@ -77,7 +77,7 @@ public final class Log {
 	 * 	mindestens	herabgesenkt werden sollen.
 	 */
 	public static void enableGlobalLevel( Level level ) {
-		int lvl = Validator.requireNotNull(level).intValue();
+		int lvl = Validator.requireNotNull(level, "level").intValue();
 		ensureRootLoggerInitialized();
 
 		// Decrease level of root level ConsoleHandlers for output

@@ -24,7 +24,7 @@ public abstract class Animation<T> extends Constants implements Updatable {
 
 	public Animation( DoubleUnaryOperator easing ) {
 		this.runtime = Constants.DEFAULT_ANIM_RUNTIME;
-		this.easing = Validator.requireNotNull(easing);
+		this.easing = Validator.requireNotNull(easing, "easing");
 	}
 
 	public Animation( int runtime ) {
@@ -34,7 +34,7 @@ public abstract class Animation<T> extends Constants implements Updatable {
 
 	public Animation( int runtime, DoubleUnaryOperator easing ) {
 		this.runtime = runtime;
-		this.easing = Validator.requireNotNull(easing);
+		this.easing = Validator.requireNotNull(easing, "easing");
 	}
 
 	public int getRuntime() {

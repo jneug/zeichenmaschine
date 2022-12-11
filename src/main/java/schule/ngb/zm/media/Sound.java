@@ -76,7 +76,7 @@ public class Sound implements Audio {
 	 * @see ResourceStreamProvider#getResourceURL(String)
 	 */
 	public Sound( String source ) {
-		Validator.requireNotNull(source);
+		Validator.requireNotNull(source, "source");
 		this.audioSource = source;
 	}
 

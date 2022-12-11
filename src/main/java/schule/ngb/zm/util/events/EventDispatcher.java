@@ -76,8 +76,8 @@ public class EventDispatcher<E, L extends Listener<E>> {
 	}
 
 	public void registerEventType( String eventKey, BiConsumer<E, L> dispatcher ) {
-		Validator.requireNotNull(eventKey);
-		Validator.requireNotNull(dispatcher);
+		Validator.requireNotNull(eventKey, "eventKey");
+		Validator.requireNotNull(dispatcher, "dispatcher");
 
 		if( !eventRegistered(eventKey) ) {
 			eventRegistry.put(eventKey, dispatcher);
@@ -102,8 +102,8 @@ public class EventDispatcher<E, L extends Listener<E>> {
 	}
 
 	public void dispatchEvent( String eventKey, final E event ) {
-		Validator.requireNotNull(eventKey);
-		Validator.requireNotNull(event);
+		Validator.requireNotNull(eventKey, "eventKey");
+		Validator.requireNotNull(event, "event");
 
 		if( eventRegistered(eventKey) ) {
 			final BiConsumer<E, L> dispatcher = eventRegistry.get(eventKey);

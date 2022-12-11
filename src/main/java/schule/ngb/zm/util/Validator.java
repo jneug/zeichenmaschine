@@ -6,34 +6,54 @@ import java.util.function.Supplier;
 /**
  * Statische Methoden, um Methodenparameter auf Gültigkeit zu prüfen.
  */
-@SuppressWarnings( "UnusedReturnValue" )
+@SuppressWarnings( {"unused", "UnusedReturnValue"} )
 public class Validator {
 
-	public static final <T> T requireNotNull( T obj ) {
-		return Objects.requireNonNull(obj);
+	public static final <T> T requireNotNull( T obj, CharSequence paramName ) {
+		return requireNotNull(obj, () -> "Parameter <%s> may not be null.".format(paramName.toString()));
 	}
 
-	public static final <T> T requireNotNull( T obj, CharSequence msg ) {
-		return Objects.requireNonNull(obj, msg::toString);
+	public static final <T> T requireNotNull( T obj, CharSequence paramName, CharSequence msg ) {
+		return requireNotNull(obj, () -> msg.toString().format(paramName.toString()));
 	}
 
 	public static final <T> T requireNotNull( T obj, Supplier<String> msg ) {
-		return Objects.requireNonNull(obj, msg);
+		if( obj == null ) {
+			throw new NullPointerException(msg == null ? "Parameter may nut be null." : msg.get());
+		}
+		return obj;
 	}
 
-	public static final String requireNotEmpty( String str ) {
-		return requireNotEmpty(str, (Supplier<String>) null);
+	public static final String requireNotEmpty( String str, CharSequence paramName ) {
+		return requireNotEmpty(str, () -> String.format("Parameter <%s> may not be empty string (<%s> provided)", paramName, str));
 	}
 
-	public static final String requireNotEmpty( String str, CharSequence msg ) {
-		return requireNotEmpty(str, msg::toString);
+	public static final String requireNotEmpty( String str, CharSequence paramName, CharSequence msg ) {
+		return requireNotEmpty(str, () -> msg.toString().format(paramName.toString()));
 	}
 
 	public static final String requireNotEmpty( String str, Supplier<String> msg ) {
-		if( str.isEmpty() )
+		if( str.isEmpty() ) {
 			throw new IllegalArgumentException(msg == null ? String.format("Parameter may not be empty string (<%s> provided)", str) : msg.get());
+		}
 		return str;
 	}
+
+	public static final <T> T[] requireNotEmpty( T[] arr, CharSequence paramName ) {
+		return requireNotEmpty(arr, () -> String.format("Parameter <%s> may not be empty", paramName));
+	}
+
+	public static final <T> T[] requireNotEmpty( T[] arr, CharSequence paramName, CharSequence msg ) {
+		return requireNotEmpty(arr, () -> msg.toString().format(paramName.toString()));
+	}
+
+	public static final <T> T[] requireNotEmpty( T[] arr, Supplier<String> msg ) {
+		if( arr.length == 0 )
+			throw new IllegalArgumentException(msg == null ? "Parameter array may not be empty" : msg.get());
+		return arr;
+	}
+
+
 
 	public static final int requirePositive( int i ) {
 		return requirePositive(i, (Supplier<String>) null);
@@ -139,21 +159,6 @@ public class Validator {
 	}
 	*/
 
-
-	public static final <T> T[] requireNotEmpty( T[] arr ) {
-		return requireNotEmpty(arr, (Supplier<String>) null);
-	}
-
-	public static final <T> T[] requireNotEmpty( T[] arr, CharSequence msg ) {
-		return requireNotEmpty(arr, msg::toString);
-	}
-
-	public static final <T> T[] requireNotEmpty( T[] arr, Supplier<String> msg ) {
-		if( arr.length == 0 )
-			throw new IllegalArgumentException(msg == null ? "Parameter array may not be empty" : msg.get());
-		return arr;
-	}
-
 	public static final <T> T[] requireSize( T[] arr, int size ) {
 		return requireSize(arr, size, (Supplier<String>) null);
 	}
@@ -165,20 +170,6 @@ public class Validator {
 	public static final <T> T[] requireSize( T[] arr, int size, Supplier<String> msg ) {
 		if( arr.length != size )
 			throw new IllegalArgumentException(msg == null ? String.format("Parameter array must have <%d> elements (<%d> provided)", size, arr.length) : msg.get());
-		return arr;
-	}
-
-	public static final <T> T[] requireValid( T[] arr ) {
-		return requireValid(arr, (Supplier<String>) null);
-	}
-
-	public static final <T> T[] requireValid( T[] arr, CharSequence msg ) {
-		return requireValid(arr, msg::toString);
-	}
-
-	public static final <T> T[] requireValid( T[] arr, Supplier<String> msg ) {
-		if( arr == null || arr.length > 0 )
-			throw new IllegalArgumentException(msg == null ? "Parameter array may not be null or empty" : msg.get());
 		return arr;
 	}
 

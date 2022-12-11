@@ -156,7 +156,7 @@ public class Zeichenfenster extends JFrame {
 	 * @param displayDevice Das Anzeigegerät für das Fenster.
 	 */
 	public Zeichenfenster( Zeichenleinwand canvas, String title, GraphicsDevice displayDevice ) {
-		super(Validator.requireNotNull(displayDevice).getDefaultConfiguration());
+		super(Validator.requireNotNull(displayDevice, "displayDevice").getDefaultConfiguration());
 		this.displayDevice = displayDevice;
 
 		Validator.requireNotNull(canvas, "Every Zeichenfenster needs a Zeichenleinwand, but got <null>.");

@@ -10,7 +10,7 @@ public class AnimationFacade<S> extends Animation<S> {
 
 	public AnimationFacade( Animation<S> anim, int runtime, DoubleUnaryOperator easing ) {
 		super(runtime, easing);
-		this.anim = Validator.requireNotNull(anim);
+		this.anim = Validator.requireNotNull(anim, "anim");
 	}
 
 	@Override

@@ -53,7 +53,7 @@ public class FontLoader {
 	}
 
 	public static Font loadFont( String name, String source ) {
-		Validator.requireNotNull(source,"Font source may not be null");
+		Validator.requireNotNull(source, "Font source may not be null");
 		Validator.requireNotEmpty(source, "Font source may not be empty.");
 
 		if( fontCache.containsKey(name) ) {

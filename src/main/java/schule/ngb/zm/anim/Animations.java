@@ -123,8 +123,8 @@ public class Animations {
 	}
 
 	public static final <T> Future<T> animateProperty( T target, final double from, final double to, int runtime, DoubleUnaryOperator easing, DoubleConsumer propSetter ) {
-		Validator.requireNotNull(target);
-		Validator.requireNotNull(propSetter);
+		Validator.requireNotNull(target, "target");
+		Validator.requireNotNull(propSetter, "propSetter");
 		return play(target, runtime, easing, ( e ) -> propSetter.accept(Constants.interpolate(from, to, e)));
 	}
 
