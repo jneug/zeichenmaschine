@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,10 +28,10 @@ import static java.lang.Math.log;
 import static schule.ngb.zm.Constants.random;
 
 /**
- * Hilfsklasse, um zufällige Beispieldaten zu erzeugen.
+ * Eine Helferklasse, um zufällige Beispieldaten zu erzeugen.
  * <p>
- * Die Klasse kann verschiedene Arten realistischer Beispieldaten erzeugen,
- * unter anderem Namen, E-Mail-Adressen, Passwörter oder Platzhalter-Bilder.
+ * Die Klasse kann verschiedene Arten realistischer Beispieldaten erzeugen.
+ * Unter anderem Namen, E-Mail-Adressen, Passwörter oder Platzhalter-Bilder.
  */
 @SuppressWarnings( "unused" )
 public final class Faker {
@@ -44,11 +44,6 @@ public final class Faker {
 	 * ersetzt werden.
 	 */
 	public static final String FAKE_IMG_URL = "https://loremflickr.com/%d/%d";
-
-	public static void main( String[] args ) {
-		String text = Faker.fakeText(2000, 8);
-		System.out.println(text);
-	}
 
 	/**
 	 * Erzeugt ein Array mit den angegebenen Anzahl zufälliger Benutzerdaten.
@@ -83,8 +78,8 @@ public final class Faker {
 
 
 	/**
-	 * Erzeugt ein Array mit den angegebenen Anzahl zufälliger Namen (Vor- und
-	 * Nachname).
+	 * Erzeugt ein Array mit den angegebenen Anzahl zufälliger Namen im Format
+	 * "Vorname Nachname".
 	 *
 	 * @param count Anzahl der Beispieldaten.
 	 * @return Ein Array mit den Beispieldaten.
@@ -140,7 +135,7 @@ public final class Faker {
 
 	/**
 	 * Erzeugt ein Array mit den angegebenen Anzahl zufälliger
-	 * {@code Date}-Objekte.
+	 * {@code LocalDate}-Objekte, die ein Datum ohne Uhrzeit beschreiben.
 	 *
 	 * @param count Anzahl der Beispieldaten.
 	 * @return Ein Array mit den Beispieldaten.
@@ -158,6 +153,14 @@ public final class Faker {
 		return result;
 	}
 
+	/**
+	 * Erzeugt ein Array mit den angegebenen Anzahl zufälliger
+	 * {@code LocalDateTime}-Objekte, die einen Zeitpunkt mit Dateum und Uhrzeit
+	 * beschreiben,
+	 *
+	 * @param count Anzahl der Beispieldaten.
+	 * @return Ein Array mit den Beispieldaten.
+	 */
 	public static LocalDateTime[] fakeDatetimes( int count ) {
 		long nowEpoch = LocalDateTime.now().toEpochSecond(ZoneOffset.UTC);
 		long from = LocalDateTime.ofEpochSecond(nowEpoch - 18 * 365, 0, ZoneOffset.UTC).toEpochSecond(ZoneOffset.UTC);
@@ -171,6 +174,17 @@ public final class Faker {
 		return result;
 	}
 
+	/**
+	 * Erzeugt einen Blindtext mit der angegebenen Anzahl Worten, aufgeteilt in
+	 * die angegebene Anzahl Absätze.
+	 * <p>
+	 * Abssätze werden duch einen doppelten Zeilenumbruch {@code \n\n}
+	 * getrennt.
+	 *
+	 * @param words Anzahl Wörter im Text insgesamt.
+	 * @param paragraphs Anzahl Absätze.
+	 * @return Ein zufälliger Blindtext.
+	 */
 	public static String fakeText( int words, int paragraphs ) {
 		String basetext = "";
 		try(
@@ -204,6 +218,16 @@ public final class Faker {
 		return result;
 	}
 
+	/**
+	 * Erzeugt ein Array mit der angegebenen Anzahl zufällig erzeugter Integer
+	 * im angegebenen Bereich.
+	 *
+	 * @param count Anzahl der Zahlen im Array.
+	 * @param min Untere Grenze der Zufallszahlen.
+	 * @param max Obere Grenze der Zufallszahlen.
+	 * @return Ein Array mit Zufallszahlen.
+	 * @see Constants#random(int, int)
+	 */
 	public static int[] fakeIntArray( int count, int min, int max ) {
 		int[] arr = new int[count];
 		for( int i = 0; i < count; i++ ) {
@@ -212,14 +236,56 @@ public final class Faker {
 		return arr;
 	}
 
+	/**
+	 * Erzeugt eine Liste mit der angegebenen Anzahl zufällig erzeugter Integer
+	 * im angegebenen Bereich.
+	 * <p>
+	 * Ist {@code list} ein Listenobjekt, werden dei Zahlen an diese angehängt.
+	 * Wird {@code null} übergeben, wird eine neue {@link ArrayList} erzeugt.
+	 *
+	 * @param count Anzahl der erzeugten Zahlen.
+	 * @param min Untere Grenze der Zufallszahlen.
+	 * @param max Obere Grenze der Zufallszahlen.
+	 * @param list Eine Liste, die befüllt werden soll, oder {@code null}.
+	 * @return Ein Array mit Zufallszahlen.
+	 * @see Constants#random(int, int)
+	 */
 	public static List<Integer> fakeIntegerList( int count, int min, int max, List<Integer> list ) {
-		if( list == null ) {
-			list = new ArrayList<>(count);
-		}
+		List<Integer> result = (list == null) ? new ArrayList<>(count) : list;
+		fakeIntegers(count, min, max, result::add);
+		return result;
+	}
+
+	/**
+	 * Erzeugt die angegebene Anzahl Zufallszahlen im angegebenen Bereich und
+	 * übergibt sie an den angegebenen {@code Consumer}.
+	 *
+	 * Ein typischer Aufruf, um eine {@code #LinkedList} mit 100 Zufallszahlen
+	 * zu erzeugen könnte so aussehen:
+	 * <pre><code>
+	 * List&lt;Integer&gt; l = new LinkedList&lt;&gt;();
+	 * Faker.fakeIntegers(100, 0, 100, l::add);
+	 * </code></pre>
+	 *
+	 * @param count Anzahl der erzeugten Zahlen.
+	 * @param min Untere Grenze der Zufallszahlen.
+	 * @param max Obere Grenze der Zufallszahlen.
+	 * @param con {@code Consumer} für die Zahlen.
+	 */
+	public static void fakeIntegers( int count, int min, int max, Consumer<Integer> con ) {
 		for( int i = 0; i < count; i++ ) {
-			list.add(random(min, max));
+			con.accept(random(min, max));
 		}
-		return list;
+	}
+
+	public static <L> L fakeIntegers( int count, int min, int max, Supplier<L> sup, BiConsumer<L, Integer> con ) {
+		L result = sup.get();
+
+		for( int i = 0; i < count; i++ ) {
+			con.accept(result, random(min, max));
+		}
+
+		return result;
 	}
 
 	@SuppressWarnings( "unchecked" )

@@ -18,6 +18,13 @@ import java.lang.ref.SoftReference;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Eine Helferklasse mit Klassenmethoden, um Bilder zu laden.
+ * <p>
+ * Bilder können von verschiedenen Quellen als {@link Image} geladen werden. Die
+ * Objekte werden in einem internen Cache gespeichert und nachfolgende Versuche,
+ * dieselbe Quelle zu laden, werden aus dem Cache bedient.
+ */
 public final class ImageLoader {
 
 	public static boolean caching = true;

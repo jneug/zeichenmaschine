@@ -5,14 +5,21 @@ import schule.ngb.zm.util.Validator;
 
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Eine Helferklasse mit Klassenmethoden, um Schriftarten zu laden.
+ * <p>
+ * Schriftarten können von verschiedenen Quellen geladen werden. Schriftarten,
+ * die aus Dateien geladen wurden, werden in einem internen Cache gespeichert
+ * und nachfolgende Versuche, dieselbe Schriftart zu laden, werden aus dem Cache
+ * bedient.
+ */
 public class FontLoader {
 
 	private static final Map<String, Font> fontCache = new ConcurrentHashMap<>();
@@ -22,11 +29,12 @@ public class FontLoader {
 	 * <p>
 	 * Die Methode kann eine Liste von Schriften bekommen und probiert diese
 	 * nacheinander zu laden. Die erste Schrift, die Fehlerfrei geladen werden
-	 * kann, wird zurückgegeben. Kann keine der Schriften geladen werden, ist das
-	 * Ergebnis {@code null}.
+	 * kann, wird zurückgegeben. Kann keine der Schriften geladen werden, ist
+	 * das Ergebnis {@code null}.
 	 * <p>
-	 * Die gefundene Schrift wird unter ihrem Dateinamen in den Schriftenspeicher
-	 * geladen und kann danach in der Zeichenmaschine benutzt werden.
+	 * Die gefundene Schrift wird unter ihrem Dateinamen in den
+	 * Schriftenspeicher geladen und kann danach in der Zeichenmaschine benutzt
+	 * werden.
 	 * <p>
 	 * Eine Datei mit dem Namen "fonts/Font-Name.ttf" würde mit dem Namen
 	 * "Font-Name" geladen und kann danach zum Beispiel in einem
@@ -96,11 +104,12 @@ public class FontLoader {
 	 * <p>
 	 * Die Methode kann eine Liste von Schriften bekommen und probiert diese
 	 * nacheinander zu laden. Die erste Schrift, die Fehlerfrei geladen werden
-	 * kann, wird zurückgegeben. Kann keine der Schriften geladen werden, ist das
-	 * Ergebnis {@code null}.
+	 * kann, wird zurückgegeben. Kann keine der Schriften geladen werden, ist
+	 * das Ergebnis {@code null}.
 	 * <p>
-	 * Die gefundene Schrift wird unter ihrem Dateinamen in den Schriftenspeicher
-	 * geladen und kann danach in der Zeichenmaschine benutzt werden.
+	 * Die gefundene Schrift wird unter ihrem Dateinamen in den
+	 * Schriftenspeicher geladen und kann danach in der Zeichenmaschine benutzt
+	 * werden.
 	 * <p>
 	 * Eine Datei mit dem Namen "fonts/Font-Name.ttf" würde mit dem Namen
 	 * "Font-Name" geladen und kann danach zum Beispiel in einem
@@ -113,7 +122,7 @@ public class FontLoader {
 	 * @see #loadFont(String, String)
 	 */
 	public static Font loadFonts( String name, String... sources ) {
-		for( String fontSource: sources ) {
+		for( String fontSource : sources ) {
 			// TODO: Ignore exceptions in this case and throw own at end?
 			Font font = loadFont(name, fontSource);
 			if( font != null ) {

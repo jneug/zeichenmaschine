@@ -23,7 +23,7 @@ import java.util.function.DoubleUnaryOperator;
  * aktuell gehalten werden (beispielsweise {@link #runtime}).
  * <p>
  * Für die Implementierung eigener Klassen ist es oft hilfreich von
- * {@code Constants} zu erben, um die Methoden und Konstanten einfach im
+ * {@code Constants} zu erben, um die Methoden und Konstanten einfacher im
  * Programm nutzen zu können.
  * <pre><code>
  * class MyClass extends Constants {
@@ -1255,7 +1255,7 @@ public class Constants {
 	public static final double distance( double fromX, double fromY, double toX, double toY ) {
 		double diffX = toX - fromX;
 		double diffY = toY - fromY;
-		return sqrt(diffX*diffX + diffY*diffY);
+		return sqrt(diffX * diffX + diffY * diffY);
 	}
 
 	/**
@@ -1416,6 +1416,7 @@ public class Constants {
 	 * @param <T> Datentyp des Elements.
 	 * @return Ein zufälliges Element aus dem Array.
 	 */
+	@SafeVarargs
 	public static final <T> T choice( T... values ) {
 		return values[random(0, values.length - 1)];
 	}

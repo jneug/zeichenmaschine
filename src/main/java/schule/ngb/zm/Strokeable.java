@@ -201,6 +201,8 @@ public interface Strokeable extends Drawable {
 	 * Kontureigenschaften zu erstellen. Der aktuelle {@code Stroke} wird
 	 * zwischengespeichert.
 	 *
+	 * @param strokeType
+	 * @param strokeWeight
 	 * @return Ein {@code Stroke} mit den passenden Kontureigenschaften.
 	 */
 	static Stroke createStroke( Options.StrokeType strokeType, double strokeWeight ) {

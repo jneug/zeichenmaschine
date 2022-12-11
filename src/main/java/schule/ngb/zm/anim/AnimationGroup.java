@@ -9,7 +9,6 @@ public class AnimationGroup<T> extends Animation<T> {
 
 	List<Animation<T>> anims;
 
-
 	private boolean overrideEasing = false;
 
 	private int overrideRuntime = -1;
