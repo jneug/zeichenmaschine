@@ -1,5 +1,6 @@
 package schule.ngb.zm.util.io;
 
+import schule.ngb.zm.util.Cache;
 import schule.ngb.zm.util.Log;
 import schule.ngb.zm.util.Validator;
 
@@ -22,7 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FontLoader {
 
-	private static final Map<String, Font> fontCache = new ConcurrentHashMap<>();
+	private static final Cache<String, Font> fontCache = Cache.newSoftCache();
 
 	/**
 	 * Lädt eine Schrift aus einer Datei.

@@ -1,7 +1,7 @@
 package schule.ngb.zm.util.io;
 
 import schule.ngb.zm.util.Log;
-import schule.ngb.zm.util.SoftCache;
+import schule.ngb.zm.util.Cache;
 import schule.ngb.zm.util.Validator;
 
 import javax.imageio.ImageIO;
@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Eine Helferklasse mit Klassenmethoden, um Bilder zu laden.
@@ -30,7 +29,7 @@ public final class ImageLoader {
 
 	public static boolean caching = true;
 
-	private static final SoftCache<String, BufferedImage> imageCache = new SoftCache<>();
+	private static final Cache<String, BufferedImage> imageCache = Cache.newSoftCache();
 
 	/**
 	 * Lädt ein Bild von der angegebenen Quelle {@code source}.

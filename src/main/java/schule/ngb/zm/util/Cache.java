@@ -1,19 +1,63 @@
 package schule.ngb.zm.util;
 
+import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
-public class SoftCache<K, V> implements Map<K, V> {
+/**
+ * Ein Cache ist ein {@link Map} Implementation, die Inhaltsobjekte in einer
+ * {@link Reference} speichert und als Zwischenspeicher für Objekte dienen kann,
+ * deren Erstellung aufwendig ist.
+ * <p>
+ * Für einen Cache ist nicht garantiert, dass ein eingefügtes Objekt beim
+ * nächsten Aufruf noch vorhanden ist, da die Referenz inzwischen vom Garbage
+ * Collector gelöscht worden sein kann.
+ * <p>
+ * Als interne Map wird einen {@link ConcurrentHashMap} verwendet.
+ *
+ * @param <K> Der Typ der Schlüssel.
+ * @param <V> Der Typ der Objekte.
+ */
+public final class Cache<K, V> implements Map<K, V> {
 
-	private final Map<K, SoftReference<V>> cache = new ConcurrentHashMap<>();
+	/**
+	 * Erstellt einen Cache mit {@link SoftReference} Referenzen.
+	 *
+	 * @param <K> Der Typ der Schlüssel.
+	 * @param <V> Der Typ der Objekte.
+	 * @return Ein Cache.
+	 */
+	public static <K, V> Cache<K, V> newSoftCache() {
+		return new Cache<>(SoftReference::new);
+	}
 
-	private final SoftReference<V> NOCACHE = new SoftReference<>(null);
+	/**
+	 * Erstellt einen Cache mit {@link WeakReference} Referenzen.
+	 *
+	 * @param <K> Der Typ der Schlüssel.
+	 * @param <V> Der Typ der Objekte.
+	 * @return Ein Cache.
+	 */
+	public static <K, V> Cache<K, V> newWeakCache() {
+		return new Cache<>(WeakReference::new);
+	}
 
-	public SoftCache() {
+
+	private final Map<K, Reference<V>> cache = new ConcurrentHashMap<>();
+
+	private final Reference<V> NOCACHE;
+
+	private final Function<V, Reference<V>> refSupplier;
+
+	private Cache( Function<V, Reference<V>> refSupplier ) {
+		this.refSupplier = refSupplier;
+		NOCACHE = refSupplier.apply(null);
 	}
 
 	@Override
@@ -26,6 +70,10 @@ public class SoftCache<K, V> implements Map<K, V> {
 		return cache.isEmpty();
 	}
 
+	private boolean containsRef( Object key ) {
+		return cache.containsKey(key);
+	}
+
 	@Override
 	public boolean containsKey( Object key ) {
 		return cache.containsKey(key) && cache.get(key).get() != null;
@@ -35,10 +83,6 @@ public class SoftCache<K, V> implements Map<K, V> {
 	public boolean containsValue( Object value ) {
 		return cache.values().stream()
 			.anyMatch(( ref ) -> ref.get() != null && ref.get() == value);
-	}
-
-	private boolean containsRef( Object key ) {
-		return cache.containsKey(key);
 	}
 
 	@Override
@@ -61,7 +105,7 @@ public class SoftCache<K, V> implements Map<K, V> {
 	public V put( K key, V value ) {
 		if( !isNocache(key) ) {
 			V prev = remove(key);
-			cache.put(key, new SoftReference<>(value));
+			cache.put(key, refSupplier.apply(value));
 			return prev;
 		} else {
 			return null;
@@ -70,7 +114,7 @@ public class SoftCache<K, V> implements Map<K, V> {
 
 	@Override
 	public V remove( Object key ) {
-		SoftReference<V> ref = cache.get(key);
+		Reference<V> ref = cache.get(key);
 		cache.remove(key);
 
 		V prev = null;
@@ -129,12 +173,12 @@ public class SoftCache<K, V> implements Map<K, V> {
 
 		@Override
 		public V getValue() {
-			return SoftCache.this.get(key);
+			return Cache.this.get(key);
 		}
 
 		@Override
 		public V setValue( V value ) {
-			return SoftCache.this.put(key, value);
+			return Cache.this.put(key, value);
 		}
 
 	}
