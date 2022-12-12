@@ -59,3 +59,10 @@ tasks.register('jarMP3SPI', Jar) {
 	}
 	with jar
 }
+
+task buildAll {
+	dependsOn 'jar'
+	dependsOn 'jarMP3SPI'
+	dependsOn 'sourcesJar'
+	dependsOn 'javadocJar'
+}
