@@ -70,8 +70,8 @@ public final class ImageLoader {
 		Validator.requireNotNull(source, "Image source may not be null");
 		Validator.requireNotEmpty(source, "Image source may not be empty.");
 
-		if( caching && isCached(source) ) {
-			return getCache(source);
+		if( caching && imageCache.containsKey(source) ) {
+			return imageCache.get(source);
 		}
 
 		BufferedImage img = null;
@@ -82,7 +82,7 @@ public final class ImageLoader {
 			img = ImageIO.read(in);
 
 			if( caching && img != null ) {
-				putCache(source, img);
+				imageCache.put(source, img);
 			}
 		} catch( IOException ioex ) {
 			LOG.error(ioex, "Error loading image file from source <%s>.", source);
@@ -110,7 +110,7 @@ public final class ImageLoader {
 	public static boolean preloadImage( String name, String source ) {
 		BufferedImage img = loadImage(source, true);
 		if( img != null ) {
-			putCache(name, img);
+			imageCache.put(name, img);
 			return true;
 		}
 		return false;
@@ -131,7 +131,7 @@ public final class ImageLoader {
 	 * @param img ZU speicherndes Bild.
 	 */
 	public static void preloadImage( String name, BufferedImage img ) {
-		putCache(name, img);
+		imageCache.put(name, img);
 	}
 
 	/**
@@ -156,30 +156,6 @@ public final class ImageLoader {
 	}
 
 	/**
-	 * Speichert ein Bild als {@link SoftReference} im Cache.
-	 *
-	 * @param name Name des Bildes im Zwischenspeicher.
-	 * @param img Das zu speichernde Bild.
-	 */
-	private static void putCache( final String name, final BufferedImage img ) {
-		imageCache.put(name, img);
-	}
-
-	/**
-	 * Holt ein Bild aus dem Cache.
-	 * <p>
-	 * Prüft nicht, ob ein Bild vorhanden ist. Dies sollte vom Aufrufenden
-	 * übernommen werden, da sonst eine {@link NullPointerException} erzeugt
-	 * werden kann.
-	 *
-	 * @param name
-	 * @return
-	 */
-	private static BufferedImage getCache( final String name ) {
-		return imageCache.get(name);
-	}
-
-	/**
 	 * Deaktiviert den Cache für die angegebene Quelle.
 	 * <p>
 	 * Selbst wenn der {@link #activateCache() Cache aktiviert} ist, wird das
@@ -188,14 +164,14 @@ public final class ImageLoader {
 	 *
 	 * @param name Die Quelle des Bildes.
 	 */
-	public static void preventCache( final String name ) {
+	public static void disableCache( final String name ) {
 		imageCache.disableCache(name);
 	}
 
 	/**
 	 * Leer den Cache und löschte alle bisher gespeicherten Bilder.
 	 * <p>
-	 * Auch vorher mit {@link #preventCache(String)} verhinderte Caches werden
+	 * Auch vorher mit {@link #disableCache(String)} verhinderte Caches werden
 	 * gelöscht und müssen neu gesetzt werden.
 	 */
 	public static void clearCache() {
