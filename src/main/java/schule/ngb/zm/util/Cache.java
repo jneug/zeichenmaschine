@@ -20,6 +20,12 @@ import java.util.stream.Collectors;
  * Collector gelöscht worden sein kann.
  * <p>
  * Als interne Map wird einen {@link ConcurrentHashMap} verwendet.
+ * <p>
+ * Ein passender Cache wird mittels der Fabrikmethoden {@link #newSoftCache()}
+ * und {@link #newWeakCache()} erstellt.
+ * <pre><code>
+ * Cache&lt;String, Image&gt; imageCache = Cache.newSoftCache();
+ * </code></pre>
  *
  * @param <K> Der Typ der Schlüssel.
  * @param <V> Der Typ der Objekte.
@@ -70,10 +76,6 @@ public final class Cache<K, V> implements Map<K, V> {
 		return cache.isEmpty();
 	}
 
-	private boolean containsRef( Object key ) {
-		return cache.containsKey(key);
-	}
-
 	@Override
 	public boolean containsKey( Object key ) {
 		return cache.containsKey(key) && cache.get(key).get() != null;
@@ -93,17 +95,33 @@ public final class Cache<K, V> implements Map<K, V> {
 		return null;
 	}
 
-	public void nocache( K key ) {
+	/**
+	 * Deaktiviert das Caching für den angegebenen Schlüssel.
+	 * <p>
+	 * Folgende Aufrufe von {@link #put(Object, Object)} mit demselben Schlüssel
+	 * haben keinen Effekt. Um das Caching wieder zu aktivieren, muss
+	 * {@link #remove(Object)} mit dem Schlüssel aufgerufen werden,
+	 *
+	 * @param key Der Schlüssel.
+	 */
+	public void disableCache( K key ) {
 		cache.put(key, NOCACHE);
 	}
 
-	public boolean isNocache( K key ) {
+	/**
+	 * Prüft, ob der für den angegebenen Schlüssel zuvor
+	 * {@link #disableCache(Object)} aufgerufen wurde.
+	 *
+	 * @param key Der Schlüssel.
+	 * @return {@code true}, wenn der Schlüssel nicht gespeichert wird.
+	 */
+	public boolean isCachingDisabled( K key ) {
 		return cache.get(key) == NOCACHE;
 	}
 
 	@Override
 	public V put( K key, V value ) {
-		if( !isNocache(key) ) {
+		if( !isCachingDisabled(key) ) {
 			V prev = remove(key);
 			cache.put(key, refSupplier.apply(value));
 			return prev;

@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
-import java.util.Map;
 
 /**
  * Eine Helferklasse mit Klassenmethoden, um Bilder zu laden.
@@ -190,7 +189,7 @@ public final class ImageLoader {
 	 * @param name Die Quelle des Bildes.
 	 */
 	public static void preventCache( final String name ) {
-		imageCache.nocache(name);
+		imageCache.disableCache(name);
 	}
 
 	/**
