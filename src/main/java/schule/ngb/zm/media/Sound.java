@@ -235,8 +235,8 @@ public class Sound implements Audio {
 	}
 
 	/**
-	 * Lädt falls nötig den {@link Clip} für die
-	 * {@link #audioSource Audioquelle} und startet die Wiedergabe.
+	 * Lädt, falls nötig, den {@link Clip} für die
+	 * {@link #audioSource Audioquelle}.
 	 *
 	 * @return {@code true}, wenn der Clip geöffnet werden konnte, {@code false}
 	 * 	sonst.
@@ -264,10 +264,6 @@ public class Sound implements Audio {
 							}
 						} else if( event.getType() == LineEvent.Type.STOP ) {
 							playbackStopped();
-
-							if( eventDispatcher != null ) {
-								eventDispatcher.dispatchEvent("stop", Sound.this);
-							}
 						}
 					}
 				});
@@ -312,6 +308,10 @@ public class Sound implements Audio {
 	 */
 	private void playbackStopped() {
 		playing = false;
+
+		if( eventDispatcher != null ) {
+			eventDispatcher.dispatchEvent("stop", Sound.this);
+		}
 
 		if( disposeAfterPlay ) {
 			this.dispose();
