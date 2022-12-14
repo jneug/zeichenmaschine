@@ -923,12 +923,43 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		}
 	}
 
+	public void curveTo( double ctrlX, double ctrlY, double x, double y ) {
+		if( !pathStarted ) {
+			path.moveTo(x, y);
+			pathStarted = true;
+		} else {
+			path.quadTo(
+				ctrlX, ctrlY,
+				x, y
+			);
+		}
+	}
+
+	public void curveTo( double ctrlX1, double ctrlY1, double ctrlX2, double ctrlY2, double x, double y ) {
+		if( !pathStarted ) {
+			path.moveTo(x, y);
+			pathStarted = true;
+		} else {
+			path.curveTo(
+				ctrlX1, ctrlY1,
+				ctrlX2, ctrlY2,
+				x, y
+			);
+		}
+	}
+
 	/**
 	 * Beendet eine zuvor {@link #beginShape() begonnene} Freihand-Form und
 	 * zeichent sie auf die Zeichenebene.
 	 */
 	public void endShape() {
-		path.closePath();
+		endShape(CLOSED);
+	}
+
+	public void endShape( Options.PathType closingType ) {
+		if( closingType == Options.PathType.CLOSED ) {
+			path.closePath();
+		}
 		path.trimToSize();
 		pathStarted = false;
 
