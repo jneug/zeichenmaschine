@@ -33,24 +33,16 @@ dependencies {
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
-javadoc {
-	options {
-		encoding = "UTF-8"
-		overview = "src/main/java/overview.html"
-		// title = "Die Zeichenmaschine"
-
-		// options.links 'https://docs.oracle.com/javase/8/docs/api/'
-		// options.links 'https://docs.oracle.com/javaee/7/api'
-		options.links 'https://docs.oracle.com/en/java/javase/11/docs/api'
+jar {
+	manifest {
+		attributes 'Class-Path': '.'
 	}
-	options.addStringOption("charset", "UTF-8")
-}
-
-test {
-    useJUnitPlatform()
 }
 
 tasks.register('jarMP3SPI', Jar) {
+	group "build"
+	description "Build jar with MP3SPI included"
+
 	archiveClassifier = 'mp3spi'
 	duplicatesStrategy = 'exclude'
 	// archivesBaseName = 'zeichenmaschine-mp3spi'
@@ -61,8 +53,45 @@ tasks.register('jarMP3SPI', Jar) {
 }
 
 task buildAll {
+	group "build"
+	description "Build all jar packages"
+
 	dependsOn 'jar'
 	dependsOn 'jarMP3SPI'
 	dependsOn 'sourcesJar'
 	dependsOn 'javadocJar'
+}
+
+javadoc {
+	options {
+		encoding = "UTF-8"
+		overview = "src/resources/java/overview.html"
+		// title = "Die Zeichenmaschine"
+
+		// options.links 'https://docs.oracle.com/javase/8/docs/api/'
+		// options.links 'https://docs.oracle.com/javaee/7/api'
+		options.links 'https://docs.oracle.com/en/java/javase/11/docs/api'
+	}
+	options.addStringOption("charset", "UTF-8")
+}
+
+task mkdocs(type: Exec) {
+	group "documentation"
+	description "Build MKDocs site"
+
+	workingDir "${projectDir}"
+	commandLine ".venv/bin/python", "-m", "mkdocs", "build"
+}
+
+task buildDocs {
+	group "documentation"
+	description "Run all documentation tasks"
+
+	dependsOn 'javadoc'
+	dependsOn 'javadocJar'
+	dependsOn 'mkdocs'
+}
+
+test {
+	useJUnitPlatform()
 }
