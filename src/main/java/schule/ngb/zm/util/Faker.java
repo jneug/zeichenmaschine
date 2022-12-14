@@ -28,7 +28,7 @@ import static java.lang.Math.log;
 import static schule.ngb.zm.Constants.random;
 
 /**
- * Eine Helferklasse, um zufällige Beispieldaten zu erzeugen.
+ * Eine Hilfsklasse, um zufällige Beispieldaten zu erzeugen.
  * <p>
  * Die Klasse kann verschiedene Arten realistischer Beispieldaten erzeugen.
  * Unter anderem Namen, E-Mail-Adressen, Passwörter oder Platzhalter-Bilder.

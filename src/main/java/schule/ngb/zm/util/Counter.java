@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Eine Helferklasse, um Dinge zu zählen.
+ * Eine Hilfsklasse, um Dinge zu zählen.
  * <p>
  * Im einfachsten Fall kann der Zähler als geteilte Zählvariable genutzt werden,
  * die mit {@link #inc()} und {@link #dec()} aus verschiedenen Objekten oder

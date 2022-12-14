@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.function.Function;
 
 /**
- * Helferklasse, um Textdateien in verschiedenen Formaten einzulesen.
+ * Hilfsklasse, um Textdateien in verschiedenen Formaten einzulesen.
  */
 @SuppressWarnings( "unused" )
 public final class FileLoader {

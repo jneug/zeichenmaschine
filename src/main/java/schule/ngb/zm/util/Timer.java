@@ -3,7 +3,7 @@ package schule.ngb.zm.util;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Helferklasse zur Zeitmessung im Nanosekundenbereich.
+ * Hilfsklasse zur Zeitmessung im Nanosekundenbereich.
  * <p>
  * Mit einem {@code Timer} kann zum Beispiel die Laufzeit eines Algorithmus
  * gemessen werden. Wie eine echte Stoppuhr läuft der {@code Timer} weiter, wenn

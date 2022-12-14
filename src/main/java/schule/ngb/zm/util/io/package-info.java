@@ -1,5 +1,5 @@
 /**
- * Dieses Paket enthält Helferklassen, um Ressourcen aus verschiedenen Quellen
+ * Dieses Paket enthält Hilfsklassen, um Ressourcen aus verschiedenen Quellen
  * zu laden.
  */
 package schule.ngb.zm.util.io;

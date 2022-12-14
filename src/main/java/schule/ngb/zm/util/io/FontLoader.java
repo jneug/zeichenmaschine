@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Eine Helferklasse mit Klassenmethoden, um Schriftarten zu laden.
+ * Eine Hilfsklasse mit Klassenmethoden, um Schriftarten zu laden.
  * <p>
  * Schriftarten können von verschiedenen Quellen geladen werden. Schriftarten,
  * die aus Dateien geladen wurden, werden in einem internen Cache gespeichert

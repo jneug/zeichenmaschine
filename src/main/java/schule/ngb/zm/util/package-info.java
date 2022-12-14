@@ -1,4 +1,4 @@
 /**
- * Dieses Paket enthält Helferklassen für verschiedene Einsatzzwecke.
+ * Dieses Paket enthält Hilfsklassen für verschiedene Einsatzzwecke.
  */
 package schule.ngb.zm.util;

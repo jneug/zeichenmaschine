@@ -18,7 +18,7 @@ import java.io.InputStream;
 import java.lang.ref.SoftReference;
 
 /**
- * Eine Helferklasse mit Klassenmethoden, um Bilder zu laden.
+ * Eine Hilfsklasse mit Klassenmethoden, um Bilder zu laden.
  * <p>
  * Bilder können von verschiedenen Quellen als {@link Image} geladen werden. Die
  * Objekte werden in einem internen Cache gespeichert und nachfolgende Versuche,

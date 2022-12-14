@@ -13,7 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
- * Helferklasse, um {@link InputStream}s für Ressourcen zu erhalten.
+ * Hilfsklasse, um {@link InputStream}s für Ressourcen zu erhalten.
  */
 @SuppressWarnings("unused")
 public class ResourceStreamProvider {
