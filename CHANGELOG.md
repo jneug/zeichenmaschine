@@ -16,6 +16,7 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## Fixed
 - `Constants.choice(int...)` und `Constants.choice(double...)` wiederhergestellt.
+- Timing-Problem beim Aufruf von `AudioListener.playbackStopped()` in `Sound` behoben.
 
 ## Removed
 - `layers.Shape2DLayer` ist nur noch im Test-Paket verfügbar.
