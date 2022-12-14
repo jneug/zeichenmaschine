@@ -2,6 +2,7 @@ package schule.ngb.zm;
 
 import schule.ngb.zm.util.Log;
 import schule.ngb.zm.util.Validator;
+import schule.ngb.zm.util.io.ImageLoader;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -10,6 +11,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -174,12 +176,14 @@ public class Zeichenfenster extends JFrame {
 		// Das Icon des Fensters ändern
 		try {
 			if( Zeichenmaschine.MACOS ) {
-				URL iconUrl = Zeichenmaschine.class.getResource("icon_512.png");
-				if( iconUrl != null ) {
-					Image icon = ImageIO.read(iconUrl);
+				InputStream iconStream = this.getClass().getResourceAsStream("icon_512.png");
+				if( iconStream != null ) {
+					Image icon = ImageIO.read(iconStream);
 					// Dock Icon in macOS setzen
 					Taskbar taskbar = Taskbar.getTaskbar();
 					taskbar.setIconImage(icon);
+				} else {
+					LOG.warn("Could not load dock-icon");
 				}
 			} else {
 				ArrayList<Image> icons = new ArrayList<>(4);
@@ -190,7 +194,11 @@ public class Zeichenfenster extends JFrame {
 					}
 				}
 
-				this.setIconImages(icons);
+				if( icons.isEmpty() ) {
+					LOG.warn("Could not load dock-icon");
+				} else {
+					this.setIconImages(icons);
+				}
 			}
 		} catch( IllegalArgumentException | IOException e ) {
 			LOG.warn("Could not load image icons: %s", e.getMessage());

@@ -797,6 +797,7 @@ public class Zeichenmaschine extends Constants {
 		BufferedImage img = ImageLoader.createImage(canvas.getWidth(), canvas.getHeight());
 
 		Graphics2D g = img.createGraphics();
+		// TODO: Transparente Hintergründe beim Speichern von png erlauben
 		g.setColor(DEFAULT_BACKGROUND.getJavaColor());
 		g.fillRect(0, 0, img.getWidth(), img.getHeight());
 		canvas.draw(g);
