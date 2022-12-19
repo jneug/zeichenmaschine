@@ -6,14 +6,60 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
-## Added
-- Interface `Audio` extrahiert, mit Basisfunktionen von `Sound` und `Music`.
-- Klasse `Mixer` steuert mehrere Audio-Objekte gleichzeitig. 
+## Added 
+- Dokumentation erweitert.
+- Caching-Mechanismen in Klasse `util.Cache` ausgelagert. 
+  - `util.io.ImageLoader` und `util.io.FontLoader` verwenden `Cache`.
 
 ## Changed
+- Die Methoden in `Validator` erwarten nun als zweiten Parameter den Namen des Parameters, der geprüft wird.
+
+## Fixed
+- `Constants.choice(int...)` und `Constants.choice(double...)` wiederhergestellt.
+- Timing-Problem beim Aufruf von `AudioListener.playbackStopped()` in `Sound` behoben.
+
+## Removed
+- `layers.Shape2DLayer` ist nur noch im Test-Paket verfügbar.
+
+## Version 0.0.34
+
+### Added
+- `Faker`-Klasse zur Erzeugung von Fake-Daten hinzugefügt.
+- Dokumentation unter [zeichenmaschine.xyz](https://zeichenmaschine.xyz) mit 
+  [MkDocs](https://www.mkdocs.org) und [Material for MkDocs](https://squidfunk.github.io/mkdocs-material/).
+- Neue `image` methoden im `DrawingLayer`.
+
+### Changed
+- `FilledShape` und `StrokedShape` durch `Fillable` und `Strokeable` Interfaces ersetzt.
+	- `Shape` erweitert nun `BasisDrawable` als abstrakte Grundlage.
+- `io` Klassen nutzen nun mehr der `java.nio` Funktionen.
+- Package-Struktur angepasst.
+
+## Version 0.0.23
+
+### Added
+- System für EventListener.
+  - `AudioListener` und `AnimationListener` als erste Anwendungsfälle.
+- Pakete für Animationen und Maschinelles-Lernen.
+- Farbverläufe als Füllung.
+
+### Changed
+- `update(double)` und `draw()` werden nun in einem eigenen Thread aufgerufen. 
+- Die Standardwerte in `Constants` wurden mit dem Prefix `DEFAULT_` benannt (vorher `STD_`).
+- Die Standardwerte sind nun nicht mehr `final` und können vom Nutzer manuell gesetzt werden.
+
+## Version 0.0.22
+
+### Added
+- Interface `Audio` extrahiert, mit Basisfunktionen von `Sound` und `Music`.
+- Klasse `Mixer` steuert mehrere Audio-Objekte gleichzeitig. 
+- Klasse `tasks.RateLimitedTask`, `tasks.FramerateLimitedTask`, `tasks.FrameSynchronizedTask` und `tasks.DelayedTask`. 
+
+### Changed
 - Neue Package-Struktur:
   - `schule.ngb.zm.media` für Audio-Klassen (und ggf. zukünftig Video).
-  - `schule.ngb.zm.tasks` für alles Rund um Parallelität.
+  - `schule.ngb.zm.util.tasks` für alles Rund um Parallelität.
+- `Zeichenthread` und `TaskRunner` setzen die Namen der Threads für besseres Debugging.
 
 ### Removed
 - Beispielprojekte in [eigenes Repository](https://github.com/jneug/zeichenmaschine-examples) verschoben.
