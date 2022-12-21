@@ -1178,6 +1178,9 @@ public class Zeichenmaschine extends Constants {
 				//saveMousePosition(evt);
 				mouseMoved(evt);
 				break;
+			case MouseEvent.MOUSE_WHEEL:
+				mouseWheelMoved(evt);
+				break;
 		}
 	}
 
@@ -1218,6 +1221,14 @@ public class Zeichenmaschine extends Constants {
 	}
 
 	public void mouseMoved() {
+		// Intentionally left blank
+	}
+
+	public void mouseWheelMoved( MouseEvent e ) {
+		mouseMoved();
+	}
+
+	public void mouseWheelMoved() {
 		// Intentionally left blank
 	}
 
