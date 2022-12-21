@@ -252,4 +252,16 @@ class ColorTest {
 	void darker() {
 	}
 
+	@Test
+	void compare() {
+		assertEquals(1.0, Color.RED.compare(Color.RED), 0.0001);
+		assertEquals(1.0, Color.BLUE.compare(Color.BLUE), 0.0001);
+		assertEquals(1.0, Color.WHITE.compare(Color.WHITE), 0.0001);
+		assertEquals(1.0, Color.BLACK.compare(Color.BLACK), 0.0001);
+
+
+		assertEquals(0.0, Color.BLACK.compare(Color.WHITE), 0.0001);
+		assertEquals(0.0, Color.WHITE.compare(Color.BLACK), 0.0001);
+	}
+
 }

@@ -576,6 +576,18 @@ public class Color implements Paint {
 		}
 	}
 
+	public double compare( Color color ) {
+		double maxDist = 764.8333151739665;
+
+		// see: https://www.compuphase.com/cmetric.htm
+		long rmean = (getRed() + color.getRed()) / 2;
+		long r = getRed() - color.getRed();
+		long g = getGreen() - color.getGreen();
+		long b = getBlue() - color.getBlue();
+
+		return 1.0 - (Math.sqrt((((512+rmean)*r*r)>>8) + 4*g*g + (((767-rmean)*b*b)>>8)) / maxDist);
+	}
+
 	/**
 	 * Prüft, ob ein anderes Objekt zu diesem gleich ist.
 	 * <p>

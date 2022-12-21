@@ -10,6 +10,7 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Dokumentation erweitert.
 - Caching-Mechanismen in Klasse `util.Cache` ausgelagert. 
   - `util.io.ImageLoader` und `util.io.FontLoader` verwenden `Cache`.
+- `mouseWheelMoved` Eventhandler für Mausrad.
 
 ## Changed
 - Die Methoden in `Validator` erwarten nun als zweiten Parameter den Namen des Parameters, der geprüft wird.
