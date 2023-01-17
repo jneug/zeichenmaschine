@@ -47,8 +47,8 @@ public class ResourceStreamProvider {
 	 *                                  einer bestehenden Ressource.
 	 */
 	public static URL getResourceURL( String source ) throws NullPointerException, IllegalArgumentException, IOException {
-		Validator.requireNotNull(source, "Resource source may not be null");
-		Validator.requireNotEmpty(source, "Resource source may not be empty.");
+		Validator.requireNotNull(source, "source");
+		Validator.requireNotEmpty(source, "source");
 
 		// Ist source ein valider Dateipfad?
 		File file = new File(source);

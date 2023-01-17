@@ -1,9 +1,11 @@
 package schule.ngb.zm.util.io;
 
 import schule.ngb.zm.util.Log;
+import schule.ngb.zm.util.Validator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.logging.Level;
 
 /**
  * Hilfsklasse, um Textdateien in verschiedenen Formaten einzulesen.
@@ -63,6 +66,9 @@ public final class FileLoader {
 	 * @return Eine Liste mit den Zeilen der Textdatei.
 	 */
 	public static List<String> loadLines( String source, Charset charset ) {
+		Validator.requireNotNull(source, "source");
+		Validator.requireNotNull(charset, "charset");
+
 		try( BufferedReader reader = ResourceStreamProvider.getReader(source, charset) ) {
 			List<String> result = new ArrayList<>();
 
@@ -72,8 +78,11 @@ public final class FileLoader {
 			}
 
 			return result;
+		} catch( MalformedURLException muex ) {
+			LOG.warn("Could not find resource for <%s>", source);
+			return Collections.emptyList();
 		} catch( IOException ex ) {
-			LOG.error(ex, "Error while loading lines from source <%s>", source);
+			LOG.warn(ex, "Error while loading lines from source <%s>", source);
 			return Collections.emptyList();
 		}
 	}
@@ -101,6 +110,9 @@ public final class FileLoader {
 	 * @return Der Inhalt der Textdatei.
 	 */
 	public static String loadText( String source, Charset charset ) {
+		Validator.requireNotNull(source, "source");
+		Validator.requireNotNull(charset, "charset");
+
 		try( BufferedReader reader = ResourceStreamProvider.getReader(source, charset) ) {
 			StringBuilder result = new StringBuilder();
 
@@ -110,8 +122,11 @@ public final class FileLoader {
 			}
 
 			return result.toString();
+		} catch( MalformedURLException muex ) {
+			LOG.warn("Could not find resource for <%s>", source);
+			return "";
 		} catch( IOException ex ) {
-			LOG.error(ex, "Error while loading string from source <%s>", source);
+			LOG.warn(ex, "Error while loading string from source <%s>", source);
 			return "";
 		}
 	}
