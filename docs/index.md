@@ -30,9 +30,9 @@ leichter nutzbar machen.
 
 ## Dokumentation
 
-* [Schnellstart](quickstart.md)
+* [Schnellstart](schnellstart.md)
 * [Installation](installation.md)
-* {{ javadoc_link() }}
+* [Javadoc]({{ javadoc() }})
 
 ## Über die Zeichenmaschine
 
@@ -69,4 +69,3 @@ Alternativen, von deren Nutzung gar nicht abgeraten werden soll.
 	die im Zusammnehang mit dem Namen der Bibliothek stehen, wie die
 	Hauptklasse `Zeichenmaschine`.
 
-Foo
