@@ -34,6 +34,7 @@ hs_err_pid*
 Thumbs.db
 
 .gradle
+local.properties
 **/build/
 !src/**/build/
 
