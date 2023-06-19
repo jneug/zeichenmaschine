@@ -2,10 +2,9 @@
 
 Um ein einfaches Projekt mit der **Zeichenmaschine** aufzusetzen ist nicht mehr
 nötig, als
-die [JAR-Datei der aktuellen Version](https://github.com/jneug/zeichenmaschine/release/latest)
+die [JAR-Datei der aktuellen Version](https://github.com/jneug/zeichenmaschine/releases/latest)
 herunterzuladen und dem *Classpath* des Projekts hinzuzufügen. Beschreibungen
-für
-verschiedene Entwicklungsumgebungen sind hier aufgelistet.
+für verschiedene Entwicklungsumgebungen sind hier aufgelistet.
 
 ## Integration in Entwicklungsumgebungen
 
