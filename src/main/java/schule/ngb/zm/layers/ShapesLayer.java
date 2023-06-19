@@ -1,6 +1,7 @@
 package schule.ngb.zm.layers;
 
 import schule.ngb.zm.Layer;
+import schule.ngb.zm.Updatable;
 import schule.ngb.zm.anim.Animation;
 import schule.ngb.zm.anim.AnimationFacade;
 import schule.ngb.zm.anim.Easing;
@@ -24,20 +25,26 @@ public class ShapesLayer extends Layer {
 	 */
 	protected boolean clearBeforeDraw = true;
 
-	private final List<Shape> shapes;
+	protected boolean updateShapes = true;
+
+	protected final List<Shape> shapes;
 
 	private final List<Animation<? extends Shape>> animations;
+
+	private final List<Updatable> updatables;
 
 	public ShapesLayer() {
 		super();
 		shapes = new LinkedList<>();
 		animations = new LinkedList<>();
+		updatables = new LinkedList<>();
 	}
 
 	public ShapesLayer( int width, int height ) {
 		super(width, height);
 		shapes = new LinkedList<>();
 		animations = new LinkedList<>();
+		updatables = new LinkedList<>();
 	}
 
 	public Shape getShape( int index ) {
@@ -70,12 +77,24 @@ public class ShapesLayer extends Layer {
 	public void add( Shape... shapes ) {
 		synchronized( this.shapes ) {
 			Collections.addAll(this.shapes, shapes);
+
+			for( Shape s : shapes ) {
+				if( Updatable.class.isInstance(s) ) {
+					updatables.add((Updatable) s);
+				}
+			}
 		}
 	}
 
 	public void add( Collection<Shape> shapes ) {
 		synchronized( this.shapes ) {
 			this.shapes.addAll(shapes);
+
+			for( Shape s : shapes ) {
+				if( Updatable.class.isInstance(s) ) {
+					updatables.add((Updatable) s);
+				}
+			}
 		}
 	}
 
@@ -139,6 +158,16 @@ public class ShapesLayer extends Layer {
 
 	@Override
 	public void update( double delta ) {
+		if( updateShapes ) {
+			Iterator<Updatable> uit = updatables.iterator();
+			while( uit.hasNext() ) {
+				Updatable u = uit.next();
+				if( u.isActive() ) {
+					u.update(delta);
+				}
+			}
+		}
+
 		Iterator<Animation<? extends Shape>> it = animations.iterator();
 		while( it.hasNext() ) {
 			Animation<? extends Shape> anim = it.next();
