@@ -404,6 +404,11 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		return shapeDelegate.getStrokeType();
 	}
 
+	@Override
+	public Options.StrokeJoin getStrokeJoin() {
+		return shapeDelegate.getStrokeJoin();
+	}
+
 	/**
 	 * Setzt den Typ der Kontur. Erlaubte Werte sind {@link #DASHED},
 	 * {@link #DOTTED} und {@link #SOLID}.
@@ -980,7 +985,7 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * @see ImageLoader#loadImage(String)
 	 */
 	public void image( String imageSource, double x, double y ) {
-		image(ImageLoader.loadImage(imageSource), x, y, 1.0, shapeDelegate.getAnchor());
+		imageScale(ImageLoader.loadImage(imageSource), x, y, 1.0, shapeDelegate.getAnchor());
 	}
 
 	/**
@@ -997,7 +1002,7 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * @see ImageLoader#loadImage(String)
 	 */
 	public void image( String imageSource, double x, double y, Options.Direction anchor ) {
-		image(ImageLoader.loadImage(imageSource), x, y, 1.0, anchor);
+		imageScale(ImageLoader.loadImage(imageSource), x, y, 1.0, anchor);
 	}
 
 	/**
@@ -1005,8 +1010,9 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * Koordinaten auf die Zeichenebene. Das Bild wird um den angegebenen Faktor
 	 * skaliert.
 	 * <p>
-	 * Siehe {@link #image(Image, double, double, double, Options.Direction)}
-	 * für mehr Details.
+	 * Siehe
+	 * {@link #imageScale(Image, double, double, double, Options.Direction)} für
+	 * mehr Details.
 	 *
 	 * @param imageSource Die Bildquelle.
 	 * @param x x-Koordinate des Ankerpunktes.
@@ -1014,8 +1020,8 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * @param scale Der Skalierungsfaktor des Bildes.
 	 * @see ImageLoader#loadImage(String)
 	 */
-	public void image( String imageSource, double x, double y, double scale ) {
-		image(ImageLoader.loadImage(imageSource), x, y, scale, shapeDelegate.getAnchor());
+	public void imageScale( String imageSource, double x, double y, double scale ) {
+		imageScale(ImageLoader.loadImage(imageSource), x, y, scale, shapeDelegate.getAnchor());
 	}
 
 	/**
@@ -1023,8 +1029,9 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * Koordinaten auf die Zeichenebene. Das Bild wird um den angegebenen Faktor
 	 * skaliert und der angegebene Ankerpunkt verwendet.
 	 * <p>
-	 * Siehe {@link #image(Image, double, double, double, Options.Direction)}
-	 * für mehr Details.
+	 * Siehe
+	 * {@link #imageScale(Image, double, double, double, Options.Direction)} für
+	 * mehr Details.
 	 *
 	 * @param imageSource Die Bildquelle.
 	 * @param x x-Koordinate des Ankerpunktes.
@@ -1033,8 +1040,8 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * @param anchor Der Ankerpunkt.
 	 * @see ImageLoader#loadImage(String)
 	 */
-	public void image( String imageSource, double x, double y, double scale, Options.Direction anchor ) {
-		image(ImageLoader.loadImage(imageSource), x, y, scale, anchor);
+	public void imageScale( String imageSource, double x, double y, double scale, Options.Direction anchor ) {
+		imageScale(ImageLoader.loadImage(imageSource), x, y, scale, anchor);
 	}
 
 	/**
@@ -1046,23 +1053,24 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * @param y y-Koordinate des Ankerpunktes.
 	 */
 	public void image( Image image, double x, double y ) {
-		image(image, x, y, 1.0, shapeDelegate.getAnchor());
+		imageScale(image, x, y, 1.0, shapeDelegate.getAnchor());
 	}
 
 	/**
 	 * Zeichnet das angegebene Bild an den angegebenen Koordinaten auf die
 	 * Zeichenebene. Das Bild wird um den angegebenen Faktor skaliert.
 	 * <p>
-	 * Siehe {@link #image(Image, double, double, double, Options.Direction)}
-	 * für mehr Details.
+	 * Siehe
+	 * {@link #imageScale(Image, double, double, double, Options.Direction)} für
+	 * mehr Details.
 	 *
 	 * @param image Das vorher geladene Bild.
 	 * @param x x-Koordinate des Ankerpunktes.
 	 * @param y y-Koordinate des Ankerpunktes.
 	 * @param scale Der Skalierungsfaktor des Bildes.
 	 */
-	public void image( Image image, double x, double y, double scale ) {
-		image(image, x, y, scale, shapeDelegate.getAnchor());
+	public void imageScale( Image image, double x, double y, double scale ) {
+		imageScale(image, x, y, scale, shapeDelegate.getAnchor());
 	}
 
 	/**
@@ -1077,8 +1085,8 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * Das Seitenverhältnis wird immer beibehalten.
 	 * <p>
 	 * Soll das Bild innerhalb eines vorgegebenen Rechtecks liegen, sollte
-	 * {@link #image(Image, double, double, double, double, Options.Direction)}
-	 * verwendet werden.
+	 * {@link #imageScale(Image, double, double, double, double,
+	 * Options.Direction)} verwendet werden.
 	 *
 	 * @param image Das vorher geladene Bild.
 	 * @param x x-Koordinate des Ankerpunktes.
@@ -1086,7 +1094,7 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * @param scale Der Skalierungsfaktor des Bildes.
 	 * @param anchor Der Ankerpunkt.
 	 */
-	public void image( Image image, double x, double y, double scale, Options.Direction anchor ) {
+	public void imageScale( Image image, double x, double y, double scale, Options.Direction anchor ) {
 		/*if( image != null ) {
 			double neww = image.getWidth(null) * scale;
 			double newh = image.getHeight(null) * scale;
@@ -1095,7 +1103,7 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 		}*/
 		double neww = image.getWidth(null) * scale;
 		double newh = image.getHeight(null) * scale;
-		image(image, x, y, neww, newh, anchor);
+		imageScale(image, x, y, neww, newh, anchor);
 	}
 
 	/**
@@ -1103,8 +1111,8 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * Koordinaten in der angegebenen Größe auf die Zeichenebene.
 	 * <p>
 	 * Siehe
-	 * {@link #image(Image, double, double, double, double, Options.Direction)}
-	 * für mehr Details.
+	 * {@link #imageScale(Image, double, double, double, double,
+	 * Options.Direction)} für mehr Details.
 	 *
 	 * @param imageSource Die Bildquelle.
 	 * @param x x-Koordinate des Ankerpunktes.
@@ -1113,8 +1121,8 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * @param height Höhe des Bildes auf der Zeichenebene oder 0.
 	 * @see ImageLoader#loadImage(String)
 	 */
-	public void image( String imageSource, double x, double y, double width, double height ) {
-		image(ImageLoader.loadImage(imageSource), x, y, width, height, shapeDelegate.getAnchor());
+	public void imageScale( String imageSource, double x, double y, double width, double height ) {
+		imageScale(ImageLoader.loadImage(imageSource), x, y, width, height, shapeDelegate.getAnchor());
 	}
 
 	/**
@@ -1123,8 +1131,8 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * angegebene Ankerpunkt verwendet.
 	 * <p>
 	 * Siehe
-	 * {@link #image(Image, double, double, double, double, Options.Direction)}
-	 * für mehr Details.
+	 * {@link #imageScale(Image, double, double, double, double,
+	 * Options.Direction)} für mehr Details.
 	 *
 	 * @param imageSource Die Bildquelle.
 	 * @param x x-Koordinate des Ankerpunktes.
@@ -1134,8 +1142,8 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * @param anchor Der Ankerpunkt.
 	 * @see ImageLoader#loadImage(String)
 	 */
-	public void image( String imageSource, double x, double y, double width, double height, Options.Direction anchor ) {
-		image(ImageLoader.loadImage(imageSource), x, y, width, height, anchor);
+	public void imageScale( String imageSource, double x, double y, double width, double height, Options.Direction anchor ) {
+		imageScale(ImageLoader.loadImage(imageSource), x, y, width, height, anchor);
 	}
 
 	/**
@@ -1143,8 +1151,8 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * angegebenen Größe auf die Zeichenebene.
 	 * <p>
 	 * Siehe
-	 * {@link #image(Image, double, double, double, double, Options.Direction)}
-	 * für mehr Details.
+	 * {@link #imageScale(Image, double, double, double, double,
+	 * Options.Direction)} für mehr Details.
 	 *
 	 * @param image Ein Bild-Objekt.
 	 * @param x x-Koordinate des Ankerpunktes.
@@ -1152,8 +1160,8 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * @param width Breite des Bildes auf der Zeichenebene oder 0.
 	 * @param height Höhe des Bildes auf der Zeichenebene oder 0.
 	 */
-	public void image( Image image, double x, double y, double width, double height ) {
-		image(image, x, y, width, height, shapeDelegate.getAnchor());
+	public void imageScale( Image image, double x, double y, double width, double height ) {
+		imageScale(image, x, y, width, height, shapeDelegate.getAnchor());
 	}
 
 	/**
@@ -1171,7 +1179,7 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * <p>
 	 * Soll die Bildgröße unter Beachtung der Abmessungen um einen Faktor
 	 * verändert werden, sollte
-	 * {@link #image(Image, double, double, double, Options.Direction)}
+	 * {@link #imageScale(Image, double, double, double, Options.Direction)}
 	 * verwendet werden.
 	 *
 	 * @param image Ein Bild-Objekt.
@@ -1181,17 +1189,163 @@ public class DrawingLayer extends Layer implements Strokeable, Fillable {
 	 * @param height Höhe des Bildes auf der Zeichenebene oder 0.
 	 * @param anchor Der Ankerpunkt.
 	 */
-	public void image( Image image, double x, double y, double width, double height, Options.Direction anchor ) {
+	public void imageScale( Image image, double x, double y, double width, double height, Options.Direction anchor ) {
+		imageRotateAndScale(image, x, y, 0, width, height, anchor);
+	}
+
+	/**
+	 * Zeichnet das Bild von der angegebenen Bildquelle an den angegebenen
+	 * Koordinaten mit der angegebenen Drehung auf die Zeichenebene.
+	 * <p>
+	 * Das Bild wird um seinen Mittelpunkt als Rotationszentrum gedreht.
+	 *
+	 * @param imageSource Die Bildquelle.
+	 * @param x x-Koordinate des Ankerpunktes.
+	 * @param y y-Koordinate des Ankerpunktes.
+	 * @param angle Winkel in Grad.
+	 */
+	public void imageRotate( String imageSource, double x, double y, double angle ) {
+		imageRotate(ImageLoader.loadImage(imageSource), x, y, angle, shapeDelegate.getAnchor());
+	}
+
+	/**
+	 * Zeichnet das Bild von der angegebenen Bildquelle an den angegebenen
+	 * Koordinaten mit der angegebenen Drehung auf die Zeichenebene. Der
+	 * angegebene Ankerpunkt wird verwendet.
+	 * <p>
+	 * Das Bild wird um seinen Mittelpunkt als Rotationszentrum gedreht.
+	 *
+	 * @param imageSource Die Bildquelle.
+	 * @param x x-Koordinate des Ankerpunktes.
+	 * @param y y-Koordinate des Ankerpunktes.
+	 * @param angle Winkel in Grad.
+	 * @param anchor Der Ankerpunkt.
+	 */
+	public void imageRotate( String imageSource, double x, double y, double angle, Options.Direction anchor ) {
+		imageRotate(ImageLoader.loadImage(imageSource), x, y, angle, anchor);
+	}
+
+	/**
+	 * Zeichnet das angegebene Bild an den angegebenen Koordinaten mit der
+	 * angegebenen Drehung auf die Zeichenebene.
+	 * <p>
+	 * Das Bild wird um seinen Mittelpunkt als Rotationszentrum gedreht.
+	 *
+	 * @param image Ein Bild-Objekt.
+	 * @param x x-Koordinate des Ankerpunktes.
+	 * @param y y-Koordinate des Ankerpunktes.
+	 * @param angle Winkel in Grad.
+	 */
+	public void imageRotate( Image image, double x, double y, double angle ) {
+		imageRotateAndScale(image, x, y, angle, image.getWidth(null), image.getHeight(null), shapeDelegate.getAnchor());
+	}
+
+	/**
+	 * Zeichnet das angegebene Bild an den angegebenen Koordinaten mit der
+	 * angegebenen Drehung auf die Zeichenebene. Der angegebene Ankerpunkt wird
+	 * verwendet.
+	 * <p>
+	 * Das Bild wird um seinen Mittelpunkt als Rotationszentrum gedreht.
+	 *
+	 * @param image Ein Bild-Objekt.
+	 * @param x x-Koordinate des Ankerpunktes.
+	 * @param y y-Koordinate des Ankerpunktes.
+	 * @param angle Winkel in Grad.
+	 * @param anchor Der Ankerpunkt.
+	 */
+	public void imageRotate( Image image, double x, double y, double angle, Options.Direction anchor ) {
+		imageRotateAndScale(image, x, y, angle, image.getWidth(null), image.getHeight(null), anchor);
+	}
+
+	/**
+	 * Zeichnet das Bild von der angegebenen Bildquelle an den angegebenen
+	 * Koordinaten mit der angegebenen Drehung in der angegebenen Größe auf die
+	 * Zeichenebene.
+	 *
+	 * @param imageSource Die Bildquelle.
+	 * @param x x-Koordinate des Ankerpunktes.
+	 * @param y y-Koordinate des Ankerpunktes.
+	 * @param angle Winkel in Grad.
+	 * @param width Breite des Bildes auf der Zeichenebene oder 0.
+	 * @param height Höhe des Bildes auf der Zeichenebene oder 0.
+	 * @see #imageRotate(String, double, double, double)
+	 * @see #imageScale(Image, double, double, double)
+	 */
+	public void imageRotateAndScale( String imageSource, double x, double y, double angle, double width, double height ) {
+		imageRotateAndScale(ImageLoader.loadImage(imageSource), x, y, angle, width, height, shapeDelegate.getAnchor());
+	}
+
+	/**
+	 * Zeichnet das Bild von der angegebenen Bildquelle an den angegebenen
+	 * Koordinaten mit der angegebenen Drehung in der angegebenen Größe auf die
+	 * Zeichenebene. Der angegebene Ankerpunkt wird verwendet.
+	 *
+	 * @param imageSource Die Bildquelle.
+	 * @param x x-Koordinate des Ankerpunktes.
+	 * @param y y-Koordinate des Ankerpunktes.
+	 * @param angle Winkel in Grad.
+	 * @param width Breite des Bildes auf der Zeichenebene oder 0.
+	 * @param height Höhe des Bildes auf der Zeichenebene oder 0.
+	 * @param anchor Der Ankerpunkt.
+	 * @see #imageRotate(String, double, double, double)
+	 * @see #imageScale(Image, double, double, double)
+	 */
+	public void imageRotateAndScale( String imageSource, double x, double y, double angle, double width, double height, Options.Direction anchor ) {
+		imageRotateAndScale(ImageLoader.loadImage(imageSource), x, y, angle, width, height, anchor);
+	}
+
+	/**
+	 * Zeichnet das angegebene Bild an den angegebenen Koordinaten mit der
+	 * angegebenen Drehung in der angegebenen Größe auf die Zeichenebene. Der
+	 * angegebene Ankerpunkt wird verwendet.
+	 *
+	 * @param image Ein Bild-Objekt.
+	 * @param x x-Koordinate des Ankerpunktes.
+	 * @param y y-Koordinate des Ankerpunktes.
+	 * @param angle Winkel in Grad.
+	 * @param width Breite des Bildes auf der Zeichenebene oder 0.
+	 * @param height Höhe des Bildes auf der Zeichenebene oder 0.
+	 * @see #imageRotate(String, double, double, double)
+	 * @see #imageScale(Image, double, double, double)
+	 */
+	public void imageRotateAndScale( Image image, double x, double y, double angle, double width, double height ) {
+		imageRotateAndScale(image, x, y, angle, width, height, shapeDelegate.getAnchor());
+	}
+
+	/**
+	 * Zeichnet das angegebene Bild an den angegebenen Koordinaten mit der
+	 * angegebenen Drehung in der angegebenen Größe auf die Zeichenebene. Der
+	 * angegebene Ankerpunkt wird verwendet.
+	 *
+	 * @param image Ein Bild-Objekt.
+	 * @param x x-Koordinate des Ankerpunktes.
+	 * @param y y-Koordinate des Ankerpunktes.
+	 * @param angle Winkel in Grad.
+	 * @param width Breite des Bildes auf der Zeichenebene oder 0.
+	 * @param height Höhe des Bildes auf der Zeichenebene oder 0.
+	 * @param anchor Der Ankerpunkt.
+	 * @see #imageRotate(String, double, double, double)
+	 * @see #imageScale(Image, double, double, double)
+	 */
+	public void imageRotateAndScale( Image image, double x, double y, double angle, double width, double height, Options.Direction anchor ) {
 		// TODO: Use Validator or at least LOG a message if image == null?
 		if( image != null ) {
+			AffineTransform orig = drawing.getTransform();
+
+			int imgWidth = image.getWidth(null);
+			int imgHeight = image.getHeight(null);
+
 			if( width == 0 ) {
-				width = (height / image.getHeight(null)) * image.getWidth(null);
+				width = (height / imgHeight) * imgWidth;
 			} else if( height == 0 ) {
-				height = (width / image.getWidth(null)) * image.getHeight(null);
+				height = (width / imgWidth) * imgHeight;
 			}
 
 			Point2D.Double anchorPoint = getOriginPoint(x, y, width, height, anchor);
+			drawing.rotate(Math.toRadians(angle), anchorPoint.x + width / 2, anchorPoint.y + height / 2);
 			drawing.drawImage(image, (int) anchorPoint.x, (int) anchorPoint.y, (int) width, (int) height, null);
+
+			drawing.setTransform(orig);
 		}
 	}
 

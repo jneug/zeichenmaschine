@@ -28,7 +28,7 @@ public class Zeichenfenster extends JFrame {
 	/**
 	 * Setzt das Look and Feel auf den Standard des Systems.
 	 * <p>
-	 * Sollte einmalig vor erstellen des erstyen Programmfensters aufgerufen
+	 * Sollte einmalig vor Erstellen des ersten Programmfensters aufgerufen
 	 * werden.
 	 */
 	public static final void setLookAndFeel() {

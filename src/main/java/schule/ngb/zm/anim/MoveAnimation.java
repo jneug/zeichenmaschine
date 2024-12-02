@@ -1,28 +1,31 @@
 package schule.ngb.zm.anim;
 
-import schule.ngb.zm.Color;
 import schule.ngb.zm.Constants;
-import schule.ngb.zm.shapes.Circle;
-import schule.ngb.zm.shapes.Ellipse;
-import schule.ngb.zm.shapes.Rectangle;
 import schule.ngb.zm.shapes.Shape;
 
 import java.util.function.DoubleUnaryOperator;
 
 public class MoveAnimation extends Animation<Shape> {
 
-	private Shape object;
+	private final Shape object;
 
-	private double oX, oY, tX, tY;
+	private final double targetX, targetY;
 
-	public MoveAnimation( Shape object, double x, double y, int runtime, DoubleUnaryOperator easing ) {
+	private double originX, originY;
+
+
+	public MoveAnimation( Shape target, double targetX, double targetY, int runtime, DoubleUnaryOperator easing ) {
 		super(runtime, easing);
 
-		this.object = object;
-		oX = object.getX();
-		oY = object.getY();
-		tX = x;
-		tY = y;
+		this.object = target;
+		this.targetX = targetX;
+		this.targetY = targetY;
+	}
+
+	@Override
+	public void initialize() {
+		originX = object.getX();
+		originY = object.getY();
 	}
 
 	@Override
@@ -32,8 +35,8 @@ public class MoveAnimation extends Animation<Shape> {
 
 	@Override
 	public void animate( double e ) {
-		object.setX(Constants.interpolate(oX, tX, e));
-		object.setY(Constants.interpolate(oY, tY, e));
+		object.setX(Constants.interpolate(originX, targetX, e));
+		object.setY(Constants.interpolate(originY, targetY, e));
 	}
 
 }

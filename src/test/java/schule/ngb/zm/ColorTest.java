@@ -262,6 +262,8 @@ class ColorTest {
 
 		assertEquals(0.0, Color.BLACK.compare(Color.WHITE), 0.0001);
 		assertEquals(0.0, Color.WHITE.compare(Color.BLACK), 0.0001);
+
+		assertEquals(0.5, Color.GRAY.compare(Color.BLACK), 0.01);
 	}
 
 }

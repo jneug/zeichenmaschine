@@ -4,9 +4,15 @@ import schule.ngb.zm.util.Validator;
 
 import java.util.function.DoubleUnaryOperator;
 
+/**
+ * Eine Wrapper Animation, um die Werte einer anderen Animation (Laufzeit, Easing) zu überschrieben,
+ * ohne die Werte der Originalanimation zu verändern.
+ *
+ * @param <S> Art des Animierten Objektes.
+ */
 public class AnimationFacade<S> extends Animation<S> {
 
-	private Animation<S> anim;
+	private final Animation<S> anim;
 
 	public AnimationFacade( Animation<S> anim, int runtime, DoubleUnaryOperator easing ) {
 		super(runtime, easing);

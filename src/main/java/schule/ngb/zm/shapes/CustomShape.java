@@ -11,6 +11,7 @@ public class CustomShape extends Shape {
 	public CustomShape( double x, double y ) {
 		super(x, y);
 		path = new Path2D.Double();
+		path.moveTo(x, y);
 	}
 
 	public CustomShape( CustomShape custom ) {
@@ -36,7 +37,7 @@ public class CustomShape extends Shape {
 	}
 
 	public void lineTo( double x, double y ) {
-		path.lineTo(x - x, y - y);
+		path.lineTo(x - this.x, y - this.y);
 		calculateBounds();
 	}
 

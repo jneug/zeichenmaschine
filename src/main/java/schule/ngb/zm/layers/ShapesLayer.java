@@ -159,6 +159,16 @@ public class ShapesLayer extends Layer {
 	@Override
 	public void update( double delta ) {
 		if( updateShapes ) {
+			synchronized( shapes ) {
+				List<Updatable> uit = List.copyOf(updatables);
+				for( Updatable u : uit ) {
+					if( u.isActive() ) {
+						u.update(delta);
+					}
+				}
+			}
+
+			/*
 			Iterator<Updatable> uit = updatables.iterator();
 			while( uit.hasNext() ) {
 				Updatable u = uit.next();
@@ -166,6 +176,7 @@ public class ShapesLayer extends Layer {
 					u.update(delta);
 				}
 			}
+			*/
 		}
 
 		Iterator<Animation<? extends Shape>> it = animations.iterator();

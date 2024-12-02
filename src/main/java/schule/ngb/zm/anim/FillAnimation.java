@@ -1,23 +1,28 @@
 package schule.ngb.zm.anim;
 
 import schule.ngb.zm.Color;
-import schule.ngb.zm.Constants;
 import schule.ngb.zm.shapes.Shape;
 
 import java.util.function.DoubleUnaryOperator;
 
 public class FillAnimation extends Animation<Shape> {
 
-	private Shape object;
+	private final Shape object;
 
-	private Color oFill, tFill;
+	private Color originFill;
 
-	public FillAnimation( Shape object, Color newFill, int runtime, DoubleUnaryOperator easing ) {
+	private final Color targetFill;
+
+	public FillAnimation( Shape target, Color newFill, int runtime, DoubleUnaryOperator easing ) {
 		super(runtime, easing);
 
-		this.object = object;
-		oFill = object.getFillColor();
-		tFill = newFill;
+		this.object = target;
+		targetFill = newFill;
+	}
+
+	@Override
+	public void initialize() {
+		originFill = object.getFillColor();
 	}
 
 	@Override
@@ -27,7 +32,7 @@ public class FillAnimation extends Animation<Shape> {
 
 	@Override
 	public void animate( double e ) {
-		object.setFillColor(Color.interpolate(oFill, tFill, e));
+		object.setFillColor(Color.interpolate(originFill, targetFill, e));
 	}
 
 }

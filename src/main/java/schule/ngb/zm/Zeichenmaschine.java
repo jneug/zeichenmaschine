@@ -94,7 +94,7 @@ public class Zeichenmaschine extends Constants {
 	 */
 	private boolean running;
 
-	private boolean terminateImediately = false;
+	private boolean terminateImmediately = false;
 
 	/**
 	 * Ob die ZM nach dem nächsten Frame pausiert werden soll.
@@ -545,7 +545,7 @@ public class Zeichenmaschine extends Constants {
 
 		if( running ) {
 			running = false;
-			terminateImediately = true;
+			terminateImmediately = true;
 			quitAfterShutdown = true;
 			mainThread.interrupt();
 		} else {
@@ -770,6 +770,23 @@ public class Zeichenmaschine extends Constants {
 	}
 
 	/**
+	 * Erstellt aus dem aktuellen Inhalt der {@link Zeichenleinwand} ein neues
+	 * {@link BufferedImage}.
+	 */
+	public final BufferedImage getImage() {
+		BufferedImage img = ImageLoader.createImage(canvas.getWidth(), canvas.getHeight());
+
+		Graphics2D g = img.createGraphics();
+		// TODO: Transparente Hintergründe beim Speichern von png erlauben
+		g.setColor(DEFAULT_BACKGROUND.getJavaColor());
+		g.fillRect(0, 0, img.getWidth(), img.getHeight());
+		canvas.draw(g);
+		g.dispose();
+
+		return img;
+	}
+
+	/**
 	 * Speichert den aktuellen Inhalt der {@link Zeichenleinwand} in einer
 	 * Bilddatei auf der Festplatte. Zur Auswahl der Zieldatei wird dem Nutzer
 	 * ein {@link JFileChooser} angezeigt.
@@ -794,24 +811,15 @@ public class Zeichenmaschine extends Constants {
 	 * Bilddatei im angegebenen Dateipfad auf der Festplatte.
 	 */
 	public final void saveImage( String filepath ) {
-		BufferedImage img = ImageLoader.createImage(canvas.getWidth(), canvas.getHeight());
-
-		Graphics2D g = img.createGraphics();
-		// TODO: Transparente Hintergründe beim Speichern von png erlauben
-		g.setColor(DEFAULT_BACKGROUND.getJavaColor());
-		g.fillRect(0, 0, img.getWidth(), img.getHeight());
-		canvas.draw(g);
-		g.dispose();
-
 		try {
-			ImageLoader.saveImage(img, new File(filepath), true);
+			ImageLoader.saveImage(getImage(), new File(filepath), true);
 		} catch( IOException ex ) {
 			ex.printStackTrace();
 		}
 	}
 
 	/**
-	 * Erstellt eine Momentanaufnahme des aktuellen Inhalts der
+	 * Erstellt eine Momentaufnahme des aktuellen Inhalts der
 	 * {@link Zeichenleinwand} und erstellt daraus eine
 	 * {@link ImageLayer Bildebene}. Die Ebene wird automatisch der
 	 * {@link Zeichenleinwand} vor dem {@link #background} hinzugefügt.
@@ -1399,7 +1407,7 @@ public class Zeichenmaschine extends Constants {
 
 						if( Thread.interrupted() ) {
 							running = false;
-							terminateImediately = true;
+							terminateImmediately = true;
 							break;
 						}
 					}
@@ -1455,7 +1463,7 @@ public class Zeichenmaschine extends Constants {
 			}
 			state = Options.AppState.STOPPED;
 			// Shutdown the updateThread
-			while( !terminateImediately && updateThreadExecutor.isRunning() ) {
+			while( !terminateImmediately && updateThreadExecutor.isRunning() ) {
 				Thread.yield();
 			}
 			updateThreadExecutor.shutdownNow();

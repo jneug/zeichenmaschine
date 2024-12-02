@@ -35,6 +35,11 @@ public abstract class BasicDrawable extends Constants implements Strokeable, Fil
 	protected Options.StrokeType strokeType = SOLID;
 
 	/**
+	 * Die Art der Kantenverbindungen von Linien.
+	 */
+	protected Options.StrokeJoin strokeJoin = MITER;
+
+	/**
 	 * Cache für den aktuellen {@code Stroke} der Kontur. Wird nach Änderung
 	 * einer der Kontureigenschaften auf {@code null} gesetzt und beim nächsten
 	 * Zeichnen neu erstellt.
@@ -53,6 +58,7 @@ public abstract class BasicDrawable extends Constants implements Strokeable, Fil
 	 */
 	protected MultipleGradientPaint fill = null;
 
+	// TODO: Add TexturePaint fill (https://docs.oracle.com/javase/8/docs//api/java/awt/TexturePaint.html)
 
 	// Implementierung Drawable Interface
 
@@ -154,7 +160,7 @@ public abstract class BasicDrawable extends Constants implements Strokeable, Fil
 	@Override
 	public Stroke getStroke() {
 		if( stroke == null ) {
-			stroke = Strokeable.createStroke(strokeType, strokeWeight);
+			stroke = Strokeable.createStroke(strokeType, strokeWeight, strokeJoin);
 		}
 		return stroke;
 	}
@@ -188,6 +194,17 @@ public abstract class BasicDrawable extends Constants implements Strokeable, Fil
 	@Override
 	public void setStrokeType( Options.StrokeType type ) {
 		strokeType = type;
+		this.stroke = null;
+	}
+
+	@Override
+	public Options.StrokeJoin getStrokeJoin() {
+		return strokeJoin;
+	}
+
+	@Override
+	public void setStrokeJoin( Options.StrokeJoin join ) {
+		strokeJoin = join;
 		this.stroke = null;
 	}
 

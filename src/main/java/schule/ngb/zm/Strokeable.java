@@ -174,7 +174,7 @@ public interface Strokeable extends Drawable {
 	 * @param weight Die Dicke der Konturlinie.
 	 */
 	default void setStrokeWeight( double weight ) {
-		setStroke(createStroke(getStrokeType(), weight));
+		setStroke(createStroke(getStrokeType(), weight, getStrokeJoin()));
 	}
 
 	/**
@@ -193,7 +193,26 @@ public interface Strokeable extends Drawable {
 	 * @see Options.StrokeType
 	 */
 	default void setStrokeType( Options.StrokeType type ) {
-		setStroke(createStroke(type, getStrokeWeight()));
+		setStroke(createStroke(type, getStrokeWeight(), getStrokeJoin()));
+	}
+
+	/**
+	 * Gibt die Art der Konturverbindungen zurück.
+	 *
+	 * @return Die aktuelle Art der Konturverbindungen.
+	 * @see Options.StrokeJoin
+	 */
+	Options.StrokeJoin getStrokeJoin();
+
+	/**
+	 * Setzt den Typ der Konturverbindungen. Erlaubte Werte sind {@link Constants#ROUND},
+	 * {@link Constants#MITER} und {@link Constants#BEVEL}.
+	 *
+	 * @param join Eine der möglichen Konturverbindungen.
+	 * @see Options.StrokeJoin
+	 */
+	default void setStrokeJoin( Options.StrokeJoin join ) {
+		setStroke(createStroke(getStrokeType(), getStrokeWeight(), join));
 	}
 
 	/**
@@ -205,26 +224,26 @@ public interface Strokeable extends Drawable {
 	 * @param strokeWeight
 	 * @return Ein {@code Stroke} mit den passenden Kontureigenschaften.
 	 */
-	static Stroke createStroke( Options.StrokeType strokeType, double strokeWeight ) {
+	static Stroke createStroke( Options.StrokeType strokeType, double strokeWeight, Options.StrokeJoin strokeJoin ) {
 		switch( strokeType ) {
 			case DOTTED:
 				return new BasicStroke(
 					(float) strokeWeight,
 					BasicStroke.CAP_ROUND,
-					BasicStroke.JOIN_ROUND,
+					strokeJoin.awt_type,
 					10.0f, new float[]{1.0f, 5.0f}, 0.0f);
 			case DASHED:
 				return new BasicStroke(
 					(float) strokeWeight,
 					BasicStroke.CAP_ROUND,
-					BasicStroke.JOIN_ROUND,
+					strokeJoin.awt_type,
 					10.0f, new float[]{5.0f}, 0.0f);
 			case SOLID:
 			default:
 				return new BasicStroke(
 					(float) strokeWeight,
 					BasicStroke.CAP_ROUND,
-					BasicStroke.JOIN_ROUND);
+					strokeJoin.awt_type);
 		}
 	}
 

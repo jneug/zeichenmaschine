@@ -1,5 +1,9 @@
 package schule.ngb.zm.shapes;
 
+import schule.ngb.zm.Options;
+
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.QuadCurve2D;
@@ -168,6 +172,30 @@ public class Curve extends Shape {
 	public void moveTo( double x, double y ) {
 		double dx = x - x, dy = y - y;
 		move(dx, dy);
+	}
+
+	@Override
+	public void draw( Graphics2D graphics, AffineTransform transform ) {
+		if( !visible ) {
+			return;
+		}
+
+		AffineTransform orig = graphics.getTransform();
+		if( transform != null ) {
+			//graphics.transform(transform);
+		}
+
+		graphics.translate(x, y);
+		graphics.rotate(Math.toRadians(rotation));
+
+		java.awt.Shape shape = getShape();
+
+		java.awt.Color currentColor = graphics.getColor();
+		fillShape(shape, graphics);
+		strokeShape(shape, graphics);
+		graphics.setColor(currentColor);
+
+		graphics.setTransform(orig);
 	}
 
 	@Override
