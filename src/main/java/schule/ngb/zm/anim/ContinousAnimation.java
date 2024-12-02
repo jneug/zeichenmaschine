@@ -8,9 +8,9 @@ public class ContinousAnimation<T> extends Animation<T> {
 	private int lag = 0;
 
 	/**
-	 * Speichert eine Approximation der aktuellen Steigung der Easing-Funktion,
-	 * um im Fall {@code easeInOnly == true} nach dem ersten Durchlauf die
-	 * passende Geschwindigkeit beizubehalten.
+	 * Speichert eine Approximation der aktuellen Steigung der Easing-Funktion, um im Fall
+	 * {@code easeInOnly == true} nach dem ersten Durchlauf die passende Geschwindigkeit
+	 * beizubehalten.
 	 */
 	private double m = 1.0, lastEase = 0.0;
 
@@ -29,7 +29,7 @@ public class ContinousAnimation<T> extends Animation<T> {
 	}
 
 	private ContinousAnimation( Animation<T> baseAnimation, int lag, boolean easeInOnly ) {
-		super(baseAnimation.getRuntime(), baseAnimation.getEasing());
+		super(baseAnimation.getRuntime() + lag, baseAnimation.getEasing());
 		this.baseAnimation = baseAnimation;
 		this.lag = lag;
 		this.easeInOnly = easeInOnly;
@@ -41,34 +41,79 @@ public class ContinousAnimation<T> extends Animation<T> {
 	}
 
 	@Override
+	public int getRuntime() {
+		return Integer.MAX_VALUE;
+	}
+
+	//	@Override
+//	public void update( double delta ) {
+//		elapsedTime += (int) (delta * 1000);
+//		if( elapsedTime >= runtime + lag ) {
+//			elapsedTime %= (runtime + lag);
+//
+//			if( easeInOnly && easing != null ) {
+//				easing = null;
+//				// runtime = (int)((1.0/m)*(runtime + lag));
+//			}
+//		}
+//
+//		double t = (double) elapsedTime / (double) runtime;
+//		if( t >= 1.0 ) {
+//			t = 1.0;
+//		}
+//		if( easing != null ) {
+//			double e = easing.applyAsDouble(t);
+//			animate(e);
+//			m = (e-lastEase)/(delta*1000/(asDouble(runtime)));
+//			lastEase = e;
+//		} else {
+//			animate(t);
+//		}
+//	}
+
+
+	@Override
+	public void finish() {
+		baseAnimation.elapsedTime = baseAnimation.getRuntime();
+		baseAnimation.stop();
+	}
+
+	@Override
+	public void initialize() {
+		baseAnimation.start();
+	}
+
+	@Override
+	public void setRuntime( int pRuntime ) {
+		baseAnimation.setRuntime(pRuntime);
+		runtime = pRuntime + lag;
+	}
+
+	@Override
 	public void update( double delta ) {
-		elapsedTime += (int) (delta * 1000);
-		if( elapsedTime >= runtime + lag ) {
-			elapsedTime %= (runtime + lag);
+		int currentRuntime = elapsedTime + (int) (delta * 1000);
+		if( currentRuntime >= runtime + lag ) {
+			elapsedTime = currentRuntime % (runtime + lag);
 
 			if( easeInOnly && easing != null ) {
-				easing = null;
+				easing = Easing.linear();
 				// runtime = (int)((1.0/m)*(runtime + lag));
 			}
 		}
 
-		double t = (double) elapsedTime / (double) runtime;
-		if( t >= 1.0 ) {
-			t = 1.0;
-		}
-		if( easing != null ) {
-			double e = easing.applyAsDouble(t);
-			animate(e);
-			m = (e-lastEase)/(delta*1000/(asDouble(runtime)));
-			lastEase = e;
-		} else {
-			animate(t);
-		}
+		super.update(delta);
 	}
 
 	@Override
 	public void animate( double e ) {
+//		double t = (double) elapsedTime / (double) runtime;
+//		if( t >= 1.0 ) {
+//			t = 1.0;
+//		}
+		baseAnimation.elapsedTime = elapsedTime;
 		baseAnimation.animate(e);
+		m = (e - lastEase) / (delta * 1000 / (asDouble(runtime)));
+		lastEase = e;
 	}
 
 }

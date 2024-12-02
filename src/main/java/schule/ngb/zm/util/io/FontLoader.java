@@ -10,6 +10,7 @@ import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -62,8 +63,8 @@ public class FontLoader {
 	}
 
 	public static Font loadFont( String name, String source ) {
-		Validator.requireNotNull(source, "Font source may not be null");
-		Validator.requireNotEmpty(source, "Font source may not be empty.");
+		Validator.requireNotNull(source, "source");
+		Validator.requireNotEmpty(source, "source");
 
 		if( fontCache.containsKey(name) ) {
 			LOG.trace("Retrieved font <%s> from font cache.", name);
@@ -91,10 +92,12 @@ public class FontLoader {
 				//ge.registerFont(font);
 			}
 			LOG.debug("Loaded custom font from source <%s>.", source);
+		} catch( MalformedURLException muex ) {
+			LOG.warn("Could not find font resource for <%s>", source);
 		} catch( IOException ioex ) {
-			LOG.error(ioex, "Error loading custom font file from source <%s>.", source);
+			LOG.warn(ioex, "Error loading custom font file from source <%s>.", source);
 		} catch( FontFormatException ffex ) {
-			LOG.error(ffex, "Error creating custom font from source <%s>.", source);
+			LOG.warn(ffex, "Error creating custom font from source <%s>.", source);
 		}
 
 		return font;

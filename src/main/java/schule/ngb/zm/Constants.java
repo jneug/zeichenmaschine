@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 import java.util.function.DoubleUnaryOperator;
 
@@ -67,7 +68,7 @@ public class Constants {
 	/**
 	 * Patchversion der Zeichenmaschine.
 	 */
-	public static final int APP_VERSION_REV = 34;
+	public static final int APP_VERSION_REV = 35;
 
 	/**
 	 * Version der Zeichenmaschine als Text-String.
@@ -169,6 +170,21 @@ public class Constants {
 	 * Option für gepunktete Konturen und Linien.
 	 */
 	public static final Options.StrokeType DOTTED = Options.StrokeType.DOTTED;
+
+	/**
+	 * Option für abgerundete Kantenverbindungen von Konturen und Linien.
+	 */
+	public static final Options.StrokeJoin ROUND = Options.StrokeJoin.ROUND;
+
+	/**
+	 * Option für abgeschnittene Kantenverbindungen von Konturen und Linien.
+	 */
+	public static final Options.StrokeJoin BEVEL = Options.StrokeJoin.BEVEL;
+
+	/**
+	 * Option für eckige Kantenverbindungen von Konturen und Linien.
+	 */
+	public static final Options.StrokeJoin MITER = Options.StrokeJoin.MITER;
 
 	/**
 	 * Option für Pfeile mit Strichen als Kopf.
@@ -1268,7 +1284,7 @@ public class Constants {
 	 *
 	 * @return Die {@code Random}-Instanz.
 	 */
-	private static Random getRandom() {
+	public static Random getRandom() {
 		if( random == null ) {
 			random = new Random();
 		}
@@ -1387,26 +1403,6 @@ public class Constants {
 	 */
 	public static final double randomGaussian() {
 		return getRandom().nextGaussian();
-	}
-
-	/**
-	 * Wählt ein zufälliges Element aus dem Array aus.
-	 *
-	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
-	 * @return Ein zufälliges Element aus dem Array.
-	 */
-	public static final int choice( int... values ) {
-		return values[random(0, values.length - 1)];
-	}
-
-	/**
-	 * Wählt ein zufälliges Element aus dem Array aus.
-	 *
-	 * @param values Ein Array mit Werten, die zur Auswahl stehen.
-	 * @return Ein zufälliges Element aus dem Array.
-	 */
-	public static final double choice( double... values ) {
-		return values[random(0, values.length - 1)];
 	}
 
 	/**
@@ -1569,6 +1565,18 @@ public class Constants {
 		java.util.List<T> valueList = Arrays.asList(values);
 		Collections.shuffle(valueList, random);
 		return valueList.toArray(values);
+	}
+
+	/**
+	 * Bringt die Werte im Array in eine zufällige Reihenfolge.
+	 *
+	 * @param values Ein Array mit Werte, die gemischt werden sollen.
+	 * @param <T> Datentyp der Elemente.
+	 * @return Das Array in zufälliger Reihenfolge.
+	 */
+	public static final <T> List<T> shuffle( List<T> values ) {
+		Collections.shuffle(values, random);
+		return values;
 	}
 
 	/**

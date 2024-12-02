@@ -10,9 +10,13 @@ und diese Projekt folgt [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Dokumentation erweitert.
 - Caching-Mechanismen in Klasse `util.Cache` ausgelagert. 
   - `util.io.ImageLoader` und `util.io.FontLoader` verwenden `Cache`.
+- `mouseWheelMoved` Eventhandler für Mausrad.
+- `DrawingLayer.imageRotate(...)` Methoden, um Bilder um ihr Zentrum gedreht zu zeichnen.
 
 ## Changed
 - Die Methoden in `Validator` erwarten nun als zweiten Parameter den Namen des Parameters, der geprüft wird.
+- `DrawingLayer.image(...)` mit Größenänderung umbenannt zu `imageScale(...)`.
+- Klassen in `schule.ngb.zm.util.io` werfen nun nur eine Warnung ohne Stack-Trace, wenn die Ressource nicht gefunden werden konnte.
 
 ## Fixed
 - `Constants.choice(int...)` und `Constants.choice(double...)` wiederhergestellt.

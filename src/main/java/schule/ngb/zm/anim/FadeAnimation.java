@@ -13,32 +13,51 @@ public class FadeAnimation extends Animation<Shape> {
 
 	public static final int FADE_OUT = 0;
 
-	private Shape object;
+	private final Shape target;
+
+	private final int targetAlpha;
 
 	private Color fill, stroke;
 
-	private int fillAlpha, strokeAlpha, tAlpha;
+	private int fillAlpha, strokeAlpha;
 
-	public FadeAnimation( Shape object, int alpha, int runtime, DoubleUnaryOperator easing ) {
+	public FadeAnimation( Shape target, int targetAlpha ) {
+		this(target, targetAlpha, DEFAULT_ANIM_RUNTIME, DEFAULT_EASING);
+	}
+
+	public FadeAnimation( Shape target, int targetAlpha, int runtime ) {
+		this(target, targetAlpha, runtime, DEFAULT_EASING);
+	}
+
+	public FadeAnimation( Shape target, int runtime, DoubleUnaryOperator easing ) {
+		this(target, 0, runtime, easing);
+	}
+
+	public FadeAnimation( Shape target, int targetAlpha, int runtime, DoubleUnaryOperator easing ) {
 		super(runtime, easing);
 
-		this.object = object;
-		fill = object.getFillColor();
+		this.target = target;
+		this.targetAlpha = targetAlpha;
+	}
+
+	@Override
+	public void initialize() {
+		fill = target.getFillColor();
 		fillAlpha = fill.getAlpha();
-		stroke = object.getStrokeColor();
+		stroke = target.getStrokeColor();
 		strokeAlpha = stroke.getAlpha();
-		tAlpha = alpha;
+
 	}
 
 	@Override
 	public Shape getAnimationTarget() {
-		return object;
+		return target;
 	}
 
 	@Override
 	public void animate( double e ) {
-		object.setFillColor(new Color(fill, (int) Constants.interpolate(fillAlpha, tAlpha, e)));
-		object.setStrokeColor(new Color(stroke, (int) Constants.interpolate(strokeAlpha, tAlpha, e)));
+		target.setFillColor(fill, (int) Constants.interpolate(fillAlpha, targetAlpha, e));
+		target.setStrokeColor(stroke, (int) Constants.interpolate(strokeAlpha, targetAlpha, e));
 	}
 
 }

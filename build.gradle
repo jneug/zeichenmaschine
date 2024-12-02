@@ -1,10 +1,11 @@
 plugins {
 	id 'idea'
     id 'java-library'
+	id 'org.hidetake.ssh' version '2.10.1'
 }
 
 group 'schule.ngb'
-version '0.0.34-SNAPSHOT'
+version '0.0.35-SNAPSHOT'
 
 java {
 	withSourcesJar()
@@ -17,6 +18,15 @@ compileJava {
 
 repositories {
     mavenCentral()
+}
+
+remotes {
+	uberspace {
+		host = 'westphal.uberspace.de'
+		user = 'ngb'
+		identity = file("${System.properties['user.home']}/.ssh/uberspace_rsa")
+		knownHosts = allowAnyHosts
+	}
 }
 
 dependencies {
@@ -90,6 +100,52 @@ task buildDocs {
 	dependsOn 'javadoc'
 	dependsOn 'javadocJar'
 	dependsOn 'mkdocs'
+}
+
+task zipSite(type: Zip) {
+	group "documentation"
+	description "Create zip archives for documentations"
+
+	dependsOn 'mkdocs'
+
+	from fileTree("${buildDir}/docs/site")
+	exclude '*.py'
+	exclude '__pycache__'
+	archiveName 'site.zip'
+	destinationDir(file("${buildDir}/docs"))
+}
+
+task zipJavadoc(type: Zip) {
+	group "documentation"
+	description "Create zip archives for javadoc"
+
+	dependsOn 'javadoc'
+
+	from fileTree("${buildDir}/docs/javadoc")
+	archiveName 'javadoc.zip'
+	destinationDir(file("${buildDir}/docs"))
+}
+
+task uploadDocs {
+	group "documentation"
+	description "Run all documentation tasks and upload artifacts to zeichenmaschine.xyz"
+
+	dependsOn 'zipSite'
+	dependsOn 'zipJavadoc'
+
+	doLast {
+		ssh.run {
+			session(remotes.uberspace) {
+				execute 'rm -rf /var/www/virtual/ngb/zeichenmaschine.xyz/*', ignoreError: true
+
+				put from: "${buildDir}/docs/site.zip", into: '/var/www/virtual/ngb/zeichenmaschine.xyz', ignoreError: true
+				execute 'unzip -o -q /var/www/virtual/ngb/zeichenmaschine.xyz/site.zip -d /var/www/virtual/ngb/zeichenmaschine.xyz'
+
+				put from: "${buildDir}/docs/javadoc.zip", into: '/var/www/virtual/ngb/zeichenmaschine.xyz', ignoreError: true
+				execute 'unzip  -o -q /var/www/virtual/ngb/zeichenmaschine.xyz/javadoc.zip -d /var/www/virtual/ngb/zeichenmaschine.xyz/docs'
+			}
+		}
+	}
 }
 
 test {

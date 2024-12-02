@@ -72,10 +72,10 @@ class FileLoaderTest {
 			{2.1,2.2,2.3},
 			{3.1,3.2,3.3}
 		};
-		csv = FileLoader.loadValues("data_comma.csv", ',', true);
+		csv = FileLoader.loadValues("data_comma.csv", ",", true);
 		assertArrayEquals(data, csv);
 
-		csv = FileLoader.loadValues("data_semicolon_latin.csv", ';', true, FileLoader.ISO_8859_1);
+		csv = FileLoader.loadValues("data_semicolon_latin.csv", ";", true, FileLoader.ISO_8859_1);
 		assertArrayEquals(data, csv);
 	}
 

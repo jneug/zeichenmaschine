@@ -231,6 +231,11 @@ public class TurtleLayer extends Layer implements Strokeable, Fillable {
 	}
 
 	@Override
+	public Options.StrokeJoin getStrokeJoin() {
+		return mainTurtle.getStrokeJoin();
+	}
+
+	@Override
 	public void setStrokeType( Options.StrokeType type ) {
 		mainTurtle.setStrokeType(type);
 	}

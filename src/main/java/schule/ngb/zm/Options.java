@@ -1,5 +1,6 @@
 package schule.ngb.zm;
 
+import java.awt.BasicStroke;
 import java.awt.geom.Arc2D;
 
 /**
@@ -29,6 +30,36 @@ public final class Options {
 		 * Gepunktete Linien.
 		 */
 		DOTTED
+	}
+
+	/**
+	 * Linienstile für Konturlinien.
+	 */
+	public enum StrokeJoin {
+
+		/**
+		 * Abgerundete Verbindungen.
+		 */
+		ROUND(BasicStroke.JOIN_ROUND),
+
+		/**
+		 * Abgeschnittene Verbindungen.
+		 */
+		BEVEL(BasicStroke.JOIN_BEVEL),
+
+		/**
+		 * Eckige Verbindungen.
+		 */
+		MITER(BasicStroke.JOIN_MITER);
+
+		/**
+		 * Der entsprechende Wert der Konstanten in {@link java.awt}
+		 */
+		public final int awt_type;
+
+		StrokeJoin( int type ) {
+			awt_type = type;
+		}
 	}
 
 	/**

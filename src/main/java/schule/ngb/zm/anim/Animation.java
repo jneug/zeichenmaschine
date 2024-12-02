@@ -50,7 +50,7 @@ public abstract class Animation<T> extends Constants implements Updatable {
 	}
 
 	public void setEasing( DoubleUnaryOperator pEasing ) {
-		this.easing = pEasing;
+		this.easing = Validator.requireNotNull(pEasing, "easing");
 	}
 
 	public abstract T getAnimationTarget();
@@ -61,7 +61,7 @@ public abstract class Animation<T> extends Constants implements Updatable {
 		running = true;
 		finished = false;
 		animate(easing.applyAsDouble(0.0));
-		initializeEventDispatcher().dispatchEvent("start", this);
+		dispatchEvent("start");
 	}
 
 	public final void stop() {
@@ -70,7 +70,7 @@ public abstract class Animation<T> extends Constants implements Updatable {
 		animate(easing.applyAsDouble((double) elapsedTime / (double) runtime));
 		this.finish();
 		finished = true;
-		initializeEventDispatcher().dispatchEvent("stop", this);
+		dispatchEvent("stop");
 	}
 
 	public void initialize() {
@@ -100,10 +100,9 @@ public abstract class Animation<T> extends Constants implements Updatable {
 
 		double t = (double) elapsedTime / (double) runtime;
 		if( t >= 1.0 ) {
-			running = false;
 			stop();
 		} else {
-			animate(easing.applyAsDouble(t));
+			animate(getEasing().applyAsDouble(t));
 		}
 	}
 
@@ -118,7 +117,7 @@ public abstract class Animation<T> extends Constants implements Updatable {
 	 * e = Constants.limit(e, 0, 1);
 	 * </code></pre>
 	 *
-	 * @param e Fortschritt der Animation nachdem die Easingfunktion angewandt
+	 * @param e Fortschritt der Animation, nachdem die Easing-Funktion angewandt
 	 * 	wurde.
 	 */
 	public abstract void animate( double e );
@@ -132,6 +131,12 @@ public abstract class Animation<T> extends Constants implements Updatable {
 			eventDispatcher.registerEventType("stop", ( a, l ) -> l.animationStopped(a));
 		}
 		return eventDispatcher;
+	}
+
+	private void dispatchEvent( String type ) {
+		if( eventDispatcher != null ) {
+			eventDispatcher.dispatchEvent(type, this);
+		}
 	}
 
 	public void addListener( AnimationListener listener ) {

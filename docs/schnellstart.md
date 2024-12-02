@@ -23,7 +23,7 @@ werden.
 
 !!! note "main Methode"
 
-	Bei einigen Entwicklungsumgebungen muss noch eine `main` Methode erstellt 
+	Bei einigen Entwicklungsumgebungen muss noch eine `main` Methode erstellt
 	werden, um die Zeichenmaschine zu starten:
 
 	```java
@@ -40,11 +40,11 @@ an.
 
 	```java
 	public class Shapes extends Zeichenmaschine {
-	
+
 		public Shapes() {
 			super(800, 800, "Shapes");
 		}
-	
+
 	}
 	```
 
@@ -57,7 +57,7 @@ erstellt und in einem Fenster mit dem Titel „Shapes“ angezeigt.
 
 ### Formen zeichnen
 
-Eine Zeichenmaschine hat verschiedene Möglichkeiten, Inhalte in das
+Eine Zeichenmaschine hat verschiedene Möglichkeiten Inhalte in das
 Zeichenfenster zu zeichnen. Um ein einfaches statisches Bild zu erzeugen,
 überschreiben wir die {{ jdl("schule.ngb.zm.Zeichenmaschine", "draw()",
 c=False) }} Methode.
@@ -66,20 +66,20 @@ c=False) }} Methode.
 
 	```java
 	public class Shapes extends Zeichenmaschine {
-	
+
 		public Shapes() {
 			super(800, 800, "Shapes");
 		}
-	
+
 		@Override
 		public void draw() {
 			background.setColor(BLUE);
-	
+
 			drawing.setFillColor(255, 223, 34);
 			drawing.noStroke();
 			drawing.circle(400, 400, 100);
 		}
-	
+
 	}
 	```
 
@@ -101,19 +101,19 @@ die Zeichenfläche vor dem ersten Zeichnen vor.
 
 	```java
 	public class Shapes extends Zeichenmaschine {
-	
+
 		public Shapes() {
 			super(800, 800, "Shapes");
 		}
-	
+
 		@Override
 		public void setup() {
 			background.setColor(BLUE);
-	
+
 			drawing.setFillColor(255, 223, 34);
 			drawing.noStroke();
 		}
-	
+
 		@Override
 		public void draw() {
 			for( int i = 0; i < 10; i++ ) {
@@ -124,7 +124,7 @@ die Zeichenfläche vor dem ersten Zeichnen vor.
 				);
 			}
 		}
-	
+
 	}
 	```
 
@@ -137,16 +137,16 @@ Im Beispiel setzen wir nun die Grundeinstellungen in der `setup()` Methode. In
 
 !!! tip ""
 
-	Mit {{ jdm("Constants", "canvasWidth") }} und 
-	{{ jdm("Constants", "canvasHeight") }} kannst du in der Zeichenmaschine 
+	Mit {{ jdm("Constants", "canvasWidth") }} und
+	{{ jdm("Constants", "canvasHeight") }} kannst du in der Zeichenmaschine
 	auf die aktuelle Größe der Zeichenfläche zugreifen.
-	{{ jdm("Constants", "random(int,int)") }} erzeugt eine Zufallszahl 
+	{{ jdm("Constants", "random(int,int)") }} erzeugt eine Zufallszahl
 	innerhalb der angegebenen Grenzen.
 
 ## Interaktionen mit der Maus: Whack-a-mole
 
 Mit der Zeichenmaschine lassen sich Interaktionen mit der Maus leicht umsetzen.
-Wor wollen das Beispielprogramm zu einem
+Wir wollen das Beispielprogramm zu einem
 [Whac-A-Mole](https://de.wikipedia.org/wiki/Whac-A-Mole) Spiel erweitern.
 
 Auf der Zeichenfläche wird nur noch ein gelber Kreis an einer zufälligen Stelle
@@ -169,28 +169,28 @@ zufälligen Werte initialisiert werden. Diese benutzen wir, um die `draw
 		private int moleX;
 
 		private int moleY;
-	
+
 		public Shapes() {
 			super(800, 800, "Shapes");
 		}
-	
+
 		@Override
 		public void setup() {
 			background.setColor(BLUE);
-	
+
 			drawing.setFillColor(255, 223, 34);
 			drawing.noStroke();
 
 			moleX = random(50, canvasWidth - 50);
 			moleY = random(50, canvasHeight - 50);
 		}
-	
+
 		@Override
 		public void draw() {
 			drawing.clear();
 			drawing.circle(moleX, moleY, moleRadius);
 		}
-	
+
 	}
 	```
 
@@ -216,10 +216,10 @@ Pythagoras leicht selber berechnen. Die Zeichenmaschine kann uns diese Arbeit
 aber auch abnehmen und stellt eine Methode dafür bereit
 ({{ jdm("Constants", "distance(double,double,double,double)") }}).
 
-Um auf einen Mausklick zu reagieren, ergänzen wir die 
+Um auf einen Mausklick zu reagieren, ergänzen wir die
 {{ jdm("Zeichenmaschine", "mouseClicked()") }} Methode:
 
-```
+```java
 @Override
 public void mouseClicked() {
 	if( distance(moleX, moleY, mouseX, mouseY) < moleRadius ) {
@@ -240,22 +240,22 @@ public void mouseClicked() {
 		private int moleX;
 
 		private int moleY;
-	
+
 		public Shapes() {
 			super(800, 800, "Shapes");
 		}
-	
+
 		@Override
 		public void setup() {
 			background.setColor(BLUE);
-	
+
 			drawing.setFillColor(255, 223, 34);
 			drawing.noStroke();
 
 			moleX = random(50, canvasWidth - 50);
 			moleY = random(50, canvasHeight - 50);
 		}
-	
+
 		@Override
 		public void draw() {
 			drawing.clear();
@@ -270,13 +270,13 @@ public void mouseClicked() {
 				redraw();
 			}
 		}
-	
+
 	}
 	```
 
 !!! warning ""
 
-	Der Aufruf von {{ jdm("Zeichenmaschine", "redraw()") }} zeichnet 
+	Der Aufruf von {{ jdm("Zeichenmaschine", "redraw()") }} zeichnet
 	die Zeichenfläche neu, indem die `draw()` Methode erneut aufgerufen wird.
 	Du solltest `draw()` niemals direkt aufrufen.
 
@@ -290,8 +290,8 @@ angeklickt wird.
 ## Ein paar Details zur Zeichenmaschine
 
 Die _Zeichenmaschine_ wurde stark von der kreativen Programmierumgebung
-[Processing](https://processing.org) inspiriert. Wenn Du Processing schon
-kennst, dann werden Dir einige der Konzepte der _Zeichenmaschine_ schon bekannt
+[Processing](https://processing.org) inspiriert. Wenn du Processing schon
+kennst, dann werden dir einige der Konzepte der _Zeichenmaschine_ schon bekannt
 vorkommen.
 
 ### Farben
@@ -300,7 +300,7 @@ Farben können auf verschiedene Weisen angegeben werden. Unser Beispiel nutzt
 bisher zwei Arten:
 
 1. Die einfachste Möglichkeit sind die _Farbkonstanten_
-   wie {{ jdm('Constants', 'BLUE') }} oder {{ jdm('Constants', 'RED') }}. Im 
+   wie {{ jdm('Constants', 'BLUE') }} oder {{ jdm('Constants', 'RED') }}. Im
    Beispiel setzen wir den Hintergrund auf die Farbe `BLUE`.
 2. Farben werden häufig im RGB-Farbraum definiert. Dazu wird jeweils der Rot-,
    Grün- und Blauanteil der Farbe als Wert zwischen 0 und 255 angegeben. Im
@@ -341,15 +341,15 @@ auf.
 </figure>
 
 Erstellst Du eine _Zeichenmaschine_ (beziehungsweise ein Objekt einer
-Unterklasse), dann wird zuerst die {{ jdm('Zeichenmaschine', 'setup()') }} 
-Methode ausgeführt. Danach folgt einmalig die 
+Unterklasse), dann wird zuerst die {{ jdm('Zeichenmaschine', 'setup()') }}
+Methode ausgeführt. Danach folgt einmalig die
 {{ jdm('Zeichenmaschine', 'draw()') }} Methode und dann endet das Hauptprogramm.
 
 Die Eingaben der Maus werden in einem parallelen Ablauf (einem _Thread_)
-abgefangen und daraufhin die {{ jdm('Zeichenmaschine', 'mouseClicked()') }} 
+abgefangen und daraufhin die {{ jdm('Zeichenmaschine', 'mouseClicked()') }}
 Methode aufgerufen. In unserem Programm prüfen wir, ob mit der Maus
-innerhalb des Kreises geklickt wurde und rufen dann 
-{{ jdm('Zeichenmaschine', 'redraw()') }} auf, woraufhin ein weiteres Mal 
+innerhalb des Kreises geklickt wurde und rufen dann
+{{ jdm('Zeichenmaschine', 'redraw()') }} auf, woraufhin ein weiteres Mal
 `draw()` ausgeführt wird.
 
 In _Processing_ wird dies der "statische" Modus genannt, weil das Programm nur
@@ -392,14 +392,14 @@ Sekunde aufgerufen wird. Normalerweise passiert dies genau 60-mal pro Sekunde.
 ### Lebenszeit eines Kreises
 
 Jeder Kreis soll drei Sekunden zu sehen sein. Daher fügen wir eine neue
-Objektvariable namens `moleTime` ein, die zunächst auf drei steht. Da wir auch
-Bruchteile von Skeunden abziehen wollen, wählen wir als Datentyp `double`:
+Objektvariable namens `moleTime` ein, die zunächst auf Drei steht. Da wir auch
+Bruchteile von Sekunden abziehen wollen, wählen wir als Datentyp `double`:
 
 ```Java
 private double moleTime=3.0;
 ```
 
-Der Parameter `delta`, der `update()` Methode ist der Zeitraum in Sekunden, seit
+Der Parameter `delta` der `update()` Methode ist der Zeitraum in Sekunden seit
 dem letzten Frame. Subtrahieren wir diesen Wert bei jedem Frame von `moleTime`,
 wird der Wert immer kleiner. Dann müssen wir nur noch prüfen, ob er kleiner Null
 ist und in dem Fall den Kreis auf eine neue Position springen lassen.
@@ -415,52 +415,52 @@ drawing.circle(moleX,moleY,moleRadius*(moleTime/3.0));
 
 	```Java
 	import schule.ngb.zm.Zeichenmaschine;
-	
+
 	public class Shapes extends Zeichenmaschine {
-	
+
 		private int moleRadius = 20;
-	
+
 		private int moleX;
-	
+
 		private int moleY;
-	
+
 		private double moleTime;
-	
+
 		public Shapes() {
 			super(800, 800, "Shapes");
 		}
-	
+
 		@Override
 		public void setup() {
 			background.setColor(BLUE);
-	
+
 			drawing.setFillColor(255, 223, 34);
 			drawing.noStroke();
-	
+
 			randomizeMole();
 		}
-	
+
 		private void randomizeMole() {
 			moleX = random(moleRadius*2, canvasWidth - moleRadius*2);
 			moleY = random(moleRadius*2, canvasHeight - moleRadius*2);
 			moleTime = 3.0;
 		}
-	
+
 		@Override
 		public void update( double delta ) {
 			moleTime -= delta;
-	
+
 			if( moleTime <= 0 ) {
 				randomizeMole();
 			}
 		}
-	
+
 		@Override
 		public void draw() {
 			drawing.clear();
 			drawing.circle(moleX, moleY, moleRadius * (moleTime / 3.0));
 		}
-	
+
 		@Override
 		public void mouseClicked() {
 			if( distance(moleX, moleY, mouseX, mouseY) < moleRadius ) {
@@ -468,11 +468,11 @@ drawing.circle(moleX,moleY,moleRadius*(moleTime/3.0));
 				redraw();
 			}
 		}
-	
+
 		public static void main( String[] args ) {
 			new Shapes();
 		}
-	
+
 	}
 	```
 
@@ -483,21 +483,21 @@ drawing.circle(moleX,moleY,moleRadius*(moleTime/3.0));
 !!! tip ""
 
 	Der Maulwurf muss mittlerweile an drei verschiedenen Stellen im Programm
-	auf eine zufällige Position gesetzt werden (am Anfang, wenn er angeklickt 
+	auf eine zufällige Position gesetzt werden (am Anfang, wenn er angeklickt
 	wurde und wenn die drei Sekunden abgelaufen sind). Daher wurde das Versetzen
-	in eine eigene Methode `randomizeMole()` ausgelagert. 
+	in eine eigene Methode `randomizeMole()` ausgelagert.
 
 ### Punktezähler
 
-Zum Schluss wollen wir noch bei jedem Treffer mit der Maus die Punkte Zählen und
+Zum Schluss wollen wir noch bei jedem Treffer mit der Maus die Punkte zählen und
 als Text auf die Zeichenfläche schreiben.
 
 Dazu ergänzen wir eine weitere Objektvariable `score`, die in `mouseClicked()`
 erhöht wird, falls der Kreis getroffen wurde.
 
-Um den Punktestand anzuzeigen ergänzen wir in `draw()` einen Aufruf von 
-{{ jdl('layers.DrawingLayer', 'text(java.lang.String,double,double,schule.ngb.zm.Options.Direction)') }} 
-mit dem  Inhalt von `score` und den Koordinaten, an denen der Text gezeigt 
+Um den Punktestand anzuzeigen ergänzen wir in `draw()` einen Aufruf von
+{{ jdl('layers.DrawingLayer', 'text(java.lang.String,double,double,schule.ngb.zm.Options.Direction)') }}
+mit dem  Inhalt von `score` und den Koordinaten, an denen der Text gezeigt
 werden soll.
 Die Zeichenebene zeichnet im Moment alle Formen und Text ausgehend vom Zentrum
 der Form. Damit der Text 10 Pixel vom Rand entfernt links oben angezeigt wird,
@@ -518,59 +518,59 @@ drawing.setFillColor(BLACK);
 
 	```Java
 	import schule.ngb.zm.Zeichenmaschine;
-	
+
 	public class Shapes extends Zeichenmaschine {
-	
+
 		private int moleRadius = 20;
-	
+
 		private int moleX;
-	
+
 		private int moleY;
-	
+
 		private double moleTime;
-	
+
 		private int score = 0;
-	
+
 		public Shapes() {
 			super(800, 800, "Shapes");
 		}
-	
+
 		@Override
 		public void setup() {
 			background.setColor(BLUE);
-	
+
 			drawing.noStroke();
 			drawing.setFontSize(24);
-	
+
 			randomizeMole();
 		}
-	
+
 		private void randomizeMole() {
 			moleX = random(moleRadius*2, canvasWidth - moleRadius*2);
 			moleY = random(moleRadius*2, canvasHeight - moleRadius*2);
 			moleTime = 3.0;
 		}
-	
+
 		@Override
 		public void update( double delta ) {
 			moleTime -= delta;
-	
+
 			if( moleTime <= 0 ) {
 				randomizeMole();
 			}
 		}
-	
+
 		@Override
 		public void draw() {
 			drawing.clear();
-	
+
 			drawing.setFillColor(255, 223, 34);
 			drawing.circle(moleX, moleY, moleRadius * (moleTime / 3.0));
-	
+
 			drawing.setFillColor(BLACK);
 			drawing.text("Punkte: " + score, 10, 10, NORTHWEST);
 		}
-	
+
 		@Override
 		public void mouseClicked() {
 			if( distance(moleX, moleY, mouseX, mouseY) < moleRadius ) {
@@ -579,28 +579,28 @@ drawing.setFillColor(BLACK);
 				redraw();
 			}
 		}
-	
+
 		public static void main( String[] args ) {
 			new Shapes();
 		}
-	
+
 	}
 	```
 
 ## Wie es weitergehen kann
 
-In diesem Schnellstart-Tutorial hast Du die Grundlagen der _Zeichenmaschine_
-gelernt. Um weiterzumachen, kannst Du versuchen, das Whack-a-mole Spiel um diese
+In diesem Schnellstart-Tutorial hast du die Grundlagen der _Zeichenmaschine_
+gelernt. Um weiterzumachen, kannst du versuchen, das Whack-a-mole Spiel um diese
 Funktionen zu erweitern:
 
 - Mehrere "Maulwürfe" gleichzeitig.
 - Unterschiedliche Zeiten pro Maulwurf.
 
-Wenn Du mehr über die Möglichkeiten lernen möchtest, die Dir die
-_Zeichenmaschine_ bereitstellt, kannst Du Dir die weiteren Tutorials in dieser
+Wenn du mehr über die Möglichkeiten lernen möchtest, die dir die
+_Zeichenmaschine_ bereitstellt, kannst du dir die weiteren Tutorials in dieser
 Dokumentation ansehen. Ein guter Startpunkt ist das
 [Aquarium](tutorials/aquarium/aquarium1.md).
 
-Viele verschiedene Beispiele, ohne detailliertes Tutorial, findest Du in der
+Viele verschiedene Beispiele, ohne detailliertes Tutorial, findest du in der
 Kategorie Beispiele und auf GitHub im Repository
 [jneug/zeichenmaschine-examples](https://github.com/jneug/zeichenmaschine-examples).

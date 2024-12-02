@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.SoftReference;
+import java.net.MalformedURLException;
 
 /**
  * Eine Hilfsklasse mit Klassenmethoden, um Bilder zu laden.
@@ -67,8 +68,8 @@ public final class ImageLoader {
 	 * @return
 	 */
 	public static BufferedImage loadImage( String source, boolean caching ) {
-		Validator.requireNotNull(source, "Image source may not be null");
-		Validator.requireNotEmpty(source, "Image source may not be empty.");
+		Validator.requireNotNull(source, "source");
+		Validator.requireNotEmpty(source, "source");
 
 		if( caching && imageCache.containsKey(source) ) {
 			return imageCache.get(source);
@@ -84,8 +85,10 @@ public final class ImageLoader {
 			if( caching && img != null ) {
 				imageCache.put(source, img);
 			}
+		} catch( MalformedURLException muex ) {
+			LOG.warn("Could not find image resource for <%s>", source);
 		} catch( IOException ioex ) {
-			LOG.error(ioex, "Error loading image file from source <%s>.", source);
+			LOG.warn(ioex, "Error loading image file from source <%s>.", source);
 		}
 		return img;
 	}
@@ -318,12 +321,8 @@ public final class ImageLoader {
 	 * @throws IOException          Falls es einen Fehler beim Speichern gab.
 	 */
 	public static void saveImage( BufferedImage image, File file, boolean overwriteIfExists ) throws IOException {
-		if( image == null ) {
-			throw new NullPointerException("Image may not be <null>.");
-		}
-		if( file == null ) {
-			throw new NullPointerException("File may not be <null>.");
-		}
+		Validator.requireNotNull(image, "image");
+		Validator.requireNotNull(file, "file");
 
 		if( file.isFile() ) {
 			// Datei existiert schon

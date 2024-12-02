@@ -1,9 +1,11 @@
 package schule.ngb.zm.util.io;
 
 import schule.ngb.zm.util.Log;
+import schule.ngb.zm.util.Validator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
+import java.util.logging.Level;
 
 /**
  * Hilfsklasse, um Textdateien in verschiedenen Formaten einzulesen.
@@ -63,6 +66,9 @@ public final class FileLoader {
 	 * @return Eine Liste mit den Zeilen der Textdatei.
 	 */
 	public static List<String> loadLines( String source, Charset charset ) {
+		Validator.requireNotNull(source, "source");
+		Validator.requireNotNull(charset, "charset");
+
 		try( BufferedReader reader = ResourceStreamProvider.getReader(source, charset) ) {
 			List<String> result = new ArrayList<>();
 
@@ -72,8 +78,11 @@ public final class FileLoader {
 			}
 
 			return result;
+		} catch( MalformedURLException muex ) {
+			LOG.warn("Could not find resource for <%s>", source);
+			return Collections.emptyList();
 		} catch( IOException ex ) {
-			LOG.error(ex, "Error while loading lines from source <%s>", source);
+			LOG.warn(ex, "Error while loading lines from source <%s>", source);
 			return Collections.emptyList();
 		}
 	}
@@ -101,6 +110,9 @@ public final class FileLoader {
 	 * @return Der Inhalt der Textdatei.
 	 */
 	public static String loadText( String source, Charset charset ) {
+		Validator.requireNotNull(source, "source");
+		Validator.requireNotNull(charset, "charset");
+
 		try( BufferedReader reader = ResourceStreamProvider.getReader(source, charset) ) {
 			StringBuilder result = new StringBuilder();
 
@@ -110,8 +122,11 @@ public final class FileLoader {
 			}
 
 			return result.toString();
+		} catch( MalformedURLException muex ) {
+			LOG.warn("Could not find resource for <%s>", source);
+			return "";
 		} catch( IOException ex ) {
-			LOG.error(ex, "Error while loading string from source <%s>", source);
+			LOG.warn(ex, "Error while loading string from source <%s>", source);
 			return "";
 		}
 	}
@@ -166,34 +181,39 @@ public final class FileLoader {
 		).toArray(String[][]::new);
 	}
 
-	public static double[][] loadValues( String source, char separator, boolean skipFirst ) {
+	public static double[][] loadValues( String source, String separator, boolean skipFirst ) {
 		return loadValues(source, separator, skipFirst, UTF8);
 	}
 
 	/**
-	 * Lädt Double-Werte aus einer CSV Datei in ein zweidimensionales Array.
+	 * Lädt Double-Werte aus einer Text-Datei in ein zweidimensionales Array.
 	 * <p>
-	 * Die gelesenen Strings werden mit {@link Double#parseDouble(String)} in
-	 * {@code double} umgeformt. Es leigt in der Verantwortung des Nutzers
-	 * sicherzustellen, dass die CSV-Datei auch nur Zahlen enthält, die korrekt
-	 * in {@code double} umgewandelt werden können. Zellen für die die
-	 * Umwandlung fehlschlägt werden mit 0.0 befüllt.
+	 * Die Zeilen der Eingabedatei werden anhand der Zeichenkette {@code separator}
+	 * in einzelne Teile aufgetrennt. {@code separator} wird als regulärer Ausdruck
+	 * interpretiert (siehe {@link String#split(String)}).
+	 * <p>
+	 * Jeder Teilstring wird mit {@link Double#parseDouble(String)} in
+	 * {@code double} umgeformt. Es liegt in der Verantwortung des Nutzers,
+	 * sicherzustellen, dass die Eingabedatei nur Zahlen enthält, die korrekt
+	 * in {@code double} umgewandelt werden können. Zellen, für die die
+	 * Umwandlung fehlschlägt, werden mit 0.0 befüllt.
 	 * <p>
 	 * Die Methode unterliegt denselben Einschränkungen wie
 	 * {@link #loadCsv(String, char, boolean, Charset)}.
 	 *
 	 * @param source Die Quelle der CSV-Daten.
-	 * @param separator Das verwendete Trennzeichen.
+	 * @param separator Ein Trennzeichen oder ein regulärer Ausdruck.
 	 * @param skipFirst Ob die erste Zeile übersprungen werden soll.
 	 * @param charset Die zu verwendende Zeichenkodierung.
 	 * @return Ein Array mit den Daten als {@code String}s.
 	 */
-	public static double[][] loadValues( String source, char separator, boolean skipFirst, Charset charset ) {
+	public static double[][] loadValues( String source, String separator, boolean skipFirst, Charset charset ) {
 		int n = skipFirst ? 1 : 0;
 		List<String> lines = loadLines(source, charset);
 		return lines.stream().skip(n).map(
 			( line ) -> Arrays
-				.stream(line.split(Character.toString(separator)))
+				//.stream(line.split(Character.toString(separator)))
+				.stream(line.split(separator))
 				.mapToDouble(
 					( value ) -> {
 						try {

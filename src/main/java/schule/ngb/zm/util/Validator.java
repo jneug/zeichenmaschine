@@ -19,7 +19,7 @@ public class Validator {
 
 	public static final <T> T requireNotNull( T obj, Supplier<String> msg ) {
 		if( obj == null ) {
-			throw new NullPointerException(msg == null ? "Parameter may nut be null." : msg.get());
+			throw new NullPointerException(msg == null ? "Parameter may not be null." : msg.get());
 		}
 		return obj;
 	}

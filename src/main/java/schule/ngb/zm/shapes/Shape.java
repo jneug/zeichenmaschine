@@ -404,6 +404,7 @@ public abstract class Shape extends BasicDrawable {
 			setStrokeColor(shape.getStrokeColor());
 			setStrokeWeight(shape.getStrokeWeight());
 			setStrokeType(shape.getStrokeType());
+			setStrokeJoin(shape.getStrokeJoin());
 			visible = shape.isVisible();
 			rotation = shape.getRotation();
 			scale(shape.getScale());
