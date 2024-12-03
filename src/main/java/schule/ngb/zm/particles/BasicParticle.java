@@ -14,20 +14,12 @@ public class BasicParticle extends Particle {
 		super();
 	}
 
-	public BasicParticle(Color startColor) {
-		this(0, startColor, null);
+	public BasicParticle( Color startColor ) {
+		this(startColor, null);
 	}
 
-	public BasicParticle(Color startColor, Color finalColor) {
-		this(0, startColor, finalColor);
-	}
-
-	public BasicParticle( int pLifetime ) {
-		super(pLifetime);
-	}
-
-	public BasicParticle( int pLifetime, Color startColor, Color finalColor ) {
-		super(pLifetime);
+	public BasicParticle( Color startColor, Color finalColor ) {
+		super();
 
 		this.color = startColor;
 		this.startColor = startColor;
@@ -59,8 +51,8 @@ public class BasicParticle extends Particle {
 	}
 
 	@Override
-	public void spawn( Vector pPosition, Vector pVelocity ) {
-		super.spawn(pPosition, pVelocity);
+	public void spawn( int pLifetime, Vector pPosition, Vector pVelocity ) {
+		super.spawn(pLifetime, pPosition, pVelocity);
 		this.color = this.startColor;
 	}
 
@@ -68,7 +60,7 @@ public class BasicParticle extends Particle {
 	public void update( double delta ) {
 		super.update(delta);
 
-		if( startColor != null && finalColor != null ) {
+		if( isActive() && startColor != null && finalColor != null ) {
 			double t = 1.0 - lifetime / maxLifetime;
 			this.color = Color.interpolate(startColor, finalColor, t);
 		}
@@ -76,9 +68,9 @@ public class BasicParticle extends Particle {
 
 	@Override
 	public void draw( Graphics2D graphics ) {
-		if( this.color != null ) {
+		if( isActive() && this.color != null ) {
 			graphics.setColor(this.color.getJavaColor());
-			graphics.fillOval((int) position.x, (int) position.y, 6, 6);
+			graphics.fillOval(position.getIntX() - 3, position.getIntY() - 3, 6, 6);
 		}
 	}
 

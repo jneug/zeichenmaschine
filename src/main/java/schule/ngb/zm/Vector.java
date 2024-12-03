@@ -191,6 +191,22 @@ public class Vector extends Point2D.Double {
 		return new Vector(x, y);
 	}
 
+	public int getIntX() {
+		return (int)this.x;
+	}
+
+	public int getRoundedX() {
+		return (int)Math.round(this.x);
+	}
+
+	public int getIntY() {
+		return (int)this.y;
+	}
+
+	public int getRoundedY() {
+		return (int)Math.round(this.y);
+	}
+
 	/**
 	 * Setzt die Komponenten dieses Vektors neu.
 	 *

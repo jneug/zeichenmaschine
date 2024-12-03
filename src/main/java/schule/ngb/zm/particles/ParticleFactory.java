@@ -4,6 +4,4 @@ public interface ParticleFactory {
 
 	Particle createParticle();
 
-	int getMaxLifetime();
-
 }

@@ -7,25 +7,19 @@ import schule.ngb.zm.Vector;
 
 public abstract class Particle extends PhysicsObject implements Updatable, Drawable {
 
-	protected double maxLifetime = 0;
-
-	protected double lifetime = 0;
+	protected double maxLifetime = 0, lifetime = 0;
 
 
 	public Particle() {
 		super();
 	}
 
-	public Particle( int pLifetime ) {
-		super();
-		maxLifetime = pLifetime;
-	}
-
-	public void spawn( Vector pPosition, Vector pVelocity ) {
-		lifetime = maxLifetime;
-		position = pPosition.copy();
-		velocity = pVelocity.copy();
-		acceleration = new Vector();
+	public void spawn( int pLifetime, Vector pPosition, Vector pVelocity ) {
+		this.maxLifetime = pLifetime;
+		this.lifetime = pLifetime;
+		this.position = pPosition.copy();
+		this.velocity = pVelocity.copy();
+		this.acceleration = new Vector();
 	}
 
 	@Override
@@ -59,6 +53,8 @@ public abstract class Particle extends PhysicsObject implements Updatable, Drawa
 		super.update(delta);
 		// lifetime -= delta;
 		lifetime -= 1;
+
+		// TODO: (ngb) calculate delta based on lifetime?
 	}
 
 }

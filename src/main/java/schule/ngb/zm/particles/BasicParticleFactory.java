@@ -4,16 +4,18 @@ import schule.ngb.zm.Color;
 
 public class BasicParticleFactory implements ParticleFactory {
 
-
 	private final Color startColor;
 
 	private final Color finalColor;
 
-	private final int maxLifetime = 50;
+	private boolean fadeOut = true;
 
 	public BasicParticleFactory() {
-		this.startColor = new Color(128, 128, 129);
-		this.finalColor = new Color(128, 128, 129, 0);
+		this(null, null);
+	}
+
+	public BasicParticleFactory( Color startColor ) {
+		this(startColor, null);
 	}
 
 	public BasicParticleFactory( Color startColor, Color finalColor ) {
@@ -21,13 +23,21 @@ public class BasicParticleFactory implements ParticleFactory {
 		this.finalColor = finalColor;
 	}
 
-	public int getMaxLifetime() {
-		return maxLifetime;
+	public void setFadeOut( boolean pFadeOut ) {
+		this.fadeOut = pFadeOut;
 	}
 
 	@Override
 	public Particle createParticle() {
-		return new BasicParticle(maxLifetime, startColor, finalColor);
+		Color finalClr = finalColor;
+		if( fadeOut ) {
+			if( finalColor != null ) {
+				finalClr = new Color(finalColor, 0);
+			} else if( startColor != null ) {
+				finalClr = new Color(startColor, 0);
+			}
+		}
+		return new BasicParticle(startColor, finalClr);
 	}
 
 }

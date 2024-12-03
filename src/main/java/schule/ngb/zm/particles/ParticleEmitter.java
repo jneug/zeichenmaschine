@@ -25,20 +25,23 @@ public class ParticleEmitter implements Updatable, Drawable {
 
 	public Vector direction = new Vector();
 
+	public double strength = 100.0;
+
 	public int angle = 0;
 
 	public double randomness = 0.0;
 
 	// private Vortex vortex = null;
 
-	public ParticleEmitter( double pX, double pY, int pParticlesPerFrame, ParticleFactory pFactory ) {
+	public ParticleEmitter( double pX, double pY, int pParticleLifetime, int pParticlesPerFrame, ParticleFactory pFactory ) {
 		this.position = new Vector(pX, pY);
 		this.particlesPerFrame = pParticlesPerFrame;
+		this.particleLifetime = pParticleLifetime;
 		this.particleFactory = pFactory;
 
 		// Create particle pool
-		this.particles = new Particle[particlesPerFrame * pFactory.getMaxLifetime()];
-		this.direction = Vector.random(8, 16).setLength(100);
+		this.particles = new Particle[particlesPerFrame * pParticleLifetime];
+		this.direction = Vector.random(8, 16).normalize();
 
 		// vortex = new Vortex(position.copy().add(-10, -10), -.2, 8);
 	}
@@ -54,6 +57,8 @@ public class ParticleEmitter implements Updatable, Drawable {
 	}
 
 	public void start() {
+		this.direction.normalize();
+
 		// Partikel initialisieren
 		for( int i = 0; i < particles.length; i++ ) {
 			particles[i] = particleFactory.createParticle();
@@ -84,16 +89,13 @@ public class ParticleEmitter implements Updatable, Drawable {
 		int ppf = particlesPerFrame;
 		Particle nextParticle = getNextParticle();
 		while( ppf > 0 && nextParticle != null ) {
-			// TODO: (ngb) randomize lifetime of particles in Factory?
-//			int pLeben = (int) random(particleLifetime);
-//			p.lifetime = pLeben;
-//			p.maxLifetime = pLeben;
+			int lifetime = (int) random(particleLifetime);
 
 			double rotation = (angle / 2.0) - (int) (Math.random() * angle);
-			Vector velocity = direction.copy().rotate(rotation);
+			Vector velocity = direction.copy().scale(strength).rotate(rotation);
 			velocity.scale(random());
 
-			nextParticle.spawn(this.position, velocity);
+			nextParticle.spawn(lifetime, this.position, velocity);
 			nextParticle = getNextParticle();
 			ppf -= 1;
 		}
@@ -130,7 +132,7 @@ public class ParticleEmitter implements Updatable, Drawable {
 	public void draw( Graphics2D graphics ) {
 		java.awt.Color current = graphics.getColor();
 		for( Particle particle : particles ) {
-			if( particle != null ) {
+			if( particle != null && particle.isVisible() ) {
 				particle.draw(graphics);
 			}
 		}
